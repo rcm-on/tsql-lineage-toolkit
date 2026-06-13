@@ -1,0 +1,12 @@
+{
+  "name": "dashboard-e2e",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Smoke test for the SQL Dashboard (loads samples/from-sql-demo/graph.json and screenshots the result).",
+  "scripts": {
+    "test": "node check-dashboard.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.60.0"
+  }
+}

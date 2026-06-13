@@ -29,7 +29,8 @@ dashboard web estático para explorar los resultados.
 ├── dashboard/                # App web estática (sin build) para explorar el grafo
 │   ├── index.html
 │   ├── src/                  # Componentes vanilla JS (namespace global `SD`)
-│   └── vendor/                # Dependencias vendorizadas (mermaid.js)
+│   ├── vendor/                # Dependencias vendorizadas (mermaid.js)
+│   └── e2e/                   # Smoke test (Playwright) contra samples/from-sql-demo
 │
 ├── samples/                  # Ejemplos pequeños de entrada/salida
 │   ├── sample_input.json
@@ -162,12 +163,11 @@ Compara las relaciones `FK_TO` / `CALLS` del grafo con `sys.foreign_keys` y
 ## Dashboard
 
 App **autónoma** (sin build, sin dependencias, offline). Abre `dashboard/index.html`
-en el navegador y sube el `workflows_full.json` (o `graph_full.json`) generado en
-el paso 3.
+en el navegador y sube el `graph_full.json` generado en el paso 3.
 
-Para probar el dashboard sin generar nada, usa
-`samples/from-sql-demo/workflows.json` (o `graph.json`) — son la salida de
-ejecutar el flujo `from-sql` (paso 2a) sobre los `.sql` de ejemplo en
-`samples/from-sql-demo/sql/`.
+Para probar el dashboard sin generar nada, usa `samples/from-sql-demo/graph.json`
+— es la salida de ejecutar el flujo `from-sql` (paso 2a) sobre los `.sql` de
+ejemplo en `samples/from-sql-demo/sql/`. Hay un smoke test automatizado
+(Playwright) en [dashboard/e2e/](dashboard/e2e/).
 
 Ver [dashboard/README.md](dashboard/README.md) para el detalle de cada componente.

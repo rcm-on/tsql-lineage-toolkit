@@ -1,7 +1,7 @@
 # SQL Dashboard
 
 App visual **autónoma** (sin build, sin dependencias, offline) para explorar el
-análisis del `tsql-parser`. **Subes el `workflows_full.json`** y la app construye
+análisis del `tsql-parser`. **Subes el `graph_full.json`** y la app construye
 sola: resumen general, navegación por objeto, flujo de control en lenguaje natural,
 llamadas (entrantes y salientes), variables y mini-gráficos — con mini-resúmenes
 automáticos para no tener que pedirlos.
@@ -11,10 +11,10 @@ automáticos para no tener que pedirlos.
 1. Genera el análisis con el parser:
    ```
    cd ../src/TSqlParser
-   dotnet run -- input.json graph_full.json workflows_full.json --columns
+   dotnet run -- input.json graph_full.json graph_full.json --columns
    ```
 2. Abre `index.html` en el navegador (doble clic).
-3. Sube (o arrastra) el `workflows_full.json` generado.
+3. Sube (o arrastra) el `graph_full.json` generado.
 
 Con eso basta: "quién me llama" se deriva invirtiendo los `ExecCalls` de todos los
 objetos, así que **un solo fichero** es suficiente.
