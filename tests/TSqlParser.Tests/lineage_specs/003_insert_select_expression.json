@@ -1,0 +1,9 @@
+{
+  "id": "003",
+  "name": "InsertSelectExpression",
+  "sql": "CREATE PROCEDURE dbo.TestProc\nAS\nBEGIN\n    INSERT INTO dbo.Target (Total)\n    SELECT Quantity * UnitPrice\n    FROM dbo.Source\nEND",
+  "expectedDerives": [
+    { "targetTable": "dbo.Target", "targetColumn": "Total", "sourceTable": "dbo.Source", "sourceColumn": "Quantity" },
+    { "targetTable": "dbo.Target", "targetColumn": "Total", "sourceTable": "dbo.Source", "sourceColumn": "UnitPrice" }
+  ]
+}

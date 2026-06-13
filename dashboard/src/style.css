@@ -1,0 +1,146 @@
+:root{
+  --bg:#1e1e1e;--pan:#252526;--bd:#3c3c3c;--fg:#ddd;--mut:#888;
+  --ac:#e91e8c;--ok:#4caf50;--warn:#ff9800;--dyn:#ce93d8;--lnk:#4ea1ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--fg);font-size:14px}
+a{color:var(--lnk);text-decoration:none}
+a:hover{color:var(--ac);text-decoration:underline}
+#app{display:flex;height:100vh}
+
+/* Pantalla de carga (upload) */
+#drop{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--bg);text-align:center;transition:background .15s}
+#drop.hot{background:#2a2330}
+#drop h1{font-size:26px;margin:0 0 6px}
+#drop p{color:var(--mut);max-width:480px}
+#drop .zone{margin-top:18px;padding:34px 48px;border:2px dashed #555;border-radius:12px}
+#drop.hot .zone{border-color:var(--ac)}
+body.loaded #drop{display:none}
+input[type=file]{color:var(--fg)}
+
+#side{width:340px;flex:0 0 340px;border-right:1px solid var(--bd);background:var(--pan);display:flex;flex-direction:column}
+#side h1{font-size:15px;margin:0;padding:12px 14px;border-bottom:1px solid var(--bd)}
+#side h1 small{color:var(--mut);font-weight:normal;font-size:11px;display:block;margin-top:2px}
+#search{margin:8px;padding:7px;background:#2d2d2d;border:1px solid var(--bd);color:var(--fg);border-radius:5px}
+#filter{display:flex;flex-wrap:wrap;gap:4px;padding:0 8px 8px}
+.fchip{font-size:11px;padding:3px 9px;border-radius:12px;background:#2d2d2d;border:1px solid var(--bd);cursor:pointer;color:#ccc}
+.fchip:hover{border-color:var(--ac)}
+.fchip.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.fchip b{font-weight:bold}
+.card.clk{cursor:pointer}.card.clk:hover{border-color:var(--ac)}
+#list{overflow:auto;flex:1}
+.item{padding:7px 12px;border-bottom:1px solid #2a2a2a;cursor:pointer;display:flex;justify-content:space-between;gap:6px}
+.item:hover{background:#2d2d2d}
+.item.sel{background:#37373d;border-left:3px solid var(--ac)}
+.item .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badges{flex:0 0 auto;display:flex;gap:3px}
+.b{font-size:10px;padding:1px 5px;border-radius:8px;background:#3a3a3a;color:#ccc}
+.b.cc{background:#5a3a3a}.b.dyn{background:#4a3a5a;color:var(--dyn)}.b.err{background:#5a2a2a;color:#ff8a80}
+.b.tbl{background:#2f4a3a;color:#9be7b4}
+.b.tmp{background:#4a3f2a;color:#ffcf8f}
+.item.table .nm{color:#9be7b4}
+.item.table.temp .nm{color:#ffcf8f;font-style:italic}
+
+/* mini-grafo */
+.mini-graph{background:#1b1b1b;border:1px solid var(--bd);border-radius:8px;padding:4px;overflow:auto}
+.mg-c{fill:#fff;font-size:12px;font-weight:bold}
+.mg-n{fill:#ddd;font-size:10px}
+.mg-empty{fill:var(--mut);font-size:12px}
+.mg-role{fill:var(--mut);font-size:9px}
+.mg-hdr{fill:var(--mut);font-size:10px;font-weight:bold;letter-spacing:.5px}
+
+#main{flex:1;overflow:auto;padding:18px 24px}
+.nav{margin-bottom:14px}
+.nav button{background:#2d2d2d;border:1px solid var(--bd);color:var(--fg);padding:6px 12px;border-radius:5px;cursor:pointer;margin-right:6px}
+.nav button:hover,.nav button.on{border-color:var(--ac)}
+h2{font-size:19px;margin:0 0 4px}
+h3{font-size:12px;color:var(--ac);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 8px;border-bottom:1px solid var(--bd);padding-bottom:4px}
+.flags{color:var(--mut);font-size:12px;margin-bottom:10px}
+
+/* Mini-resumen automático */
+.summary{display:flex;gap:10px;background:#2a2733;border:1px solid #463a52;border-left:3px solid var(--ac);
+  border-radius:8px;padding:11px 14px;margin:6px 0 4px;line-height:1.5}
+.summary .sumicon{color:var(--ac)}
+.summary b{color:#fff}
+
+.cards{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+.card{background:var(--pan);border:1px solid var(--bd);border-radius:8px;padding:12px 16px;min-width:118px}
+.card .n{font-size:24px;font-weight:bold}.card .l{color:var(--mut);font-size:11px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+
+/* charts: barras */
+.chart-bars .bar{display:flex;align-items:center;gap:8px;margin:3px 0}
+.chart-bars .lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chart-bars .lbl[onclick]{cursor:pointer}.chart-bars .lbl[onclick]:hover{color:var(--ac)}
+.chart-bars .track{flex:0 0 150px;background:#2d2d2d;border-radius:4px;height:14px}
+.chart-bars .fill{height:100%;border-radius:4px;display:block}
+.chart-bars .v{flex:0 0 38px;text-align:right;color:var(--mut);font-size:12px}
+
+/* charts: donut */
+.chart-donut{display:flex;align-items:center;gap:18px}
+.donut-c{fill:var(--fg);font-size:22px;font-weight:bold}
+.legend .lg{font-size:12px;margin:3px 0;color:#ccc}
+.legend .dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+/* charts: tally (columnas) */
+.chart-tally{display:flex;gap:14px;align-items:flex-end;padding:8px 0;flex-wrap:wrap}
+.chart-tally .col{display:flex;flex-direction:column;align-items:center;gap:3px}
+.chart-tally .colbar{width:26px;border-radius:3px 3px 0 0}
+.chart-tally .colv{font-size:12px;color:#fff}
+.chart-tally .colk{font-size:10px;color:var(--mut)}
+
+/* flujograma vertical (SVG) */
+.flowchart{background:#1b1b1b;border:1px solid var(--bd);border-radius:8px;padding:8px;overflow:auto;max-width:100%}
+.fc-t{font-size:11px;font-weight:bold}
+.fc-d{fill:var(--warn);font-size:10px}
+.fc-term{fill:#fff;font-size:11px;font-weight:bold;letter-spacing:.5px}
+.fc-lbl{fill:var(--mut);font-size:10px}
+.tree-fold{margin-top:8px}
+.tree-fold>summary{cursor:pointer;color:var(--mut);font-size:12px;padding:4px 0}
+
+/* árbol de flujo */
+.tree{font-family:Consolas,monospace;font-size:13px;line-height:1.55}
+.tree .cond{color:var(--warn)}
+.tree .act{font-weight:bold;padding:0 5px;border-radius:4px;font-size:12px}
+.tree .a-read{background:#1e3a5a;color:#9cdcfe}      /* SELECT */
+.tree .a-write{background:#5a2a2a;color:#ff8a80}     /* INSERT/UPDATE/DELETE/MERGE */
+.tree .a-call{background:#3a2a5a;color:#c8a2e8}       /* EXEC */
+.tree .a-ctrl{background:#3a3a3a;color:#bbb}          /* RETURN/THROW/TRAN */
+.tree .tgt{color:var(--ok)}.tree .dyn{color:var(--dyn);font-weight:bold}
+.tree details{margin-left:14px}.tree summary{cursor:pointer;list-style:none}
+.tree summary::-webkit-details-marker{display:none}
+.tree summary::before{content:'▸ ';color:var(--mut)}.tree details[open]>summary::before{content:'▾ '}
+.tree .step{margin-left:2px}
+
+/* Bloques Mermaid (flujogramas de control y de datos) */
+.mm-wrap{margin:8px 0 4px;border:1px solid var(--bd);border-radius:8px;background:var(--pan);overflow:hidden}
+.mm-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:#2d2d2d;border-bottom:1px solid var(--bd)}
+.mm-title{font-size:12px;color:var(--mut);font-weight:600}
+.mm-tools{display:flex;gap:4px}
+.mm-tools button{font-size:11px;padding:3px 9px;border-radius:6px;cursor:pointer;background:#333;border:1px solid var(--bd);color:#ccc}
+.mm-tools button:hover{border-color:var(--ac);color:#fff}
+.mermaid{padding:12px;overflow:auto;text-align:center}
+.mermaid svg{max-width:none}
+.mermaid .muted{color:var(--mut);font-family:Consolas,monospace;font-size:12px}
+
+table.t{border-collapse:collapse;width:100%;margin-top:4px}
+table.t td,table.t th{border:1px solid var(--bd);padding:4px 8px;text-align:left;font-size:13px}
+table.t th{background:#2d2d2d;color:var(--mut)}
+.chip{display:inline-block;background:#2d2d2d;border:1px solid var(--bd);border-radius:10px;padding:2px 8px;margin:2px;font-size:12px;cursor:pointer}
+.chip:hover{border-color:var(--ac)}.chip.w{color:#ff8a80}.chip.r{color:#9cdcfe}
+.muted{color:var(--mut)}.risk{color:var(--dyn)}
+code.ctor{display:inline-block;font-family:Consolas,monospace;font-size:12px;color:#ce93d8;background:#2a2733;border:1px solid #463a52;border-radius:4px;padding:4px 8px;max-width:560px;white-space:pre-wrap;word-break:break-word}
+.ctor-block{margin:6px 0}
+
+/* riesgos */
+.risk-card .n{color:#ff8a80}
+.sev{font-size:10px;font-weight:bold;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.sev.s-crit{background:#7a1f1f;color:#ffd6d6}
+.sev.s-high{background:#7a3a1f;color:#ffe0c0}
+.sev.s-med{background:#6a5a1f;color:#fff0c0}
+.sev.s-low{background:#2f4a3a;color:#c8f0d8}
+.sev.s-info{background:#3a3a3a;color:#ccc}
+table.risks td{vertical-align:top}
+table.risks tr.s-crit td:first-child,table.risks tr.s-high td:first-child{font-weight:bold}

@@ -1,0 +1,6 @@
+{
+  "id": "004",
+  "name": "InsertSelectUnion",
+  "sql": "CREATE PROCEDURE dbo.TestProc\nAS\nBEGIN\n    INSERT INTO dbo.Target (Col1)\n    SELECT Col1 FROM dbo.Source1\n    UNION ALL\n    SELECT Col1 FROM dbo.Source2\nEND",
+  "expectedDerives": []
+}

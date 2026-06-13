@@ -1,0 +1,6 @@
+[
+  {
+    "name": "Test::dbo.DeepNesting",
+    "sql": "CREATE PROCEDURE dbo.DeepNesting @a INT, @b INT, @c INT AS BEGIN IF @a = 1 BEGIN IF @b = 1 BEGIN WHILE @c > 0 BEGIN IF @a + @b = 2 BEGIN BEGIN TRY UPDATE dbo.T1 SET X = 1; IF @c = 5 BEGIN INSERT INTO dbo.T2 (Id) VALUES (@c); END END TRY BEGIN CATCH IF ERROR_NUMBER() = 50000 BEGIN INSERT INTO dbo.T3 (Msg) VALUES ('deep'); END ELSE BEGIN EXEC dbo.uspLogError; END END CATCH END SET @c = @c - 1; END END END END;"
+  }
+]

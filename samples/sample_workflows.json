@@ -1,0 +1,94 @@
+﻿[
+  {
+    "ObjectName": "Test::dbo.DeepNesting",
+    "Parameters": [
+      {
+        "Name": "@a",
+        "DataType": "INT",
+        "IsOutput": false
+      },
+      {
+        "Name": "@b",
+        "DataType": "INT",
+        "IsOutput": false
+      },
+      {
+        "Name": "@c",
+        "DataType": "INT",
+        "IsOutput": false
+      }
+    ],
+    "Variables": [],
+    "FlowLinks": [
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@a + @b = 2",
+        "ConsequenceType": "UPDATE",
+        "ConsequenceTarget": "dbo.T1",
+        "NestingLevel": 4,
+        "LineNo": 1,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF: @a = 1",
+          "IF: @b = 1",
+          "WHILE: @c > 0",
+          "IF: @a + @b = 2"
+        ]
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@c = 5",
+        "ConsequenceType": "INSERT",
+        "ConsequenceTarget": "dbo.T2",
+        "NestingLevel": 5,
+        "LineNo": 1,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF: @a = 1",
+          "IF: @b = 1",
+          "WHILE: @c > 0",
+          "IF: @a + @b = 2",
+          "IF: @c = 5"
+        ]
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "ERROR_NUMBER() = 50000",
+        "ConsequenceType": "INSERT",
+        "ConsequenceTarget": "dbo.T3",
+        "NestingLevel": 2,
+        "LineNo": 1,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "CATCH: ON ERROR",
+          "IF: ERROR_NUMBER() = 50000"
+        ]
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (ERROR_NUMBER() = 50000)",
+        "ConsequenceType": "EXEC",
+        "ConsequenceTarget": "dbo.uspLogError",
+        "NestingLevel": 2,
+        "LineNo": 1,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "CATCH: ON ERROR",
+          "IF_ELSE: NOT (ERROR_NUMBER() = 50000)"
+        ]
+      }
+    ],
+    "ExecCalls": [
+      "dbo.uspLogError"
+    ],
+    "FunctionCalls": [
+      "ERROR_NUMBER"
+    ],
+    "HasTransaction": false,
+    "HasErrorHandling": true,
+    "HasCursor": false,
+    "DynamicSqlCount": 0,
+    "ComplexityScore": 8,
+    "Error": null
+  }
+]

@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/TSqlParser/TSqlParser.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TSqlParser.Tests/TSqlParser.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,433 @@
+﻿{
+  "Nodes": [
+    {
+      "Id": "Test::dbo.DeepNesting",
+      "Labels": [
+        "SqlObject"
+      ],
+      "Properties": {
+        "database": "Test",
+        "full_name": "dbo.DeepNesting",
+        "has_transaction": false,
+        "has_error_handling": true,
+        "has_cursor": false,
+        "dynamic_sql_calls": 0,
+        "cyclomatic_complexity": 8,
+        "parse_error": ""
+      }
+    },
+    {
+      "Id": "Test::dbo.DeepNesting#param:@a",
+      "Labels": [
+        "Parameter"
+      ],
+      "Properties": {
+        "name": "@a",
+        "data_type": "INT",
+        "is_output": false
+      }
+    },
+    {
+      "Id": "Test::dbo.DeepNesting#param:@b",
+      "Labels": [
+        "Parameter"
+      ],
+      "Properties": {
+        "name": "@b",
+        "data_type": "INT",
+        "is_output": false
+      }
+    },
+    {
+      "Id": "Test::dbo.DeepNesting#param:@c",
+      "Labels": [
+        "Parameter"
+      ],
+      "Properties": {
+        "name": "@c",
+        "data_type": "INT",
+        "is_output": false
+      }
+    },
+    {
+      "Id": "Test::dbo.DeepNesting#step0",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 0,
+        "line_no": 1,
+        "nesting_level": 4,
+        "action": "UPDATE",
+        "target_name": "dbo.T1",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF: @a = 1",
+          "IF: @b = 1",
+          "WHILE: @c > 0",
+          "IF: @a + @b = 2"
+        ],
+        "label": "UPDATE -> dbo.T1"
+      }
+    },
+    {
+      "Id": "Test:action:UPDATE",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "UPDATE"
+      }
+    },
+    {
+      "Id": "Test:table:dbo.t1",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "Test",
+        "name": "dbo.T1"
+      }
+    },
+    {
+      "Id": "Test:rule:IF:d80d132e",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@a = 1"
+      }
+    },
+    {
+      "Id": "Test:rule:IF:42e44dc7",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@b = 1"
+      }
+    },
+    {
+      "Id": "Test:rule:WHILE:cd9cf5b4",
+      "Labels": [
+        "Rule",
+        "WHILE"
+      ],
+      "Properties": {
+        "type": "WHILE",
+        "expression": "@c > 0"
+      }
+    },
+    {
+      "Id": "Test:rule:IF:f0fa9d16",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@a + @b = 2"
+      }
+    },
+    {
+      "Id": "Test::dbo.DeepNesting#step1",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 1,
+        "line_no": 1,
+        "nesting_level": 5,
+        "action": "INSERT",
+        "target_name": "dbo.T2",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF: @a = 1",
+          "IF: @b = 1",
+          "WHILE: @c > 0",
+          "IF: @a + @b = 2",
+          "IF: @c = 5"
+        ],
+        "label": "INSERT -> dbo.T2"
+      }
+    },
+    {
+      "Id": "Test:action:INSERT",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "INSERT"
+      }
+    },
+    {
+      "Id": "Test:table:dbo.t2",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "Test",
+        "name": "dbo.T2"
+      }
+    },
+    {
+      "Id": "Test:rule:IF:e6fa1c63",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@c = 5"
+      }
+    },
+    {
+      "Id": "Test::dbo.DeepNesting#step2",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 2,
+        "line_no": 1,
+        "nesting_level": 2,
+        "action": "INSERT",
+        "target_name": "dbo.T3",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "CATCH: ON ERROR",
+          "IF: ERROR_NUMBER() = 50000"
+        ],
+        "label": "INSERT -> dbo.T3"
+      }
+    },
+    {
+      "Id": "Test:table:dbo.t3",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "Test",
+        "name": "dbo.T3"
+      }
+    },
+    {
+      "Id": "Test:rule:CATCH:12a2e825",
+      "Labels": [
+        "Rule",
+        "CATCH"
+      ],
+      "Properties": {
+        "type": "CATCH",
+        "expression": "ON ERROR"
+      }
+    },
+    {
+      "Id": "Test:rule:IF:15455b53",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "ERROR_NUMBER() = 50000"
+      }
+    },
+    {
+      "Id": "Test::dbo.DeepNesting#step3",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 3,
+        "line_no": 1,
+        "nesting_level": 2,
+        "action": "EXEC",
+        "target_name": "dbo.uspLogError",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "CATCH: ON ERROR",
+          "IF_ELSE: NOT (ERROR_NUMBER() = 50000)"
+        ],
+        "label": "EXEC -> dbo.uspLogError"
+      }
+    },
+    {
+      "Id": "Test:action:EXEC",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "EXEC"
+      }
+    },
+    {
+      "Id": "Test:rule:IF_ELSE:426e38e9",
+      "Labels": [
+        "Rule",
+        "IFELSE"
+      ],
+      "Properties": {
+        "type": "IF_ELSE",
+        "expression": "NOT (ERROR_NUMBER() = 50000)"
+      }
+    }
+  ],
+  "Relationships": [
+    {
+      "Type": "HAS_PARAMETER",
+      "StartNodeId": "Test::dbo.DeepNesting",
+      "EndNodeId": "Test::dbo.DeepNesting#param:@a",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_PARAMETER",
+      "StartNodeId": "Test::dbo.DeepNesting",
+      "EndNodeId": "Test::dbo.DeepNesting#param:@b",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_PARAMETER",
+      "StartNodeId": "Test::dbo.DeepNesting",
+      "EndNodeId": "Test::dbo.DeepNesting#param:@c",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "Test::dbo.DeepNesting",
+      "EndNodeId": "Test::dbo.DeepNesting#step0",
+      "Properties": {
+        "order": 0
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "Test::dbo.DeepNesting#step0",
+      "EndNodeId": "Test:action:UPDATE",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "Test::dbo.DeepNesting#step0",
+      "EndNodeId": "Test:table:dbo.t1",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "Test:rule:IF:42e44dc7",
+      "EndNodeId": "Test:rule:IF:d80d132e",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "Test:rule:WHILE:cd9cf5b4",
+      "EndNodeId": "Test:rule:IF:42e44dc7",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "Test:rule:IF:f0fa9d16",
+      "EndNodeId": "Test:rule:WHILE:cd9cf5b4",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "Test:rule:IF:f0fa9d16",
+      "EndNodeId": "Test::dbo.DeepNesting#step0",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "Test::dbo.DeepNesting",
+      "EndNodeId": "Test::dbo.DeepNesting#step1",
+      "Properties": {
+        "order": 1
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "Test::dbo.DeepNesting#step1",
+      "EndNodeId": "Test:action:INSERT",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "Test::dbo.DeepNesting#step1",
+      "EndNodeId": "Test:table:dbo.t2",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "Test:rule:IF:e6fa1c63",
+      "EndNodeId": "Test:rule:IF:f0fa9d16",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "Test:rule:IF:e6fa1c63",
+      "EndNodeId": "Test::dbo.DeepNesting#step1",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "Test::dbo.DeepNesting",
+      "EndNodeId": "Test::dbo.DeepNesting#step2",
+      "Properties": {
+        "order": 2
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "Test::dbo.DeepNesting#step2",
+      "EndNodeId": "Test:action:INSERT",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "Test::dbo.DeepNesting#step2",
+      "EndNodeId": "Test:table:dbo.t3",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "Test:rule:IF:15455b53",
+      "EndNodeId": "Test:rule:CATCH:12a2e825",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "Test:rule:IF:15455b53",
+      "EndNodeId": "Test::dbo.DeepNesting#step2",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "Test::dbo.DeepNesting",
+      "EndNodeId": "Test::dbo.DeepNesting#step3",
+      "Properties": {
+        "order": 3
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "Test::dbo.DeepNesting#step3",
+      "EndNodeId": "Test:action:EXEC",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "Test:rule:IF_ELSE:426e38e9",
+      "EndNodeId": "Test:rule:CATCH:12a2e825",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "Test:rule:IF_ELSE:426e38e9",
+      "EndNodeId": "Test::dbo.DeepNesting#step3",
+      "Properties": {}
+    }
+  ]
+}

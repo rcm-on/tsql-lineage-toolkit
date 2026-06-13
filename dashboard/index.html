@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQL Dashboard · lineage &amp; flujo</title>
+<link rel="stylesheet" href="src/style.css">
+</head>
+<body>
+
+<!-- Pantalla de carga: sube (o arrastra) el workflows_full.json y la app hace el resto -->
+<div id="drop">
+  <h1>SQL Dashboard</h1>
+  <p>Sube el <code>graph_full.json</code> que genera el parser y se construye solo:
+     resumen general, navegación por <b>objeto y tabla</b>, flujo de control en
+     lenguaje natural, dependencias (quién llama a quién), relaciones FK,
+     variables, condiciones y mini-grafos.</p>
+  <div class="zone">
+    <input type="file" id="file" accept=".json">
+    <p style="margin:10px 0 0">o arrastra el archivo aquí</p>
+  </div>
+</div>
+
+<!-- App (oculta hasta cargar datos) -->
+<div id="app">
+  <div id="side">
+    <h1>SQL Dashboard<small id="subtitle">sin datos</small></h1>
+    <input id="search" placeholder="Buscar objeto…" disabled>
+    <div id="filter"></div>
+    <div id="list"></div>
+  </div>
+  <div id="main"></div>
+</div>
+
+<!-- Componentes en ficheros separados, cargados en orden de dependencia -->
+<script src="vendor/mermaid.min.js"></script>
+<script src="src/mermaid.js"></script>
+<script src="src/naturalize.js"></script>
+<script src="src/charts.js"></script>
+<script src="src/shape.js"></script>
+<script src="src/summary.js"></script>
+<script src="src/risks.js"></script>
+<script src="src/components.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
