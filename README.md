@@ -4,6 +4,31 @@ Analizador de lineage para T-SQL (procedimientos, funciones, triggers) basado en
 [ScriptDom](https://www.nuget.org/packages/Microsoft.SqlServer.TransactSql.ScriptDom), más un
 dashboard web estático para explorar los resultados.
 
+## ¿Para qué sirve?
+
+Antes de tocar una tabla o un procedimiento en una base de datos SQL Server
+grande, la pregunta es siempre la misma: **¿qué se rompe si cambio esto?**
+Responderla a mano significa leer cientos de procedimientos a ojo.
+
+Este toolkit recorre el AST real (no regex) de cada procedimiento/función/
+trigger/vista y construye el grafo de lineage completo: qué objetos llaman a
+cuáles (`CALLS`), qué tablas/columnas lee y escribe cada uno
+(`READS_FROM`/`WRITES_TO`, `READS_COLUMN`/`WRITES_COLUMN`), y las relaciones de
+clave foránea entre tablas. Con eso puedes:
+
+- **Impact analysis**: "si cambio `dbo.Customers.Email`, ¿qué procedimientos
+  lo leen o lo escriben, directa o indirectamente?"
+- **Preparar una migración**: detectar dependencias ocultas (SQL dinámico,
+  `EXEC`, vistas en cascada) antes de mover o refactorizar objetos.
+- **Onboarding / auditoría**: explorar visualmente el flujo de control y de
+  datos de una base de datos desconocida sin leer cada SP.
+
+El grafo resultante (`graph_full.json`) se explora en el
+[dashboard](dashboard/) (vanilla JS, sin instalación) o se exporta a
+Neo4j/GraphML/D3 para análisis más avanzado.
+
+![Dashboard: resumen general](docs/dashboard-overview.png)
+
 ## Estructura del repositorio
 
 ```
