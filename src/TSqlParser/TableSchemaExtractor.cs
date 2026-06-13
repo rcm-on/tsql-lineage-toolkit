@@ -79,6 +79,69 @@ public static class TableSchemaExtractor
         return 0;
     }
 
+    /// <summary>
+    /// Extracts CREATE TABLE DDL for every base table (sys.tables) in
+    /// <paramref name="database"/> and appends new entries to input.json.
+    /// Unlike <see cref="Run"/>, this does not need a pre-built graph: it
+    /// covers the whole database in one pass.
+    /// </summary>
+    public static int RunAll(string database, string inputPath, string server)
+    {
+        var jsonOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            PropertyNameCaseInsensitive = true,
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+        };
+
+        var existing = File.Exists(inputPath)
+            ? JsonSerializer.Deserialize<List<SourceObject>>(File.ReadAllText(inputPath), jsonOptions) ?? []
+            : [];
+        var existingNames = existing.Select(e => e.Name).ToHashSet();
+
+        using var conn = Connect(server, database);
+        if (conn == null)
+        {
+            Console.Error.WriteLine($"Could not connect to {server}/{database}");
+            return 1;
+        }
+
+        var tables = new List<(string schema, string table)>();
+        using (var cmd = new SqlCommand("SELECT SCHEMA_NAME(schema_id), name FROM sys.tables ORDER BY 1, 2", conn))
+        {
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+                tables.Add((reader.GetString(0), reader.GetString(1)));
+        }
+
+        var newEntries = new List<SourceObject>();
+        foreach (var (schema, table) in tables)
+        {
+            var objName = $"{database}::{schema}.{table}";
+            if (existingNames.Contains(objName))
+            {
+                Console.WriteLine($"  - {schema}.{table}: already in input.json, skipping");
+                continue;
+            }
+            var ddl = BuildCreateTable(conn, schema, table);
+            if (ddl == null)
+                continue;
+            newEntries.Add(new SourceObject(objName, ddl));
+            Console.WriteLine($"  + {schema}.{table}: ok");
+        }
+
+        if (newEntries.Count == 0)
+        {
+            Console.WriteLine("\nNo new table definitions to add.");
+            return 0;
+        }
+
+        existing.AddRange(newEntries);
+        File.WriteAllText(inputPath, JsonSerializer.Serialize(existing, jsonOptions), Encoding.UTF8);
+        Console.WriteLine($"\nAppended {newEntries.Count} table definitions to {inputPath}");
+        return 0;
+    }
+
     private static Dictionary<string, HashSet<string>> CollectTableNames(string graphPath)
     {
         using var doc = JsonDocument.Parse(File.ReadAllText(graphPath));

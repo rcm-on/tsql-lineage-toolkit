@@ -10,6 +10,9 @@ graph_*.json
 workflows_*.json
 output/
 
+## Local database backups (too large for git, used for manual testing)
+database/
+
 ## Editor / OS
 .vs/
 .vscode/

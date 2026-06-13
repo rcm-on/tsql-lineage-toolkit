@@ -43,6 +43,37 @@ if (positional.Count >= 1 && positional[0] == "validate")
     return DbValidator.Run(positional[1], server);
 }
 
+// "extract <database> <input.json> [--server <server>] [--tables] [--object schema.name]... [--like pattern]":
+// connects to a live database and dumps the SQL definitions of its
+// procedures/functions/triggers/views (sys.sql_modules) into input.json,
+// ready for the main pipeline below.
+//   --object schema.name : restrict to this object (repeatable for several).
+//   --like pattern        : restrict to objects matching this T-SQL LIKE
+//                            pattern over "schema.name" (e.g. "dbo.usp_Sales%").
+//   --tables              : also append CREATE TABLE DDL for every base table
+//                            (sys.tables) so input.json is self-contained.
+if (positional.Count >= 1 && positional[0] == "extract")
+{
+    if (positional.Count < 3)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser extract <database> <input.json> [--server <server>] [--tables] [--object schema.name]... [--like pattern]");
+        return 1;
+    }
+    var serverArgIdx = Array.IndexOf(args, "--server");
+    var server = serverArgIdx >= 0 && serverArgIdx + 1 < args.Length ? args[serverArgIdx + 1] : @".\SQLEXPRESS";
+    var likeArgIdx = Array.IndexOf(args, "--like");
+    var likePattern = likeArgIdx >= 0 && likeArgIdx + 1 < args.Length ? args[likeArgIdx + 1] : null;
+    var objectNames = new List<string>();
+    for (var i = 0; i < args.Length - 1; i++)
+        if (args[i] == "--object")
+            objectNames.Add(args[i + 1]);
+
+    var extractResult = ObjectExtractor.Run(positional[1], positional[2], server, objectNames, likePattern);
+    if (extractResult != 0 || !args.Contains("--tables"))
+        return extractResult;
+    return TableSchemaExtractor.RunAll(positional[1], positional[2], server);
+}
+
 // "extract-tables <graph.json> <input.json> [--server <server>]": for every
 // :Table node in graph.json, fetches its CREATE TABLE DDL (columns, types,
 // PK, FK) from the live database and appends it to input.json.
@@ -100,6 +131,7 @@ if (positional.Count < 2)
 {
     Console.Error.WriteLine("Usage: TSqlParser <input.json> <output_graph.json> [output_workflows.json] [--columns] [--graphify]");
     Console.Error.WriteLine("       TSqlParser report <input.json> [nombre-objeto]");
+    Console.Error.WriteLine("       TSqlParser extract <database> <input.json> [--server <server>] [--tables] [--object schema.name]... [--like pattern]");
     Console.Error.WriteLine("       TSqlParser validate <graph.json> [--server <server>]");
     Console.Error.WriteLine("       TSqlParser extract-tables <graph.json> <input.json> [--server <server>]");
     return 1;
