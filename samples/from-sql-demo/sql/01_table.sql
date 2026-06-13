@@ -1,0 +1,6 @@
+CREATE TABLE dbo.Customers
+(
+    CustomerId INT NOT NULL PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(200) NULL
+)

@@ -1,0 +1,14 @@
+[
+  {
+    "Name": "TestDb::dbo.Customers",
+    "Sql": "CREATE TABLE dbo.Customers\n(\n    CustomerId INT NOT NULL PRIMARY KEY,\n    Name NVARCHAR(100) NOT NULL,\n    Email NVARCHAR(200) NULL\n)\n"
+  },
+  {
+    "Name": "TestDb::dbo.usp_GetCustomerEmail",
+    "Sql": "CREATE PROCEDURE dbo.usp_GetCustomerEmail\n    @CustomerId INT\nAS\nBEGIN\n    SELECT Email\n    FROM dbo.Customers\n    WHERE CustomerId = @CustomerId;\nEND\n"
+  },
+  {
+    "Name": "TestDb::Sales.usp_UpdateCustomerEmail",
+    "Sql": "CREATE PROCEDURE Sales.usp_UpdateCustomerEmail\n    @CustomerId INT,\n    @NewEmail NVARCHAR(200)\nAS\nBEGIN\n    UPDATE dbo.Customers\n    SET Email = @NewEmail\n    WHERE CustomerId = @CustomerId;\n\n    EXEC dbo.usp_GetCustomerEmail @CustomerId;\nEND\n"
+  }
+]

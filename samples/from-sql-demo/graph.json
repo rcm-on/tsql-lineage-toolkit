@@ -1,0 +1,358 @@
+﻿{
+  "Nodes": [
+    {
+      "Id": "TestDb::dbo.usp_GetCustomerEmail",
+      "Labels": [
+        "SqlObject"
+      ],
+      "Properties": {
+        "database": "TestDb",
+        "full_name": "dbo.usp_GetCustomerEmail",
+        "has_transaction": false,
+        "has_error_handling": false,
+        "has_cursor": false,
+        "dynamic_sql_calls": 0,
+        "cyclomatic_complexity": 1,
+        "parse_error": ""
+      }
+    },
+    {
+      "Id": "TestDb::Sales.usp_UpdateCustomerEmail",
+      "Labels": [
+        "SqlObject"
+      ],
+      "Properties": {
+        "database": "TestDb",
+        "full_name": "Sales.usp_UpdateCustomerEmail",
+        "has_transaction": false,
+        "has_error_handling": false,
+        "has_cursor": false,
+        "dynamic_sql_calls": 0,
+        "cyclomatic_complexity": 1,
+        "parse_error": ""
+      }
+    },
+    {
+      "Id": "TestDb:table:dbo.customers",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "TestDb",
+        "name": "dbo.Customers"
+      }
+    },
+    {
+      "Id": "TestDb:table:dbo.customers:column:CustomerId",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "CustomerId",
+        "table": "dbo.customers",
+        "data_type": "INT",
+        "is_nullable": false,
+        "is_identity": false,
+        "is_primary_key": true,
+        "ordinal": 1
+      }
+    },
+    {
+      "Id": "TestDb:table:dbo.customers:column:Name",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "Name",
+        "table": "dbo.customers",
+        "data_type": "NVARCHAR (100)",
+        "is_nullable": false,
+        "is_identity": false,
+        "is_primary_key": false,
+        "ordinal": 2
+      }
+    },
+    {
+      "Id": "TestDb:table:dbo.customers:column:Email",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "Email",
+        "table": "dbo.customers",
+        "data_type": "NVARCHAR (200)",
+        "is_nullable": true,
+        "is_identity": false,
+        "is_primary_key": false,
+        "ordinal": 3
+      }
+    },
+    {
+      "Id": "TestDb::dbo.usp_GetCustomerEmail#param:@CustomerId",
+      "Labels": [
+        "Parameter"
+      ],
+      "Properties": {
+        "name": "@CustomerId",
+        "data_type": "INT",
+        "is_output": false
+      }
+    },
+    {
+      "Id": "TestDb::dbo.usp_GetCustomerEmail#step0",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 0,
+        "line_no": 5,
+        "nesting_level": 0,
+        "action": "SELECT",
+        "target_name": "dbo.Customers",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "SELECT -> dbo.Customers"
+      }
+    },
+    {
+      "Id": "TestDb:action:SELECT",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "SELECT"
+      }
+    },
+    {
+      "Id": "TestDb::Sales.usp_UpdateCustomerEmail#param:@CustomerId",
+      "Labels": [
+        "Parameter"
+      ],
+      "Properties": {
+        "name": "@CustomerId",
+        "data_type": "INT",
+        "is_output": false
+      }
+    },
+    {
+      "Id": "TestDb::Sales.usp_UpdateCustomerEmail#param:@NewEmail",
+      "Labels": [
+        "Parameter"
+      ],
+      "Properties": {
+        "name": "@NewEmail",
+        "data_type": "NVARCHAR (200)",
+        "is_output": false
+      }
+    },
+    {
+      "Id": "TestDb::Sales.usp_UpdateCustomerEmail#step0",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 0,
+        "line_no": 6,
+        "nesting_level": 0,
+        "action": "UPDATE",
+        "target_name": "dbo.Customers",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "UPDATE -> dbo.Customers"
+      }
+    },
+    {
+      "Id": "TestDb:action:UPDATE",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "UPDATE"
+      }
+    },
+    {
+      "Id": "TestDb::Sales.usp_UpdateCustomerEmail#step1",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 1,
+        "line_no": 10,
+        "nesting_level": 0,
+        "action": "EXEC",
+        "target_name": "dbo.usp_GetCustomerEmail",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "EXEC -> dbo.usp_GetCustomerEmail"
+      }
+    },
+    {
+      "Id": "TestDb:action:EXEC",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "EXEC"
+      }
+    }
+  ],
+  "Relationships": [
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestDb:table:dbo.customers",
+      "EndNodeId": "TestDb:table:dbo.customers:column:CustomerId",
+      "Properties": {
+        "ordinal": 1
+      }
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestDb:table:dbo.customers",
+      "EndNodeId": "TestDb:table:dbo.customers:column:Name",
+      "Properties": {
+        "ordinal": 2
+      }
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestDb:table:dbo.customers",
+      "EndNodeId": "TestDb:table:dbo.customers:column:Email",
+      "Properties": {
+        "ordinal": 3
+      }
+    },
+    {
+      "Type": "HAS_PARAMETER",
+      "StartNodeId": "TestDb::dbo.usp_GetCustomerEmail",
+      "EndNodeId": "TestDb::dbo.usp_GetCustomerEmail#param:@CustomerId",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestDb::dbo.usp_GetCustomerEmail",
+      "EndNodeId": "TestDb::dbo.usp_GetCustomerEmail#step0",
+      "Properties": {
+        "order": 0
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestDb::dbo.usp_GetCustomerEmail#step0",
+      "EndNodeId": "TestDb::dbo.usp_GetCustomerEmail#param:@CustomerId",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestDb::dbo.usp_GetCustomerEmail#step0",
+      "EndNodeId": "TestDb:action:SELECT",
+      "Properties": {}
+    },
+    {
+      "Type": "READS_FROM",
+      "StartNodeId": "TestDb::dbo.usp_GetCustomerEmail#step0",
+      "EndNodeId": "TestDb:table:dbo.customers",
+      "Properties": {}
+    },
+    {
+      "Type": "READS_COLUMN",
+      "StartNodeId": "TestDb::dbo.usp_GetCustomerEmail#step0",
+      "EndNodeId": "TestDb:table:dbo.customers:column:Email",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_PARAMETER",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail",
+      "EndNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#param:@CustomerId",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_PARAMETER",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail",
+      "EndNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#param:@NewEmail",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail",
+      "EndNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#step0",
+      "Properties": {
+        "order": 0
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#step0",
+      "EndNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#param:@CustomerId",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#step0",
+      "EndNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#param:@NewEmail",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#step0",
+      "EndNodeId": "TestDb:action:UPDATE",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#step0",
+      "EndNodeId": "TestDb:table:dbo.customers",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#step0",
+      "EndNodeId": "TestDb:table:dbo.customers:column:Email",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail",
+      "EndNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#step1",
+      "Properties": {
+        "order": 1
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#step1",
+      "EndNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#param:@CustomerId",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#step1",
+      "EndNodeId": "TestDb:action:EXEC",
+      "Properties": {}
+    },
+    {
+      "Type": "TARGETS",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail#step1",
+      "EndNodeId": "TestDb::dbo.usp_GetCustomerEmail",
+      "Properties": {}
+    },
+    {
+      "Type": "CALLS",
+      "StartNodeId": "TestDb::Sales.usp_UpdateCustomerEmail",
+      "EndNodeId": "TestDb::dbo.usp_GetCustomerEmail",
+      "Properties": {
+        "caller": "TestDb::Sales.usp_UpdateCustomerEmail",
+        "callee": "TestDb::dbo.usp_GetCustomerEmail",
+        "kind": "EXEC"
+      }
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+﻿[
+  {
+    "ObjectName": "TestDb::dbo.usp_GetCustomerEmail",
+    "Parameters": [
+      {
+        "Name": "@CustomerId",
+        "DataType": "INT",
+        "IsOutput": false
+      }
+    ],
+    "Variables": [],
+    "FlowLinks": [
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "SELECT",
+        "ConsequenceTarget": "dbo.Customers",
+        "NestingLevel": 0,
+        "LineNo": 5,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [
+          "Email"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@CustomerId"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      }
+    ],
+    "ExecCalls": [],
+    "FunctionCalls": [],
+    "VariableAssignments": [],
+    "VariableConstructions": {},
+    "HasTransaction": false,
+    "HasErrorHandling": false,
+    "HasCursor": false,
+    "DynamicSqlCount": 0,
+    "ComplexityScore": 1,
+    "Error": null
+  },
+  {
+    "ObjectName": "TestDb::Sales.usp_UpdateCustomerEmail",
+    "Parameters": [
+      {
+        "Name": "@CustomerId",
+        "DataType": "INT",
+        "IsOutput": false
+      },
+      {
+        "Name": "@NewEmail",
+        "DataType": "NVARCHAR (200)",
+        "IsOutput": false
+      }
+    ],
+    "Variables": [],
+    "FlowLinks": [
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "UPDATE",
+        "ConsequenceTarget": "dbo.Customers",
+        "NestingLevel": 0,
+        "LineNo": 6,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [
+          "Email"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@CustomerId",
+          "@NewEmail"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "EXEC",
+        "ConsequenceTarget": "dbo.usp_GetCustomerEmail",
+        "NestingLevel": 0,
+        "LineNo": 10,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@CustomerId"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      }
+    ],
+    "ExecCalls": [
+      "dbo.usp_GetCustomerEmail"
+    ],
+    "FunctionCalls": [],
+    "VariableAssignments": [],
+    "VariableConstructions": {},
+    "HasTransaction": false,
+    "HasErrorHandling": false,
+    "HasCursor": false,
+    "DynamicSqlCount": 0,
+    "ComplexityScore": 1,
+    "Error": null
+  }
+]

@@ -43,6 +43,20 @@ if (positional.Count >= 1 && positional[0] == "validate")
     return DbValidator.Run(positional[1], server);
 }
 
+// "from-sql <database> <input.json> <file1.sql> [file2.sql ...|dir|glob]": builds
+// input.json from local .sql files (no database connection). Each file should
+// hold one CREATE [OR ALTER] PROC/FUNCTION/TRIGGER/VIEW/TABLE statement; the
+// "schema.name" is detected from that statement (default schema "dbo").
+if (positional.Count >= 1 && positional[0] == "from-sql")
+{
+    if (positional.Count < 4)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser from-sql <database> <input.json> <file1.sql> [file2.sql ...|dir|glob]");
+        return 1;
+    }
+    return SqlFileLoader.Run(positional[1], positional[2], positional.Skip(3).ToList());
+}
+
 // "extract <database> <input.json> [--server <server>] [--tables] [--object schema.name]... [--like pattern]":
 // connects to a live database and dumps the SQL definitions of its
 // procedures/functions/triggers/views (sys.sql_modules) into input.json,
@@ -131,6 +145,7 @@ if (positional.Count < 2)
 {
     Console.Error.WriteLine("Usage: TSqlParser <input.json> <output_graph.json> [output_workflows.json] [--columns] [--graphify]");
     Console.Error.WriteLine("       TSqlParser report <input.json> [nombre-objeto]");
+    Console.Error.WriteLine("       TSqlParser from-sql <database> <input.json> <file1.sql> [file2.sql ...|dir|glob]");
     Console.Error.WriteLine("       TSqlParser extract <database> <input.json> [--server <server>] [--tables] [--object schema.name]... [--like pattern]");
     Console.Error.WriteLine("       TSqlParser validate <graph.json> [--server <server>]");
     Console.Error.WriteLine("       TSqlParser extract-tables <graph.json> <input.json> [--server <server>]");

@@ -74,7 +74,23 @@ enriquecer con esquema de tablas y validar -> cargar en el dashboard.
   `Microsoft.Data.SqlClient`, p. ej. `.\SQLEXPRESS`, `localhost,1433`,
   `tcp:miservidor.database.windows.net`, etc.
 
-### 2. Extraer las definiciones a `input.json` (con el propio .NET)
+### 2a. Alternativa sin base de datos: a partir de ficheros .sql
+
+Si no tienes (o no quieres usar) una conexión a base de datos, puedes generar
+`input.json` directamente desde ficheros `.sql` locales (uno por objeto:
+`CREATE [OR ALTER] PROC/FUNCTION/TRIGGER/VIEW/TABLE`):
+
+```bash
+cd src/TSqlParser
+dotnet run -- from-sql TestDb ../../input.json ruta/a/*.sql
+# o un directorio completo (recursivo):
+dotnet run -- from-sql TestDb ../../input.json ruta/a/carpeta
+```
+
+El "schema.nombre" se detecta de la propia instrucción `CREATE` (por defecto
+`dbo` si no está cualificado). Continúa por el paso 3.
+
+### 2b. Extraer las definiciones a `input.json` (con el propio .NET)
 
 ```bash
 cd src/TSqlParser
@@ -148,5 +164,10 @@ Compara las relaciones `FK_TO` / `CALLS` del grafo con `sys.foreign_keys` y
 App **autónoma** (sin build, sin dependencias, offline). Abre `dashboard/index.html`
 en el navegador y sube el `workflows_full.json` (o `graph_full.json`) generado en
 el paso 3.
+
+Para probar el dashboard sin generar nada, usa
+`samples/from-sql-demo/workflows.json` (o `graph.json`) — son la salida de
+ejecutar el flujo `from-sql` (paso 2a) sobre los `.sql` de ejemplo en
+`samples/from-sql-demo/sql/`.
 
 Ver [dashboard/README.md](dashboard/README.md) para el detalle de cada componente.
