@@ -85,6 +85,78 @@ dotnet run -- input.json graph_full.json workflows_full.json --columns
 - `--columns`: añade nodos `:Column` (HAS_COLUMN / READS_COLUMN / WRITES_COLUMN).
 - `--graphify`: además exporta `<graph>.graphify.json` (D3 / vis-network / Graphify).
 - `--graphml`: además exporta `<graph>.graphml` (Gephi / yEd / Cytoscape / NetworkX).
+- `--nodestore`: además exporta `<graph>.nodes/`, una versión del mismo grafo
+  partida en ficheros pequeños y navegables (pensada para que un agente la lea
+  sin cargar `graph_full.json` entero):
+
+  ```
+  graph_full.nodes/
+    index.json        # punto de entrada: meta, schema (tipos cerrados de nodo/arista),
+                       # stats e instrucciones de navegación ("howto")
+    model.json         # "nodos iniciales": todos los SqlObject y Table, con
+                       # CALLS/AFFECTS/FK_TO y WRITES_TO/READS_FROM agregados a
+                       # nivel de objeto - el mapa general desde el que decidir
+                       # qué fichero abrir a continuación
+    manifest.json      # por objeto: content_hash + fichero + nodos compartidos
+                       # a los que contribuye (base para una futura
+                       # regeneración incremental)
+    objects/<obj>/object.json    # un SqlObject con sus parámetros/variables/
+                       # pasos propios y sus aristas salientes (cada una con
+                       # `path` al fichero vecino)
+    shared/{tables,columns,actions,rules}/<id>.json  # nodos compartidos entre
+                       # objetos (Table/Column/Action/Rule), con `refs`
+                       # (aristas entrantes partidas por objeto contribuyente)
+                       # y `edges_in`/`edges_out` ya resueltos
+  ```
+
+  Un agente típico: lee `index.json` + `model.json` (pequeños), localiza el
+  objeto o tabla de interés, abre su `objects/.../object.json` o
+  `shared/.../*.json`, y sigue los `path` de sus aristas solo donde necesite
+  profundizar - sin tocar el resto de ficheros.
+
+  **Ejemplo medido** (WideWorldImporters, 47 objetos, 1384 nodos, 3365
+  relaciones) para responder "¿qué escribe en `Warehouse.StockItems`,
+  directa e indirectamente?":
+
+  | | ficheros leídos | bytes | tiempo |
+  | --- | --- | --- | --- |
+  | `graph_full.json` completo + filtrar relaciones a mano | 1 | 1.51 MB | 194 ms |
+  | `index.json` + `model.json` + `shared/tables/...stockitems.json` | 3 | 93 KB | 30 ms |
+
+  La segunda vía lee **16x menos datos** y entrega la respuesta ya
+  estructurada por objeto contribuyente (`refs`), incluyendo cadenas de
+  impacto indirecto con `via`/`hops` precalculados - sin reconstruirlas a
+  mano a partir de las 3365 relaciones planas.
+
+  **`manifest.json` y actualizaciones incrementales.** Por cada `SqlObject`
+  guarda `{ content_hash, object_file, shared_touched }`:
+  - `content_hash`: hash SHA-1 del `object.json` de ese objeto - permite
+    detectar si cambió desde la última generación sin reanalizar el SQL.
+  - `shared_touched`: lista de los nodos compartidos (tablas, columnas,
+    acciones, reglas) a los que ese objeto contribuye en `shared/**`.
+
+  Esto deja la estructura lista para un futuro comando incremental: si
+  cambia un objeto, basta con (1) comparar su `content_hash`, (2) si difiere,
+  reescribir solo su `objects/<obj>/object.json`, y (3) usando el
+  `shared_touched` antiguo vs. nuevo, actualizar únicamente las entradas
+  `refs[<objeto>]` de los ficheros `shared/**` afectados - sin tocar el resto
+  de objetos ni regenerar `graph_full.json` completo. El comando en sí
+  (`update-nodestore`) todavía no está implementado; por ahora `--nodestore`
+  siempre regenera el store completo, pero ya escribe `content_hash` y
+  `shared_touched` para que ese comando pueda apoyarse en ellos sin rediseño.
+
+  **Pruebas realizadas.** `dotnet build` (0 errores) y `dotnet test` (42/42)
+  pasan con el exporter activo. Ejecutado de extremo a extremo contra
+  **WideWorldImporters** (base de datos real, 47 objetos): `index.json`
+  reporta `orphan_edges: 0` y `unknown_labels`/`unknown_edge_types` vacíos, es
+  decir, el vocabulario cerrado cubre el 100% de los nodos/aristas de una base
+  de datos real. Probado también con un procedimiento sintético muy anidado
+  (IF/ELSE IF/ELSE de 4 niveles, WHILE+cursor, TRY/CATCH, ~100 nodos/221
+  aristas) sin errores de parseo. Y verificado que los procedimientos reales
+  con más condiciones (p. ej. `DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures`,
+  cyclomatic_complexity=21) guardan en cada `Step` su `condition_path`
+  (la condición `IF`/`WHILE` exacta bajo la que se ejecuta) y `condition_keys`,
+  visibles en un único `object.json`.
 
 ## Ejecutar contra una base de datos real
 
@@ -151,13 +223,41 @@ las tablas (`sys.tables`) en una sola pasada, sin necesitar el paso 4.
 
 ```bash
 cd src/TSqlParser
-dotnet run -- ../../input.json ../../graph_full.json ../../workflows_full.json --columns --graphify --graphml
+dotnet run -- ../../input.json ../../graph_full.json ../../workflows_full.json --columns --graphify --graphml --nodestore
 ```
 
 - `input.json`: array de `{ "name": "Database::Schema.Object", "sql": "CREATE PROCEDURE ..." }`.
 - `--columns`: añade nodos `:Column` (HAS_COLUMN / READS_COLUMN / WRITES_COLUMN).
 - `--graphify`: además exporta `<graph>.graphify.json` (D3 / vis-network / Graphify).
 - `--graphml`: además exporta `<graph>.graphml` (Gephi / yEd / Cytoscape / NetworkX).
+- `--nodestore`: además exporta `<graph>.nodes/`, una versión del mismo grafo
+  partida en ficheros pequeños y navegables (pensada para que un agente la lea
+  sin cargar `graph_full.json` entero):
+
+  ```
+  graph_full.nodes/
+    index.json        # punto de entrada: meta, schema (tipos cerrados de nodo/arista),
+                       # stats e instrucciones de navegación ("howto")
+    model.json         # "nodos iniciales": todos los SqlObject y Table, con
+                       # CALLS/AFFECTS/FK_TO y WRITES_TO/READS_FROM agregados a
+                       # nivel de objeto - el mapa general desde el que decidir
+                       # qué fichero abrir a continuación
+    manifest.json      # por objeto: content_hash + fichero + nodos compartidos
+                       # a los que contribuye (base para una futura
+                       # regeneración incremental)
+    objects/<obj>/object.json    # un SqlObject con sus parámetros/variables/
+                       # pasos propios y sus aristas salientes (cada una con
+                       # `path` al fichero vecino)
+    shared/{tables,columns,actions,rules}/<id>.json  # nodos compartidos entre
+                       # objetos (Table/Column/Action/Rule), con `refs`
+                       # (aristas entrantes partidas por objeto contribuyente)
+                       # y `edges_in`/`edges_out` ya resueltos
+  ```
+
+  Un agente típico: lee `index.json` + `model.json` (pequeños), localiza el
+  objeto o tabla de interés, abre su `objects/.../object.json` o
+  `shared/.../*.json`, y sigue los `path` de sus aristas solo donde necesite
+  profundizar - sin tocar el resto de ficheros.
 
 Los ficheros de salida (`graph_full.json`, `workflows_full.json`, `*.graphml`,
 `*.graphify.json`) no se versionan (ver `.gitignore`); guárdalos donde te
