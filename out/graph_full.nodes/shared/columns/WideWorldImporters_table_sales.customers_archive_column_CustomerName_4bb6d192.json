@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers_archive:column:CustomerName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CustomerName",
+    "table": "sales.customers_archive",
+    "data_type": "NVARCHAR (100)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

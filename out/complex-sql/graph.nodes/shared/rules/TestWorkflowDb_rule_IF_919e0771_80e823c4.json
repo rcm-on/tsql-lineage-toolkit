@@ -1,0 +1,39 @@
+﻿{
+  "id": "TestWorkflowDb:rule:IF:919e0771",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "@ApprovalStatus = 'APPROVED'"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step19",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step26",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "TestWorkflowDb:rule:IF:6a6b8490",
+      "to_label": "Rule",
+      "path": "shared/rules/TestWorkflowDb_rule_IF_6a6b8490_cb2ad504.json"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitemstockgroups",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Warehouse.StockItemStockGroups"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemStockGroups_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:warehouse.stockgroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemStockGroups_StockGroupID_Warehouse_StockGroups"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemStockGroups_StockItemID_Warehouse_StockItems"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_LastEditedBy_9b2de6c8.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:LastEditedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_LastEditedWhen_dbf9070d.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockGroupID_ca5f1bdb.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockItemID_7202250e.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockItemStockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockItemStockGro_1b98c6d3.json",
+      "props": {
+        "ordinal": 1
+      }
+    }
+  ]
+}

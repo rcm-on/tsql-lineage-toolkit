@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems_archive:column:LastEditedBy",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LastEditedBy",
+    "table": "warehouse.stockitems_archive",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 23
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

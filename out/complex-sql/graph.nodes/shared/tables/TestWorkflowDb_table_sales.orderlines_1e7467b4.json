@@ -1,0 +1,48 @@
+﻿{
+  "id": "TestWorkflowDb:table:sales.orderlines",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "TestWorkflowDb",
+    "name": "Sales.OrderLines"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "READS_FROM",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step20",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step20",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:sales.orderlines:column:PickingCompletedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_sales.orderlines_column_PickingCompletedWhen_9090d0d8.json"
+    }
+  ]
+}

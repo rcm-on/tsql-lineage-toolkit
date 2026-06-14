@@ -1,0 +1,40 @@
+﻿{
+  "id": "TestWorkflowDb:action:ROLLBACK",
+  "labels": [
+    "Action"
+  ],
+  "properties": {
+    "name": "ROLLBACK"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step16",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step31",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step16",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step31",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": []
+}

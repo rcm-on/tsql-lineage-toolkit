@@ -1,0 +1,44 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers:column:BillToCustomerID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "BillToCustomerID",
+    "table": "sales.customers",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 3
+  },
+  "refs": {
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:sales.customers:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerID_e70cb692.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_BillToCustomerID_Sales_Customers"
+      }
+    }
+  ]
+}

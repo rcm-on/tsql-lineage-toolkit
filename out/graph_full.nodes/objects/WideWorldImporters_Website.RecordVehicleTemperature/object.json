@@ -1,0 +1,411 @@
+﻿{
+  "id": "WideWorldImporters::Website.RecordVehicleTemperature",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Website.RecordVehicleTemperature",
+    "has_transaction": true,
+    "has_error_handling": true,
+    "has_cursor": false,
+    "dynamic_sql_calls": 0,
+    "cyclomatic_complexity": 5,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#param:@FullSensorDataArray",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@FullSensorDataArray",
+          "data_type": "NVARCHAR (1000)",
+          "is_output": false
+        }
+      }
+    ],
+    "variables": [
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#var:@CrLf",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@CrLf",
+          "data_type": "NCHAR (2)",
+          "default": "nchar(13) + nchar(10)",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#var:@HelpMessage",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@HelpMessage",
+          "data_type": "NVARCHAR (MAX)",
+          "default": "N'JSON sensor data is invalid. An example of what is required is as follows:' + @CrLf + @CrLf + N'{\"Recordings\":' + @CrL",
+          "construction": []
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 21,
+          "nesting_level": 1,
+          "action": "THROW",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "IF: ISJSON(@FullSensorDataArray) = 0"
+          ],
+          "condition_keys": [
+            "IF#18"
+          ],
+          "label": "THROW"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 22,
+          "nesting_level": 1,
+          "action": "RETURN",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "IF: ISJSON(@FullSensorDataArray) = 0"
+          ],
+          "condition_keys": [
+            "IF#18"
+          ],
+          "label": "RETURN"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "line_no": 27,
+          "nesting_level": 0,
+          "action": "BEGIN_TRAN",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "BEGIN_TRAN"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "line_no": 29,
+          "nesting_level": 0,
+          "action": "INSERT",
+          "target_name": "Warehouse.VehicleTemperatures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "INSERT -> Warehouse.VehicleTemperatures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#step4",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 4,
+          "line_no": 47,
+          "nesting_level": 0,
+          "action": "COMMIT_TRAN",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "COMMIT_TRAN"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#step5",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 5,
+          "line_no": 53,
+          "nesting_level": 1,
+          "action": "THROW",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#25"
+          ],
+          "label": "THROW"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#step6",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 6,
+          "line_no": 55,
+          "nesting_level": 2,
+          "action": "ROLLBACK",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "CATCH: ON ERROR",
+            "IF: XACT_STATE() <> 0"
+          ],
+          "condition_keys": [
+            "CATCH#25",
+            "IF#55"
+          ],
+          "label": "ROLLBACK"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordVehicleTemperature#step7",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 7,
+          "line_no": 57,
+          "nesting_level": 1,
+          "action": "RETURN",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#25"
+          ],
+          "label": "RETURN"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:THROW",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:RETURN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:BEGIN_TRAN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_BEGIN_TRAN_53e5058e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:INSERT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordVehicleTemperature#param:@FullSensorDataArray",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:ChillerSensorNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_ChillerSensorNumbe_dedc9460.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:CompressedSensorData",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_CompressedSensorDa_77277c79.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:FullSensorData",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_FullSensorData_9bfbb828.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:IsCompressed",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_IsCompressed_a805d11d.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:RecordedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_RecordedWhen_052b7656.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:Temperature",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_Temperature_bfb31d6d.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:VehicleRegistration",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_VehicleRegistratio_2d3e0501.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:COMMIT_TRAN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_COMMIT_TRAN_e48041a5.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:THROW",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:ROLLBACK",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_ROLLBACK_ddf682d7.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:RETURN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordVehicleTemperature#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordVehicleTemperature#step7",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:47ac7eba",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordVehicleTemperature#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:47ac7eba",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordVehicleTemperature#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:70a20de0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordVehicleTemperature#step6",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    }
+  ]
+}

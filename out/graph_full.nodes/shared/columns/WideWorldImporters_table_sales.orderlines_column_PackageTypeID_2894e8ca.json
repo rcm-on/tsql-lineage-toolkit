@@ -1,0 +1,50 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.orderlines:column:PackageTypeID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PackageTypeID",
+    "table": "sales.orderlines",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 5
+  },
+  "refs": {
+    "WideWorldImporters::Website.InsertCustomerOrders": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:UnitPackageID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_UnitPackageID_63c6c6d7.json"
+    },
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_PackageTypeID_bf4218cb.json",
+      "props": {
+        "constraint": "FK_Sales_OrderLines_PackageTypeID_Warehouse_PackageTypes"
+      }
+    }
+  ]
+}

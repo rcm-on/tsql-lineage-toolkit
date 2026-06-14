@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers_archive:column:ValidTo",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ValidTo",
+    "table": "purchasing.suppliers_archive",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 29
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

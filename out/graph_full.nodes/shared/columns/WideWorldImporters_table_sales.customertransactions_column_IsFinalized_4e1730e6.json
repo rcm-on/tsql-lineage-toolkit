@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customertransactions:column:IsFinalized",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "IsFinalized",
+    "table": "sales.customertransactions",
+    "data_type": "BIT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 12
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

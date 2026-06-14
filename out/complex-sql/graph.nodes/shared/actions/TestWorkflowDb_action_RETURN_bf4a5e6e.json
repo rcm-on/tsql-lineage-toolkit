@@ -1,0 +1,52 @@
+﻿{
+  "id": "TestWorkflowDb:action:RETURN",
+  "labels": [
+    "Action"
+  ],
+  "properties": {
+    "name": "RETURN"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step17",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step3",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step8",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step17",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step3",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step8",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": []
+}

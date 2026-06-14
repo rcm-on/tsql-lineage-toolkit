@@ -1,0 +1,34 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers:column:DeliveryAddressLine1",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DeliveryAddressLine1",
+    "table": "sales.customers",
+    "data_type": "NVARCHAR (60)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 22
+  },
+  "refs": {
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": []
+}

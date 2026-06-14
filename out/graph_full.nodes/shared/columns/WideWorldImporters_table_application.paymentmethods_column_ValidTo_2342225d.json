@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.paymentmethods:column:ValidTo",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ValidTo",
+    "table": "application.paymentmethods",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 5
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

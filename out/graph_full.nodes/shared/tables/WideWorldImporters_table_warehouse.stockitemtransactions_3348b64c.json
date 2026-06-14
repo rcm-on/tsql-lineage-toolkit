@@ -1,0 +1,206 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitemtransactions",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Warehouse.StockItemTransactions"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetMovementUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetMovementUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetMovementUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:application.transactiontypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_TransactionTypeID_Application_TransactionTypes"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:purchasing.purchaseorders",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorders_a4740742.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_PurchaseOrderID_Purchasing_PurchaseOrders"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:purchasing.suppliers",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_SupplierID_Purchasing_Suppliers"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:sales.customers",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_CustomerID_Sales_Customers"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:sales.invoices",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_InvoiceID_Sales_Invoices"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_StockItemID_Warehouse_StockItems"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_CustomerID_fa40a495.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:InvoiceID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_InvoiceID_35d46947.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_LastEditedBy_eb85360e.json",
+      "props": {
+        "ordinal": 10
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:LastEditedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_LastEditedWhen_84d4afcb.json",
+      "props": {
+        "ordinal": 11
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:PurchaseOrderID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_PurchaseOrderID_b5ecb09d.json",
+      "props": {
+        "ordinal": 7
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:Quantity",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_Quantity_cb079e80.json",
+      "props": {
+        "ordinal": 9
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_StockItemID_098d95c4.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:StockItemTransactionID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_StockItemTransac_767162ed.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:SupplierID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_SupplierID_d9587212.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:TransactionOccurredWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_TransactionOccur_92d4f05e.json",
+      "props": {
+        "ordinal": 8
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:TransactionTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_TransactionTypeI_1270bc13.json",
+      "props": {
+        "ordinal": 3
+      }
+    }
+  ]
+}

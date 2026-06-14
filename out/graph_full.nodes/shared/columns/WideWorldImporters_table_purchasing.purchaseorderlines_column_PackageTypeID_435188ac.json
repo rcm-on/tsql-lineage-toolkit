@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.purchaseorderlines:column:PackageTypeID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PackageTypeID",
+    "table": "purchasing.purchaseorderlines",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 7
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_PackageTypeID_bf4218cb.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrderLines_PackageTypeID_Warehouse_PackageTypes"
+      }
+    }
+  ]
+}

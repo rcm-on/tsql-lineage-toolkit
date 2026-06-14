@@ -1,0 +1,21 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:d771c529",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "NOT EXISTS (SELECT 1             FROM   sys.database_role_members AS drm                    INNER JOIN                    sys.database_princ"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    }
+  ]
+}

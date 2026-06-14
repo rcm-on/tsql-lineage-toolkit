@@ -1,0 +1,126 @@
+﻿{
+  "id": "WideWorldImporters:action:CREATE_TABLE",
+  "labels": [
+    "Action"
+  ],
+  "properties": {
+    "name": "CREATE_TABLE"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetCityUpdates": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Integration.GetCustomerUpdates": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Integration.GetEmployeeUpdates": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Integration.GetPaymentMethodUpdates": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Integration.GetStockItemUpdates": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Integration.GetSupplierUpdates": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Integration.GetTransactionTypeUpdates": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    }
+  ],
+  "edges_out": []
+}

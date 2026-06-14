@@ -1,0 +1,89 @@
+﻿{
+  "meta": {
+    "database": "TestWorkflowDb",
+    "generated_at": "2026-06-14T11:37:54.0008379+02:00",
+    "tool": "sql-analyzer/tsql-parser",
+    "format": "nodestore-v1"
+  },
+  "howto": {
+    "start": "Load model.json: the initial nodes (every SqlObject and Table) with object/table-level edges.",
+    "pick": "From model.json, pick a node by id and follow its `path`.",
+    "open_object": "objects/<slug>/object.json holds a SqlObject's own properties, owned Parameters/Variables/Steps, and edges_out (each with `path` to the neighbor).",
+    "open_shared": "shared/<category>/<slug>.json holds a Table/Column/Action/Rule: `refs` partitions its incoming edges by the SqlObject that contributed them, `edges_in`/`edges_out` give the flattened view.",
+    "downstream": "Follow edges_out (WRITES_TO, CALLS, AFFECTS) for what an object affects.",
+    "upstream": "Follow edges_in / refs (WRITES_TO, READS_FROM, CALLS) for what affects a node."
+  },
+  "schema": {
+    "node_labels": [
+      "SqlObject",
+      "Parameter",
+      "Variable",
+      "Step",
+      "Action",
+      "Table",
+      "Column",
+      "Rule"
+    ],
+    "edge_types": [
+      "HAS_PARAMETER",
+      "DECLARES",
+      "ASSIGNED_FROM",
+      "HAS_STEP",
+      "ACTION",
+      "BUILDS_SQL_FROM",
+      "USES_VARIABLE",
+      "TARGETS",
+      "WRITES_TO",
+      "READS_FROM",
+      "READS_COLUMN",
+      "WRITES_COLUMN",
+      "DERIVES_FROM",
+      "NESTED_IN",
+      "GOVERNS",
+      "CALLS",
+      "AFFECTS",
+      "HAS_COLUMN",
+      "FK_TO",
+      "REFERENCES"
+    ]
+  },
+  "stats": {
+    "total_nodes": 100,
+    "total_edges": 221,
+    "objects": 1,
+    "shared_nodes": 52,
+    "orphan_edges": 0,
+    "nodes_by_label": {
+      "SqlObject": 1,
+      "Parameter": 3,
+      "Variable": 10,
+      "Step": 34,
+      "Table": 7,
+      "Column": 16,
+      "Action": 13,
+      "Rule": 16
+    },
+    "edges_by_type": {
+      "HAS_PARAMETER": 3,
+      "DECLARES": 10,
+      "HAS_COLUMN": 16,
+      "ASSIGNED_FROM": 5,
+      "HAS_STEP": 34,
+      "ACTION": 34,
+      "USES_VARIABLE": 41,
+      "READS_FROM": 4,
+      "GOVERNS": 26,
+      "WRITES_TO": 12,
+      "WRITES_COLUMN": 22,
+      "NESTED_IN": 14
+    },
+    "unknown_labels": [],
+    "unknown_edge_types": []
+  },
+  "entry": {
+    "model": "model.json",
+    "manifest": "manifest.json",
+    "objects_dir": "objects/",
+    "shared_dir": "shared/"
+  }
+}

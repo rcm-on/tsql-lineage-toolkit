@@ -1,0 +1,59 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.colors_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Warehouse.Colors_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.colors_archive:column:ColorID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.colors_archive_column_ColorID_2c44c167.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.colors_archive:column:ColorName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.colors_archive_column_ColorName_650a02b3.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.colors_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.colors_archive_column_LastEditedBy_479a3b00.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.colors_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.colors_archive_column_ValidFrom_b686945e.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.colors_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.colors_archive_column_ValidTo_cb7e7719.json",
+      "props": {
+        "ordinal": 5
+      }
+    }
+  ]
+}

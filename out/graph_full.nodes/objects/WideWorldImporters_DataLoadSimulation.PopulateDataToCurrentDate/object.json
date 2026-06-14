@@ -1,0 +1,500 @@
+﻿{
+  "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "DataLoadSimulation.PopulateDataToCurrentDate",
+    "has_transaction": false,
+    "has_error_handling": false,
+    "has_cursor": false,
+    "dynamic_sql_calls": 0,
+    "cyclomatic_complexity": 1,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#param:@AverageNumberOfCustomerOrdersPerDay",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@AverageNumberOfCustomerOrdersPerDay",
+          "data_type": "INT",
+          "is_output": false
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#param:@SaturdayPercentageOfNormalWorkDay",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@SaturdayPercentageOfNormalWorkDay",
+          "data_type": "INT",
+          "is_output": false
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#param:@SundayPercentageOfNormalWorkDay",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@SundayPercentageOfNormalWorkDay",
+          "data_type": "INT",
+          "is_output": false
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#param:@IsSilentMode",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@IsSilentMode",
+          "data_type": "BIT",
+          "is_output": false
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#param:@AreDatesPrinted",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@AreDatesPrinted",
+          "data_type": "BIT",
+          "is_output": false
+        }
+      }
+    ],
+    "variables": [
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#var:@CurrentMaximumDate",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@CurrentMaximumDate",
+          "data_type": "DATE",
+          "default": "COALESCE ((SELECT MAX(OrderDate)            FROM   Sales.Orders), '20121231')",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#var:@StartingDate",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@StartingDate",
+          "data_type": "DATE",
+          "default": "DATEADD(day, 1, @CurrentMaximumDate)",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#var:@EndingDate",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@EndingDate",
+          "data_type": "DATE",
+          "default": "CAST (DATEADD(day, -1, SYSDATETIME()) AS DATE)",
+          "construction": []
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 12,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 18,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "DataLoadSimulation.DailyProcessToCreateHistory",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> DataLoadSimulation.DailyProcessToCreateHistory"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "line_no": 28,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:application.cities",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:application.countries",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:application.deliverymethods",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:application.paymentmethods",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:application.stateprovinces",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:application.transactiontypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:purchasing.suppliercategories",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:purchasing.suppliers",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:sales.buyinggroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:sales.customercategories",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:sales.customers",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:warehouse.colors",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:warehouse.packagetypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:warehouse.stockgroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json",
+      "props": {
+        "caller": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+        "callee": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+        "kind": "EXEC"
+      }
+    },
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_RemoveDataLoadSimulationProc/object.json",
+      "props": {
+        "caller": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+        "callee": "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
+        "kind": "EXEC"
+      }
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "TARGETS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#param:@AreDatesPrinted",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#param:@AverageNumberOfCustomerOrdersPerDay",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#param:@IsSilentMode",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#param:@SaturdayPercentageOfNormalWorkDay",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#param:@SundayPercentageOfNormalWorkDay",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#var:@EndingDate",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#var:@StartingDate",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "TARGETS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_RemoveDataLoadSimulationProc/object.json"
+    }
+  ]
+}

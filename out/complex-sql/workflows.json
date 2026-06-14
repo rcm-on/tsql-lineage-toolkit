@@ -1,0 +1,1018 @@
+﻿[
+  {
+    "ObjectName": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+    "Parameters": [
+      {
+        "Name": "@OrderID",
+        "DataType": "INT",
+        "IsOutput": false
+      },
+      {
+        "Name": "@CustomerID",
+        "DataType": "INT",
+        "IsOutput": false
+      },
+      {
+        "Name": "@ForceReview",
+        "DataType": "BIT",
+        "IsOutput": false
+      }
+    ],
+    "Variables": [
+      {
+        "Name": "@OrderTotal",
+        "Type": "DECIMAL (18, 2)",
+        "Default": ""
+      },
+      {
+        "Name": "@CustomerCreditLimit",
+        "Type": "DECIMAL (18, 2)",
+        "Default": ""
+      },
+      {
+        "Name": "@CustomerBalance",
+        "Type": "DECIMAL (18, 2)",
+        "Default": ""
+      },
+      {
+        "Name": "@StockItemID",
+        "Type": "INT",
+        "Default": ""
+      },
+      {
+        "Name": "@AvailableQty",
+        "Type": "INT",
+        "Default": ""
+      },
+      {
+        "Name": "@RequiredQty",
+        "Type": "INT",
+        "Default": ""
+      },
+      {
+        "Name": "@RiskLevel",
+        "Type": "VARCHAR (20)",
+        "Default": ""
+      },
+      {
+        "Name": "@ApprovalStatus",
+        "Type": "VARCHAR (20)",
+        "Default": ""
+      },
+      {
+        "Name": "@ErrorMsg",
+        "Type": "NVARCHAR (400)",
+        "Default": ""
+      },
+      {
+        "Name": "@LineCursor",
+        "Type": "CURSOR",
+        "Default": ""
+      }
+    ],
+    "FlowLinks": [
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "BEGIN_TRAN",
+        "ConsequenceTarget": "",
+        "NestingLevel": 0,
+        "LineNo": 20,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "SELECT",
+        "ConsequenceTarget": "Sales.Orders",
+        "NestingLevel": 0,
+        "LineNo": 23,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@OrderTotal",
+          "@CustomerID",
+          "@OrderID"
+        ],
+        "ExtraReads": [
+          {
+            "Table": "Sales.OrderLines",
+            "Columns": []
+          }
+        ],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@OrderTotal IS NULL",
+        "ConsequenceType": "THROW",
+        "ConsequenceTarget": "",
+        "NestingLevel": 1,
+        "LineNo": 31,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF: @OrderTotal IS NULL"
+        ],
+        "ConditionKeys": [
+          "IF#29"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@OrderTotal IS NULL",
+        "ConsequenceType": "RETURN",
+        "ConsequenceTarget": "",
+        "NestingLevel": 1,
+        "LineNo": 32,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF: @OrderTotal IS NULL"
+        ],
+        "ConditionKeys": [
+          "IF#29"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "SELECT",
+        "ConsequenceTarget": "Sales.Customers",
+        "NestingLevel": 0,
+        "LineNo": 36,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@CustomerCreditLimit",
+          "@CustomerBalance",
+          "@CustomerID"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@ForceReview = 1",
+        "ConsequenceType": "INSERT",
+        "ConsequenceTarget": "Sales.OrderApprovals",
+        "NestingLevel": 2,
+        "LineNo": 70,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF: @CustomerBalance + @OrderTotal > @CustomerCreditLimit",
+          "IF: @ForceReview = 1"
+        ],
+        "ConditionKeys": [
+          "IF#41",
+          "IF#43"
+        ],
+        "Columns": [
+          "OrderID",
+          "RiskLevel",
+          "Status"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@OrderID",
+          "@RiskLevel",
+          "@ApprovalStatus"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@ForceReview = 1)",
+        "ConsequenceType": "UPDATE",
+        "ConsequenceTarget": "Sales.Orders",
+        "NestingLevel": 2,
+        "LineNo": 77,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF: @CustomerBalance + @OrderTotal > @CustomerCreditLimit",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "ConditionKeys": [
+          "IF#41",
+          "IF_ELSE#43"
+        ],
+        "Columns": [
+          "OrderStatus"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@OrderID"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@ForceReview = 1)",
+        "ConsequenceType": "THROW",
+        "ConsequenceTarget": "",
+        "NestingLevel": 2,
+        "LineNo": 81,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF: @CustomerBalance + @OrderTotal > @CustomerCreditLimit",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "ConditionKeys": [
+          "IF#41",
+          "IF_ELSE#43"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@ForceReview = 1)",
+        "ConsequenceType": "RETURN",
+        "ConsequenceTarget": "",
+        "NestingLevel": 2,
+        "LineNo": 82,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF: @CustomerBalance + @OrderTotal > @CustomerCreditLimit",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "ConditionKeys": [
+          "IF#41",
+          "IF_ELSE#43"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "OPEN_CURSOR",
+        "ConsequenceTarget": "@LineCursor",
+        "NestingLevel": 0,
+        "LineNo": 97,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@LineCursor"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "FETCH",
+        "ConsequenceTarget": "@LineCursor",
+        "NestingLevel": 0,
+        "LineNo": 98,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@LineCursor",
+          "@StockItemID",
+          "@RequiredQty"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "WHILE",
+        "ConditionText": "@@FETCH_STATUS = 0",
+        "ConsequenceType": "SELECT",
+        "ConsequenceTarget": "Warehouse.StockItemHoldings",
+        "NestingLevel": 1,
+        "LineNo": 102,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0"
+        ],
+        "ConditionKeys": [
+          "WHILE#100"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@AvailableQty",
+          "@StockItemID"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@ForceReview = 1",
+        "ConsequenceType": "INSERT",
+        "ConsequenceTarget": "Warehouse.StockItemTransactions",
+        "NestingLevel": 3,
+        "LineNo": 112,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF: @ForceReview = 1"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF#106",
+          "IF#110"
+        ],
+        "Columns": [
+          "StockItemID",
+          "TransactionTypeID",
+          "Quantity"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@StockItemID"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@ForceReview = 1)",
+        "ConsequenceType": "THROW",
+        "ConsequenceTarget": "",
+        "NestingLevel": 3,
+        "LineNo": 117,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF#106",
+          "IF_ELSE#110"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@ErrorMsg"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@ForceReview = 1)",
+        "ConsequenceType": "CLOSE_CURSOR",
+        "ConsequenceTarget": "@LineCursor",
+        "NestingLevel": 3,
+        "LineNo": 118,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF#106",
+          "IF_ELSE#110"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@LineCursor"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@ForceReview = 1)",
+        "ConsequenceType": "DEALLOCATE",
+        "ConsequenceTarget": "@LineCursor",
+        "NestingLevel": 3,
+        "LineNo": 119,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF#106",
+          "IF_ELSE#110"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@LineCursor"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@ForceReview = 1)",
+        "ConsequenceType": "ROLLBACK",
+        "ConsequenceTarget": "",
+        "NestingLevel": 3,
+        "LineNo": 120,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF#106",
+          "IF_ELSE#110"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@ForceReview = 1)",
+        "ConsequenceType": "RETURN",
+        "ConsequenceTarget": "",
+        "NestingLevel": 3,
+        "LineNo": 121,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF#106",
+          "IF_ELSE#110"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@ApprovalStatus = 'APPROVED'",
+        "ConsequenceType": "INSERT",
+        "ConsequenceTarget": "Warehouse.StockItemTransactions",
+        "NestingLevel": 4,
+        "LineNo": 129,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF_ELSE: NOT (@AvailableQty IS NULL)",
+          "IF: @AvailableQty < @RequiredQty",
+          "IF: @ApprovalStatus = 'APPROVED'"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF_ELSE#106",
+          "IF#124",
+          "IF#126"
+        ],
+        "Columns": [
+          "StockItemID",
+          "TransactionTypeID",
+          "Quantity"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@StockItemID",
+          "@RequiredQty",
+          "@AvailableQty"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@ApprovalStatus = 'APPROVED'",
+        "ConsequenceType": "UPDATE",
+        "ConsequenceTarget": "Warehouse.StockItemHoldings",
+        "NestingLevel": 4,
+        "LineNo": 132,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF_ELSE: NOT (@AvailableQty IS NULL)",
+          "IF: @AvailableQty < @RequiredQty",
+          "IF: @ApprovalStatus = 'APPROVED'"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF_ELSE#106",
+          "IF#124",
+          "IF#126"
+        ],
+        "Columns": [
+          "QuantityOnHand"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@StockItemID"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@ApprovalStatus = 'APPROVED')",
+        "ConsequenceType": "UPDATE",
+        "ConsequenceTarget": "Sales.OrderLines",
+        "NestingLevel": 4,
+        "LineNo": 138,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF_ELSE: NOT (@AvailableQty IS NULL)",
+          "IF: @AvailableQty < @RequiredQty",
+          "IF_ELSE: NOT (@ApprovalStatus = 'APPROVED')"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF_ELSE#106",
+          "IF#124",
+          "IF_ELSE#126"
+        ],
+        "Columns": [
+          "PickingCompletedWhen"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@OrderID",
+          "@StockItemID"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@AvailableQty < @RequiredQty)",
+        "ConsequenceType": "UPDATE",
+        "ConsequenceTarget": "Warehouse.StockItemHoldings",
+        "NestingLevel": 3,
+        "LineNo": 145,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF_ELSE: NOT (@AvailableQty IS NULL)",
+          "IF_ELSE: NOT (@AvailableQty < @RequiredQty)"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF_ELSE#106",
+          "IF_ELSE#124"
+        ],
+        "Columns": [
+          "QuantityOnHand"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@StockItemID",
+          "@RequiredQty"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@AvailableQty < @RequiredQty)",
+        "ConsequenceType": "INSERT",
+        "ConsequenceTarget": "Warehouse.StockItemTransactions",
+        "NestingLevel": 3,
+        "LineNo": 149,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF_ELSE: NOT (@AvailableQty IS NULL)",
+          "IF_ELSE: NOT (@AvailableQty < @RequiredQty)"
+        ],
+        "ConditionKeys": [
+          "WHILE#100",
+          "IF_ELSE#106",
+          "IF_ELSE#124"
+        ],
+        "Columns": [
+          "StockItemID",
+          "TransactionTypeID",
+          "Quantity"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@StockItemID",
+          "@RequiredQty"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "WHILE",
+        "ConditionText": "@@FETCH_STATUS = 0",
+        "ConsequenceType": "FETCH",
+        "ConsequenceTarget": "@LineCursor",
+        "NestingLevel": 1,
+        "LineNo": 153,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "WHILE: @@FETCH_STATUS = 0"
+        ],
+        "ConditionKeys": [
+          "WHILE#100"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@LineCursor",
+          "@StockItemID",
+          "@RequiredQty"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "CLOSE_CURSOR",
+        "ConsequenceTarget": "@LineCursor",
+        "NestingLevel": 0,
+        "LineNo": 156,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@LineCursor"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "DEALLOCATE",
+        "ConsequenceTarget": "@LineCursor",
+        "NestingLevel": 0,
+        "LineNo": 157,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@LineCursor"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@ApprovalStatus = 'APPROVED'",
+        "ConsequenceType": "UPDATE",
+        "ConsequenceTarget": "Sales.Orders",
+        "NestingLevel": 1,
+        "LineNo": 162,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF: @ApprovalStatus = 'APPROVED'"
+        ],
+        "ConditionKeys": [
+          "IF#160"
+        ],
+        "Columns": [
+          "OrderStatus"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@OrderID"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@RiskLevel = 'CRITICAL'",
+        "ConsequenceType": "UPDATE",
+        "ConsequenceTarget": "Sales.Orders",
+        "NestingLevel": 3,
+        "LineNo": 170,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF_ELSE: NOT (@ApprovalStatus = 'APPROVED')",
+          "IF: @ApprovalStatus = 'PENDING_REVIEW'",
+          "IF: @RiskLevel = 'CRITICAL'"
+        ],
+        "ConditionKeys": [
+          "IF_ELSE#160",
+          "IF#166",
+          "IF#168"
+        ],
+        "Columns": [
+          "OrderStatus"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@OrderID"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@RiskLevel = 'CRITICAL'",
+        "ConsequenceType": "EXEC",
+        "ConsequenceTarget": "dbo.NotifyRiskTeam",
+        "NestingLevel": 3,
+        "LineNo": 174,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF_ELSE: NOT (@ApprovalStatus = 'APPROVED')",
+          "IF: @ApprovalStatus = 'PENDING_REVIEW'",
+          "IF: @RiskLevel = 'CRITICAL'"
+        ],
+        "ConditionKeys": [
+          "IF_ELSE#160",
+          "IF#166",
+          "IF#168"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@OrderID",
+          "@RiskLevel"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF_ELSE",
+        "ConditionText": "NOT (@RiskLevel = 'CRITICAL')",
+        "ConsequenceType": "UPDATE",
+        "ConsequenceTarget": "Sales.Orders",
+        "NestingLevel": 3,
+        "LineNo": 178,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "IF_ELSE: NOT (@ApprovalStatus = 'APPROVED')",
+          "IF: @ApprovalStatus = 'PENDING_REVIEW'",
+          "IF_ELSE: NOT (@RiskLevel = 'CRITICAL')"
+        ],
+        "ConditionKeys": [
+          "IF_ELSE#160",
+          "IF#166",
+          "IF_ELSE#168"
+        ],
+        "Columns": [
+          "OrderStatus"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@OrderID"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "UNCONDITIONAL",
+        "ConditionText": "",
+        "ConsequenceType": "COMMIT_TRAN",
+        "ConsequenceTarget": "",
+        "NestingLevel": 0,
+        "LineNo": 184,
+        "DynamicSqlVars": [],
+        "ConditionPath": [],
+        "ConditionKeys": [],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "IF",
+        "ConditionText": "@@TRANCOUNT > 0",
+        "ConsequenceType": "ROLLBACK",
+        "ConsequenceTarget": "",
+        "NestingLevel": 2,
+        "LineNo": 188,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "CATCH: ON ERROR",
+          "IF: @@TRANCOUNT > 0"
+        ],
+        "ConditionKeys": [
+          "CATCH#19",
+          "IF#187"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "CATCH",
+        "ConditionText": "ON ERROR",
+        "ConsequenceType": "INSERT",
+        "ConsequenceTarget": "dbo.ErrorLog",
+        "NestingLevel": 1,
+        "LineNo": 192,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "CATCH: ON ERROR"
+        ],
+        "ConditionKeys": [
+          "CATCH#19"
+        ],
+        "Columns": [
+          "ErrorMessage",
+          "ErrorProcedure",
+          "ErrorTime"
+        ],
+        "ColumnLineage": [],
+        "UsedVariables": [
+          "@ErrorMsg"
+        ],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      },
+      {
+        "ConditionType": "CATCH",
+        "ConditionText": "ON ERROR",
+        "ConsequenceType": "THROW",
+        "ConsequenceTarget": "",
+        "NestingLevel": 1,
+        "LineNo": 195,
+        "DynamicSqlVars": [],
+        "ConditionPath": [
+          "CATCH: ON ERROR"
+        ],
+        "ConditionKeys": [
+          "CATCH#19"
+        ],
+        "Columns": [],
+        "ColumnLineage": [],
+        "UsedVariables": [],
+        "ExtraReads": [],
+        "Detail": "",
+        "DynamicSqlText": ""
+      }
+    ],
+    "ExecCalls": [
+      "dbo.NotifyRiskTeam"
+    ],
+    "FunctionCalls": [
+      "ERROR_MESSAGE",
+      "ERROR_PROCEDURE",
+      "GETDATE"
+    ],
+    "VariableAssignments": [
+      {
+        "VariableName": "@OrderTotal",
+        "SourceTable": "Sales.Orders",
+        "SourceColumns": [
+          "OrderTotal"
+        ]
+      },
+      {
+        "VariableName": "@CustomerID",
+        "SourceTable": "Sales.Orders",
+        "SourceColumns": [
+          "CustomerID"
+        ]
+      },
+      {
+        "VariableName": "@CustomerCreditLimit",
+        "SourceTable": "Sales.Customers",
+        "SourceColumns": [
+          "CreditLimit"
+        ]
+      },
+      {
+        "VariableName": "@CustomerBalance",
+        "SourceTable": "Sales.Customers",
+        "SourceColumns": [
+          "AccountBalance"
+        ]
+      },
+      {
+        "VariableName": "@AvailableQty",
+        "SourceTable": "Warehouse.StockItemHoldings",
+        "SourceColumns": [
+          "QuantityOnHand"
+        ]
+      }
+    ],
+    "VariableConstructions": {
+      "@OrderTotal": [
+        "od.OrderTotal"
+      ],
+      "@CustomerID": [
+        "o.CustomerID"
+      ],
+      "@CustomerCreditLimit": [
+        "CreditLimit"
+      ],
+      "@CustomerBalance": [
+        "AccountBalance"
+      ],
+      "@ApprovalStatus": [
+        "'PENDING_REVIEW'",
+        "'REJECTED'",
+        "'APPROVED'"
+      ],
+      "@RiskLevel": [
+        "'HIGH'",
+        "'CRITICAL'",
+        "'HIGH'",
+        "'MEDIUM'",
+        "'LOW'"
+      ],
+      "@AvailableQty": [
+        "QuantityOnHand"
+      ],
+      "@ErrorMsg": [
+        "'No stock holding record for item ' + CAST (@StockItemID AS VARCHAR (10))",
+        "ERROR_MESSAGE()"
+      ]
+    },
+    "HasTransaction": true,
+    "HasErrorHandling": true,
+    "HasCursor": false,
+    "DynamicSqlCount": 0,
+    "ComplexityScore": 17,
+    "Error": null
+  }
+]

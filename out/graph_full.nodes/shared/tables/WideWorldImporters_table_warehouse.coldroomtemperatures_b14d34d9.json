@@ -1,0 +1,192 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Warehouse.ColdRoomTemperatures"
+  },
+  "refs": {
+    "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures": [
+      {
+        "type": "AFFECTS",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json",
+        "props": {
+          "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+          "hops": 1
+        }
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad": [
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step25",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step26",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": [
+      {
+        "type": "AFFECTS",
+        "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json",
+        "props": {
+          "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+          "hops": 2
+        }
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad": [
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step25",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step26",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.RecordColdRoomTemperatures": [
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 1
+      }
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step25",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step26",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step25",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step26",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ColdRoomSensorNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_ColdRoomSensorNum_8f23eeb1.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ColdRoomTemperatureID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_ColdRoomTemperatu_762fc309.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:RecordedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_RecordedWhen_2822c656.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:Temperature",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_Temperature_c7ddbf93.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_ValidFrom_e979c101.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_ValidTo_0a45709c.json",
+      "props": {
+        "ordinal": 6
+      }
+    }
+  ]
+}

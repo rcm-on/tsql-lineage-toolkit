@@ -1,0 +1,48 @@
+﻿{
+  "id": "WideWorldImporters:table:#stockitemchanges:column:Selling Package",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Selling Package",
+    "table": "#stockitemchanges"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetStockItemUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step10",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step10",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_PackageTypeName_2e5dfcbf.json"
+    }
+  ]
+}

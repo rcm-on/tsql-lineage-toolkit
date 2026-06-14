@@ -1,0 +1,293 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Sales.Customers_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:AccountOpenedDate",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_AccountOpenedDate_8b6034d9.json",
+      "props": {
+        "ordinal": 12
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:AlternateContactPersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_AlternateContactPersonID_70635f01.json",
+      "props": {
+        "ordinal": 7
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:BillToCustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_BillToCustomerID_eaae6446.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:BuyingGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_BuyingGroupID_6704e0dd.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:CreditLimit",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_CreditLimit_dbc8bc8a.json",
+      "props": {
+        "ordinal": 11
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:CustomerCategoryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_CustomerCategoryID_7da28a91.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_CustomerID_5b7ee8df.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:CustomerName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_CustomerName_4bb6d192.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:DeliveryAddressLine1",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_DeliveryAddressLine1_a96930fe.json",
+      "props": {
+        "ordinal": 22
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:DeliveryAddressLine2",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_DeliveryAddressLine2_127dc505.json",
+      "props": {
+        "ordinal": 23
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:DeliveryCityID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_DeliveryCityID_aab52c95.json",
+      "props": {
+        "ordinal": 9
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:DeliveryLocation",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_DeliveryLocation_4c43a5fb.json",
+      "props": {
+        "ordinal": 25
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:DeliveryMethodID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_DeliveryMethodID_bbba8fb2.json",
+      "props": {
+        "ordinal": 8
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:DeliveryPostalCode",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_DeliveryPostalCode_bb609881.json",
+      "props": {
+        "ordinal": 24
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:DeliveryRun",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_DeliveryRun_28bfada3.json",
+      "props": {
+        "ordinal": 19
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:FaxNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_FaxNumber_cd1b6749.json",
+      "props": {
+        "ordinal": 18
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:IsOnCreditHold",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_IsOnCreditHold_41cb238f.json",
+      "props": {
+        "ordinal": 15
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:IsStatementSent",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_IsStatementSent_0e75b703.json",
+      "props": {
+        "ordinal": 14
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_LastEditedBy_e9d3732d.json",
+      "props": {
+        "ordinal": 29
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:PaymentDays",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_PaymentDays_0abf17f6.json",
+      "props": {
+        "ordinal": 16
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:PhoneNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_PhoneNumber_17b18d9b.json",
+      "props": {
+        "ordinal": 17
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:PostalAddressLine1",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_PostalAddressLine1_4d2d6cb6.json",
+      "props": {
+        "ordinal": 26
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:PostalAddressLine2",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_PostalAddressLine2_8644bef6.json",
+      "props": {
+        "ordinal": 27
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:PostalCityID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_PostalCityID_28e9d5d7.json",
+      "props": {
+        "ordinal": 10
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:PostalPostalCode",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_PostalPostalCode_d7df7537.json",
+      "props": {
+        "ordinal": 28
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:PrimaryContactPersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_PrimaryContactPersonID_09584969.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:RunPosition",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_RunPosition_baf270d9.json",
+      "props": {
+        "ordinal": 20
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:StandardDiscountPercentage",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_StandardDiscountPercenta_8e0857af.json",
+      "props": {
+        "ordinal": 13
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_ValidFrom_064d843e.json",
+      "props": {
+        "ordinal": 30
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_ValidTo_ad016fd2.json",
+      "props": {
+        "ordinal": 31
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customers_archive:column:WebsiteURL",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_archive_column_WebsiteURL_9383c0af.json",
+      "props": {
+        "ordinal": 21
+      }
+    }
+  ]
+}

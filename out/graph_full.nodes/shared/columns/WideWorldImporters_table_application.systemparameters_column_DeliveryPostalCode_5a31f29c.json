@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.systemparameters:column:DeliveryPostalCode",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DeliveryPostalCode",
+    "table": "application.systemparameters",
+    "data_type": "NVARCHAR (10)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 5
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

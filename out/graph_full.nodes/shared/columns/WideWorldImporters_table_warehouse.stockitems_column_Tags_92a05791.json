@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems:column:Tags",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Tags",
+    "table": "warehouse.stockitems",
+    "data_type": "NVARCHAR (MAX)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 21
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

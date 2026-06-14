@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.cities:column:Location",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Location",
+    "table": "application.cities",
+    "data_type": "geography",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 4
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

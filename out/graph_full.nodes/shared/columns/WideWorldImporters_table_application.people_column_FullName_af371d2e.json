@@ -1,0 +1,126 @@
+﻿{
+  "id": "WideWorldImporters:table:application.people:column:FullName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "FullName",
+    "table": "application.people",
+    "data_type": "NVARCHAR (50)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetCustomerUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      },
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      },
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Integration.GetSupplierUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+      },
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.SearchForCustomers": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.SearchForCustomers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.SearchForPeople": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.SearchForPeople#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.SearchForSuppliers": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.SearchForCustomers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.SearchForPeople#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+    }
+  ],
+  "edges_out": []
+}

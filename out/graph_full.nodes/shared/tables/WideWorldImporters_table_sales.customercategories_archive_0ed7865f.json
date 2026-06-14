@@ -1,0 +1,59 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customercategories_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Sales.CustomerCategories_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customercategories_archive:column:CustomerCategoryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_archive_column_CustomerCategor_3c1f428f.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customercategories_archive:column:CustomerCategoryName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_archive_column_CustomerCategor_c042ca9f.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customercategories_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_archive_column_LastEditedBy_01d45715.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customercategories_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_archive_column_ValidFrom_abb99786.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.customercategories_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_archive_column_ValidTo_9c2665c2.json",
+      "props": {
+        "ordinal": 5
+      }
+    }
+  ]
+}

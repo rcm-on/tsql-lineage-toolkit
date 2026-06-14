@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers_archive:column:InternalComments",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "InternalComments",
+    "table": "purchasing.suppliers_archive",
+    "data_type": "NVARCHAR (MAX)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 16
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

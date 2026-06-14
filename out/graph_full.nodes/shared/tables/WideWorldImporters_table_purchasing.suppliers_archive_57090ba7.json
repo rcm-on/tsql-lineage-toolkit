@@ -1,0 +1,275 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Purchasing.Suppliers_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:AlternateContactPersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_AlternateContactPer_3e5919fc.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:BankAccountBranch",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_BankAccountBranch_2b25ab3d.json",
+      "props": {
+        "ordinal": 11
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:BankAccountCode",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_BankAccountCode_ee7f679e.json",
+      "props": {
+        "ordinal": 12
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:BankAccountName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_BankAccountName_5dc2a4fa.json",
+      "props": {
+        "ordinal": 10
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:BankAccountNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_BankAccountNumber_7dddc473.json",
+      "props": {
+        "ordinal": 13
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:BankInternationalCode",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_BankInternationalCo_0aa9d9fa.json",
+      "props": {
+        "ordinal": 14
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:DeliveryAddressLine1",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_DeliveryAddressLine_18c66a90.json",
+      "props": {
+        "ordinal": 20
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:DeliveryAddressLine2",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_DeliveryAddressLine_507ff576.json",
+      "props": {
+        "ordinal": 21
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:DeliveryCityID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_DeliveryCityID_39bc8323.json",
+      "props": {
+        "ordinal": 7
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:DeliveryLocation",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_DeliveryLocation_30027256.json",
+      "props": {
+        "ordinal": 23
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:DeliveryMethodID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_DeliveryMethodID_723fb855.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:DeliveryPostalCode",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_DeliveryPostalCode_2e86ec76.json",
+      "props": {
+        "ordinal": 22
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:FaxNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_FaxNumber_93e9995d.json",
+      "props": {
+        "ordinal": 18
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:InternalComments",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_InternalComments_f88283e4.json",
+      "props": {
+        "ordinal": 16
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_LastEditedBy_86cd142a.json",
+      "props": {
+        "ordinal": 27
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:PaymentDays",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_PaymentDays_ab4915fa.json",
+      "props": {
+        "ordinal": 15
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:PhoneNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_PhoneNumber_25d57e54.json",
+      "props": {
+        "ordinal": 17
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:PostalAddressLine1",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_PostalAddressLine1_83f1cb75.json",
+      "props": {
+        "ordinal": 24
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:PostalAddressLine2",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_PostalAddressLine2_70dc39d0.json",
+      "props": {
+        "ordinal": 25
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:PostalCityID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_PostalCityID_3959766b.json",
+      "props": {
+        "ordinal": 8
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:PostalPostalCode",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_PostalPostalCode_11b43fcf.json",
+      "props": {
+        "ordinal": 26
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:PrimaryContactPersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_PrimaryContactPerso_630793ec.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:SupplierCategoryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_SupplierCategoryID_455446c3.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:SupplierID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_SupplierID_d392f5b9.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:SupplierName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_SupplierName_9f4ccae4.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:SupplierReference",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_SupplierReference_12153498.json",
+      "props": {
+        "ordinal": 9
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_ValidFrom_7bfe471f.json",
+      "props": {
+        "ordinal": 28
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_ValidTo_92e125ee.json",
+      "props": {
+        "ordinal": 29
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.suppliers_archive:column:WebsiteURL",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_archive_column_WebsiteURL_df26dc73.json",
+      "props": {
+        "ordinal": 19
+      }
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+﻿{
+  "id": "WideWorldImporters:table:#currentvalue:column:CurrentValue",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CurrentValue",
+    "table": "#currentvalue"
+  },
+  "refs": {
+    "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues": [
+      {
+        "type": "ASSIGNED_FROM",
+        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@CurrentTableMaximumValue",
+        "from_label": "Variable",
+        "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ASSIGNED_FROM",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@CurrentTableMaximumValue",
+      "from_label": "Variable",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    }
+  ],
+  "edges_out": []
+}

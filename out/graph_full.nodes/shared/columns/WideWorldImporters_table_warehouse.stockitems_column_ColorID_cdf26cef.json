@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems:column:ColorID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ColorID",
+    "table": "warehouse.stockitems",
+    "data_type": "INT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 4
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:warehouse.colors:column:ColorID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.colors_column_ColorID_7429479d.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItems_ColorID_Warehouse_Colors"
+      }
+    }
+  ]
+}

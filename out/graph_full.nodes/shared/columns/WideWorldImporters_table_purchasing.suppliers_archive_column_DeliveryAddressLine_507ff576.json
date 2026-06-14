@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers_archive:column:DeliveryAddressLine2",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DeliveryAddressLine2",
+    "table": "purchasing.suppliers_archive",
+    "data_type": "NVARCHAR (60)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 21
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

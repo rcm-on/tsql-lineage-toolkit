@@ -1,0 +1,209 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.invoicelines",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Sales.InvoiceLines"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetSaleUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "constraint": "FK_Sales_InvoiceLines_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:sales.invoices",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "constraint": "FK_Sales_InvoiceLines_InvoiceID_Sales_Invoices"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:warehouse.packagetypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "props": {
+        "constraint": "FK_Sales_InvoiceLines_PackageTypeID_Warehouse_PackageTypes"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "constraint": "FK_Sales_InvoiceLines_StockItemID_Warehouse_StockItems"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:Description",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_Description_a6c3cf0b.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:ExtendedPrice",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_ExtendedPrice_0471671b.json",
+      "props": {
+        "ordinal": 11
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:InvoiceID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_InvoiceID_32c8347f.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:InvoiceLineID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_InvoiceLineID_3bd9a27a.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_LastEditedBy_b4130aa2.json",
+      "props": {
+        "ordinal": 12
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:LastEditedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_LastEditedWhen_e6f97598.json",
+      "props": {
+        "ordinal": 13
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:LineProfit",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_LineProfit_062725d3.json",
+      "props": {
+        "ordinal": 10
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:PackageTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_PackageTypeID_e680be99.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:Quantity",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_Quantity_d8de1a73.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_StockItemID_f273d53f.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:TaxAmount",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_TaxAmount_702e3101.json",
+      "props": {
+        "ordinal": 9
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:TaxRate",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_TaxRate_84015493.json",
+      "props": {
+        "ordinal": 8
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:UnitPrice",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_UnitPrice_b59378c3.json",
+      "props": {
+        "ordinal": 7
+      }
+    }
+  ]
+}

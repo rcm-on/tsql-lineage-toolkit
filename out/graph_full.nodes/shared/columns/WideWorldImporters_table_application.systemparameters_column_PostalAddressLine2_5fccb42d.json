@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.systemparameters:column:PostalAddressLine2",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PostalAddressLine2",
+    "table": "application.systemparameters",
+    "data_type": "NVARCHAR (60)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 8
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

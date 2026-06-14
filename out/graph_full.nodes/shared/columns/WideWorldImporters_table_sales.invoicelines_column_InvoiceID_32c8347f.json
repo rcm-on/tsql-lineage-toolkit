@@ -1,0 +1,44 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.invoicelines:column:InvoiceID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "InvoiceID",
+    "table": "sales.invoicelines",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:sales.invoices:column:InvoiceID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_InvoiceID_7f54aeaf.json",
+      "props": {
+        "constraint": "FK_Sales_InvoiceLines_InvoiceID_Sales_Invoices"
+      }
+    }
+  ]
+}

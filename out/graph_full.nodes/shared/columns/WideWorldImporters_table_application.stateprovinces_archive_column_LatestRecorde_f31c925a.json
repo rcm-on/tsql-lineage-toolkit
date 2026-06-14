@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.stateprovinces_archive:column:LatestRecordedPopulation",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LatestRecordedPopulation",
+    "table": "application.stateprovinces_archive",
+    "data_type": "BIGINT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 7
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

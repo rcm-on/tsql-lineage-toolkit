@@ -1,0 +1,21 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:8ad4e571",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "EXISTS (SELECT 1         FROM   @OrdersToInvoice AS oti         WHERE  NOT EXISTS (SELECT 1                            FROM   @InvoicesToGen"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ]
+}

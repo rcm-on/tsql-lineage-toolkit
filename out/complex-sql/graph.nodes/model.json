@@ -1,0 +1,112 @@
+﻿{
+  "nodes": [
+    {
+      "id": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "label": "SqlObject",
+      "name": "dbo.ProcessOrderWorkflow",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json",
+      "degree": 10
+    },
+    {
+      "id": "TestWorkflowDb:table:sales.orders",
+      "label": "Table",
+      "name": "Sales.Orders",
+      "path": "shared/tables/TestWorkflowDb_table_sales.orders_c238ff2a.json",
+      "degree": 2
+    },
+    {
+      "id": "TestWorkflowDb:table:sales.customers",
+      "label": "Table",
+      "name": "Sales.Customers",
+      "path": "shared/tables/TestWorkflowDb_table_sales.customers_8f63afa5.json",
+      "degree": 1
+    },
+    {
+      "id": "TestWorkflowDb:table:warehouse.stockitemholdings",
+      "label": "Table",
+      "name": "Warehouse.StockItemHoldings",
+      "path": "shared/tables/TestWorkflowDb_table_warehouse.stockitemholdings_b385fd58.json",
+      "degree": 2
+    },
+    {
+      "id": "TestWorkflowDb:table:sales.orderlines",
+      "label": "Table",
+      "name": "Sales.OrderLines",
+      "path": "shared/tables/TestWorkflowDb_table_sales.orderlines_1e7467b4.json",
+      "degree": 2
+    },
+    {
+      "id": "TestWorkflowDb:table:sales.orderapprovals",
+      "label": "Table",
+      "name": "Sales.OrderApprovals",
+      "path": "shared/tables/TestWorkflowDb_table_sales.orderapprovals_191eaea6.json",
+      "degree": 1
+    },
+    {
+      "id": "TestWorkflowDb:table:warehouse.stockitemtransactions",
+      "label": "Table",
+      "name": "Warehouse.StockItemTransactions",
+      "path": "shared/tables/TestWorkflowDb_table_warehouse.stockitemtransactions_bbd6d66a.json",
+      "degree": 1
+    },
+    {
+      "id": "TestWorkflowDb:table:dbo.errorlog",
+      "label": "Table",
+      "name": "dbo.ErrorLog",
+      "path": "shared/tables/TestWorkflowDb_table_dbo.errorlog_dc7cf470.json",
+      "degree": 1
+    }
+  ],
+  "edges": [
+    {
+      "type": "READS_FROM",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "to": "TestWorkflowDb:table:sales.orders"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "to": "TestWorkflowDb:table:sales.orderlines"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "to": "TestWorkflowDb:table:sales.customers"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "to": "TestWorkflowDb:table:sales.orderapprovals"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "to": "TestWorkflowDb:table:sales.orders"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "to": "TestWorkflowDb:table:warehouse.stockitemholdings"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "to": "TestWorkflowDb:table:warehouse.stockitemtransactions"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "to": "TestWorkflowDb:table:warehouse.stockitemholdings"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "to": "TestWorkflowDb:table:sales.orderlines"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "to": "TestWorkflowDb:table:dbo.errorlog"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliertransactions:column:OutstandingBalance",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "OutstandingBalance",
+    "table": "purchasing.suppliertransactions",
+    "data_type": "DECIMAL (18, 2)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 11
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

@@ -1,0 +1,50 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customertransactions:column:CustomerID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CustomerID",
+    "table": "sales.customertransactions",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:sales.invoices:column:BillToCustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_BillToCustomerID_f9827551.json"
+    },
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:sales.customers:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerID_e70cb692.json",
+      "props": {
+        "constraint": "FK_Sales_CustomerTransactions_CustomerID_Sales_Customers"
+      }
+    }
+  ]
+}

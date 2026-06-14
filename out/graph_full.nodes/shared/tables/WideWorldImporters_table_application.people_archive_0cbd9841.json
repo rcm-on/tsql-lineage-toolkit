@@ -1,0 +1,203 @@
+﻿{
+  "id": "WideWorldImporters:table:application.people_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Application.People_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:CustomFields",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_CustomFields_481e1ab8.json",
+      "props": {
+        "ordinal": 17
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:EmailAddress",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_EmailAddress_8c55e374.json",
+      "props": {
+        "ordinal": 15
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:FaxNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_FaxNumber_1cd551dc.json",
+      "props": {
+        "ordinal": 14
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:FullName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_FullName_df71d9df.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:HashedPassword",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_HashedPassword_d103a153.json",
+      "props": {
+        "ordinal": 8
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:IsEmployee",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_IsEmployee_5df3470f.json",
+      "props": {
+        "ordinal": 10
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:IsExternalLogonProvider",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_IsExternalLogonProvid_4c52f5e0.json",
+      "props": {
+        "ordinal": 7
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:IsPermittedToLogon",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_IsPermittedToLogon_c6c6c214.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:IsSalesperson",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_IsSalesperson_e8395fa0.json",
+      "props": {
+        "ordinal": 11
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:IsSystemUser",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_IsSystemUser_1fd277fa.json",
+      "props": {
+        "ordinal": 9
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_LastEditedBy_f234d2fb.json",
+      "props": {
+        "ordinal": 19
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:LogonName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_LogonName_388880d4.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:OtherLanguages",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_OtherLanguages_937a1b7a.json",
+      "props": {
+        "ordinal": 18
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:PersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_PersonID_eb2f86dc.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:PhoneNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_PhoneNumber_ad10c51b.json",
+      "props": {
+        "ordinal": 13
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:Photo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_Photo_59cb8f98.json",
+      "props": {
+        "ordinal": 16
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:PreferredName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_PreferredName_9a2b7cc9.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:SearchName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_SearchName_91f10b18.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:UserPreferences",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_UserPreferences_2ea243cb.json",
+      "props": {
+        "ordinal": 12
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_ValidFrom_bc4e7516.json",
+      "props": {
+        "ordinal": 20
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.people_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_archive_column_ValidTo_ca41fbf1.json",
+      "props": {
+        "ordinal": 21
+      }
+    }
+  ]
+}

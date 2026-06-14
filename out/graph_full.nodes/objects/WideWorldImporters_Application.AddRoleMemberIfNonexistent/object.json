@@ -1,0 +1,154 @@
+﻿{
+  "id": "WideWorldImporters::Application.AddRoleMemberIfNonexistent",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Application.AddRoleMemberIfNonexistent",
+    "has_transaction": false,
+    "has_error_handling": true,
+    "has_cursor": false,
+    "dynamic_sql_calls": 1,
+    "cyclomatic_complexity": 3,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [
+      {
+        "id": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#param:@RoleName",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@RoleName",
+          "data_type": "sysname",
+          "is_output": false
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#param:@UserName",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@UserName",
+          "data_type": "sysname",
+          "is_output": false
+        }
+      }
+    ],
+    "variables": [
+      {
+        "id": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#var:@SQL",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@SQL",
+          "data_type": "NVARCHAR (MAX)",
+          "default": "N'ALTER ROLE ' + QUOTENAME(@RoleName) + N' ADD MEMBER ' + QUOTENAME(@UserName) + N';'",
+          "construction": []
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 25,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.database_role_members AS drm                    INNER JOIN                    sys.database_princ"
+          ],
+          "condition_keys": [
+            "IF#11"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 32,
+          "nesting_level": 1,
+          "action": "THROW",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#21"
+          ],
+          "label": "THROW"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:THROW",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:d771c529",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    }
+  ]
+}

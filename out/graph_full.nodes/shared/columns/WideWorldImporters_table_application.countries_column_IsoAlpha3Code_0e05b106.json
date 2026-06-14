@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.countries:column:IsoAlpha3Code",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "IsoAlpha3Code",
+    "table": "application.countries",
+    "data_type": "NVARCHAR (3)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 4
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

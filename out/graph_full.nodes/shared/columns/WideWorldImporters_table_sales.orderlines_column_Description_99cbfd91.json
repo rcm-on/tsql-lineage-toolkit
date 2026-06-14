@@ -1,0 +1,48 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.orderlines:column:Description",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Description",
+    "table": "sales.orderlines",
+    "data_type": "NVARCHAR (100)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 4
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetOrderUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InsertCustomerOrders": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": []
+}

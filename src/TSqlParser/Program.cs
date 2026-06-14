@@ -6,7 +6,7 @@
 // Rule -> GOVERNS -> Step, SqlObject -CALLS-> SqlObject, plus Variable nodes.
 //
 // Usage:
-//   dotnet run -- input.json output_graph.json [output_workflows.json] [--columns] [--graphify]
+//   dotnet run -- input.json output_graph.json [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore]
 //
 // --columns: also emit :Column nodes (HAS_COLUMN / READS_COLUMN / WRITES_COLUMN).
 // --graphify: also write "<output_graph>.graphify.json" in the flat
@@ -14,6 +14,10 @@
 //   / D3 / vis-network (viewer.html) - convertible to Cypher for Neo4j.
 // --graphml: also write "<output_graph>.graphml" (graph XML) for Gephi / yEd /
 //   Cytoscape / NetworkX.
+// --nodestore: also write "<output_graph>.nodes/" - a navigable node store on
+//   disk (one file per SqlObject + one per shared Table/Column/Action/Rule,
+//   each with its own adjacency) so an agent can read a few small files instead
+//   of the whole graph_full.json. See NodeStoreExporter for the layout.
 // Off by default - column lists come only from the SQL text (INSERT column
 // list, UPDATE SET clauses, SELECT list) and have no data type, so this is an
 // opt-in level of detail rather than a full schema.
@@ -27,6 +31,7 @@ var positional = args.Where(a => !a.StartsWith("--")).ToList();
 var includeColumns = args.Contains("--columns");
 var emitGraphify = args.Contains("--graphify");
 var emitGraphml = args.Contains("--graphml");
+var emitNodeStore = args.Contains("--nodestore");
 
 // "validate <graph.json> [--server <server>]": cross-checks FK_TO/CALLS edges
 // in an already-built graph against the live database (sys.foreign_keys,
@@ -143,7 +148,7 @@ if (positional.Count >= 1 && positional[0] == "report")
 
 if (positional.Count < 2)
 {
-    Console.Error.WriteLine("Usage: TSqlParser <input.json> <output_graph.json> [output_workflows.json] [--columns] [--graphify]");
+    Console.Error.WriteLine("Usage: TSqlParser <input.json> <output_graph.json> [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore]");
     Console.Error.WriteLine("       TSqlParser report <input.json> [nombre-objeto]");
     Console.Error.WriteLine("       TSqlParser from-sql <database> <input.json> <file1.sql> [file2.sql ...|dir|glob]");
     Console.Error.WriteLine("       TSqlParser extract <database> <input.json> [--server <server>] [--tables] [--object schema.name]... [--like pattern]");
@@ -195,6 +200,19 @@ if (emitGraphml)
         : graphOutputPath + ".graphml";
     File.WriteAllText(graphmlPath, GraphMlExporter.ToGraphMl(graph), Encoding.UTF8);
     Console.WriteLine($"GraphML: {graph.Nodes.Count} nodes, {graph.Relationships.Count} edges -> {graphmlPath}");
+}
+
+// --nodestore: also write "<graphOutputPath without .json>.nodes/" - a
+// navigable, incremental node store (index.json, model.json, manifest.json,
+// objects/<obj>/object.json, shared/<category>/<slug>.json). See NodeStoreExporter.
+if (emitNodeStore)
+{
+    var db = results.Select(o => o.ObjectName.Split("::", 2)).FirstOrDefault(p => p.Length == 2)?[0] ?? "";
+    var nodeStorePath = graphOutputPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+        ? graphOutputPath[..^5] + ".nodes"
+        : graphOutputPath + ".nodes";
+    var nodeStoreStats = NodeStoreExporter.Write(graph, nodeStorePath, db, jsonOptions);
+    Console.WriteLine($"NodeStore: {nodeStoreStats.Objects} objects, {nodeStoreStats.SharedNodes} shared nodes, {nodeStoreStats.Edges} edges -> {nodeStorePath}");
 }
 
 var ok = results.Count(r => r.Error == null);

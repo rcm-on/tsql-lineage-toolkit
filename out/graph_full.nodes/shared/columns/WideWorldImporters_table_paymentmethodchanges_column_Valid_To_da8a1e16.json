@@ -1,0 +1,60 @@
+﻿{
+  "id": "WideWorldImporters:table:#paymentmethodchanges:column:Valid To",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Valid To",
+    "table": "#paymentmethodchanges"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetPaymentMethodUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step10",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step9",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step10",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step9",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.paymentmethods:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.paymentmethods_column_ValidTo_2342225d.json"
+    }
+  ]
+}

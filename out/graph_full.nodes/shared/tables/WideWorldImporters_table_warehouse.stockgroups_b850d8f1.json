@@ -1,0 +1,166 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockgroups",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Warehouse.StockGroups"
+  },
+  "refs": {
+    "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures": [
+      {
+        "type": "AFFECTS",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json",
+        "props": {
+          "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+          "hops": 1
+        }
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad": [
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step31",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step32",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": [
+      {
+        "type": "AFFECTS",
+        "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json",
+        "props": {
+          "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+          "hops": 2
+        }
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad": [
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step31",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step32",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 1
+      }
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step31",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step32",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json",
+      "props": {
+        "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "hops": 2
+      }
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step31",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step32",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockGroups_Application_People"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockgroups:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockgroups_column_LastEditedBy_ba611083.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockgroups:column:StockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockgroups_column_StockGroupID_e26a84c1.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockgroups:column:StockGroupName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockgroups_column_StockGroupName_ff248766.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockgroups:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockgroups_column_ValidFrom_a766311b.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.stockgroups:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockgroups_column_ValidTo_726d5dac.json",
+      "props": {
+        "ordinal": 5
+      }
+    }
+  ]
+}

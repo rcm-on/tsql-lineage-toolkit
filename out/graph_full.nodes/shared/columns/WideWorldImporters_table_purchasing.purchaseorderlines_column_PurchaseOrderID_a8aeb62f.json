@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.purchaseorderlines:column:PurchaseOrderID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PurchaseOrderID",
+    "table": "purchasing.purchaseorderlines",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:purchasing.purchaseorders:column:PurchaseOrderID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorders_column_PurchaseOrderID_9a3b7b15.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrderLines_PurchaseOrderID_Purchasing_PurchaseOrders"
+      }
+    }
+  ]
+}

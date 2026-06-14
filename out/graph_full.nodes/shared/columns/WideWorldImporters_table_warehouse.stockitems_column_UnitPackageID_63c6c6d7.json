@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems:column:UnitPackageID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "UnitPackageID",
+    "table": "warehouse.stockitems",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 5
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_PackageTypeID_bf4218cb.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItems_UnitPackageID_Warehouse_PackageTypes"
+      }
+    }
+  ]
+}

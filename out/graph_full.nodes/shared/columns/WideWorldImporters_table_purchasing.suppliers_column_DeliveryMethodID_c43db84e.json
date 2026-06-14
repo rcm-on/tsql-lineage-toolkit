@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers:column:DeliveryMethodID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DeliveryMethodID",
+    "table": "purchasing.suppliers",
+    "data_type": "INT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 6
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:application.deliverymethods:column:DeliveryMethodID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.deliverymethods_column_DeliveryMethodID_0668c523.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_DeliveryMethodID_Application_DeliveryMethods"
+      }
+    }
+  ]
+}

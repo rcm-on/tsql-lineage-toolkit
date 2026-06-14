@@ -1,0 +1,58 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customercategories:column:CustomerCategoryName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CustomerCategoryName",
+    "table": "sales.customercategories",
+    "data_type": "NVARCHAR (50)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetCustomerUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      },
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      },
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    }
+  ],
+  "edges_out": []
+}

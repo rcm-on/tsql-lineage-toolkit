@@ -1,0 +1,33 @@
+﻿{
+  "id": "TestWorkflowDb:rule:IF:90b3a9c6",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "@RiskLevel = 'CRITICAL'"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step27",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step28",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "TestWorkflowDb:rule:IF:21fd62af",
+      "to_label": "Rule",
+      "path": "shared/rules/TestWorkflowDb_rule_IF_21fd62af_e16c375e.json"
+    }
+  ]
+}

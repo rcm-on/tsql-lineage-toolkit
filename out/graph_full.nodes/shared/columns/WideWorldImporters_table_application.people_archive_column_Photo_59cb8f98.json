@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.people_archive:column:Photo",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Photo",
+    "table": "application.people_archive",
+    "data_type": "VARBINARY (MAX)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 16
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

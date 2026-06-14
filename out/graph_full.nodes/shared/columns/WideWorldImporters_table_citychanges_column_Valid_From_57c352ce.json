@@ -1,0 +1,65 @@
+﻿{
+  "id": "WideWorldImporters:table:#citychanges:column:Valid From",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Valid From",
+    "table": "#citychanges"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetCityUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    }
+  ],
+  "edges_out": []
+}

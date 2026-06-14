@@ -1,0 +1,64 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitemtransactions:column:StockItemID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "StockItemID",
+    "table": "warehouse.stockitemtransactions",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetMovementUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetMovementUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetMovementUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_StockItemID_f273d53f.json"
+    },
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_StockItemID_46c2e34c.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_StockItemID_Warehouse_StockItems"
+      }
+    }
+  ]
+}

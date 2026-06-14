@@ -1,0 +1,34 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.colors:column:ColorName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ColorName",
+    "table": "warehouse.colors",
+    "data_type": "NVARCHAR (20)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetStockItemUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+    }
+  ],
+  "edges_out": []
+}

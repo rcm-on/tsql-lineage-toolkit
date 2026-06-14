@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.systemparameters:column:DeliveryLocation",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DeliveryLocation",
+    "table": "application.systemparameters",
+    "data_type": "geography",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 6
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

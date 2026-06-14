@@ -1,0 +1,53 @@
+﻿{
+  "id": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:Quantity",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Quantity",
+    "table": "warehouse.stockitemtransactions"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_COLUMN",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": []
+}

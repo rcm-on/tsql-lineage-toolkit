@@ -1,0 +1,174 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.purchaseorderlines",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Purchasing.PurchaseOrderLines"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetPurchaseUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrderLines_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:purchasing.purchaseorders",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorders_a4740742.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrderLines_PurchaseOrderID_Purchasing_PurchaseOrders"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:warehouse.packagetypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrderLines_PackageTypeID_Warehouse_PackageTypes"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrderLines_StockItemID_Warehouse_StockItems"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:Description",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_Description_2357c1d2.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:ExpectedUnitPricePerOuter",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_ExpectedUnitPriceP_7a65e599.json",
+      "props": {
+        "ordinal": 8
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:IsOrderLineFinalized",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_IsOrderLineFinaliz_f367c5a2.json",
+      "props": {
+        "ordinal": 10
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_LastEditedBy_002f65e7.json",
+      "props": {
+        "ordinal": 11
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:LastEditedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_LastEditedWhen_0f8c9e4e.json",
+      "props": {
+        "ordinal": 12
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:LastReceiptDate",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_LastReceiptDate_a967c70a.json",
+      "props": {
+        "ordinal": 9
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:OrderedOuters",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_OrderedOuters_2a2be477.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:PackageTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_PackageTypeID_435188ac.json",
+      "props": {
+        "ordinal": 7
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:PurchaseOrderID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_PurchaseOrderID_a8aeb62f.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:PurchaseOrderLineID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_PurchaseOrderLineI_9c66f110.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:ReceivedOuters",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_ReceivedOuters_21d5d73c.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_StockItemID_3991d097.json",
+      "props": {
+        "ordinal": 3
+      }
+    }
+  ]
+}

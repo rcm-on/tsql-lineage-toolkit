@@ -1,0 +1,2935 @@
+﻿{
+  "Nodes": [
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "Labels": [
+        "SqlObject"
+      ],
+      "Properties": {
+        "database": "TestWorkflowDb",
+        "full_name": "dbo.ProcessOrderWorkflow",
+        "has_transaction": true,
+        "has_error_handling": true,
+        "has_cursor": false,
+        "dynamic_sql_calls": 0,
+        "cyclomatic_complexity": 17,
+        "parse_error": ""
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@OrderID",
+      "Labels": [
+        "Parameter"
+      ],
+      "Properties": {
+        "name": "@OrderID",
+        "data_type": "INT",
+        "is_output": false
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@CustomerID",
+      "Labels": [
+        "Parameter"
+      ],
+      "Properties": {
+        "name": "@CustomerID",
+        "data_type": "INT",
+        "is_output": false
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@ForceReview",
+      "Labels": [
+        "Parameter"
+      ],
+      "Properties": {
+        "name": "@ForceReview",
+        "data_type": "BIT",
+        "is_output": false
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@OrderTotal",
+      "Labels": [
+        "Variable"
+      ],
+      "Properties": {
+        "name": "@OrderTotal",
+        "data_type": "DECIMAL (18, 2)",
+        "default": "",
+        "construction": [
+          "od.OrderTotal"
+        ]
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@CustomerCreditLimit",
+      "Labels": [
+        "Variable"
+      ],
+      "Properties": {
+        "name": "@CustomerCreditLimit",
+        "data_type": "DECIMAL (18, 2)",
+        "default": "",
+        "construction": [
+          "CreditLimit"
+        ]
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@CustomerBalance",
+      "Labels": [
+        "Variable"
+      ],
+      "Properties": {
+        "name": "@CustomerBalance",
+        "data_type": "DECIMAL (18, 2)",
+        "default": "",
+        "construction": [
+          "AccountBalance"
+        ]
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Labels": [
+        "Variable"
+      ],
+      "Properties": {
+        "name": "@StockItemID",
+        "data_type": "INT",
+        "default": "",
+        "construction": []
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@AvailableQty",
+      "Labels": [
+        "Variable"
+      ],
+      "Properties": {
+        "name": "@AvailableQty",
+        "data_type": "INT",
+        "default": "",
+        "construction": [
+          "QuantityOnHand"
+        ]
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RequiredQty",
+      "Labels": [
+        "Variable"
+      ],
+      "Properties": {
+        "name": "@RequiredQty",
+        "data_type": "INT",
+        "default": "",
+        "construction": []
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RiskLevel",
+      "Labels": [
+        "Variable"
+      ],
+      "Properties": {
+        "name": "@RiskLevel",
+        "data_type": "VARCHAR (20)",
+        "default": "",
+        "construction": [
+          "'HIGH'",
+          "'CRITICAL'",
+          "'HIGH'",
+          "'MEDIUM'",
+          "'LOW'"
+        ]
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@ApprovalStatus",
+      "Labels": [
+        "Variable"
+      ],
+      "Properties": {
+        "name": "@ApprovalStatus",
+        "data_type": "VARCHAR (20)",
+        "default": "",
+        "construction": [
+          "'PENDING_REVIEW'",
+          "'REJECTED'",
+          "'APPROVED'"
+        ]
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@ErrorMsg",
+      "Labels": [
+        "Variable"
+      ],
+      "Properties": {
+        "name": "@ErrorMsg",
+        "data_type": "NVARCHAR (400)",
+        "default": "",
+        "construction": [
+          "'No stock holding record for item ' + CAST (@StockItemID AS VARCHAR (10))",
+          "ERROR_MESSAGE()"
+        ]
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@LineCursor",
+      "Labels": [
+        "Variable"
+      ],
+      "Properties": {
+        "name": "@LineCursor",
+        "data_type": "CURSOR",
+        "default": "",
+        "construction": []
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.orders",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "TestWorkflowDb",
+        "name": "Sales.Orders"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.orders:column:OrderTotal",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "OrderTotal",
+        "table": "sales.orders"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.orders:column:CustomerID",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "CustomerID",
+        "table": "sales.orders"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.customers",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "TestWorkflowDb",
+        "name": "Sales.Customers"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.customers:column:CreditLimit",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "CreditLimit",
+        "table": "sales.customers"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.customers:column:AccountBalance",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "AccountBalance",
+        "table": "sales.customers"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:warehouse.stockitemholdings",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "TestWorkflowDb",
+        "name": "Warehouse.StockItemHoldings"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:warehouse.stockitemholdings:column:QuantityOnHand",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "QuantityOnHand",
+        "table": "warehouse.stockitemholdings"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step0",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 0,
+        "line_no": 20,
+        "nesting_level": 0,
+        "action": "BEGIN_TRAN",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "BEGIN_TRAN"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:BEGIN_TRAN",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "BEGIN_TRAN"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 1,
+        "line_no": 23,
+        "nesting_level": 0,
+        "action": "SELECT",
+        "target_name": "Sales.Orders",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "SELECT -> Sales.Orders"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:SELECT",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "SELECT"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.orderlines",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "TestWorkflowDb",
+        "name": "Sales.OrderLines"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step2",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 2,
+        "line_no": 31,
+        "nesting_level": 1,
+        "action": "THROW",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF: @OrderTotal IS NULL"
+        ],
+        "condition_keys": [
+          "IF#29"
+        ],
+        "label": "THROW"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:THROW",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "THROW"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF:21dd82e7",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@OrderTotal IS NULL"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step3",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 3,
+        "line_no": 32,
+        "nesting_level": 1,
+        "action": "RETURN",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF: @OrderTotal IS NULL"
+        ],
+        "condition_keys": [
+          "IF#29"
+        ],
+        "label": "RETURN"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:RETURN",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "RETURN"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step4",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 4,
+        "line_no": 36,
+        "nesting_level": 0,
+        "action": "SELECT",
+        "target_name": "Sales.Customers",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "SELECT -> Sales.Customers"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 5,
+        "line_no": 70,
+        "nesting_level": 2,
+        "action": "INSERT",
+        "target_name": "Sales.OrderApprovals",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF: @CustomerBalance + @OrderTotal > @CustomerCreditLimit",
+          "IF: @ForceReview = 1"
+        ],
+        "condition_keys": [
+          "IF#41",
+          "IF#43"
+        ],
+        "label": "INSERT -> Sales.OrderApprovals"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:INSERT",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "INSERT"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.orderapprovals",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "TestWorkflowDb",
+        "name": "Sales.OrderApprovals"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.orderapprovals:column:OrderID",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "OrderID",
+        "table": "sales.orderapprovals"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.orderapprovals:column:RiskLevel",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "RiskLevel",
+        "table": "sales.orderapprovals"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.orderapprovals:column:Status",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "Status",
+        "table": "sales.orderapprovals"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF:dbbcc406",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@CustomerBalance + @OrderTotal > @CustomerCreditLimit"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF:e38c0ee9",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@ForceReview = 1"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step6",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 6,
+        "line_no": 77,
+        "nesting_level": 2,
+        "action": "UPDATE",
+        "target_name": "Sales.Orders",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF: @CustomerBalance + @OrderTotal > @CustomerCreditLimit",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "condition_keys": [
+          "IF#41",
+          "IF_ELSE#43"
+        ],
+        "label": "UPDATE -> Sales.Orders"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:UPDATE",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "UPDATE"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.orders:column:OrderStatus",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "OrderStatus",
+        "table": "sales.orders"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "Labels": [
+        "Rule",
+        "IFELSE"
+      ],
+      "Properties": {
+        "type": "IF_ELSE",
+        "expression": "NOT (@ForceReview = 1)"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step7",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 7,
+        "line_no": 81,
+        "nesting_level": 2,
+        "action": "THROW",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF: @CustomerBalance + @OrderTotal > @CustomerCreditLimit",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "condition_keys": [
+          "IF#41",
+          "IF_ELSE#43"
+        ],
+        "label": "THROW"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step8",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 8,
+        "line_no": 82,
+        "nesting_level": 2,
+        "action": "RETURN",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF: @CustomerBalance + @OrderTotal > @CustomerCreditLimit",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "condition_keys": [
+          "IF#41",
+          "IF_ELSE#43"
+        ],
+        "label": "RETURN"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step9",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 9,
+        "line_no": 97,
+        "nesting_level": 0,
+        "action": "OPEN_CURSOR",
+        "target_name": "@LineCursor",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "OPEN_CURSOR -> @LineCursor"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:OPEN_CURSOR",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "OPEN_CURSOR"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step10",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 10,
+        "line_no": 98,
+        "nesting_level": 0,
+        "action": "FETCH",
+        "target_name": "@LineCursor",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "FETCH -> @LineCursor"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:FETCH",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "FETCH"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step11",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 11,
+        "line_no": 102,
+        "nesting_level": 1,
+        "action": "SELECT",
+        "target_name": "Warehouse.StockItemHoldings",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0"
+        ],
+        "condition_keys": [
+          "WHILE#100"
+        ],
+        "label": "SELECT -> Warehouse.StockItemHoldings"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:WHILE:4161cf00",
+      "Labels": [
+        "Rule",
+        "WHILE"
+      ],
+      "Properties": {
+        "type": "WHILE",
+        "expression": "@@FETCH_STATUS = 0"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 12,
+        "line_no": 112,
+        "nesting_level": 3,
+        "action": "INSERT",
+        "target_name": "Warehouse.StockItemTransactions",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF: @ForceReview = 1"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF#106",
+          "IF#110"
+        ],
+        "label": "INSERT -> Warehouse.StockItemTransactions"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:warehouse.stockitemtransactions",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "TestWorkflowDb",
+        "name": "Warehouse.StockItemTransactions"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:StockItemID",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "StockItemID",
+        "table": "warehouse.stockitemtransactions"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:TransactionTypeID",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "TransactionTypeID",
+        "table": "warehouse.stockitemtransactions"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:Quantity",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "Quantity",
+        "table": "warehouse.stockitemtransactions"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF:703cefd9",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@AvailableQty IS NULL"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step13",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 13,
+        "line_no": 117,
+        "nesting_level": 3,
+        "action": "THROW",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF#106",
+          "IF_ELSE#110"
+        ],
+        "label": "THROW"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step14",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 14,
+        "line_no": 118,
+        "nesting_level": 3,
+        "action": "CLOSE_CURSOR",
+        "target_name": "@LineCursor",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF#106",
+          "IF_ELSE#110"
+        ],
+        "label": "CLOSE_CURSOR -> @LineCursor"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:CLOSE_CURSOR",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "CLOSE_CURSOR"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step15",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 15,
+        "line_no": 119,
+        "nesting_level": 3,
+        "action": "DEALLOCATE",
+        "target_name": "@LineCursor",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF#106",
+          "IF_ELSE#110"
+        ],
+        "label": "DEALLOCATE -> @LineCursor"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:DEALLOCATE",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "DEALLOCATE"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step16",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 16,
+        "line_no": 120,
+        "nesting_level": 3,
+        "action": "ROLLBACK",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF#106",
+          "IF_ELSE#110"
+        ],
+        "label": "ROLLBACK"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:ROLLBACK",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "ROLLBACK"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step17",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 17,
+        "line_no": 121,
+        "nesting_level": 3,
+        "action": "RETURN",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF: @AvailableQty IS NULL",
+          "IF_ELSE: NOT (@ForceReview = 1)"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF#106",
+          "IF_ELSE#110"
+        ],
+        "label": "RETURN"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 18,
+        "line_no": 129,
+        "nesting_level": 4,
+        "action": "INSERT",
+        "target_name": "Warehouse.StockItemTransactions",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF_ELSE: NOT (@AvailableQty IS NULL)",
+          "IF: @AvailableQty < @RequiredQty",
+          "IF: @ApprovalStatus = 'APPROVED'"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF_ELSE#106",
+          "IF#124",
+          "IF#126"
+        ],
+        "label": "INSERT -> Warehouse.StockItemTransactions"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF_ELSE:ca699726",
+      "Labels": [
+        "Rule",
+        "IFELSE"
+      ],
+      "Properties": {
+        "type": "IF_ELSE",
+        "expression": "NOT (@AvailableQty IS NULL)"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF:6a6b8490",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@AvailableQty < @RequiredQty"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF:919e0771",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@ApprovalStatus = 'APPROVED'"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step19",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 19,
+        "line_no": 132,
+        "nesting_level": 4,
+        "action": "UPDATE",
+        "target_name": "Warehouse.StockItemHoldings",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF_ELSE: NOT (@AvailableQty IS NULL)",
+          "IF: @AvailableQty < @RequiredQty",
+          "IF: @ApprovalStatus = 'APPROVED'"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF_ELSE#106",
+          "IF#124",
+          "IF#126"
+        ],
+        "label": "UPDATE -> Warehouse.StockItemHoldings"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step20",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 20,
+        "line_no": 138,
+        "nesting_level": 4,
+        "action": "UPDATE",
+        "target_name": "Sales.OrderLines",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF_ELSE: NOT (@AvailableQty IS NULL)",
+          "IF: @AvailableQty < @RequiredQty",
+          "IF_ELSE: NOT (@ApprovalStatus = 'APPROVED')"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF_ELSE#106",
+          "IF#124",
+          "IF_ELSE#126"
+        ],
+        "label": "UPDATE -> Sales.OrderLines"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:sales.orderlines:column:PickingCompletedWhen",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "PickingCompletedWhen",
+        "table": "sales.orderlines"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF_ELSE:b4c6d65b",
+      "Labels": [
+        "Rule",
+        "IFELSE"
+      ],
+      "Properties": {
+        "type": "IF_ELSE",
+        "expression": "NOT (@ApprovalStatus = 'APPROVED')"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 21,
+        "line_no": 145,
+        "nesting_level": 3,
+        "action": "UPDATE",
+        "target_name": "Warehouse.StockItemHoldings",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF_ELSE: NOT (@AvailableQty IS NULL)",
+          "IF_ELSE: NOT (@AvailableQty < @RequiredQty)"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF_ELSE#106",
+          "IF_ELSE#124"
+        ],
+        "label": "UPDATE -> Warehouse.StockItemHoldings"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF_ELSE:b2f9c54c",
+      "Labels": [
+        "Rule",
+        "IFELSE"
+      ],
+      "Properties": {
+        "type": "IF_ELSE",
+        "expression": "NOT (@AvailableQty < @RequiredQty)"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 22,
+        "line_no": 149,
+        "nesting_level": 3,
+        "action": "INSERT",
+        "target_name": "Warehouse.StockItemTransactions",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0",
+          "IF_ELSE: NOT (@AvailableQty IS NULL)",
+          "IF_ELSE: NOT (@AvailableQty < @RequiredQty)"
+        ],
+        "condition_keys": [
+          "WHILE#100",
+          "IF_ELSE#106",
+          "IF_ELSE#124"
+        ],
+        "label": "INSERT -> Warehouse.StockItemTransactions"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step23",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 23,
+        "line_no": 153,
+        "nesting_level": 1,
+        "action": "FETCH",
+        "target_name": "@LineCursor",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "WHILE: @@FETCH_STATUS = 0"
+        ],
+        "condition_keys": [
+          "WHILE#100"
+        ],
+        "label": "FETCH -> @LineCursor"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step24",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 24,
+        "line_no": 156,
+        "nesting_level": 0,
+        "action": "CLOSE_CURSOR",
+        "target_name": "@LineCursor",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "CLOSE_CURSOR -> @LineCursor"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step25",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 25,
+        "line_no": 157,
+        "nesting_level": 0,
+        "action": "DEALLOCATE",
+        "target_name": "@LineCursor",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "DEALLOCATE -> @LineCursor"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step26",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 26,
+        "line_no": 162,
+        "nesting_level": 1,
+        "action": "UPDATE",
+        "target_name": "Sales.Orders",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF: @ApprovalStatus = 'APPROVED'"
+        ],
+        "condition_keys": [
+          "IF#160"
+        ],
+        "label": "UPDATE -> Sales.Orders"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step27",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 27,
+        "line_no": 170,
+        "nesting_level": 3,
+        "action": "UPDATE",
+        "target_name": "Sales.Orders",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF_ELSE: NOT (@ApprovalStatus = 'APPROVED')",
+          "IF: @ApprovalStatus = 'PENDING_REVIEW'",
+          "IF: @RiskLevel = 'CRITICAL'"
+        ],
+        "condition_keys": [
+          "IF_ELSE#160",
+          "IF#166",
+          "IF#168"
+        ],
+        "label": "UPDATE -> Sales.Orders"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF:21fd62af",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@ApprovalStatus = 'PENDING_REVIEW'"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF:90b3a9c6",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@RiskLevel = 'CRITICAL'"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step28",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 28,
+        "line_no": 174,
+        "nesting_level": 3,
+        "action": "EXEC",
+        "target_name": "dbo.NotifyRiskTeam",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF_ELSE: NOT (@ApprovalStatus = 'APPROVED')",
+          "IF: @ApprovalStatus = 'PENDING_REVIEW'",
+          "IF: @RiskLevel = 'CRITICAL'"
+        ],
+        "condition_keys": [
+          "IF_ELSE#160",
+          "IF#166",
+          "IF#168"
+        ],
+        "label": "EXEC -> dbo.NotifyRiskTeam"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:EXEC",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "EXEC"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step29",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 29,
+        "line_no": 178,
+        "nesting_level": 3,
+        "action": "UPDATE",
+        "target_name": "Sales.Orders",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "IF_ELSE: NOT (@ApprovalStatus = 'APPROVED')",
+          "IF: @ApprovalStatus = 'PENDING_REVIEW'",
+          "IF_ELSE: NOT (@RiskLevel = 'CRITICAL')"
+        ],
+        "condition_keys": [
+          "IF_ELSE#160",
+          "IF#166",
+          "IF_ELSE#168"
+        ],
+        "label": "UPDATE -> Sales.Orders"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF_ELSE:a4d064e6",
+      "Labels": [
+        "Rule",
+        "IFELSE"
+      ],
+      "Properties": {
+        "type": "IF_ELSE",
+        "expression": "NOT (@RiskLevel = 'CRITICAL')"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step30",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 30,
+        "line_no": 184,
+        "nesting_level": 0,
+        "action": "COMMIT_TRAN",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [],
+        "condition_keys": [],
+        "label": "COMMIT_TRAN"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:action:COMMIT_TRAN",
+      "Labels": [
+        "Action"
+      ],
+      "Properties": {
+        "name": "COMMIT_TRAN"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step31",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 31,
+        "line_no": 188,
+        "nesting_level": 2,
+        "action": "ROLLBACK",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "CATCH: ON ERROR",
+          "IF: @@TRANCOUNT > 0"
+        ],
+        "condition_keys": [
+          "CATCH#19",
+          "IF#187"
+        ],
+        "label": "ROLLBACK"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:CATCH:9e173e51",
+      "Labels": [
+        "Rule",
+        "CATCH"
+      ],
+      "Properties": {
+        "type": "CATCH",
+        "expression": "ON ERROR"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:rule:IF:ec9a15ec",
+      "Labels": [
+        "Rule",
+        "IF"
+      ],
+      "Properties": {
+        "type": "IF",
+        "expression": "@@TRANCOUNT > 0"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 32,
+        "line_no": 192,
+        "nesting_level": 1,
+        "action": "INSERT",
+        "target_name": "dbo.ErrorLog",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "CATCH: ON ERROR"
+        ],
+        "condition_keys": [
+          "CATCH#19"
+        ],
+        "label": "INSERT -> dbo.ErrorLog"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:dbo.errorlog",
+      "Labels": [
+        "Table"
+      ],
+      "Properties": {
+        "database": "TestWorkflowDb",
+        "name": "dbo.ErrorLog"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:dbo.errorlog:column:ErrorMessage",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "ErrorMessage",
+        "table": "dbo.errorlog"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:dbo.errorlog:column:ErrorProcedure",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "ErrorProcedure",
+        "table": "dbo.errorlog"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb:table:dbo.errorlog:column:ErrorTime",
+      "Labels": [
+        "Column"
+      ],
+      "Properties": {
+        "name": "ErrorTime",
+        "table": "dbo.errorlog"
+      }
+    },
+    {
+      "Id": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step33",
+      "Labels": [
+        "Step"
+      ],
+      "Properties": {
+        "order": 33,
+        "line_no": 195,
+        "nesting_level": 1,
+        "action": "THROW",
+        "target_name": "",
+        "detail": "",
+        "dynamic_sql": "",
+        "is_dynamic_sql": false,
+        "condition_path": [
+          "CATCH: ON ERROR"
+        ],
+        "condition_keys": [
+          "CATCH#19"
+        ],
+        "label": "THROW"
+      }
+    }
+  ],
+  "Relationships": [
+    {
+      "Type": "HAS_PARAMETER",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_PARAMETER",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@CustomerID",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_PARAMETER",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@ForceReview",
+      "Properties": {}
+    },
+    {
+      "Type": "DECLARES",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@OrderTotal",
+      "Properties": {}
+    },
+    {
+      "Type": "DECLARES",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@CustomerCreditLimit",
+      "Properties": {}
+    },
+    {
+      "Type": "DECLARES",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@CustomerBalance",
+      "Properties": {}
+    },
+    {
+      "Type": "DECLARES",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "DECLARES",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@AvailableQty",
+      "Properties": {}
+    },
+    {
+      "Type": "DECLARES",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RequiredQty",
+      "Properties": {}
+    },
+    {
+      "Type": "DECLARES",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RiskLevel",
+      "Properties": {}
+    },
+    {
+      "Type": "DECLARES",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@ApprovalStatus",
+      "Properties": {}
+    },
+    {
+      "Type": "DECLARES",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@ErrorMsg",
+      "Properties": {}
+    },
+    {
+      "Type": "DECLARES",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@LineCursor",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:sales.orders",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders:column:OrderTotal",
+      "Properties": {}
+    },
+    {
+      "Type": "ASSIGNED_FROM",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@OrderTotal",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders:column:OrderTotal",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:sales.orders",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders:column:CustomerID",
+      "Properties": {}
+    },
+    {
+      "Type": "ASSIGNED_FROM",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@CustomerID",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders:column:CustomerID",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:sales.customers",
+      "EndNodeId": "TestWorkflowDb:table:sales.customers:column:CreditLimit",
+      "Properties": {}
+    },
+    {
+      "Type": "ASSIGNED_FROM",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@CustomerCreditLimit",
+      "EndNodeId": "TestWorkflowDb:table:sales.customers:column:CreditLimit",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:sales.customers",
+      "EndNodeId": "TestWorkflowDb:table:sales.customers:column:AccountBalance",
+      "Properties": {}
+    },
+    {
+      "Type": "ASSIGNED_FROM",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@CustomerBalance",
+      "EndNodeId": "TestWorkflowDb:table:sales.customers:column:AccountBalance",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:warehouse.stockitemholdings",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemholdings:column:QuantityOnHand",
+      "Properties": {}
+    },
+    {
+      "Type": "ASSIGNED_FROM",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@AvailableQty",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemholdings:column:QuantityOnHand",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step0",
+      "Properties": {
+        "order": 0
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step0",
+      "EndNodeId": "TestWorkflowDb:action:BEGIN_TRAN",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+      "Properties": {
+        "order": 1
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@OrderTotal",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@CustomerID",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+      "EndNodeId": "TestWorkflowDb:action:SELECT",
+      "Properties": {}
+    },
+    {
+      "Type": "READS_FROM",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders",
+      "Properties": {}
+    },
+    {
+      "Type": "READS_FROM",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderlines",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step2",
+      "Properties": {
+        "order": 2
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step2",
+      "EndNodeId": "TestWorkflowDb:action:THROW",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF:21dd82e7",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step2",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step3",
+      "Properties": {
+        "order": 3
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step3",
+      "EndNodeId": "TestWorkflowDb:action:RETURN",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF:21dd82e7",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step3",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step4",
+      "Properties": {
+        "order": 4
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step4",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@CustomerCreditLimit",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step4",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@CustomerBalance",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step4",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@CustomerID",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step4",
+      "EndNodeId": "TestWorkflowDb:action:SELECT",
+      "Properties": {}
+    },
+    {
+      "Type": "READS_FROM",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step4",
+      "EndNodeId": "TestWorkflowDb:table:sales.customers",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "Properties": {
+        "order": 5
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RiskLevel",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@ApprovalStatus",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "EndNodeId": "TestWorkflowDb:action:INSERT",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderapprovals",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:sales.orderapprovals",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderapprovals:column:OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderapprovals:column:OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:sales.orderapprovals",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderapprovals:column:RiskLevel",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderapprovals:column:RiskLevel",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:sales.orderapprovals",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderapprovals:column:Status",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderapprovals:column:Status",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF:e38c0ee9",
+      "EndNodeId": "TestWorkflowDb:rule:IF:dbbcc406",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF:e38c0ee9",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step6",
+      "Properties": {
+        "order": 6
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step6",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step6",
+      "EndNodeId": "TestWorkflowDb:action:UPDATE",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step6",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:sales.orders",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders:column:OrderStatus",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step6",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders:column:OrderStatus",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "EndNodeId": "TestWorkflowDb:rule:IF:dbbcc406",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step6",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step7",
+      "Properties": {
+        "order": 7
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step7",
+      "EndNodeId": "TestWorkflowDb:action:THROW",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step7",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step8",
+      "Properties": {
+        "order": 8
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step8",
+      "EndNodeId": "TestWorkflowDb:action:RETURN",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step8",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step9",
+      "Properties": {
+        "order": 9
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step9",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@LineCursor",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step9",
+      "EndNodeId": "TestWorkflowDb:action:OPEN_CURSOR",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step10",
+      "Properties": {
+        "order": 10
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step10",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@LineCursor",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step10",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step10",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RequiredQty",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step10",
+      "EndNodeId": "TestWorkflowDb:action:FETCH",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step11",
+      "Properties": {
+        "order": 11
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step11",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@AvailableQty",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step11",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step11",
+      "EndNodeId": "TestWorkflowDb:action:SELECT",
+      "Properties": {}
+    },
+    {
+      "Type": "READS_FROM",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step11",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemholdings",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:WHILE:4161cf00",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step11",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "Properties": {
+        "order": 12
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "EndNodeId": "TestWorkflowDb:action:INSERT",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:TransactionTypeID",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:TransactionTypeID",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:Quantity",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:Quantity",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF:703cefd9",
+      "EndNodeId": "TestWorkflowDb:rule:WHILE:4161cf00",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF:e38c0ee9",
+      "EndNodeId": "TestWorkflowDb:rule:IF:703cefd9",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF:e38c0ee9",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step13",
+      "Properties": {
+        "order": 13
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step13",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@ErrorMsg",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step13",
+      "EndNodeId": "TestWorkflowDb:action:THROW",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "EndNodeId": "TestWorkflowDb:rule:IF:703cefd9",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step13",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step14",
+      "Properties": {
+        "order": 14
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step14",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@LineCursor",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step14",
+      "EndNodeId": "TestWorkflowDb:action:CLOSE_CURSOR",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step14",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step15",
+      "Properties": {
+        "order": 15
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step15",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@LineCursor",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step15",
+      "EndNodeId": "TestWorkflowDb:action:DEALLOCATE",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step15",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step16",
+      "Properties": {
+        "order": 16
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step16",
+      "EndNodeId": "TestWorkflowDb:action:ROLLBACK",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step16",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step17",
+      "Properties": {
+        "order": 17
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step17",
+      "EndNodeId": "TestWorkflowDb:action:RETURN",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a92ae90a",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step17",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "Properties": {
+        "order": 18
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RequiredQty",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@AvailableQty",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "EndNodeId": "TestWorkflowDb:action:INSERT",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:TransactionTypeID",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:Quantity",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:ca699726",
+      "EndNodeId": "TestWorkflowDb:rule:WHILE:4161cf00",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF:6a6b8490",
+      "EndNodeId": "TestWorkflowDb:rule:IF_ELSE:ca699726",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF:919e0771",
+      "EndNodeId": "TestWorkflowDb:rule:IF:6a6b8490",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF:919e0771",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step19",
+      "Properties": {
+        "order": 19
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step19",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step19",
+      "EndNodeId": "TestWorkflowDb:action:UPDATE",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step19",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemholdings",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step19",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemholdings:column:QuantityOnHand",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF:919e0771",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step19",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step20",
+      "Properties": {
+        "order": 20
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step20",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step20",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step20",
+      "EndNodeId": "TestWorkflowDb:action:UPDATE",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step20",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderlines",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:sales.orderlines",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderlines:column:PickingCompletedWhen",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step20",
+      "EndNodeId": "TestWorkflowDb:table:sales.orderlines:column:PickingCompletedWhen",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:b4c6d65b",
+      "EndNodeId": "TestWorkflowDb:rule:IF:6a6b8490",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:b4c6d65b",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step20",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+      "Properties": {
+        "order": 21
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RequiredQty",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+      "EndNodeId": "TestWorkflowDb:action:UPDATE",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemholdings",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemholdings:column:QuantityOnHand",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:b2f9c54c",
+      "EndNodeId": "TestWorkflowDb:rule:IF_ELSE:ca699726",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:b2f9c54c",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "Properties": {
+        "order": 22
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RequiredQty",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "EndNodeId": "TestWorkflowDb:action:INSERT",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:TransactionTypeID",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "EndNodeId": "TestWorkflowDb:table:warehouse.stockitemtransactions:column:Quantity",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:b2f9c54c",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step23",
+      "Properties": {
+        "order": 23
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step23",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@LineCursor",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step23",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@StockItemID",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step23",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RequiredQty",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step23",
+      "EndNodeId": "TestWorkflowDb:action:FETCH",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:WHILE:4161cf00",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step23",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step24",
+      "Properties": {
+        "order": 24
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step24",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@LineCursor",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step24",
+      "EndNodeId": "TestWorkflowDb:action:CLOSE_CURSOR",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step25",
+      "Properties": {
+        "order": 25
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step25",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@LineCursor",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step25",
+      "EndNodeId": "TestWorkflowDb:action:DEALLOCATE",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step26",
+      "Properties": {
+        "order": 26
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step26",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step26",
+      "EndNodeId": "TestWorkflowDb:action:UPDATE",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step26",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step26",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders:column:OrderStatus",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF:919e0771",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step26",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step27",
+      "Properties": {
+        "order": 27
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step27",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step27",
+      "EndNodeId": "TestWorkflowDb:action:UPDATE",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step27",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step27",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders:column:OrderStatus",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF:21fd62af",
+      "EndNodeId": "TestWorkflowDb:rule:IF_ELSE:b4c6d65b",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF:90b3a9c6",
+      "EndNodeId": "TestWorkflowDb:rule:IF:21fd62af",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF:90b3a9c6",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step27",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step28",
+      "Properties": {
+        "order": 28
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step28",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step28",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@RiskLevel",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step28",
+      "EndNodeId": "TestWorkflowDb:action:EXEC",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF:90b3a9c6",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step28",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step29",
+      "Properties": {
+        "order": 29
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step29",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@OrderID",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step29",
+      "EndNodeId": "TestWorkflowDb:action:UPDATE",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step29",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step29",
+      "EndNodeId": "TestWorkflowDb:table:sales.orders:column:OrderStatus",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a4d064e6",
+      "EndNodeId": "TestWorkflowDb:rule:IF:21fd62af",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF_ELSE:a4d064e6",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step29",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step30",
+      "Properties": {
+        "order": 30
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step30",
+      "EndNodeId": "TestWorkflowDb:action:COMMIT_TRAN",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step31",
+      "Properties": {
+        "order": 31
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step31",
+      "EndNodeId": "TestWorkflowDb:action:ROLLBACK",
+      "Properties": {}
+    },
+    {
+      "Type": "NESTED_IN",
+      "StartNodeId": "TestWorkflowDb:rule:IF:ec9a15ec",
+      "EndNodeId": "TestWorkflowDb:rule:CATCH:9e173e51",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:IF:ec9a15ec",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step31",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "Properties": {
+        "order": 32
+      }
+    },
+    {
+      "Type": "USES_VARIABLE",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@ErrorMsg",
+      "Properties": {}
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "EndNodeId": "TestWorkflowDb:action:INSERT",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_TO",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "EndNodeId": "TestWorkflowDb:table:dbo.errorlog",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:dbo.errorlog",
+      "EndNodeId": "TestWorkflowDb:table:dbo.errorlog:column:ErrorMessage",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "EndNodeId": "TestWorkflowDb:table:dbo.errorlog:column:ErrorMessage",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:dbo.errorlog",
+      "EndNodeId": "TestWorkflowDb:table:dbo.errorlog:column:ErrorProcedure",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "EndNodeId": "TestWorkflowDb:table:dbo.errorlog:column:ErrorProcedure",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_COLUMN",
+      "StartNodeId": "TestWorkflowDb:table:dbo.errorlog",
+      "EndNodeId": "TestWorkflowDb:table:dbo.errorlog:column:ErrorTime",
+      "Properties": {}
+    },
+    {
+      "Type": "WRITES_COLUMN",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "EndNodeId": "TestWorkflowDb:table:dbo.errorlog:column:ErrorTime",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:CATCH:9e173e51",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "Properties": {}
+    },
+    {
+      "Type": "HAS_STEP",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step33",
+      "Properties": {
+        "order": 33
+      }
+    },
+    {
+      "Type": "ACTION",
+      "StartNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step33",
+      "EndNodeId": "TestWorkflowDb:action:THROW",
+      "Properties": {}
+    },
+    {
+      "Type": "GOVERNS",
+      "StartNodeId": "TestWorkflowDb:rule:CATCH:9e173e51",
+      "EndNodeId": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step33",
+      "Properties": {}
+    }
+  ]
+}

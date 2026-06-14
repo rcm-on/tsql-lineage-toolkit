@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.countries_archive:column:CountryName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CountryName",
+    "table": "application.countries_archive",
+    "data_type": "NVARCHAR (60)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

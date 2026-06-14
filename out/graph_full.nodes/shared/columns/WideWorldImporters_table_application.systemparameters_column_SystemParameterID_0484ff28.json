@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.systemparameters:column:SystemParameterID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "SystemParameterID",
+    "table": "application.systemparameters",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": true,
+    "ordinal": 1
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.specialdeals:column:DealDescription",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DealDescription",
+    "table": "sales.specialdeals",
+    "data_type": "NVARCHAR (30)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 7
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

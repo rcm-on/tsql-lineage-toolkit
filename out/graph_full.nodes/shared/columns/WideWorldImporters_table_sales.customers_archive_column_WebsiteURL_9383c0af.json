@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers_archive:column:WebsiteURL",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "WebsiteURL",
+    "table": "sales.customers_archive",
+    "data_type": "NVARCHAR (256)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 21
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

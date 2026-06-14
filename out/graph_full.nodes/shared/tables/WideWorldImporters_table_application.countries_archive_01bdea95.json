@@ -1,0 +1,140 @@
+﻿{
+  "id": "WideWorldImporters:table:application.countries_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Application.Countries_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:Border",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_Border_a25e1759.json",
+      "props": {
+        "ordinal": 11
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:Continent",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_Continent_bd0a3de2.json",
+      "props": {
+        "ordinal": 8
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:CountryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_CountryID_ea3f48aa.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:CountryName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_CountryName_1c09206d.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:CountryType",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_CountryType_9a2da9a0.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:FormalName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_FormalName_4c1ad9d6.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:IsoAlpha3Code",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_IsoAlpha3Code_13eed539.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:IsoNumericCode",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_IsoNumericCode_92dce2da.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_LastEditedBy_75c9f7f5.json",
+      "props": {
+        "ordinal": 12
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:LatestRecordedPopulation",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_LatestRecordedPopu_b518dc9c.json",
+      "props": {
+        "ordinal": 7
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:Region",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_Region_50d7b968.json",
+      "props": {
+        "ordinal": 9
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:Subregion",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_Subregion_cec9d80b.json",
+      "props": {
+        "ordinal": 10
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_ValidFrom_c76361a8.json",
+      "props": {
+        "ordinal": 13
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.countries_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_archive_column_ValidTo_1a29f3e2.json",
+      "props": {
+        "ordinal": 14
+      }
+    }
+  ]
+}

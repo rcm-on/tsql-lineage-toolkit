@@ -1,0 +1,33 @@
+﻿{
+  "id": "TestWorkflowDb:rule:IF_ELSE:b2f9c54c",
+  "labels": [
+    "Rule",
+    "IFELSE"
+  ],
+  "properties": {
+    "type": "IF_ELSE",
+    "expression": "NOT (@AvailableQty < @RequiredQty)"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "TestWorkflowDb:rule:IF_ELSE:ca699726",
+      "to_label": "Rule",
+      "path": "shared/rules/TestWorkflowDb_rule_IF_ELSE_ca699726_1e44b711.json"
+    }
+  ]
+}

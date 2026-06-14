@@ -1,0 +1,47 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.invoices:column:DeliveryInstructions",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DeliveryInstructions",
+    "table": "sales.invoices",
+    "data_type": "NVARCHAR (MAX)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 15
+  },
+  "refs": {
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:sales.customers:column:DeliveryAddressLine1",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryAddressLine1_0c3d03c7.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:sales.customers:column:DeliveryAddressLine2",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryAddressLine2_fa7348a3.json"
+    }
+  ]
+}

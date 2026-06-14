@@ -1,0 +1,21 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:a4d3ba57",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "EXISTS (SELECT 1         FROM   sys.procedures         WHERE  name = N'Configuration_RemoveRowLevelSecurity')"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+﻿{
+  "id": "WideWorldImporters:table:#currentvalue",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "#CurrentValue"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:#currentvalue:column:CurrentValue",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_currentvalue_column_CurrentValue_e95501cd.json"
+    }
+  ]
+}

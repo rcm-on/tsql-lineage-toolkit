@@ -1,0 +1,84 @@
+﻿{
+  "id": "WideWorldImporters:action:COMMIT_TRAN",
+  "labels": [
+    "Action"
+  ],
+  "properties": {
+    "name": "COMMIT_TRAN"
+  },
+  "refs": {
+    "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step9",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyPartitioning": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step21",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InsertCustomerOrders": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.InsertCustomerOrders#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.RecordVehicleTemperature": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.RecordVehicleTemperature#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step9",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step21",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    }
+  ],
+  "edges_out": []
+}

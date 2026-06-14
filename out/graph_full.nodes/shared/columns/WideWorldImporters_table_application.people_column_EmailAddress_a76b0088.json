@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.people:column:EmailAddress",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "EmailAddress",
+    "table": "application.people",
+    "data_type": "NVARCHAR (256)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 15
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

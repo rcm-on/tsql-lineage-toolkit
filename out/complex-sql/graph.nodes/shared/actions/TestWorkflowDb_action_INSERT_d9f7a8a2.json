@@ -1,0 +1,76 @@
+﻿{
+  "id": "TestWorkflowDb:action:INSERT",
+  "labels": [
+    "Action"
+  ],
+  "properties": {
+    "name": "INSERT"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step12",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step18",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step22",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": []
+}

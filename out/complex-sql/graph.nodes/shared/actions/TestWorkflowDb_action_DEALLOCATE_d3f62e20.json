@@ -1,0 +1,40 @@
+﻿{
+  "id": "TestWorkflowDb:action:DEALLOCATE",
+  "labels": [
+    "Action"
+  ],
+  "properties": {
+    "name": "DEALLOCATE"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step15",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step25",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step15",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step25",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": []
+}

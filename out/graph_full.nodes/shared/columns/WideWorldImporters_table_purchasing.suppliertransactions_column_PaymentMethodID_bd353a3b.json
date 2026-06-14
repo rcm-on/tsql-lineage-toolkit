@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliertransactions:column:PaymentMethodID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PaymentMethodID",
+    "table": "purchasing.suppliertransactions",
+    "data_type": "INT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 5
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:application.paymentmethods:column:PaymentMethodID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.paymentmethods_column_PaymentMethodID_acc145e8.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierTransactions_PaymentMethodID_Application_PaymentMethods"
+      }
+    }
+  ]
+}

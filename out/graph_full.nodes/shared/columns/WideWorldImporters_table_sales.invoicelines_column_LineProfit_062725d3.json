@@ -1,0 +1,67 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.invoicelines:column:LineProfit",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LineProfit",
+    "table": "sales.invoicelines",
+    "data_type": "DECIMAL (18, 2)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 10
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetSaleUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:sales.orderlines:column:PickedQuantity",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PickedQuantity_7a0db540.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:sales.orderlines:column:UnitPrice",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_UnitPrice_52388afa.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.stockitemholdings:column:LastCostPrice",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_LastCostPrice_1e5b87f4.json"
+    }
+  ]
+}

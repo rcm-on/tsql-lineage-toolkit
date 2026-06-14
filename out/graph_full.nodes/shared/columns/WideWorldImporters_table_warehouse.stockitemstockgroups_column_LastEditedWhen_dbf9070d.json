@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:LastEditedWhen",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LastEditedWhen",
+    "table": "warehouse.stockitemstockgroups",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 5
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

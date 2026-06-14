@@ -1,0 +1,86 @@
+﻿{
+  "id": "WideWorldImporters:table:application.cities_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Application.Cities_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.cities_archive:column:CityID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_archive_column_CityID_c970515b.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.cities_archive:column:CityName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_archive_column_CityName_4485a98d.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.cities_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_archive_column_LastEditedBy_57d96a22.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.cities_archive:column:LatestRecordedPopulation",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_archive_column_LatestRecordedPopulat_41c2f387.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.cities_archive:column:Location",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_archive_column_Location_282a6bc3.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.cities_archive:column:StateProvinceID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_archive_column_StateProvinceID_dcdf1e3f.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.cities_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_archive_column_ValidFrom_2ee02ae1.json",
+      "props": {
+        "ordinal": 7
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.cities_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_archive_column_ValidTo_79d26ae8.json",
+      "props": {
+        "ordinal": 8
+      }
+    }
+  ]
+}

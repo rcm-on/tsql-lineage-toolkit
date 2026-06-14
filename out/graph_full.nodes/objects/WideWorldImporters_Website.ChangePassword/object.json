@@ -1,0 +1,211 @@
+﻿{
+  "id": "WideWorldImporters::Website.ChangePassword",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Website.ChangePassword",
+    "has_transaction": false,
+    "has_error_handling": false,
+    "has_cursor": false,
+    "dynamic_sql_calls": 0,
+    "cyclomatic_complexity": 2,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [
+      {
+        "id": "WideWorldImporters::Website.ChangePassword#param:@PersonID",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@PersonID",
+          "data_type": "INT",
+          "is_output": false
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.ChangePassword#param:@OldPassword",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@OldPassword",
+          "data_type": "NVARCHAR (40)",
+          "is_output": false
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.ChangePassword#param:@NewPassword",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@NewPassword",
+          "data_type": "NVARCHAR (40)",
+          "is_output": false
+        }
+      }
+    ],
+    "variables": [],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Website.ChangePassword#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 12,
+          "nesting_level": 0,
+          "action": "UPDATE",
+          "target_name": "[Application].People",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "UPDATE -> [Application].People"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.ChangePassword#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 23,
+          "nesting_level": 1,
+          "action": "THROW",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "IF: @@ROWCOUNT = 0"
+          ],
+          "condition_keys": [
+            "IF#19"
+          ],
+          "label": "THROW"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.ChangePassword#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "line_no": 24,
+          "nesting_level": 1,
+          "action": "RETURN",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "IF: @@ROWCOUNT = 0"
+          ],
+          "condition_keys": [
+            "IF#19"
+          ],
+          "label": "RETURN"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.ChangePassword#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:UPDATE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_UPDATE_605dec54.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.ChangePassword#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.ChangePassword#param:@NewPassword",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.ChangePassword#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.ChangePassword#param:@OldPassword",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.ChangePassword#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.ChangePassword#param:@PersonID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.ChangePassword#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:HashedPassword",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_HashedPassword_d5d384d5.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.ChangePassword#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:IsPermittedToLogon",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_IsPermittedToLogon_6b16c213.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.ChangePassword#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.ChangePassword#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:THROW",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.ChangePassword#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:RETURN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:125f715a",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.ChangePassword#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:125f715a",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.ChangePassword#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+﻿{
+  "id": "WideWorldImporters:table:application.transactiontypes_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Application.TransactionTypes_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.transactiontypes_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.transactiontypes_archive_column_LastEditedB_2418b137.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.transactiontypes_archive:column:TransactionTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.transactiontypes_archive_column_Transaction_feed6f77.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.transactiontypes_archive:column:TransactionTypeName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.transactiontypes_archive_column_Transaction_ff478e6a.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.transactiontypes_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.transactiontypes_archive_column_ValidFrom_c31fabb2.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.transactiontypes_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.transactiontypes_archive_column_ValidTo_e0e49794.json",
+      "props": {
+        "ordinal": 5
+      }
+    }
+  ]
+}

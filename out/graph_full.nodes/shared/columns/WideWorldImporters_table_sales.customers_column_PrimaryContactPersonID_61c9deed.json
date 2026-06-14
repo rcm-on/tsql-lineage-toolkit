@@ -1,0 +1,44 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers:column:PrimaryContactPersonID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PrimaryContactPersonID",
+    "table": "sales.customers",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 6
+  },
+  "refs": {
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:application.people:column:PersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_PrimaryContactPersonID_Application_People"
+      }
+    }
+  ]
+}

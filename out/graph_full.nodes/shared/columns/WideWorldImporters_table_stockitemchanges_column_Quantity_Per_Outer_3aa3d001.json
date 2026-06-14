@@ -1,0 +1,48 @@
+﻿{
+  "id": "WideWorldImporters:table:#stockitemchanges:column:Quantity Per Outer",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Quantity Per Outer",
+    "table": "#stockitemchanges"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetStockItemUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step10",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step10",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:QuantityPerOuter",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_QuantityPerOuter_dbb73098.json"
+    }
+  ]
+}

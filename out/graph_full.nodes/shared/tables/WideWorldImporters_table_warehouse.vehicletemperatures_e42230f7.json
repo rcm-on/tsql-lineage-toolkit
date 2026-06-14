@@ -1,0 +1,102 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.vehicletemperatures",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Warehouse.VehicleTemperatures"
+  },
+  "refs": {
+    "WideWorldImporters::Website.RecordVehicleTemperature": [
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:ChillerSensorNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_ChillerSensorNumbe_dedc9460.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:CompressedSensorData",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_CompressedSensorDa_77277c79.json",
+      "props": {
+        "ordinal": 8
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:FullSensorData",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_FullSensorData_9bfbb828.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:IsCompressed",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_IsCompressed_a805d11d.json",
+      "props": {
+        "ordinal": 7
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:RecordedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_RecordedWhen_052b7656.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:Temperature",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_Temperature_bfb31d6d.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:VehicleRegistration",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_VehicleRegistratio_2d3e0501.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:VehicleTemperatureID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_VehicleTemperature_3562f018.json",
+      "props": {
+        "ordinal": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers:column:IsOnCreditHold",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "IsOnCreditHold",
+    "table": "sales.customers",
+    "data_type": "BIT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 15
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

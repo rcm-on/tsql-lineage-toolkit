@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliercategories_archive:column:SupplierCategoryID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "SupplierCategoryID",
+    "table": "purchasing.suppliercategories_archive",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 1
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

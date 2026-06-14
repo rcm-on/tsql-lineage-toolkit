@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers_archive:column:PostalAddressLine2",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PostalAddressLine2",
+    "table": "sales.customers_archive",
+    "data_type": "NVARCHAR (60)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 27
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.purchaseorderlines:column:ExpectedUnitPricePerOuter",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ExpectedUnitPricePerOuter",
+    "table": "purchasing.purchaseorderlines",
+    "data_type": "DECIMAL (18, 2)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 8
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

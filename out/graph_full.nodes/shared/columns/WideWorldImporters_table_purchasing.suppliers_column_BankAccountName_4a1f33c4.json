@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers:column:BankAccountName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "BankAccountName",
+    "table": "purchasing.suppliers",
+    "data_type": "NVARCHAR (50)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 10
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

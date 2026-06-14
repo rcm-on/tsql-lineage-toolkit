@@ -1,0 +1,27 @@
+﻿{
+  "id": "TestWorkflowDb:rule:IF:ec9a15ec",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "@@TRANCOUNT > 0"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step31",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "TestWorkflowDb:rule:CATCH:9e173e51",
+      "to_label": "Rule",
+      "path": "shared/rules/TestWorkflowDb_rule_CATCH_9e173e51_d8c1f2ec.json"
+    }
+  ]
+}

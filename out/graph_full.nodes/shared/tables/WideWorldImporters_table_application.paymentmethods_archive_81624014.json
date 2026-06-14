@@ -1,0 +1,59 @@
+﻿{
+  "id": "WideWorldImporters:table:application.paymentmethods_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Application.PaymentMethods_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.paymentmethods_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.paymentmethods_archive_column_LastEditedBy_a1eb670c.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.paymentmethods_archive:column:PaymentMethodID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.paymentmethods_archive_column_PaymentMethod_38220b34.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.paymentmethods_archive:column:PaymentMethodName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.paymentmethods_archive_column_PaymentMethod_d32ed76e.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.paymentmethods_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.paymentmethods_archive_column_ValidFrom_44cf0551.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.paymentmethods_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.paymentmethods_archive_column_ValidTo_d8f0b85b.json",
+      "props": {
+        "ordinal": 5
+      }
+    }
+  ]
+}

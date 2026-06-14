@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.specialdeals:column:StockGroupID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "StockGroupID",
+    "table": "sales.specialdeals",
+    "data_type": "INT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 6
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:warehouse.stockgroups:column:StockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockgroups_column_StockGroupID_e26a84c1.json",
+      "props": {
+        "constraint": "FK_Sales_SpecialDeals_StockGroupID_Warehouse_StockGroups"
+      }
+    }
+  ]
+}

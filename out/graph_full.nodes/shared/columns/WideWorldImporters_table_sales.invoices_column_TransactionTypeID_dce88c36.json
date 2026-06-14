@@ -1,0 +1,13 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.invoices:column:TransactionTypeID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "TransactionTypeID",
+    "table": "sales.invoices"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

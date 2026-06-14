@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.specialdeals:column:BuyingGroupID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "BuyingGroupID",
+    "table": "sales.specialdeals",
+    "data_type": "INT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 4
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:sales.buyinggroups:column:BuyingGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_column_BuyingGroupID_08a3384c.json",
+      "props": {
+        "constraint": "FK_Sales_SpecialDeals_BuyingGroupID_Sales_BuyingGroups"
+      }
+    }
+  ]
+}

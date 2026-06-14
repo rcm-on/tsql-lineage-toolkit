@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers_archive:column:RunPosition",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "RunPosition",
+    "table": "sales.customers_archive",
+    "data_type": "NVARCHAR (5)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 20
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

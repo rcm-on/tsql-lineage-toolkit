@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:application.stateprovinces:column:CountryID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CountryID",
+    "table": "application.stateprovinces",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 4
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:application.countries:column:CountryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_column_CountryID_73e2786f.json",
+      "props": {
+        "constraint": "FK_Application_StateProvinces_CountryID_Application_Countries"
+      }
+    }
+  ]
+}

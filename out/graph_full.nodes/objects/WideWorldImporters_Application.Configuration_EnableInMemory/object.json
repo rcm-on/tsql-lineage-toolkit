@@ -1,0 +1,1757 @@
+﻿{
+  "id": "WideWorldImporters::Application.Configuration_EnableInMemory",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Application.Configuration_EnableInMemory",
+    "has_transaction": false,
+    "has_error_handling": true,
+    "has_cursor": false,
+    "dynamic_sql_calls": 29,
+    "cyclomatic_complexity": 7,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [],
+    "variables": [
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@SQL",
+          "data_type": "NVARCHAR (MAX)",
+          "default": "N''",
+          "construction": [
+            "N' ALTER DATABASE CURRENT ADD FILEGROUP WWI_InMemory_Data CONTAINS MEMORY_OPTIMIZED_DATA;'",
+            "N' ALTER DATABASE CURRENT ADD FILE (name = N''WWI_InMemory_Data_1'', filename = ''' + @MemoryOptimizedFilegroupFolder + N''') TO FILEGROUP WWI_InMemory_Data;'",
+            "N' ALTER DATABASE CURRENT SET MEMORY_OPTIMIZED_ELEVATE_TO_SNAPSHOT = ON;'",
+            "N' ALTER TABLE Warehouse.ColdRoomTemperatures SET (SYSTEM_VERSIONING = OFF); ALTER TABLE Warehouse.ColdRoomTemperatures DROP PERIOD FOR SYSTEM_TIME; ALTER TABLE Warehouse.ColdRoomTemperatures DROP CONSTRAINT PK_Warehouse_ColdRoomTemperatures;'",
+            "N' EXEC dbo.sp_rename @objname = N''Warehouse.ColdRoomTemperatures'',                    @newname = N''ColdRoomTemperatures_Backup'',                    @objtype = N''OBJECT'';'",
+            "N' CREATE TABLE Warehouse.ColdRoomTemperatures (     ColdRoomTemperatureID bigint IDENTITY(1,1) NOT NULL,     ColdRoomSensorNumber int NOT NULL,     RecordedWhen datetime2(7) NOT NULL,     Temperature decimal(10, 2) NOT NULL,     ValidFrom datetime2(7) NOT NULL,     ValidTo datetime2(7) NOT NULL,   ",
+            "N' SET IDENTITY_INSERT Warehouse.ColdRoomTemperatures ON;  INSERT Warehouse.ColdRoomTemperatures (ColdRoomTemperatureID, ColdRoomSensorNumber, RecordedWhen, Temperature,                                        ValidFrom, ValidTo) SELECT ColdRoomTemperatureID, ColdRoomSensorNumber, RecordedWhen, Tempe",
+            "N'DROP TABLE Warehouse.ColdRoomTemperatures_Backup;'",
+            "N' ALTER TABLE Warehouse.ColdRoomTemperatures ADD PERIOD FOR SYSTEM_TIME(ValidFrom, ValidTo);'",
+            "N' ALTER TABLE Warehouse.ColdRoomTemperatures SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = Warehouse.ColdRoomTemperatures_Archive, DATA_CONSISTENCY_CHECK = ON));'",
+            "N' ALTER TABLE Warehouse.VehicleTemperatures DROP CONSTRAINT PK_Warehouse_VehicleTemperatures;'",
+            "N' EXEC dbo.sp_rename @objname = N''Warehouse.VehicleTemperatures'',                    @newname = N''VehicleTemperatures_Backup'',                    @objtype = N''OBJECT'';'",
+            "N' CREATE TABLE Warehouse.VehicleTemperatures ( \tVehicleTemperatureID bigint IDENTITY(1,1) NOT NULL, \tVehicleRegistration nvarchar(20) COLLATE Latin1_General_CI_AS NOT NULL, \tChillerSensorNumber int NOT NULL, \tRecordedWhen datetime2(7) NOT NULL, \tTemperature decimal(10, 2) NOT NULL, \tFullSensorData ",
+            "N' SET IDENTITY_INSERT Warehouse.VehicleTemperatures ON;  INSERT Warehouse.VehicleTemperatures     (VehicleTemperatureID, VehicleRegistration, ChillerSensorNumber, RecordedWhen, Temperature, FullSensorData, IsCompressed, CompressedSensorData) SELECT VehicleTemperatureID, VehicleRegistration, Chiller",
+            "N'DROP TABLE Warehouse.VehicleTemperatures_Backup;'",
+            "N'DROP PROCEDURE IF EXISTS Website.InvoiceCustomerOrders;'",
+            "N'DROP PROCEDURE IF EXISTS Website.InsertCustomerOrders;'",
+            "N'DROP PROCEDURE IF EXISTS Website.RecordColdRoomTemperatures;'",
+            "N'DROP TYPE IF EXISTS Website.OrderIDList;'",
+            "N'DROP TYPE IF EXISTS Website.OrderLineList;'",
+            "N'DROP TYPE IF EXISTS Website.OrderList;'",
+            "N'DROP TYPE IF EXISTS Website.SensorDataList;'",
+            "N' CREATE TYPE Website.OrderIDList AS TABLE (     OrderID int PRIMARY KEY NONCLUSTERED ) WITH (MEMORY_OPTIMIZED = ON);'",
+            "N' CREATE TYPE Website.OrderList AS TABLE (     OrderReference int PRIMARY KEY NONCLUSTERED,     CustomerID int,     ContactPersonID int,     ExpectedDeliveryDate date,     CustomerPurchaseOrderNumber nvarchar(20),     IsUndersupplyBackordered bit,     Comments nvarchar(max),     DeliveryInstruction",
+            "N' CREATE TYPE Website.OrderLineList AS TABLE (     OrderReference int,     StockItemID int,     [Description] nvarchar(100),     Quantity int,     INDEX IX_Website_OrderLineList NONCLUSTERED (OrderReference) ) WITH (MEMORY_OPTIMIZED = ON);'",
+            "N' CREATE TYPE Website.SensorDataList AS TABLE ( \tSensorDataListID int IDENTITY(1,1) PRIMARY KEY NONCLUSTERED, \tColdRoomSensorNumber int, \tRecordedWhen datetime2(7), \tTemperature decimal(18,2) ) WITH (MEMORY_OPTIMIZED = ON);'",
+            "N' CREATE PROCEDURE Website.InvoiceCustomerOrders @OrdersToInvoice Website.OrderIDList READONLY, @PackedByPersonID int, @InvoicedByPersonID int WITH EXECUTE AS OWNER AS BEGIN     SET NOCOUNT ON;     SET XACT_ABORT ON;      DECLARE @InvoicesToGenerate TABLE     (         OrderID int PRIMARY KEY,     ",
+            "N' CREATE PROCEDURE Website.RecordColdRoomTemperatures @SensorReadings Website.SensorDataList READONLY WITH NATIVE_COMPILATION, SCHEMABINDING, EXECUTE AS OWNER AS BEGIN ATOMIC WITH ( \tTRANSACTION ISOLATION LEVEL = SNAPSHOT, \tLANGUAGE = N''English'' )     BEGIN TRY  \t\tDECLARE @NumberOfReadings int = ",
+            "N' CREATE PROCEDURE Website.InsertCustomerOrders @Orders Website.OrderList READONLY, @OrderLines Website.OrderLineList READONLY, @OrdersCreatedByPersonID int, @SalespersonPersonID int WITH EXECUTE AS OWNER AS BEGIN     SET NOCOUNT ON;     SET XACT_ABORT ON;      DECLARE @OrdersToGenerate AS TABLE   "
+          ]
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQLDataFolder",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@SQLDataFolder",
+          "data_type": "NVARCHAR (MAX)",
+          "default": "CAST (SERVERPROPERTY('InstanceDefaultDataPath') AS NVARCHAR (MAX))",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@MemoryOptimizedFilegroupFolder",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@MemoryOptimizedFilegroupFolder",
+          "data_type": "NVARCHAR (MAX)",
+          "default": "@SQLDataFolder + N'WideWorldImporters_InMemory_Data_1'",
+          "construction": []
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 26,
+          "nesting_level": 3,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "ALTER DATABASE CURRENT ADD FILEGROUP WWI_InMemory_Data CONTAINS MEMORY_OPTIMIZED_DATA;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: CAST (SERVERPROPERTY(N'EngineEdition') AS INT) <> 5",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.filegroups             WHERE  name = N'WWI_InMemory_Data')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#16",
+            "IF#21"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 33,
+          "nesting_level": 3,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: CAST (SERVERPROPERTY(N'EngineEdition') AS INT) <> 5",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.filegroups             WHERE  name = N'WWI_InMemory_Data')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#16",
+            "IF#21"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "line_no": 41,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "ALTER DATABASE CURRENT SET MEMORY_OPTIMIZED_ELEVATE_TO_SNAPSHOT = ON;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "line_no": 50,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "ALTER TABLE Warehouse.ColdRoomTemperatures SET (SYSTEM_VERSIONING = OFF); ALTER TABLE Warehouse.ColdRoomTemperatures DROP PERIOD FOR SYSTEM_TIME; ALTER TABLE Warehouse.ColdRoomTemperatures DROP CONSTR",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#43"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 4,
+          "line_no": 56,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "EXEC dbo.sp_rename @objname = N'Warehouse.ColdRoomTemperatures', @newname = N'ColdRoomTemperatures_Backup', @objtype = N'OBJECT';",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#43"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step5",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 5,
+          "line_no": 70,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TABLE Warehouse.ColdRoomTemperatures ( ColdRoomTemperatureID bigint IDENTITY(1,1) NOT NULL, ColdRoomSensorNumber int NOT NULL, RecordedWhen datetime2(7) NOT NULL, Temperature decimal(10, 2) NOT",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#43"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step6",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 6,
+          "line_no": 81,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "SET IDENTITY_INSERT Warehouse.ColdRoomTemperatures ON; INSERT Warehouse.ColdRoomTemperatures (ColdRoomTemperatureID, ColdRoomSensorNumber, RecordedWhen, Temperature, ValidFrom, ValidTo) SELECT ColdRoo",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#43"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 7,
+          "line_no": 84,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TABLE Warehouse.ColdRoomTemperatures_Backup;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#43"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 8,
+          "line_no": 89,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "ALTER TABLE Warehouse.ColdRoomTemperatures ADD PERIOD FOR SYSTEM_TIME(ValidFrom, ValidTo);",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#43"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 9,
+          "line_no": 94,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "ALTER TABLE Warehouse.ColdRoomTemperatures SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = Warehouse.ColdRoomTemperatures_Archive, DATA_CONSISTENCY_CHECK = ON));",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#43"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step10",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 10,
+          "line_no": 103,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "ALTER TABLE Warehouse.VehicleTemperatures DROP CONSTRAINT PK_Warehouse_VehicleTemperatures;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#98"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step11",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 11,
+          "line_no": 109,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "EXEC dbo.sp_rename @objname = N'Warehouse.VehicleTemperatures', @newname = N'VehicleTemperatures_Backup', @objtype = N'OBJECT';",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#98"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step12",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 12,
+          "line_no": 124,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TABLE Warehouse.VehicleTemperatures ( VehicleTemperatureID bigint IDENTITY(1,1) NOT NULL, VehicleRegistration nvarchar(20) COLLATE Latin1_General_CI_AS NOT NULL, ChillerSensorNumber int NOT NUL",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#98"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 13,
+          "line_no": 135,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "SET IDENTITY_INSERT Warehouse.VehicleTemperatures ON; INSERT Warehouse.VehicleTemperatures (VehicleTemperatureID, VehicleRegistration, ChillerSensorNumber, RecordedWhen, Temperature, FullSensorData, I",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#98"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step14",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 14,
+          "line_no": 138,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TABLE Warehouse.VehicleTemperatures_Backup;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#98"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step15",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 15,
+          "line_no": 145,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.InvoiceCustomerOrders;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step16",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 16,
+          "line_no": 147,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.InsertCustomerOrders;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step17",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 17,
+          "line_no": 149,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.RecordColdRoomTemperatures;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 18,
+          "line_no": 154,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TYPE IF EXISTS Website.OrderIDList;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step19",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 19,
+          "line_no": 156,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TYPE IF EXISTS Website.OrderLineList;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step20",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 20,
+          "line_no": 158,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TYPE IF EXISTS Website.OrderList;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step21",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 21,
+          "line_no": 160,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TYPE IF EXISTS Website.SensorDataList;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step22",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 22,
+          "line_no": 170,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TYPE Website.OrderIDList AS TABLE ( OrderID int PRIMARY KEY NONCLUSTERED ) WITH (MEMORY_OPTIMIZED = ON);",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step23",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 23,
+          "line_no": 185,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TYPE Website.OrderList AS TABLE ( OrderReference int PRIMARY KEY NONCLUSTERED, CustomerID int, ContactPersonID int, ExpectedDeliveryDate date, CustomerPurchaseOrderNumber nvarchar(20), IsUnders",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step24",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 24,
+          "line_no": 197,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TYPE Website.OrderLineList AS TABLE ( OrderReference int, StockItemID int, [Description] nvarchar(100), Quantity int, INDEX IX_Website_OrderLineList NONCLUSTERED (OrderReference) ) WITH (MEMORY",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step25",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 25,
+          "line_no": 208,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TYPE Website.SensorDataList AS TABLE ( SensorDataListID int IDENTITY(1,1) PRIMARY KEY NONCLUSTERED, ColdRoomSensorNumber int, RecordedWhen datetime2(7), Temperature decimal(18,2) ) WITH (MEMORY",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step26",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 26,
+          "line_no": 365,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE Website.InvoiceCustomerOrders @OrdersToInvoice Website.OrderIDList READONLY, @PackedByPersonID int, @InvoicedByPersonID int WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT ON; SET XACT_ABO",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step27",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 27,
+          "line_no": 418,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE Website.RecordColdRoomTemperatures @SensorReadings Website.SensorDataList READONLY WITH NATIVE_COMPILATION, SCHEMABINDING, EXECUTE AS OWNER AS BEGIN ATOMIC WITH ( TRANSACTION ISOLATIO",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step28",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 28,
+          "line_no": 485,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE Website.InsertCustomerOrders @Orders Website.OrderList READONLY, @OrderLines Website.OrderLineList READONLY, @OrdersCreatedByPersonID int, @SalespersonPersonID int WITH EXECUTE AS OWN",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step29",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 29,
+          "line_no": 490,
+          "nesting_level": 1,
+          "action": "THROW",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#15"
+          ],
+          "label": "THROW"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step12",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step12",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step12",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step14",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step14",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step14",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step15",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step15",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step15",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step16",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step16",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step16",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step17",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step17",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step17",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step19",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step19",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step19",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step20",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step20",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step20",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step26",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step26",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step26",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step27",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step27",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step27",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step28",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step28",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step28",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step29",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:THROW",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step29",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:340d20d3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step3",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:340d20d3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:340d20d3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:340d20d3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step6",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:340d20d3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:340d20d3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:340d20d3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b94a45b8",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step10",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b94a45b8",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step11",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b94a45b8",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step12",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b94a45b8",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b94a45b8",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step14",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b9e62e8b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b9e62e8b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step15",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step16",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step17",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step19",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step20",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step21",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step22",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step23",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step24",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step25",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step26",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step27",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step28",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    }
+  ]
+}

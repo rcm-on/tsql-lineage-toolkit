@@ -1,0 +1,234 @@
+﻿{
+  "id": "WideWorldImporters:action:THROW",
+  "labels": [
+    "Action"
+  ],
+  "properties": {
+    "name": "THROW"
+  },
+  "refs": {
+    "WideWorldImporters::Application.AddRoleMemberIfNonexistent": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyAuditing": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step10",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_EnableInMemory": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step29",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_RemoveAuditing": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_RemoveRowLevelSecurity/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.CreateRoleIfNonexistent": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.ActivateWebsiteLogon": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.ChangePassword": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.ChangePassword#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InsertCustomerOrders": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.InsertCustomerOrders#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.RecordColdRoomTemperatures": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.RecordVehicleTemperature": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.RecordVehicleTemperature#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.RecordVehicleTemperature#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step10",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step29",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveRowLevelSecurity/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.ChangePassword#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    }
+  ],
+  "edges_out": []
+}

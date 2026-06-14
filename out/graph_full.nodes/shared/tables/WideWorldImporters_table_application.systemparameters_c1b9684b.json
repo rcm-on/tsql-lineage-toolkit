@@ -1,0 +1,158 @@
+﻿{
+  "id": "WideWorldImporters:table:application.systemparameters",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Application.SystemParameters"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:application.cities",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "constraint": "FK_Application_SystemParameters_DeliveryCityID_Application_Cities"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:application.cities",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "constraint": "FK_Application_SystemParameters_PostalCityID_Application_Cities"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "constraint": "FK_Application_SystemParameters_Application_People"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:ApplicationSettings",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_ApplicationSettings_2918f37a.json",
+      "props": {
+        "ordinal": 11
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:DeliveryAddressLine1",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_DeliveryAddressLine_38fdf4d5.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:DeliveryAddressLine2",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_DeliveryAddressLine_00a83b3a.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:DeliveryCityID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_DeliveryCityID_63bd8689.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:DeliveryLocation",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_DeliveryLocation_932d40d6.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:DeliveryPostalCode",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_DeliveryPostalCode_5a31f29c.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_LastEditedBy_aea1389e.json",
+      "props": {
+        "ordinal": 12
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:LastEditedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_LastEditedWhen_bdc30e80.json",
+      "props": {
+        "ordinal": 13
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:PostalAddressLine1",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_PostalAddressLine1_943ad2b9.json",
+      "props": {
+        "ordinal": 7
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:PostalAddressLine2",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_PostalAddressLine2_5fccb42d.json",
+      "props": {
+        "ordinal": 8
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:PostalCityID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_PostalCityID_3b4df477.json",
+      "props": {
+        "ordinal": 9
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:PostalPostalCode",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_PostalPostalCode_d274f7cb.json",
+      "props": {
+        "ordinal": 10
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.systemparameters:column:SystemParameterID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_SystemParameterID_0484ff28.json",
+      "props": {
+        "ordinal": 1
+      }
+    }
+  ]
+}

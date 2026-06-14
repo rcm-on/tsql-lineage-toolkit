@@ -1,0 +1,60 @@
+﻿{
+  "id": "TestWorkflowDb:table:warehouse.stockitemholdings",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "TestWorkflowDb",
+    "name": "Warehouse.StockItemHoldings"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "READS_FROM",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step11",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step19",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step11",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step19",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step21",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:warehouse.stockitemholdings:column:QuantityOnHand",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_warehouse.stockitemholdings_column_QuantityOnHand_e544a8c8.json"
+    }
+  ]
+}

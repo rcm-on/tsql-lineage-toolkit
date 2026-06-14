@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers_archive:column:DeliveryLocation",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DeliveryLocation",
+    "table": "purchasing.suppliers_archive",
+    "data_type": "geography",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 23
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

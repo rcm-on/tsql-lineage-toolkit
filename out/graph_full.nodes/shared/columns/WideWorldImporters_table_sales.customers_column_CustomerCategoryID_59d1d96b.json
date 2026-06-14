@@ -1,0 +1,44 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers:column:CustomerCategoryID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CustomerCategoryID",
+    "table": "sales.customers",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 4
+  },
+  "refs": {
+    "WideWorldImporters::Website.CalculateCustomerPrice": [
+      {
+        "type": "ASSIGNED_FROM",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#var:@CustomerCategoryID",
+        "from_label": "Variable",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ASSIGNED_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#var:@CustomerCategoryID",
+      "from_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:sales.customercategories:column:CustomerCategoryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_column_CustomerCategoryID_f8db0ef6.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_CustomerCategoryID_Sales_CustomerCategories"
+      }
+    }
+  ]
+}

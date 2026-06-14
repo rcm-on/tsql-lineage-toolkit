@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.paymentmethods:column:ValidFrom",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ValidFrom",
+    "table": "application.paymentmethods",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 4
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

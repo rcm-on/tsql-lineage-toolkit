@@ -1,0 +1,58 @@
+﻿{
+  "id": "WideWorldImporters:table:application.countries:column:CountryName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CountryName",
+    "table": "application.countries",
+    "data_type": "NVARCHAR (60)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetCityUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    }
+  ],
+  "edges_out": []
+}

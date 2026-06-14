@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers_archive:column:DeliveryRun",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DeliveryRun",
+    "table": "sales.customers_archive",
+    "data_type": "NVARCHAR (5)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 19
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

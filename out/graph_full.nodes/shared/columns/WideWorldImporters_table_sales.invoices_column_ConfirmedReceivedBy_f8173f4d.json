@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.invoices:column:ConfirmedReceivedBy",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ConfirmedReceivedBy",
+    "table": "sales.invoices",
+    "data_type": "NVARCHAR (4000)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 23
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

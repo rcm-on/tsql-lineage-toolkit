@@ -1,0 +1,29 @@
+﻿{
+  "id": "TestWorkflowDb:table:sales.orders:column:CustomerID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CustomerID",
+    "table": "sales.orders"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "ASSIGNED_FROM",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@CustomerID",
+        "from_label": "Parameter",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ASSIGNED_FROM",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#param:@CustomerID",
+      "from_label": "Parameter",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": []
+}

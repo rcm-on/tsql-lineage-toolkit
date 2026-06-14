@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems_archive:column:Brand",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Brand",
+    "table": "warehouse.stockitems_archive",
+    "data_type": "NVARCHAR (50)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 7
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

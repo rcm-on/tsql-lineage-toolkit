@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.cities_archive:column:ValidFrom",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ValidFrom",
+    "table": "application.cities_archive",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 7
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

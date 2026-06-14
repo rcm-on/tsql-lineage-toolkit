@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.countries_archive:column:LastEditedBy",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LastEditedBy",
+    "table": "application.countries_archive",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 12
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

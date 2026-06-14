@@ -1,0 +1,48 @@
+﻿{
+  "id": "TestWorkflowDb:table:sales.orderapprovals",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "TestWorkflowDb",
+    "name": "Sales.OrderApprovals"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "WRITES_TO",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:sales.orderapprovals:column:OrderID",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_sales.orderapprovals_column_OrderID_4bcb07bd.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:sales.orderapprovals:column:RiskLevel",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_sales.orderapprovals_column_RiskLevel_0a9067ef.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:sales.orderapprovals:column:Status",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_sales.orderapprovals_column_Status_093f7123.json"
+    }
+  ]
+}

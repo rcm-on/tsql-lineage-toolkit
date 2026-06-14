@@ -1,0 +1,48 @@
+﻿{
+  "id": "TestWorkflowDb:table:dbo.errorlog",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "TestWorkflowDb",
+    "name": "dbo.ErrorLog"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "WRITES_TO",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:dbo.errorlog:column:ErrorMessage",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_dbo.errorlog_column_ErrorMessage_a4d4d375.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:dbo.errorlog:column:ErrorProcedure",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_dbo.errorlog_column_ErrorProcedure_601faab0.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:dbo.errorlog:column:ErrorTime",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_dbo.errorlog_column_ErrorTime_d2281a51.json"
+    }
+  ]
+}

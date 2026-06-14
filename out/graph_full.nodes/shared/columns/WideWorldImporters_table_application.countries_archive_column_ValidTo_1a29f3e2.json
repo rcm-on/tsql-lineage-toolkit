@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.countries_archive:column:ValidTo",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ValidTo",
+    "table": "application.countries_archive",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 14
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

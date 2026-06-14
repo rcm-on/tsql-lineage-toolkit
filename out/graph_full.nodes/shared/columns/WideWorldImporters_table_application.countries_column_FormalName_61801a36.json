@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.countries:column:FormalName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "FormalName",
+    "table": "application.countries",
+    "data_type": "NVARCHAR (60)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 3
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

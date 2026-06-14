@@ -1,0 +1,446 @@
+﻿{
+  "id": "WideWorldImporters::Website.RecordColdRoomTemperatures",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Website.RecordColdRoomTemperatures",
+    "has_transaction": false,
+    "has_error_handling": true,
+    "has_cursor": false,
+    "dynamic_sql_calls": 0,
+    "cyclomatic_complexity": 4,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#param:@SensorReadings",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@SensorReadings",
+          "data_type": "Website.SensorDataList",
+          "is_output": false
+        }
+      }
+    ],
+    "variables": [
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@NumberOfReadings",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@NumberOfReadings",
+          "data_type": "INT",
+          "default": "(SELECT MAX(SensorDataListID)  FROM   @SensorReadings)",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@Counter",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@Counter",
+          "data_type": "INT",
+          "default": "(SELECT MIN(SensorDataListID)  FROM   @SensorReadings)",
+          "construction": [
+            "1"
+          ]
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@ColdRoomSensorNumber",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@ColdRoomSensorNumber",
+          "data_type": "INT",
+          "default": "",
+          "construction": [
+            "ColdRoomSensorNumber"
+          ]
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@RecordedWhen",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@RecordedWhen",
+          "data_type": "DATETIME2 (7)",
+          "default": "",
+          "construction": [
+            "RecordedWhen"
+          ]
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@Temperature",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@Temperature",
+          "data_type": "DECIMAL (18, 2)",
+          "default": "",
+          "construction": [
+            "Temperature"
+          ]
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 24,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @Counter <= @NumberOfReadings"
+          ],
+          "condition_keys": [
+            "WHILE#22"
+          ],
+          "label": "SELECT"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 30,
+          "nesting_level": 1,
+          "action": "UPDATE",
+          "target_name": "Warehouse.ColdRoomTemperatures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @Counter <= @NumberOfReadings"
+          ],
+          "condition_keys": [
+            "WHILE#22"
+          ],
+          "label": "UPDATE -> Warehouse.ColdRoomTemperatures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "line_no": 37,
+          "nesting_level": 2,
+          "action": "INSERT",
+          "target_name": "Warehouse.ColdRoomTemperatures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @Counter <= @NumberOfReadings",
+            "IF: @@ROWCOUNT = 0"
+          ],
+          "condition_keys": [
+            "WHILE#22",
+            "IF#35"
+          ],
+          "label": "INSERT -> Warehouse.ColdRoomTemperatures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "line_no": 47,
+          "nesting_level": 1,
+          "action": "THROW",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#11"
+          ],
+          "label": "THROW"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.RecordColdRoomTemperatures#step4",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 4,
+          "line_no": 49,
+          "nesting_level": 1,
+          "action": "RETURN",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#11"
+          ],
+          "label": "RETURN"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#param:@SensorReadings",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@ColdRoomSensorNumber",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@Counter",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@RecordedWhen",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@Temperature",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:UPDATE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_UPDATE_605dec54.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@ColdRoomSensorNumber",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@RecordedWhen",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@Temperature",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:RecordedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_RecordedWhen_2822c656.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:Temperature",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_Temperature_c7ddbf93.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:INSERT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@ColdRoomSensorNumber",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@RecordedWhen",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#var:@Temperature",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ColdRoomSensorNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_ColdRoomSensorNum_8f23eeb1.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:RecordedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_RecordedWhen_2822c656.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:Temperature",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_Temperature_c7ddbf93.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:THROW",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:RETURN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#step3",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:125f715a",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:WHILE:84fccd6e",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:WHILE:84fccd6e",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    }
+  ]
+}

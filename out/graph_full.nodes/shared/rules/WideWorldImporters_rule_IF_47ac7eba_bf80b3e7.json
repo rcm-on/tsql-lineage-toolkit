@@ -1,0 +1,27 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:47ac7eba",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "ISJSON(@FullSensorDataArray) = 0"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.RecordVehicleTemperature#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.RecordVehicleTemperature#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    }
+  ]
+}

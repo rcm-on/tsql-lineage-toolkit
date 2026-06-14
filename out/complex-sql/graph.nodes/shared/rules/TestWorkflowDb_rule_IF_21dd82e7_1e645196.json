@@ -1,0 +1,27 @@
+﻿{
+  "id": "TestWorkflowDb:rule:IF:21dd82e7",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "@OrderTotal IS NULL"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step2",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step3",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ]
+}

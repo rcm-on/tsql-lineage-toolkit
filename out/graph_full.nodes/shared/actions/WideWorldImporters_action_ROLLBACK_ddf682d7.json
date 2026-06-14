@@ -1,0 +1,56 @@
+﻿{
+  "id": "WideWorldImporters:action:ROLLBACK",
+  "labels": [
+    "Action"
+  ],
+  "properties": {
+    "name": "ROLLBACK"
+  },
+  "refs": {
+    "WideWorldImporters::Website.InsertCustomerOrders": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.InsertCustomerOrders#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.RecordVehicleTemperature": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.RecordVehicleTemperature#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    }
+  ],
+  "edges_out": []
+}

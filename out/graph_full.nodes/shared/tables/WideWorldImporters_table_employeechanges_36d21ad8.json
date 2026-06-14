@@ -1,0 +1,96 @@
+﻿{
+  "id": "WideWorldImporters:table:#employeechanges",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "#EmployeeChanges"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetEmployeeUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step10",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step9",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step10",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step9",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:#employeechanges:column:Employee",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Employee_e9bce3ba.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:#employeechanges:column:Is Salesperson",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Is_Salesperson_d19af1d9.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:#employeechanges:column:Photo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Photo_7a78ebc8.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:#employeechanges:column:Preferred Name",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Preferred_Name_c98e6b27.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:#employeechanges:column:Valid From",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Valid_From_d5d5f0ab.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:#employeechanges:column:Valid To",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Valid_To_5f81d2c9.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:#employeechanges:column:WWI Employee ID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_WWI_Employee_ID_b1f1c982.json"
+    }
+  ]
+}

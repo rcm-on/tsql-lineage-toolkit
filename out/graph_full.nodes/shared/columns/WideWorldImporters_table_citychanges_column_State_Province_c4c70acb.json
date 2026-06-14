@@ -1,0 +1,84 @@
+﻿{
+  "id": "WideWorldImporters:table:#citychanges:column:State Province",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "State Province",
+    "table": "#citychanges"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetCityUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.stateprovinces:column:StateProvinceName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_StateProvinceName_70110c3a.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.stateprovinces:column:StateProvinceName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_StateProvinceName_70110c3a.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.stateprovinces:column:StateProvinceName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_StateProvinceName_70110c3a.json"
+    }
+  ]
+}

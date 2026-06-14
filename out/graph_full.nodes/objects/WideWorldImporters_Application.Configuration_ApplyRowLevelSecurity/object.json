@@ -1,0 +1,253 @@
+﻿{
+  "id": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Application.Configuration_ApplyRowLevelSecurity",
+    "has_transaction": false,
+    "has_error_handling": true,
+    "has_cursor": false,
+    "dynamic_sql_calls": 4,
+    "cyclomatic_complexity": 2,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [],
+    "variables": [
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#var:@SQL",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@SQL",
+          "data_type": "NVARCHAR (MAX)",
+          "default": "",
+          "construction": [
+            "N'DROP SECURITY POLICY IF EXISTS [Application].FilterCustomersBySalesTerritoryRole;'",
+            "N'DROP FUNCTION IF EXISTS [Application].DetermineCustomerAccess;'",
+            "N' CREATE FUNCTION [Application].DetermineCustomerAccess(@CityID int) RETURNS TABLE WITH SCHEMABINDING AS RETURN (SELECT 1 AS AccessResult         WHERE IS_ROLEMEMBER(N''db_owner'') <> 0         OR IS_ROLEMEMBER((SELECT sp.SalesTerritory                           FROM [Application].Cities AS c      ",
+            "N' CREATE SECURITY POLICY [Application].FilterCustomersBySalesTerritoryRole ADD FILTER PREDICATE [Application].DetermineCustomerAccess(DeliveryCityID) ON Sales.Customers, ADD BLOCK PREDICATE [Application].DetermineCustomerAccess(DeliveryCityID) ON Sales.Customers AFTER UPDATE;'"
+          ]
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 14,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP SECURITY POLICY IF EXISTS [Application].FilterCustomersBySalesTerritoryRole;",
+          "is_dynamic_sql": true,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 17,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP FUNCTION IF EXISTS [Application].DetermineCustomerAccess;",
+          "is_dynamic_sql": true,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "line_no": 38,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE FUNCTION [Application].DetermineCustomerAccess(@CityID int) RETURNS TABLE WITH SCHEMABINDING AS RETURN (SELECT 1 AS AccessResult WHERE IS_ROLEMEMBER(N'db_owner') <> 0 OR IS_ROLEMEMBER((SELECT s",
+          "is_dynamic_sql": true,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "line_no": 46,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE SECURITY POLICY [Application].FilterCustomersBySalesTerritoryRole ADD FILTER PREDICATE [Application].DetermineCustomerAccess(DeliveryCityID) ON Sales.Customers, ADD BLOCK PREDICATE [Application",
+          "is_dynamic_sql": true,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step4",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 4,
+          "line_no": 53,
+          "nesting_level": 1,
+          "action": "THROW",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#11"
+          ],
+          "label": "THROW"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:THROW",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json"
+    }
+  ]
+}

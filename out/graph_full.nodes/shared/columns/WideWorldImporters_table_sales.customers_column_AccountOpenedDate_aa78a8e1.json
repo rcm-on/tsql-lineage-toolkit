@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers:column:AccountOpenedDate",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "AccountOpenedDate",
+    "table": "sales.customers",
+    "data_type": "DATE",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 12
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

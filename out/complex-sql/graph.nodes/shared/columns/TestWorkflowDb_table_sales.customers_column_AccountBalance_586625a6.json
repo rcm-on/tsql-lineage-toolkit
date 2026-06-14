@@ -1,0 +1,29 @@
+﻿{
+  "id": "TestWorkflowDb:table:sales.customers:column:AccountBalance",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "AccountBalance",
+    "table": "sales.customers"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "ASSIGNED_FROM",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@CustomerBalance",
+        "from_label": "Variable",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ASSIGNED_FROM",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#var:@CustomerBalance",
+      "from_label": "Variable",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": []
+}

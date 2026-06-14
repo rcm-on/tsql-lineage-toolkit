@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliertransactions:column:TaxAmount",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "TaxAmount",
+    "table": "purchasing.suppliertransactions",
+    "data_type": "DECIMAL (18, 2)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 9
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

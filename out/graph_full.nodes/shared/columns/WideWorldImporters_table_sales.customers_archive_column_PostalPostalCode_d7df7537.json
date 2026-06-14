@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers_archive:column:PostalPostalCode",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PostalPostalCode",
+    "table": "sales.customers_archive",
+    "data_type": "NVARCHAR (10)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 28
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

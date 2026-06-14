@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.people_archive:column:FaxNumber",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "FaxNumber",
+    "table": "application.people_archive",
+    "data_type": "NVARCHAR (20)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 14
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

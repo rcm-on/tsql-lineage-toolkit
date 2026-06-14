@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.systemparameters:column:LastEditedWhen",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LastEditedWhen",
+    "table": "application.systemparameters",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 13
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

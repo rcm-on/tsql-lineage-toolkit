@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems_archive:column:TypicalWeightPerUnit",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "TypicalWeightPerUnit",
+    "table": "warehouse.stockitems_archive",
+    "data_type": "DECIMAL (18, 3)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 16
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

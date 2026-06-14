@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers_archive:column:DeliveryMethodID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DeliveryMethodID",
+    "table": "purchasing.suppliers_archive",
+    "data_type": "INT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 6
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

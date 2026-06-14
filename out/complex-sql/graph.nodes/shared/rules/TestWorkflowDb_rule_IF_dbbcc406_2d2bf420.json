@@ -1,0 +1,14 @@
+﻿{
+  "id": "TestWorkflowDb:rule:IF:dbbcc406",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "@CustomerBalance + @OrderTotal > @CustomerCreditLimit"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

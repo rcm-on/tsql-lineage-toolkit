@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers:column:PostalAddressLine1",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PostalAddressLine1",
+    "table": "purchasing.suppliers",
+    "data_type": "NVARCHAR (60)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 24
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

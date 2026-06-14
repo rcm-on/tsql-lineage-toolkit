@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers:column:ValidFrom",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ValidFrom",
+    "table": "sales.customers",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 30
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

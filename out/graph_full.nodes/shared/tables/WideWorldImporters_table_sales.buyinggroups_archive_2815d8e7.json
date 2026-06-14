@@ -1,0 +1,59 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.buyinggroups_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Sales.BuyingGroups_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.buyinggroups_archive:column:BuyingGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_archive_column_BuyingGroupID_234a6f97.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.buyinggroups_archive:column:BuyingGroupName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_archive_column_BuyingGroupName_82b34c42.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.buyinggroups_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_archive_column_LastEditedBy_a9f6c206.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.buyinggroups_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_archive_column_ValidFrom_3734373e.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sales.buyinggroups_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_archive_column_ValidTo_0a467d43.json",
+      "props": {
+        "ordinal": 5
+      }
+    }
+  ]
+}

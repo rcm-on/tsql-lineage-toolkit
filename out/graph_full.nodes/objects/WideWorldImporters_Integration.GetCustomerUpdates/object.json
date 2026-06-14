@@ -1,0 +1,1665 @@
+﻿{
+  "id": "WideWorldImporters::Integration.GetCustomerUpdates",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Integration.GetCustomerUpdates",
+    "has_transaction": false,
+    "has_error_handling": false,
+    "has_cursor": true,
+    "dynamic_sql_calls": 0,
+    "cyclomatic_complexity": 4,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#param:@LastCutoff",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@LastCutoff",
+          "data_type": "DATETIME2 (7)",
+          "is_output": false
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#param:@NewCutoff",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@NewCutoff",
+          "data_type": "DATETIME2 (7)",
+          "is_output": false
+        }
+      }
+    ],
+    "variables": [
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#var:@EndOfTime",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@EndOfTime",
+          "data_type": "DATETIME2 (7)",
+          "default": "'99991231 23:59:59.9999999'",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#var:@InitialLoadDate",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@InitialLoadDate",
+          "data_type": "DATE",
+          "default": "'20130101'",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#var:@BuyingGroupID",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@BuyingGroupID",
+          "data_type": "INT",
+          "default": "",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#var:@CustomerCategoryID",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@CustomerCategoryID",
+          "data_type": "INT",
+          "default": "",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#var:@CustomerID",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@CustomerID",
+          "data_type": "INT",
+          "default": "",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#var:@ValidFrom",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@ValidFrom",
+          "data_type": "DATETIME2 (7)",
+          "default": "",
+          "construction": []
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 14,
+          "nesting_level": 0,
+          "action": "CREATE_TABLE",
+          "target_name": "#CustomerChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "CREATE_TABLE -> #CustomerChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 34,
+          "nesting_level": 0,
+          "action": "DECLARE_CURSOR",
+          "target_name": "BuyingGroupChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DECLARE_CURSOR -> BuyingGroupChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "line_no": 51,
+          "nesting_level": 0,
+          "action": "OPEN_CURSOR",
+          "target_name": "BuyingGroupChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "OPEN_CURSOR -> BuyingGroupChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "line_no": 52,
+          "nesting_level": 0,
+          "action": "FETCH",
+          "target_name": "BuyingGroupChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "FETCH -> BuyingGroupChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 4,
+          "line_no": 56,
+          "nesting_level": 1,
+          "action": "INSERT",
+          "target_name": "#CustomerChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @@FETCH_STATUS = 0"
+          ],
+          "condition_keys": [
+            "WHILE#54"
+          ],
+          "label": "INSERT -> #CustomerChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step5",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 5,
+          "line_no": 74,
+          "nesting_level": 1,
+          "action": "FETCH",
+          "target_name": "BuyingGroupChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @@FETCH_STATUS = 0"
+          ],
+          "condition_keys": [
+            "WHILE#54"
+          ],
+          "label": "FETCH -> BuyingGroupChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step6",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 6,
+          "line_no": 77,
+          "nesting_level": 0,
+          "action": "CLOSE_CURSOR",
+          "target_name": "BuyingGroupChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "CLOSE_CURSOR -> BuyingGroupChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step7",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 7,
+          "line_no": 78,
+          "nesting_level": 0,
+          "action": "DEALLOCATE",
+          "target_name": "BuyingGroupChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DEALLOCATE -> BuyingGroupChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step8",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 8,
+          "line_no": 82,
+          "nesting_level": 0,
+          "action": "DECLARE_CURSOR",
+          "target_name": "CustomerCategoryChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DECLARE_CURSOR -> CustomerCategoryChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step9",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 9,
+          "line_no": 99,
+          "nesting_level": 0,
+          "action": "OPEN_CURSOR",
+          "target_name": "CustomerCategoryChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "OPEN_CURSOR -> CustomerCategoryChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step10",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 10,
+          "line_no": 100,
+          "nesting_level": 0,
+          "action": "FETCH",
+          "target_name": "CustomerCategoryChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "FETCH -> CustomerCategoryChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 11,
+          "line_no": 104,
+          "nesting_level": 1,
+          "action": "INSERT",
+          "target_name": "#CustomerChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @@FETCH_STATUS = 0"
+          ],
+          "condition_keys": [
+            "WHILE#102"
+          ],
+          "label": "INSERT -> #CustomerChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step12",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 12,
+          "line_no": 122,
+          "nesting_level": 1,
+          "action": "FETCH",
+          "target_name": "CustomerCategoryChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @@FETCH_STATUS = 0"
+          ],
+          "condition_keys": [
+            "WHILE#102"
+          ],
+          "label": "FETCH -> CustomerCategoryChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step13",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 13,
+          "line_no": 125,
+          "nesting_level": 0,
+          "action": "CLOSE_CURSOR",
+          "target_name": "CustomerCategoryChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "CLOSE_CURSOR -> CustomerCategoryChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step14",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 14,
+          "line_no": 126,
+          "nesting_level": 0,
+          "action": "DEALLOCATE",
+          "target_name": "CustomerCategoryChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DEALLOCATE -> CustomerCategoryChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step15",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 15,
+          "line_no": 130,
+          "nesting_level": 0,
+          "action": "DECLARE_CURSOR",
+          "target_name": "CustomerChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DECLARE_CURSOR -> CustomerChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step16",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 16,
+          "line_no": 145,
+          "nesting_level": 0,
+          "action": "OPEN_CURSOR",
+          "target_name": "CustomerChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "OPEN_CURSOR -> CustomerChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step17",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 17,
+          "line_no": 146,
+          "nesting_level": 0,
+          "action": "FETCH",
+          "target_name": "CustomerChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "FETCH -> CustomerChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 18,
+          "line_no": 150,
+          "nesting_level": 1,
+          "action": "INSERT",
+          "target_name": "#CustomerChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @@FETCH_STATUS = 0"
+          ],
+          "condition_keys": [
+            "WHILE#148"
+          ],
+          "label": "INSERT -> #CustomerChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step19",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 19,
+          "line_no": 168,
+          "nesting_level": 1,
+          "action": "FETCH",
+          "target_name": "CustomerChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @@FETCH_STATUS = 0"
+          ],
+          "condition_keys": [
+            "WHILE#148"
+          ],
+          "label": "FETCH -> CustomerChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step20",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 20,
+          "line_no": 171,
+          "nesting_level": 0,
+          "action": "CLOSE_CURSOR",
+          "target_name": "CustomerChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "CLOSE_CURSOR -> CustomerChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step21",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 21,
+          "line_no": 172,
+          "nesting_level": 0,
+          "action": "DEALLOCATE",
+          "target_name": "CustomerChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DEALLOCATE -> CustomerChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step22",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 22,
+          "line_no": 176,
+          "nesting_level": 0,
+          "action": "CREATE_INDEX",
+          "target_name": "#CustomerChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "CREATE_INDEX -> #CustomerChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step23",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 23,
+          "line_no": 181,
+          "nesting_level": 0,
+          "action": "UPDATE",
+          "target_name": "#CustomerChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "UPDATE -> #CustomerChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 24,
+          "line_no": 187,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "target_name": "#CustomerChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> #CustomerChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step25",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 25,
+          "line_no": 193,
+          "nesting_level": 0,
+          "action": "DROP_TABLE",
+          "target_name": "#CustomerChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DROP_TABLE -> #CustomerChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step26",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 26,
+          "line_no": 195,
+          "nesting_level": 0,
+          "action": "RETURN",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "RETURN"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:CREATE_TABLE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_CREATE_TABLE_f06c2897.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:DECLARE_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_DECLARE_CURSOR_e4eee7c4.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#param:@LastCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#param:@NewCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@InitialLoadDate",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:FETCH",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_FETCH_03e55c63.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@CustomerCategoryID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:INSERT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:FullName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_FullName_af371d2e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.buyinggroups:column:BuyingGroupName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_column_BuyingGroupName_621ac2ad.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customercategories:column:CustomerCategoryName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_column_CustomerCategoryName_7af9552f.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customers:column:CustomerName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerName_5ad49cb9.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.buyinggroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customercategories",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customers",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@CustomerCategoryID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Bill To Customer",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Bill_To_Customer_0f86b3b8.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Buying Group",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Buying_Group_2000062e.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Category",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Category_2361fa18.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Customer",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Customer_8e9c2150.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Postal Code",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Postal_Code_40c0929e.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Primary Contact",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Primary_Contact_f129b91f.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Valid From",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Valid_From_8fe26df1.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Valid To",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Valid_To_7a048e06.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:WWI Customer ID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_WWI_Customer_ID_1ee36e02.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_customerchanges_67a9a51e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step12",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:FETCH",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_FETCH_03e55c63.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step12",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@CustomerCategoryID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step12",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step13",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:CLOSE_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_CLOSE_CURSOR_44141708.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step14",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:DEALLOCATE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_DEALLOCATE_967d1beb.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step15",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:DECLARE_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_DECLARE_CURSOR_e4eee7c4.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step15",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#param:@LastCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step15",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#param:@NewCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step16",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:OPEN_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_OPEN_CURSOR_65201b90.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step17",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:FETCH",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_FETCH_03e55c63.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step17",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@CustomerID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step17",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:INSERT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:FullName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_FullName_af371d2e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.buyinggroups:column:BuyingGroupName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_column_BuyingGroupName_621ac2ad.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customercategories:column:CustomerCategoryName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_column_CustomerCategoryName_7af9552f.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customers:column:CustomerName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerName_5ad49cb9.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.buyinggroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customercategories",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customers",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@CustomerID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Bill To Customer",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Bill_To_Customer_0f86b3b8.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Buying Group",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Buying_Group_2000062e.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Category",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Category_2361fa18.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Customer",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Customer_8e9c2150.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Postal Code",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Postal_Code_40c0929e.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Primary Contact",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Primary_Contact_f129b91f.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Valid From",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Valid_From_8fe26df1.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Valid To",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Valid_To_7a048e06.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:WWI Customer ID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_WWI_Customer_ID_1ee36e02.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_customerchanges_67a9a51e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step19",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:FETCH",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_FETCH_03e55c63.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step19",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@CustomerID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step19",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:OPEN_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_OPEN_CURSOR_65201b90.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step20",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:CLOSE_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_CLOSE_CURSOR_44141708.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:DEALLOCATE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_DEALLOCATE_967d1beb.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:CREATE_INDEX",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_CREATE_INDEX_068c9001.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:UPDATE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_UPDATE_605dec54.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@EndOfTime",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Valid To",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Valid_To_7a048e06.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_customerchanges_67a9a51e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Bill To Customer",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Bill_To_Customer_0f86b3b8.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Buying Group",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Buying_Group_2000062e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Category",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Category_2361fa18.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Customer",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Customer_8e9c2150.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Postal Code",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Postal_Code_40c0929e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Primary Contact",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Primary_Contact_f129b91f.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Valid From",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Valid_From_8fe26df1.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Valid To",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Valid_To_7a048e06.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:WWI Customer ID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_WWI_Customer_ID_1ee36e02.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_customerchanges_67a9a51e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:DROP_TABLE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_DROP_TABLE_d4bc7329.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step26",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:RETURN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:FETCH",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_FETCH_03e55c63.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@BuyingGroupID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:INSERT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:FullName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_FullName_af371d2e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.buyinggroups:column:BuyingGroupName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_column_BuyingGroupName_621ac2ad.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customercategories:column:CustomerCategoryName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_column_CustomerCategoryName_7af9552f.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customers:column:CustomerName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerName_5ad49cb9.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.buyinggroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customercategories",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customers",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@BuyingGroupID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Bill To Customer",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Bill_To_Customer_0f86b3b8.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Buying Group",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Buying_Group_2000062e.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Category",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Category_2361fa18.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Customer",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Customer_8e9c2150.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Postal Code",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Postal_Code_40c0929e.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Primary Contact",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Primary_Contact_f129b91f.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Valid From",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Valid_From_8fe26df1.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:Valid To",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_Valid_To_7a048e06.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges:column:WWI Customer ID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_customerchanges_column_WWI_Customer_ID_1ee36e02.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#customerchanges",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_customerchanges_67a9a51e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:FETCH",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_FETCH_03e55c63.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@BuyingGroupID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:CLOSE_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_CLOSE_CURSOR_44141708.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:DEALLOCATE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_DEALLOCATE_967d1beb.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:DECLARE_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_DECLARE_CURSOR_e4eee7c4.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#param:@LastCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#param:@NewCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@InitialLoadDate",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:OPEN_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_OPEN_CURSOR_65201b90.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step12",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step19",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.specialdeals:column:StockItemID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "StockItemID",
+    "table": "sales.specialdeals",
+    "data_type": "INT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_StockItemID_46c2e34c.json",
+      "props": {
+        "constraint": "FK_Sales_SpecialDeals_StockItemID_Warehouse_StockItems"
+      }
+    }
+  ]
+}

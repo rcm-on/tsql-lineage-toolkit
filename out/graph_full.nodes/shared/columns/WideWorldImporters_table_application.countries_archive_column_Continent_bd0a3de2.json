@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.countries_archive:column:Continent",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Continent",
+    "table": "application.countries_archive",
+    "data_type": "NVARCHAR (30)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 8
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

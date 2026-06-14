@@ -1,0 +1,27 @@
+﻿{
+  "id": "TestWorkflowDb:rule:IF_ELSE:a4d064e6",
+  "labels": [
+    "Rule",
+    "IFELSE"
+  ],
+  "properties": {
+    "type": "IF_ELSE",
+    "expression": "NOT (@RiskLevel = 'CRITICAL')"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step29",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "TestWorkflowDb:rule:IF:21fd62af",
+      "to_label": "Rule",
+      "path": "shared/rules/TestWorkflowDb_rule_IF_21fd62af_e16c375e.json"
+    }
+  ]
+}

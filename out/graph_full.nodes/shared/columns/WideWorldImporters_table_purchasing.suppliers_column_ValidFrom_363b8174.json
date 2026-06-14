@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers:column:ValidFrom",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ValidFrom",
+    "table": "purchasing.suppliers",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 28
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

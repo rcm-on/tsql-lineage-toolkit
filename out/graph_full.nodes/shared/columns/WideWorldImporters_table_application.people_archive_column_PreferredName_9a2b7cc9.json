@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.people_archive:column:PreferredName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PreferredName",
+    "table": "application.people_archive",
+    "data_type": "NVARCHAR (50)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 3
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

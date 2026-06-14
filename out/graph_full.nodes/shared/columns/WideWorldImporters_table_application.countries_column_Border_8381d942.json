@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.countries:column:Border",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Border",
+    "table": "application.countries",
+    "data_type": "geography",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 11
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

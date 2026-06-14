@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.paymentmethods:column:PaymentMethodID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PaymentMethodID",
+    "table": "application.paymentmethods",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": true,
+    "ordinal": 1
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

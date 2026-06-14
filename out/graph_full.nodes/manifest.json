@@ -1,0 +1,869 @@
+﻿{
+  "WideWorldImporters::Application.AddRoleMemberIfNonexistent": {
+    "content_hash": "7b7c797b25283f9413dfa813009de24ca8fe2c93",
+    "object_file": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:action:THROW"
+    ]
+  },
+  "WideWorldImporters::Application.Configuration_ApplyAuditing": {
+    "content_hash": "1aa9d154841a12d9a035aaef863b4ab97beb900c",
+    "object_file": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:action:THROW"
+    ]
+  },
+  "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": {
+    "content_hash": "6e2fedb166e9933ce720c13da52ccaa83cd1e7ba",
+    "object_file": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:BEGIN_TRAN",
+      "WideWorldImporters:action:COMMIT_TRAN",
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:action:THROW",
+      "WideWorldImporters:table:sys.indexes",
+      "WideWorldImporters:table:sys.indexes:column:name",
+      "WideWorldImporters:table:sys.indexes:column:schema_id",
+      "WideWorldImporters:table:sys.tables"
+    ]
+  },
+  "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing": {
+    "content_hash": "ea204adfe5f726f246f7617907a8e582e109fd02",
+    "object_file": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC"
+    ]
+  },
+  "WideWorldImporters::Application.Configuration_ApplyPartitioning": {
+    "content_hash": "7a00577064f308e178f3b3b63a80d305ff7cc21d",
+    "object_file": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:BEGIN_TRAN",
+      "WideWorldImporters:action:COMMIT_TRAN",
+      "WideWorldImporters:action:EXEC"
+    ]
+  },
+  "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity": {
+    "content_hash": "4100b596534a952545d5a4b1372edd23d89f99cc",
+    "object_file": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:action:THROW"
+    ]
+  },
+  "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition": {
+    "content_hash": "d3c3e0a6035adec1e73f9878b2c6ffb25ede43ff",
+    "object_file": "objects/WideWorldImporters_Application.Configuration_ConfigureForEnterpriseEdition/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC"
+    ]
+  },
+  "WideWorldImporters::Application.Configuration_EnableInMemory": {
+    "content_hash": "5c99f6e7b355f4853b737a1bae17e03f37529843",
+    "object_file": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:action:THROW"
+    ]
+  },
+  "WideWorldImporters::Application.Configuration_RemoveAuditing": {
+    "content_hash": "6a6470a0fd7323095dd760f027534ea8b3d1bedc",
+    "object_file": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:action:THROW"
+    ]
+  },
+  "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity": {
+    "content_hash": "98f4b5e970d5a758e8d0446949e75d3275f0d05e",
+    "object_file": "objects/WideWorldImporters_Application.Configuration_RemoveRowLevelSecurity/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:action:THROW"
+    ]
+  },
+  "WideWorldImporters::Application.CreateRoleIfNonexistent": {
+    "content_hash": "c6fbedd5eb97e9d570934a2520471f64f5422ad3",
+    "object_file": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:action:THROW"
+    ]
+  },
+  "WideWorldImporters::Application.DetermineCustomerAccess": {
+    "content_hash": "e4c8bcd8693ff0e61997c663d1eed7e179ad9167",
+    "object_file": "objects/WideWorldImporters_Application.DetermineCustomerAccess/object.json",
+    "shared_touched": []
+  },
+  "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures": {
+    "content_hash": "6216a0ec367d8d85b23766d236210e5f9e58cb2b",
+    "object_file": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:table:application.cities",
+      "WideWorldImporters:table:application.countries",
+      "WideWorldImporters:table:application.deliverymethods",
+      "WideWorldImporters:table:application.paymentmethods",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.stateprovinces",
+      "WideWorldImporters:table:application.transactiontypes",
+      "WideWorldImporters:table:purchasing.suppliercategories",
+      "WideWorldImporters:table:purchasing.suppliers",
+      "WideWorldImporters:table:sales.buyinggroups",
+      "WideWorldImporters:table:sales.customercategories",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "WideWorldImporters:table:warehouse.colors",
+      "WideWorldImporters:table:warehouse.packagetypes",
+      "WideWorldImporters:table:warehouse.stockgroups",
+      "WideWorldImporters:table:warehouse.stockitems"
+    ]
+  },
+  "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures": {
+    "content_hash": "c237d48a3524bb3830ccb543939309a81a3feddd",
+    "object_file": "objects/WideWorldImporters_DataLoadSimulation.Configuration_RemoveDataLoadSimulationProc/object.json",
+    "shared_touched": []
+  },
+  "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad": {
+    "content_hash": "65226f241f7dfee8c5e45b2ac85a160e255b2afa",
+    "object_file": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:ALTER",
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:table:application.cities",
+      "WideWorldImporters:table:application.countries",
+      "WideWorldImporters:table:application.deliverymethods",
+      "WideWorldImporters:table:application.paymentmethods",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.stateprovinces",
+      "WideWorldImporters:table:application.transactiontypes",
+      "WideWorldImporters:table:purchasing.suppliercategories",
+      "WideWorldImporters:table:purchasing.suppliers",
+      "WideWorldImporters:table:sales.buyinggroups",
+      "WideWorldImporters:table:sales.customercategories",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "WideWorldImporters:table:warehouse.colors",
+      "WideWorldImporters:table:warehouse.packagetypes",
+      "WideWorldImporters:table:warehouse.stockgroups",
+      "WideWorldImporters:table:warehouse.stockitems"
+    ]
+  },
+  "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": {
+    "content_hash": "39f0f001e8971235e47493aafdef1edf3a1c9ac9",
+    "object_file": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:table:application.cities",
+      "WideWorldImporters:table:application.countries",
+      "WideWorldImporters:table:application.deliverymethods",
+      "WideWorldImporters:table:application.paymentmethods",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.stateprovinces",
+      "WideWorldImporters:table:application.transactiontypes",
+      "WideWorldImporters:table:purchasing.suppliercategories",
+      "WideWorldImporters:table:purchasing.suppliers",
+      "WideWorldImporters:table:sales.buyinggroups",
+      "WideWorldImporters:table:sales.customercategories",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "WideWorldImporters:table:warehouse.colors",
+      "WideWorldImporters:table:warehouse.packagetypes",
+      "WideWorldImporters:table:warehouse.stockgroups",
+      "WideWorldImporters:table:warehouse.stockitems"
+    ]
+  },
+  "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad": {
+    "content_hash": "2abb720850b2609ab591de770e2080370340ab0b",
+    "object_file": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:ALTER",
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:table:application.cities",
+      "WideWorldImporters:table:application.countries",
+      "WideWorldImporters:table:application.deliverymethods",
+      "WideWorldImporters:table:application.paymentmethods",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.stateprovinces",
+      "WideWorldImporters:table:application.transactiontypes",
+      "WideWorldImporters:table:purchasing.suppliercategories",
+      "WideWorldImporters:table:purchasing.suppliers",
+      "WideWorldImporters:table:sales.buyinggroups",
+      "WideWorldImporters:table:sales.customercategories",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "WideWorldImporters:table:warehouse.colors",
+      "WideWorldImporters:table:warehouse.packagetypes",
+      "WideWorldImporters:table:warehouse.stockgroups",
+      "WideWorldImporters:table:warehouse.stockitems"
+    ]
+  },
+  "WideWorldImporters::Integration.GetCityUpdates": {
+    "content_hash": "60304032d020804d6aa17dd00e149adc0b4e925a",
+    "object_file": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:CLOSE_CURSOR",
+      "WideWorldImporters:action:CREATE_INDEX",
+      "WideWorldImporters:action:CREATE_TABLE",
+      "WideWorldImporters:action:DEALLOCATE",
+      "WideWorldImporters:action:DECLARE_CURSOR",
+      "WideWorldImporters:action:DROP_TABLE",
+      "WideWorldImporters:action:FETCH",
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:OPEN_CURSOR",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:#citychanges",
+      "WideWorldImporters:table:#citychanges:column:City",
+      "WideWorldImporters:table:#citychanges:column:Continent",
+      "WideWorldImporters:table:#citychanges:column:Country",
+      "WideWorldImporters:table:#citychanges:column:Latest Recorded Population",
+      "WideWorldImporters:table:#citychanges:column:Location",
+      "WideWorldImporters:table:#citychanges:column:Region",
+      "WideWorldImporters:table:#citychanges:column:Sales Territory",
+      "WideWorldImporters:table:#citychanges:column:State Province",
+      "WideWorldImporters:table:#citychanges:column:Subregion",
+      "WideWorldImporters:table:#citychanges:column:Valid From",
+      "WideWorldImporters:table:#citychanges:column:Valid To",
+      "WideWorldImporters:table:#citychanges:column:WWI City ID",
+      "WideWorldImporters:table:application.cities",
+      "WideWorldImporters:table:application.countries",
+      "WideWorldImporters:table:application.countries:column:Continent",
+      "WideWorldImporters:table:application.countries:column:CountryName",
+      "WideWorldImporters:table:application.countries:column:Region",
+      "WideWorldImporters:table:application.countries:column:Subregion",
+      "WideWorldImporters:table:application.stateprovinces",
+      "WideWorldImporters:table:application.stateprovinces:column:SalesTerritory",
+      "WideWorldImporters:table:application.stateprovinces:column:StateProvinceName"
+    ]
+  },
+  "WideWorldImporters::Integration.GetCustomerUpdates": {
+    "content_hash": "782723711831401f1e101c84bab436a2e70c19bb",
+    "object_file": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:CLOSE_CURSOR",
+      "WideWorldImporters:action:CREATE_INDEX",
+      "WideWorldImporters:action:CREATE_TABLE",
+      "WideWorldImporters:action:DEALLOCATE",
+      "WideWorldImporters:action:DECLARE_CURSOR",
+      "WideWorldImporters:action:DROP_TABLE",
+      "WideWorldImporters:action:FETCH",
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:OPEN_CURSOR",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:#customerchanges",
+      "WideWorldImporters:table:#customerchanges:column:Bill To Customer",
+      "WideWorldImporters:table:#customerchanges:column:Buying Group",
+      "WideWorldImporters:table:#customerchanges:column:Category",
+      "WideWorldImporters:table:#customerchanges:column:Customer",
+      "WideWorldImporters:table:#customerchanges:column:Postal Code",
+      "WideWorldImporters:table:#customerchanges:column:Primary Contact",
+      "WideWorldImporters:table:#customerchanges:column:Valid From",
+      "WideWorldImporters:table:#customerchanges:column:Valid To",
+      "WideWorldImporters:table:#customerchanges:column:WWI Customer ID",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.people:column:FullName",
+      "WideWorldImporters:table:sales.buyinggroups",
+      "WideWorldImporters:table:sales.buyinggroups:column:BuyingGroupName",
+      "WideWorldImporters:table:sales.customercategories",
+      "WideWorldImporters:table:sales.customercategories:column:CustomerCategoryName",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:sales.customers:column:CustomerName"
+    ]
+  },
+  "WideWorldImporters::Integration.GetEmployeeUpdates": {
+    "content_hash": "d2281e2be9bbf54850d001fe15c13a0bfcc3b725",
+    "object_file": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:CLOSE_CURSOR",
+      "WideWorldImporters:action:CREATE_INDEX",
+      "WideWorldImporters:action:CREATE_TABLE",
+      "WideWorldImporters:action:DEALLOCATE",
+      "WideWorldImporters:action:DECLARE_CURSOR",
+      "WideWorldImporters:action:DROP_TABLE",
+      "WideWorldImporters:action:FETCH",
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:OPEN_CURSOR",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:#employeechanges",
+      "WideWorldImporters:table:#employeechanges:column:Employee",
+      "WideWorldImporters:table:#employeechanges:column:Is Salesperson",
+      "WideWorldImporters:table:#employeechanges:column:Photo",
+      "WideWorldImporters:table:#employeechanges:column:Preferred Name",
+      "WideWorldImporters:table:#employeechanges:column:Valid From",
+      "WideWorldImporters:table:#employeechanges:column:Valid To",
+      "WideWorldImporters:table:#employeechanges:column:WWI Employee ID",
+      "WideWorldImporters:table:application.people"
+    ]
+  },
+  "WideWorldImporters::Integration.GetMovementUpdates": {
+    "content_hash": "306865e3201ef4893356f6915f05755d54316c12",
+    "object_file": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:warehouse.stockitemtransactions",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:CustomerID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:InvoiceID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:PurchaseOrderID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:Quantity",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:StockItemID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:StockItemTransactionID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:SupplierID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:TransactionOccurredWhen",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:TransactionTypeID"
+    ]
+  },
+  "WideWorldImporters::Integration.GetOrderUpdates": {
+    "content_hash": "a81f4537f51b51223f49471bc8bfbafb9d42cea4",
+    "object_file": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:sales.customers:column:CustomerID",
+      "WideWorldImporters:table:sales.customers:column:DeliveryCityID",
+      "WideWorldImporters:table:sales.orderlines",
+      "WideWorldImporters:table:sales.orderlines:column:Description",
+      "WideWorldImporters:table:sales.orderlines:column:LastEditedWhen",
+      "WideWorldImporters:table:sales.orderlines:column:PickingCompletedWhen",
+      "WideWorldImporters:table:sales.orderlines:column:Quantity",
+      "WideWorldImporters:table:sales.orderlines:column:StockItemID",
+      "WideWorldImporters:table:sales.orderlines:column:TaxRate",
+      "WideWorldImporters:table:sales.orderlines:column:UnitPrice",
+      "WideWorldImporters:table:sales.orders",
+      "WideWorldImporters:table:sales.orders:column:BackorderOrderID",
+      "WideWorldImporters:table:sales.orders:column:LastEditedWhen",
+      "WideWorldImporters:table:sales.orders:column:OrderDate",
+      "WideWorldImporters:table:sales.orders:column:OrderID",
+      "WideWorldImporters:table:sales.orders:column:PickedByPersonID",
+      "WideWorldImporters:table:sales.orders:column:SalespersonPersonID",
+      "WideWorldImporters:table:warehouse.packagetypes",
+      "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeName"
+    ]
+  },
+  "WideWorldImporters::Integration.GetPaymentMethodUpdates": {
+    "content_hash": "32bfa1c930aa3a790ed58e9add4fcdf63b574d64",
+    "object_file": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:CLOSE_CURSOR",
+      "WideWorldImporters:action:CREATE_INDEX",
+      "WideWorldImporters:action:CREATE_TABLE",
+      "WideWorldImporters:action:DEALLOCATE",
+      "WideWorldImporters:action:DECLARE_CURSOR",
+      "WideWorldImporters:action:DROP_TABLE",
+      "WideWorldImporters:action:FETCH",
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:OPEN_CURSOR",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:#paymentmethodchanges",
+      "WideWorldImporters:table:#paymentmethodchanges:column:Payment Method",
+      "WideWorldImporters:table:#paymentmethodchanges:column:Valid From",
+      "WideWorldImporters:table:#paymentmethodchanges:column:Valid To",
+      "WideWorldImporters:table:#paymentmethodchanges:column:WWI Payment Method ID",
+      "WideWorldImporters:table:application.paymentmethods"
+    ]
+  },
+  "WideWorldImporters::Integration.GetPurchaseUpdates": {
+    "content_hash": "ad5e6f75e80c4e1be574c049d795a798c4726f40",
+    "object_file": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:purchasing.purchaseorderlines",
+      "WideWorldImporters:table:purchasing.purchaseorderlines:column:IsOrderLineFinalized",
+      "WideWorldImporters:table:purchasing.purchaseorderlines:column:LastEditedWhen",
+      "WideWorldImporters:table:purchasing.purchaseorderlines:column:OrderedOuters",
+      "WideWorldImporters:table:purchasing.purchaseorderlines:column:ReceivedOuters",
+      "WideWorldImporters:table:purchasing.purchaseorderlines:column:StockItemID",
+      "WideWorldImporters:table:purchasing.purchaseorders",
+      "WideWorldImporters:table:purchasing.purchaseorders:column:LastEditedWhen",
+      "WideWorldImporters:table:purchasing.purchaseorders:column:OrderDate",
+      "WideWorldImporters:table:purchasing.purchaseorders:column:PurchaseOrderID",
+      "WideWorldImporters:table:purchasing.purchaseorders:column:SupplierID",
+      "WideWorldImporters:table:warehouse.packagetypes",
+      "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeName",
+      "WideWorldImporters:table:warehouse.stockitems",
+      "WideWorldImporters:table:warehouse.stockitems:column:QuantityPerOuter"
+    ]
+  },
+  "WideWorldImporters::Integration.GetSaleUpdates": {
+    "content_hash": "4732ee4aea6acc077d9505bf9f2d1df449f2888f",
+    "object_file": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:sales.customers:column:DeliveryCityID",
+      "WideWorldImporters:table:sales.invoicelines",
+      "WideWorldImporters:table:sales.invoicelines:column:Description",
+      "WideWorldImporters:table:sales.invoicelines:column:ExtendedPrice",
+      "WideWorldImporters:table:sales.invoicelines:column:LastEditedWhen",
+      "WideWorldImporters:table:sales.invoicelines:column:LineProfit",
+      "WideWorldImporters:table:sales.invoicelines:column:Quantity",
+      "WideWorldImporters:table:sales.invoicelines:column:StockItemID",
+      "WideWorldImporters:table:sales.invoicelines:column:TaxAmount",
+      "WideWorldImporters:table:sales.invoicelines:column:TaxRate",
+      "WideWorldImporters:table:sales.invoicelines:column:UnitPrice",
+      "WideWorldImporters:table:sales.invoices",
+      "WideWorldImporters:table:sales.invoices:column:BillToCustomerID",
+      "WideWorldImporters:table:sales.invoices:column:ConfirmedDeliveryTime",
+      "WideWorldImporters:table:sales.invoices:column:CustomerID",
+      "WideWorldImporters:table:sales.invoices:column:InvoiceDate",
+      "WideWorldImporters:table:sales.invoices:column:InvoiceID",
+      "WideWorldImporters:table:sales.invoices:column:LastEditedWhen",
+      "WideWorldImporters:table:sales.invoices:column:SalespersonPersonID",
+      "WideWorldImporters:table:warehouse.packagetypes",
+      "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeName",
+      "WideWorldImporters:table:warehouse.stockitems",
+      "WideWorldImporters:table:warehouse.stockitems:column:IsChillerStock"
+    ]
+  },
+  "WideWorldImporters::Integration.GetStockHoldingUpdates": {
+    "content_hash": "5a83df6a53f2f24b66dc52947856a23d92c9212d",
+    "object_file": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:warehouse.stockitemholdings",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:BinLocation",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:LastCostPrice",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:LastStocktakeQuantity",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:QuantityOnHand",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:ReorderLevel",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:StockItemID",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:TargetStockLevel"
+    ]
+  },
+  "WideWorldImporters::Integration.GetStockItemUpdates": {
+    "content_hash": "cb65cdaf0966c5eac7596e5231fa162005522077",
+    "object_file": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:CLOSE_CURSOR",
+      "WideWorldImporters:action:CREATE_INDEX",
+      "WideWorldImporters:action:CREATE_TABLE",
+      "WideWorldImporters:action:DEALLOCATE",
+      "WideWorldImporters:action:DECLARE_CURSOR",
+      "WideWorldImporters:action:DROP_TABLE",
+      "WideWorldImporters:action:FETCH",
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:OPEN_CURSOR",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:#stockitemchanges",
+      "WideWorldImporters:table:#stockitemchanges:column:Barcode",
+      "WideWorldImporters:table:#stockitemchanges:column:Brand",
+      "WideWorldImporters:table:#stockitemchanges:column:Buying Package",
+      "WideWorldImporters:table:#stockitemchanges:column:Color",
+      "WideWorldImporters:table:#stockitemchanges:column:Is Chiller Stock",
+      "WideWorldImporters:table:#stockitemchanges:column:Lead Time Days",
+      "WideWorldImporters:table:#stockitemchanges:column:Photo",
+      "WideWorldImporters:table:#stockitemchanges:column:Quantity Per Outer",
+      "WideWorldImporters:table:#stockitemchanges:column:Recommended Retail Price",
+      "WideWorldImporters:table:#stockitemchanges:column:Selling Package",
+      "WideWorldImporters:table:#stockitemchanges:column:Size",
+      "WideWorldImporters:table:#stockitemchanges:column:Stock Item",
+      "WideWorldImporters:table:#stockitemchanges:column:Tax Rate",
+      "WideWorldImporters:table:#stockitemchanges:column:Typical Weight Per Unit",
+      "WideWorldImporters:table:#stockitemchanges:column:Unit Price",
+      "WideWorldImporters:table:#stockitemchanges:column:Valid From",
+      "WideWorldImporters:table:#stockitemchanges:column:Valid To",
+      "WideWorldImporters:table:#stockitemchanges:column:WWI Stock Item ID",
+      "WideWorldImporters:table:warehouse.colors",
+      "WideWorldImporters:table:warehouse.colors:column:ColorName",
+      "WideWorldImporters:table:warehouse.packagetypes",
+      "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeName",
+      "WideWorldImporters:table:warehouse.stockitems"
+    ]
+  },
+  "WideWorldImporters::Integration.GetSupplierUpdates": {
+    "content_hash": "fc1b01e321b32d08a5dc2ee2e6d3f86ef9ca692b",
+    "object_file": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:CLOSE_CURSOR",
+      "WideWorldImporters:action:CREATE_INDEX",
+      "WideWorldImporters:action:CREATE_TABLE",
+      "WideWorldImporters:action:DEALLOCATE",
+      "WideWorldImporters:action:DECLARE_CURSOR",
+      "WideWorldImporters:action:DROP_TABLE",
+      "WideWorldImporters:action:FETCH",
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:OPEN_CURSOR",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:#supplierchanges",
+      "WideWorldImporters:table:#supplierchanges:column:Category",
+      "WideWorldImporters:table:#supplierchanges:column:Payment Days",
+      "WideWorldImporters:table:#supplierchanges:column:Postal Code",
+      "WideWorldImporters:table:#supplierchanges:column:Primary Contact",
+      "WideWorldImporters:table:#supplierchanges:column:Supplier",
+      "WideWorldImporters:table:#supplierchanges:column:Supplier Reference",
+      "WideWorldImporters:table:#supplierchanges:column:Valid From",
+      "WideWorldImporters:table:#supplierchanges:column:Valid To",
+      "WideWorldImporters:table:#supplierchanges:column:WWI Supplier ID",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.people:column:FullName",
+      "WideWorldImporters:table:purchasing.suppliercategories",
+      "WideWorldImporters:table:purchasing.suppliercategories:column:SupplierCategoryName",
+      "WideWorldImporters:table:purchasing.suppliers"
+    ]
+  },
+  "WideWorldImporters::Integration.GetTransactionTypeUpdates": {
+    "content_hash": "d5450e31441b56d8137b8717a31111ce46b9778d",
+    "object_file": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:CLOSE_CURSOR",
+      "WideWorldImporters:action:CREATE_INDEX",
+      "WideWorldImporters:action:CREATE_TABLE",
+      "WideWorldImporters:action:DEALLOCATE",
+      "WideWorldImporters:action:DECLARE_CURSOR",
+      "WideWorldImporters:action:DROP_TABLE",
+      "WideWorldImporters:action:FETCH",
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:OPEN_CURSOR",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:#transactiontypechanges",
+      "WideWorldImporters:table:#transactiontypechanges:column:Transaction Type",
+      "WideWorldImporters:table:#transactiontypechanges:column:Valid From",
+      "WideWorldImporters:table:#transactiontypechanges:column:Valid To",
+      "WideWorldImporters:table:#transactiontypechanges:column:WWI Transaction Type ID",
+      "WideWorldImporters:table:application.transactiontypes"
+    ]
+  },
+  "WideWorldImporters::Integration.GetTransactionUpdates": {
+    "content_hash": "7414369b5657dbbe2e894188fe942ceb5fa87bc8",
+    "object_file": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:RETURN"
+    ]
+  },
+  "WideWorldImporters::Sequences.ReseedAllSequences": {
+    "content_hash": "71b22668fb8cff1246b7a5286a49b023ef1e2414",
+    "object_file": "objects/WideWorldImporters_Sequences.ReseedAllSequences/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:EXEC"
+    ]
+  },
+  "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues": {
+    "content_hash": "a98885c3a3c2fcae17ae63a11dd6e676babb89b5",
+    "object_file": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:CREATE_TABLE",
+      "WideWorldImporters:action:DROP_TABLE",
+      "WideWorldImporters:action:EXEC",
+      "WideWorldImporters:table:#currentvalue:column:CurrentValue"
+    ]
+  },
+  "WideWorldImporters::Website.ActivateWebsiteLogon": {
+    "content_hash": "6ac80102b5b5a4d0ce1143bba9b2281ab17438ac",
+    "object_file": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:THROW",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.people:column:HashedPassword",
+      "WideWorldImporters:table:application.people:column:IsPermittedToLogon",
+      "WideWorldImporters:table:application.people:column:LogonName",
+      "WideWorldImporters:table:application.people:column:UserPreferences"
+    ]
+  },
+  "WideWorldImporters::Website.CalculateCustomerPrice": {
+    "content_hash": "21c85a8ab240f3d75b35b1dec39b7860be2dafa3",
+    "object_file": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:sales.customers:column:BuyingGroupID",
+      "WideWorldImporters:table:sales.customers:column:CustomerCategoryID",
+      "WideWorldImporters:table:sales.specialdeals:column:DiscountAmount",
+      "WideWorldImporters:table:sales.specialdeals:column:DiscountPercentage",
+      "WideWorldImporters:table:sales.specialdeals:column:UnitPrice",
+      "WideWorldImporters:table:warehouse.stockitems",
+      "WideWorldImporters:table:warehouse.stockitems:column:UnitPrice"
+    ]
+  },
+  "WideWorldImporters::Website.ChangePassword": {
+    "content_hash": "0ddfdb0875ccb5508e17fd956122f57c9e381085",
+    "object_file": "objects/WideWorldImporters_Website.ChangePassword/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:THROW",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.people:column:HashedPassword",
+      "WideWorldImporters:table:application.people:column:IsPermittedToLogon"
+    ]
+  },
+  "WideWorldImporters::Website.Customers": {
+    "content_hash": "e932a11b7bbe07fd87d9fba52714dfd1e083d15f",
+    "object_file": "objects/WideWorldImporters_Website.Customers/object.json",
+    "shared_touched": []
+  },
+  "WideWorldImporters::Website.InsertCustomerOrders": {
+    "content_hash": "a9675625a7bc24f8ae84ffbc6e8892a725566933",
+    "object_file": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:BEGIN_TRAN",
+      "WideWorldImporters:action:COMMIT_TRAN",
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:ROLLBACK",
+      "WideWorldImporters:action:THROW",
+      "WideWorldImporters:table:sales.orderlines",
+      "WideWorldImporters:table:sales.orderlines:column:Description",
+      "WideWorldImporters:table:sales.orderlines:column:LastEditedBy",
+      "WideWorldImporters:table:sales.orderlines:column:LastEditedWhen",
+      "WideWorldImporters:table:sales.orderlines:column:OrderID",
+      "WideWorldImporters:table:sales.orderlines:column:PackageTypeID",
+      "WideWorldImporters:table:sales.orderlines:column:PickedQuantity",
+      "WideWorldImporters:table:sales.orderlines:column:PickingCompletedWhen",
+      "WideWorldImporters:table:sales.orderlines:column:Quantity",
+      "WideWorldImporters:table:sales.orderlines:column:StockItemID",
+      "WideWorldImporters:table:sales.orderlines:column:TaxRate",
+      "WideWorldImporters:table:sales.orderlines:column:UnitPrice",
+      "WideWorldImporters:table:sales.orders",
+      "WideWorldImporters:table:sales.orders:column:BackorderOrderID",
+      "WideWorldImporters:table:sales.orders:column:Comments",
+      "WideWorldImporters:table:sales.orders:column:ContactPersonID",
+      "WideWorldImporters:table:sales.orders:column:CustomerID",
+      "WideWorldImporters:table:sales.orders:column:CustomerPurchaseOrderNumber",
+      "WideWorldImporters:table:sales.orders:column:DeliveryInstructions",
+      "WideWorldImporters:table:sales.orders:column:ExpectedDeliveryDate",
+      "WideWorldImporters:table:sales.orders:column:InternalComments",
+      "WideWorldImporters:table:sales.orders:column:IsUndersupplyBackordered",
+      "WideWorldImporters:table:sales.orders:column:LastEditedBy",
+      "WideWorldImporters:table:sales.orders:column:LastEditedWhen",
+      "WideWorldImporters:table:sales.orders:column:OrderDate",
+      "WideWorldImporters:table:sales.orders:column:OrderID",
+      "WideWorldImporters:table:sales.orders:column:PickedByPersonID",
+      "WideWorldImporters:table:sales.orders:column:PickingCompletedWhen",
+      "WideWorldImporters:table:sales.orders:column:SalespersonPersonID",
+      "WideWorldImporters:table:warehouse.stockitems"
+    ]
+  },
+  "WideWorldImporters::Website.InvoiceCustomerOrders": {
+    "content_hash": "f4f2c303cb766ed4053ed7993a8cba1975f0e6bc",
+    "object_file": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:BEGIN_TRAN",
+      "WideWorldImporters:action:COMMIT_TRAN",
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:ROLLBACK",
+      "WideWorldImporters:action:THROW",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:sales.customers:column:BillToCustomerID",
+      "WideWorldImporters:table:sales.customers:column:CustomerID",
+      "WideWorldImporters:table:sales.customers:column:DeliveryAddressLine1",
+      "WideWorldImporters:table:sales.customers:column:DeliveryAddressLine2",
+      "WideWorldImporters:table:sales.customers:column:DeliveryMethodID",
+      "WideWorldImporters:table:sales.customers:column:DeliveryRun",
+      "WideWorldImporters:table:sales.customers:column:PrimaryContactPersonID",
+      "WideWorldImporters:table:sales.customers:column:RunPosition",
+      "WideWorldImporters:table:sales.customertransactions",
+      "WideWorldImporters:table:sales.customertransactions:column:AmountExcludingTax",
+      "WideWorldImporters:table:sales.customertransactions:column:CustomerID",
+      "WideWorldImporters:table:sales.customertransactions:column:FinalizationDate",
+      "WideWorldImporters:table:sales.customertransactions:column:InvoiceID",
+      "WideWorldImporters:table:sales.customertransactions:column:LastEditedBy",
+      "WideWorldImporters:table:sales.customertransactions:column:LastEditedWhen",
+      "WideWorldImporters:table:sales.customertransactions:column:OutstandingBalance",
+      "WideWorldImporters:table:sales.customertransactions:column:PaymentMethodID",
+      "WideWorldImporters:table:sales.customertransactions:column:TaxAmount",
+      "WideWorldImporters:table:sales.customertransactions:column:TransactionAmount",
+      "WideWorldImporters:table:sales.customertransactions:column:TransactionDate",
+      "WideWorldImporters:table:sales.customertransactions:column:TransactionTypeID",
+      "WideWorldImporters:table:sales.invoicelines",
+      "WideWorldImporters:table:sales.invoicelines:column:Description",
+      "WideWorldImporters:table:sales.invoicelines:column:ExtendedPrice",
+      "WideWorldImporters:table:sales.invoicelines:column:InvoiceID",
+      "WideWorldImporters:table:sales.invoicelines:column:LastEditedBy",
+      "WideWorldImporters:table:sales.invoicelines:column:LastEditedWhen",
+      "WideWorldImporters:table:sales.invoicelines:column:LineProfit",
+      "WideWorldImporters:table:sales.invoicelines:column:PackageTypeID",
+      "WideWorldImporters:table:sales.invoicelines:column:Quantity",
+      "WideWorldImporters:table:sales.invoicelines:column:StockItemID",
+      "WideWorldImporters:table:sales.invoicelines:column:TaxAmount",
+      "WideWorldImporters:table:sales.invoicelines:column:TaxRate",
+      "WideWorldImporters:table:sales.invoicelines:column:UnitPrice",
+      "WideWorldImporters:table:sales.invoices",
+      "WideWorldImporters:table:sales.invoices:column:AccountsPersonID",
+      "WideWorldImporters:table:sales.invoices:column:BillToCustomerID",
+      "WideWorldImporters:table:sales.invoices:column:Comments",
+      "WideWorldImporters:table:sales.invoices:column:ContactPersonID",
+      "WideWorldImporters:table:sales.invoices:column:CreditNoteReason",
+      "WideWorldImporters:table:sales.invoices:column:CustomerID",
+      "WideWorldImporters:table:sales.invoices:column:CustomerPurchaseOrderNumber",
+      "WideWorldImporters:table:sales.invoices:column:DeliveryInstructions",
+      "WideWorldImporters:table:sales.invoices:column:DeliveryMethodID",
+      "WideWorldImporters:table:sales.invoices:column:DeliveryRun",
+      "WideWorldImporters:table:sales.invoices:column:InternalComments",
+      "WideWorldImporters:table:sales.invoices:column:InvoiceDate",
+      "WideWorldImporters:table:sales.invoices:column:InvoiceID",
+      "WideWorldImporters:table:sales.invoices:column:IsCreditNote",
+      "WideWorldImporters:table:sales.invoices:column:LastEditedBy",
+      "WideWorldImporters:table:sales.invoices:column:LastEditedWhen",
+      "WideWorldImporters:table:sales.invoices:column:OrderID",
+      "WideWorldImporters:table:sales.invoices:column:PackedByPersonID",
+      "WideWorldImporters:table:sales.invoices:column:ReturnedDeliveryData",
+      "WideWorldImporters:table:sales.invoices:column:RunPosition",
+      "WideWorldImporters:table:sales.invoices:column:SalespersonPersonID",
+      "WideWorldImporters:table:sales.invoices:column:TotalChillerItems",
+      "WideWorldImporters:table:sales.invoices:column:TotalDryItems",
+      "WideWorldImporters:table:sales.orderlines",
+      "WideWorldImporters:table:sales.orders",
+      "WideWorldImporters:table:warehouse.stockitemholdings",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:LastCostPrice",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:LastEditedBy",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:LastEditedWhen",
+      "WideWorldImporters:table:warehouse.stockitemholdings:column:QuantityOnHand",
+      "WideWorldImporters:table:warehouse.stockitems",
+      "WideWorldImporters:table:warehouse.stockitemtransactions",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:CustomerID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:InvoiceID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:LastEditedBy",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:LastEditedWhen",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:PurchaseOrderID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:Quantity",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:StockItemID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:SupplierID",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:TransactionOccurredWhen",
+      "WideWorldImporters:table:warehouse.stockitemtransactions:column:TransactionTypeID"
+    ]
+  },
+  "WideWorldImporters::Website.RecordColdRoomTemperatures": {
+    "content_hash": "73df4fe37c0549fa9e44820bc6e36ce773ad5ce7",
+    "object_file": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:action:THROW",
+      "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ColdRoomSensorNumber",
+      "WideWorldImporters:table:warehouse.coldroomtemperatures:column:RecordedWhen",
+      "WideWorldImporters:table:warehouse.coldroomtemperatures:column:Temperature"
+    ]
+  },
+  "WideWorldImporters::Website.RecordVehicleTemperature": {
+    "content_hash": "b7b7c5066ec5eb3c8ae8ceec269d606a1e91f589",
+    "object_file": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:BEGIN_TRAN",
+      "WideWorldImporters:action:COMMIT_TRAN",
+      "WideWorldImporters:action:INSERT",
+      "WideWorldImporters:action:RETURN",
+      "WideWorldImporters:action:ROLLBACK",
+      "WideWorldImporters:action:THROW",
+      "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "WideWorldImporters:table:warehouse.vehicletemperatures:column:ChillerSensorNumber",
+      "WideWorldImporters:table:warehouse.vehicletemperatures:column:CompressedSensorData",
+      "WideWorldImporters:table:warehouse.vehicletemperatures:column:FullSensorData",
+      "WideWorldImporters:table:warehouse.vehicletemperatures:column:IsCompressed",
+      "WideWorldImporters:table:warehouse.vehicletemperatures:column:RecordedWhen",
+      "WideWorldImporters:table:warehouse.vehicletemperatures:column:Temperature",
+      "WideWorldImporters:table:warehouse.vehicletemperatures:column:VehicleRegistration"
+    ]
+  },
+  "WideWorldImporters::Website.SearchForCustomers": {
+    "content_hash": "0f243f893f93dda50af0bd21a8a92e57dbe7c80a",
+    "object_file": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:application.cities",
+      "WideWorldImporters:table:application.cities:column:CityName",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.people:column:FullName",
+      "WideWorldImporters:table:application.people:column:PreferredName",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:sales.customers:column:CustomerID",
+      "WideWorldImporters:table:sales.customers:column:CustomerName",
+      "WideWorldImporters:table:sales.customers:column:FaxNumber",
+      "WideWorldImporters:table:sales.customers:column:PhoneNumber"
+    ]
+  },
+  "WideWorldImporters::Website.SearchForPeople": {
+    "content_hash": "17c07212d712f8ee15f1ab50e5e97cc154cb8234",
+    "object_file": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.people:column:FullName",
+      "WideWorldImporters:table:application.people:column:IsEmployee",
+      "WideWorldImporters:table:application.people:column:IsSalesperson",
+      "WideWorldImporters:table:application.people:column:PersonID",
+      "WideWorldImporters:table:application.people:column:PreferredName",
+      "WideWorldImporters:table:purchasing.suppliers",
+      "WideWorldImporters:table:purchasing.suppliers:column:SupplierID",
+      "WideWorldImporters:table:purchasing.suppliers:column:SupplierName",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:sales.customers:column:CustomerID",
+      "WideWorldImporters:table:sales.customers:column:CustomerName"
+    ]
+  },
+  "WideWorldImporters::Website.SearchForStockItems": {
+    "content_hash": "6c00951d46263b7f42428d632de82bcf531f0a1d",
+    "object_file": "objects/WideWorldImporters_Website.SearchForStockItems/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:warehouse.stockitems",
+      "WideWorldImporters:table:warehouse.stockitems:column:StockItemID",
+      "WideWorldImporters:table:warehouse.stockitems:column:StockItemName"
+    ]
+  },
+  "WideWorldImporters::Website.SearchForStockItemsByTags": {
+    "content_hash": "b44119a6a690da3f17184ab3eabdc44761aba5ff",
+    "object_file": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:warehouse.stockitems",
+      "WideWorldImporters:table:warehouse.stockitems:column:StockItemID",
+      "WideWorldImporters:table:warehouse.stockitems:column:StockItemName"
+    ]
+  },
+  "WideWorldImporters::Website.SearchForSuppliers": {
+    "content_hash": "5c4dc7d4bcf7c13114d4b640fff179d0b32c849c",
+    "object_file": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+    "shared_touched": [
+      "WideWorldImporters:action:SELECT",
+      "WideWorldImporters:table:application.cities",
+      "WideWorldImporters:table:application.cities:column:CityName",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.people:column:FullName",
+      "WideWorldImporters:table:application.people:column:PreferredName",
+      "WideWorldImporters:table:purchasing.suppliers",
+      "WideWorldImporters:table:purchasing.suppliers:column:FaxNumber",
+      "WideWorldImporters:table:purchasing.suppliers:column:PhoneNumber",
+      "WideWorldImporters:table:purchasing.suppliers:column:SupplierID",
+      "WideWorldImporters:table:purchasing.suppliers:column:SupplierName"
+    ]
+  },
+  "WideWorldImporters::Website.Suppliers": {
+    "content_hash": "8fe9082bfa08d6afef33213bc0979c18bdef5f03",
+    "object_file": "objects/WideWorldImporters_Website.Suppliers/object.json",
+    "shared_touched": []
+  },
+  "WideWorldImporters::Website.VehicleTemperatures": {
+    "content_hash": "fcd2617dccb27b86690430f19eb16efdfd1534d9",
+    "object_file": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json",
+    "shared_touched": []
+  }
+}

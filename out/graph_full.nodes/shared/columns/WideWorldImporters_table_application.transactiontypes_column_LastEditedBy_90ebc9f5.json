@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:application.transactiontypes:column:LastEditedBy",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LastEditedBy",
+    "table": "application.transactiontypes",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 3
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:application.people:column:PersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
+      "props": {
+        "constraint": "FK_Application_TransactionTypes_Application_People"
+      }
+    }
+  ]
+}

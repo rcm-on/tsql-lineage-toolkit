@@ -1,0 +1,34 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliers:column:FaxNumber",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "FaxNumber",
+    "table": "purchasing.suppliers",
+    "data_type": "NVARCHAR (20)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 18
+  },
+  "refs": {
+    "WideWorldImporters::Website.SearchForSuppliers": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+    }
+  ],
+  "edges_out": []
+}

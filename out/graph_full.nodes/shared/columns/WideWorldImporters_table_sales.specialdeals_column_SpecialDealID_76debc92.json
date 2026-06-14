@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.specialdeals:column:SpecialDealID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "SpecialDealID",
+    "table": "sales.specialdeals",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": true,
+    "ordinal": 1
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.people:column:OtherLanguages",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "OtherLanguages",
+    "table": "application.people",
+    "data_type": "NVARCHAR (MAX)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 18
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

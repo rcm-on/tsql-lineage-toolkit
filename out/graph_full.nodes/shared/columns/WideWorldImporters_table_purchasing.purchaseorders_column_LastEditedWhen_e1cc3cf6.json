@@ -1,0 +1,34 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.purchaseorders:column:LastEditedWhen",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LastEditedWhen",
+    "table": "purchasing.purchaseorders",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 12
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetPurchaseUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+    }
+  ],
+  "edges_out": []
+}

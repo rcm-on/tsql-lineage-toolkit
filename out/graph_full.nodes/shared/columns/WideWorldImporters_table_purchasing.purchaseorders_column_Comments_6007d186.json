@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.purchaseorders:column:Comments",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Comments",
+    "table": "purchasing.purchaseorders",
+    "data_type": "NVARCHAR (MAX)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 9
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

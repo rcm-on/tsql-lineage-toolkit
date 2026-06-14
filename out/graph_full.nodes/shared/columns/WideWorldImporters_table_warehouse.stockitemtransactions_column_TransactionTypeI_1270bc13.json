@@ -1,0 +1,58 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitemtransactions:column:TransactionTypeID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "TransactionTypeID",
+    "table": "warehouse.stockitemtransactions",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 3
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetMovementUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetMovementUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetMovementUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:application.transactiontypes:column:TransactionTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.transactiontypes_column_TransactionTypeID_3c716b41.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_TransactionTypeID_Application_TransactionTypes"
+      }
+    }
+  ]
+}

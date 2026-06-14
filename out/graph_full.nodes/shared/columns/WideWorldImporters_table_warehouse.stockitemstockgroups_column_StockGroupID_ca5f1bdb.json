@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockGroupID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "StockGroupID",
+    "table": "warehouse.stockitemstockgroups",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 3
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:warehouse.stockgroups:column:StockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockgroups_column_StockGroupID_e26a84c1.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemStockGroups_StockGroupID_Warehouse_StockGroups"
+      }
+    }
+  ]
+}

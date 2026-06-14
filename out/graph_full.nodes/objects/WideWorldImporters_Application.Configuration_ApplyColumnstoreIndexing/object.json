@@ -1,0 +1,641 @@
+﻿{
+  "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Application.Configuration_ApplyColumnstoreIndexing",
+    "has_transaction": true,
+    "has_error_handling": true,
+    "has_cursor": false,
+    "dynamic_sql_calls": 7,
+    "cyclomatic_complexity": 6,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [],
+    "variables": [
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@SQL",
+          "data_type": "NVARCHAR (MAX)",
+          "default": "N''",
+          "construction": [
+            "N''",
+            "N' ALTER INDEX [' + i.name + N'] ON [' + schema_name(o.schema_id) + N'].[' + o.name + N'] REBUILD PARTITION = ALL WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, DATA_COMPRESSION = PAGE);  '",
+            "N' CREATE NONCLUSTERED COLUMNSTORE INDEX NCCX_Sales_OrderLines ON Sales.OrderLines (     OrderID,     StockItemID, \t[Description],     Quantity,     UnitPrice,     PickedQuantity )'",
+            "N';'",
+            "N' CREATE NONCLUSTERED COLUMNSTORE INDEX NCCX_Sales_InvoiceLines ON Sales.InvoiceLines (     InvoiceID,     StockItemID,     Quantity,     UnitPrice,     LineProfit,     LastEditedWhen )'",
+            "N';'",
+            "N' ALTER TABLE Warehouse.StockItemTransactions DROP CONSTRAINT PK_Warehouse_StockItemTransactions;'",
+            "N' ALTER TABLE Warehouse.StockItemTransactions ADD CONSTRAINT PK_Warehouse_StockItemTransactions PRIMARY KEY NONCLUSTERED (StockItemTransactionID);'",
+            "N' CREATE CLUSTERED COLUMNSTORE INDEX CCX_Warehouse_StockItemTransactions ON Warehouse.StockItemTransactions;'",
+            "N' ALTER INDEX CCX_Warehouse_StockItemTransactions ON Warehouse.StockItemTransactions REORGANIZE WITH (COMPRESS_ALL_ROW_GROUPS = ON);'"
+          ]
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 17,
+          "nesting_level": 1,
+          "action": "BEGIN_TRAN",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#9"
+          ],
+          "label": "BEGIN_TRAN"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 21,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "target_name": "sys.indexes",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#9"
+          ],
+          "label": "SELECT -> sys.indexes"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "line_no": 25,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#9"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "line_no": 41,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": ";",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'NCCX_Sales_OrderLines')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#9",
+            "IF#27"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step4",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 4,
+          "line_no": 58,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": ";",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'NCCX_Sales_InvoiceLines')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#9",
+            "IF#44"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 5,
+          "line_no": 66,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "ALTER TABLE Warehouse.StockItemTransactions DROP CONSTRAINT PK_Warehouse_StockItemTransactions;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CCX_Warehouse_StockItemTransactions')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#9",
+            "IF#61"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step6",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 6,
+          "line_no": 71,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "ALTER TABLE Warehouse.StockItemTransactions ADD CONSTRAINT PK_Warehouse_StockItemTransactions PRIMARY KEY NONCLUSTERED (StockItemTransactionID);",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CCX_Warehouse_StockItemTransactions')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#9",
+            "IF#61"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 7,
+          "line_no": 76,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE CLUSTERED COLUMNSTORE INDEX CCX_Warehouse_StockItemTransactions ON Warehouse.StockItemTransactions;",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CCX_Warehouse_StockItemTransactions')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#9",
+            "IF#61"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step8",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 8,
+          "line_no": 82,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "ALTER INDEX CCX_Warehouse_StockItemTransactions ON Warehouse.StockItemTransactions REORGANIZE WITH (COMPRESS_ALL_ROW_GROUPS = ON);",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CCX_Warehouse_StockItemTransactions')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#9",
+            "IF#61"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step9",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 9,
+          "line_no": 87,
+          "nesting_level": 1,
+          "action": "COMMIT_TRAN",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#9"
+          ],
+          "label": "COMMIT_TRAN"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step10",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 10,
+          "line_no": 91,
+          "nesting_level": 1,
+          "action": "THROW",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#15"
+          ],
+          "label": "THROW"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:BEGIN_TRAN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_BEGIN_TRAN_53e5058e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:THROW",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:COMMIT_TRAN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_COMMIT_TRAN_e48041a5.json"
+    },
+    {
+      "type": "ASSIGNED_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "from_label": "Variable",
+      "to": "WideWorldImporters:table:sys.indexes:column:name",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sys.indexes_column_name_9771ffde.json"
+    },
+    {
+      "type": "ASSIGNED_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
+      "from_label": "Variable",
+      "to": "WideWorldImporters:table:sys.indexes:column:schema_id",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sys.indexes_column_schema_id_fc9480a5.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step10",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:8d47830b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b5ad4c6",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b5ad4c6",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step6",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b5ad4c6",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b5ad4c6",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step8",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:ec00ad61",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step3",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step9",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    }
+  ]
+}

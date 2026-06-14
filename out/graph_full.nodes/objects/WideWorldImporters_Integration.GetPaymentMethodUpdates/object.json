@@ -1,0 +1,635 @@
+﻿{
+  "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Integration.GetPaymentMethodUpdates",
+    "has_transaction": false,
+    "has_error_handling": false,
+    "has_cursor": true,
+    "dynamic_sql_calls": 0,
+    "cyclomatic_complexity": 2,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#param:@LastCutoff",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@LastCutoff",
+          "data_type": "DATETIME2 (7)",
+          "is_output": false
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#param:@NewCutoff",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@NewCutoff",
+          "data_type": "DATETIME2 (7)",
+          "is_output": false
+        }
+      }
+    ],
+    "variables": [
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#var:@EndOfTime",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@EndOfTime",
+          "data_type": "DATETIME2 (7)",
+          "default": "'99991231 23:59:59.9999999'",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#var:@PaymentMethodID",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@PaymentMethodID",
+          "data_type": "INT",
+          "default": "",
+          "construction": []
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#var:@ValidFrom",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@ValidFrom",
+          "data_type": "DATETIME2 (7)",
+          "default": "",
+          "construction": []
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 13,
+          "nesting_level": 0,
+          "action": "CREATE_TABLE",
+          "target_name": "#PaymentMethodChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "CREATE_TABLE -> #PaymentMethodChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 26,
+          "nesting_level": 0,
+          "action": "DECLARE_CURSOR",
+          "target_name": "ChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DECLARE_CURSOR -> ChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "line_no": 41,
+          "nesting_level": 0,
+          "action": "OPEN_CURSOR",
+          "target_name": "ChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "OPEN_CURSOR -> ChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "line_no": 42,
+          "nesting_level": 0,
+          "action": "FETCH",
+          "target_name": "ChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "FETCH -> ChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 4,
+          "line_no": 46,
+          "nesting_level": 1,
+          "action": "INSERT",
+          "target_name": "#PaymentMethodChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @@FETCH_STATUS = 0"
+          ],
+          "condition_keys": [
+            "WHILE#44"
+          ],
+          "label": "INSERT -> #PaymentMethodChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step5",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 5,
+          "line_no": 52,
+          "nesting_level": 1,
+          "action": "FETCH",
+          "target_name": "ChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "WHILE: @@FETCH_STATUS = 0"
+          ],
+          "condition_keys": [
+            "WHILE#44"
+          ],
+          "label": "FETCH -> ChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step6",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 6,
+          "line_no": 55,
+          "nesting_level": 0,
+          "action": "CLOSE_CURSOR",
+          "target_name": "ChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "CLOSE_CURSOR -> ChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step7",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 7,
+          "line_no": 56,
+          "nesting_level": 0,
+          "action": "DEALLOCATE",
+          "target_name": "ChangeList",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DEALLOCATE -> ChangeList"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step8",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 8,
+          "line_no": 60,
+          "nesting_level": 0,
+          "action": "CREATE_INDEX",
+          "target_name": "#PaymentMethodChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "CREATE_INDEX -> #PaymentMethodChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step9",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 9,
+          "line_no": 65,
+          "nesting_level": 0,
+          "action": "UPDATE",
+          "target_name": "#PaymentMethodChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "UPDATE -> #PaymentMethodChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step10",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 10,
+          "line_no": 71,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "target_name": "#PaymentMethodChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> #PaymentMethodChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step11",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 11,
+          "line_no": 75,
+          "nesting_level": 0,
+          "action": "DROP_TABLE",
+          "target_name": "#PaymentMethodChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DROP_TABLE -> #PaymentMethodChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step12",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 12,
+          "line_no": 77,
+          "nesting_level": 0,
+          "action": "RETURN",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "RETURN"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:CREATE_TABLE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_CREATE_TABLE_f06c2897.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:DECLARE_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_DECLARE_CURSOR_e4eee7c4.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#param:@LastCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#param:@NewCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges:column:Payment Method",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_paymentmethodchanges_column_Payment_Method_7990274a.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges:column:Valid From",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_paymentmethodchanges_column_Valid_From_3e2f300e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges:column:Valid To",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_paymentmethodchanges_column_Valid_To_da8a1e16.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges:column:WWI Payment Method ID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_paymentmethodchanges_column_WWI_Payment_Method_ID_8e12796d.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_paymentmethodchanges_9de89353.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:DROP_TABLE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_DROP_TABLE_d4bc7329.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step12",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:RETURN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:OPEN_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_OPEN_CURSOR_65201b90.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:FETCH",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_FETCH_03e55c63.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#var:@PaymentMethodID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:INSERT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.paymentmethods",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#var:@PaymentMethodID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges:column:Payment Method",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_paymentmethodchanges_column_Payment_Method_7990274a.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges:column:Valid From",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_paymentmethodchanges_column_Valid_From_3e2f300e.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges:column:Valid To",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_paymentmethodchanges_column_Valid_To_da8a1e16.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges:column:WWI Payment Method ID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_paymentmethodchanges_column_WWI_Payment_Method_ID_8e12796d.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_paymentmethodchanges_9de89353.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:FETCH",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_FETCH_03e55c63.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#var:@PaymentMethodID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:CLOSE_CURSOR",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_CLOSE_CURSOR_44141708.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:DEALLOCATE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_DEALLOCATE_967d1beb.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:CREATE_INDEX",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_CREATE_INDEX_068c9001.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:UPDATE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_UPDATE_605dec54.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#var:@EndOfTime",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges:column:Valid To",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_paymentmethodchanges_column_Valid_To_da8a1e16.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:#paymentmethodchanges",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_paymentmethodchanges_9de89353.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+﻿{
+  "id": "WideWorldImporters:table:#citychanges:column:Sales Territory",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Sales Territory",
+    "table": "#citychanges"
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetCityUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.stateprovinces:column:SalesTerritory",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_SalesTerritory_444b37ed.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.stateprovinces:column:SalesTerritory",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_SalesTerritory_444b37ed.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.stateprovinces:column:SalesTerritory",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_SalesTerritory_444b37ed.json"
+    }
+  ]
+}

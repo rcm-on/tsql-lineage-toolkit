@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.customers_archive:column:PaymentDays",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PaymentDays",
+    "table": "sales.customers_archive",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 16
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

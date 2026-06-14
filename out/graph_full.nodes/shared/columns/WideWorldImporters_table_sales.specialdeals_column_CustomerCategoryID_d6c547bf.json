@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.specialdeals:column:CustomerCategoryID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CustomerCategoryID",
+    "table": "sales.specialdeals",
+    "data_type": "INT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 5
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:sales.customercategories:column:CustomerCategoryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_column_CustomerCategoryID_f8db0ef6.json",
+      "props": {
+        "constraint": "FK_Sales_SpecialDeals_CustomerCategoryID_Sales_CustomerCategories"
+      }
+    }
+  ]
+}

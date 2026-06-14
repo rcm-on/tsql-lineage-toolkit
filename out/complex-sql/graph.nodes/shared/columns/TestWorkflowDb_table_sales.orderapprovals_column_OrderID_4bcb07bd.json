@@ -1,0 +1,29 @@
+﻿{
+  "id": "TestWorkflowDb:table:sales.orderapprovals:column:OrderID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "OrderID",
+    "table": "sales.orderapprovals"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_COLUMN",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step5",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": []
+}

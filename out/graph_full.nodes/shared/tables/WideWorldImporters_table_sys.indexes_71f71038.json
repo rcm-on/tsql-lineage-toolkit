@@ -1,0 +1,42 @@
+﻿{
+  "id": "WideWorldImporters:table:sys.indexes",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "sys.indexes"
+  },
+  "refs": {
+    "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sys.indexes:column:name",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sys.indexes_column_name_9771ffde.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sys.indexes:column:schema_id",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sys.indexes_column_schema_id_fc9480a5.json"
+    }
+  ]
+}

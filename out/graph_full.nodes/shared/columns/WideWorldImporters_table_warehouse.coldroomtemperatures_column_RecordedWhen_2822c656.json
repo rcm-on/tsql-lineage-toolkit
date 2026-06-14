@@ -1,0 +1,46 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:RecordedWhen",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "RecordedWhen",
+    "table": "warehouse.coldroomtemperatures",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 3
+  },
+  "refs": {
+    "WideWorldImporters::Website.RecordColdRoomTemperatures": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+      },
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    }
+  ],
+  "edges_out": []
+}

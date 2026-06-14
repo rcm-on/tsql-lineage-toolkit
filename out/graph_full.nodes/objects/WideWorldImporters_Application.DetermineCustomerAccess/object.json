@@ -1,0 +1,34 @@
+﻿{
+  "id": "WideWorldImporters::Application.DetermineCustomerAccess",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Application.DetermineCustomerAccess",
+    "has_transaction": false,
+    "has_error_handling": false,
+    "has_cursor": false,
+    "dynamic_sql_calls": 0,
+    "cyclomatic_complexity": 1,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [
+      {
+        "id": "WideWorldImporters::Application.DetermineCustomerAccess#param:@CityID",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@CityID",
+          "data_type": "INT",
+          "is_output": false
+        }
+      }
+    ],
+    "variables": [],
+    "steps": []
+  },
+  "edges_out": []
+}

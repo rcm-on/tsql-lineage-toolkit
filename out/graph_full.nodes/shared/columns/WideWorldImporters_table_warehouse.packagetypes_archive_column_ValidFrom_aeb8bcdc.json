@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.packagetypes_archive:column:ValidFrom",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ValidFrom",
+    "table": "warehouse.packagetypes_archive",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 4
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

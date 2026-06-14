@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems_archive:column:UnitPrice",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "UnitPrice",
+    "table": "warehouse.stockitems_archive",
+    "data_type": "DECIMAL (18, 2)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 14
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

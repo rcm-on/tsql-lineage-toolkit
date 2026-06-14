@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems:column:SupplierID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "SupplierID",
+    "table": "warehouse.stockitems",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 3
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:purchasing.suppliers:column:SupplierID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_SupplierID_a2de940a.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItems_SupplierID_Purchasing_Suppliers"
+      }
+    }
+  ]
+}

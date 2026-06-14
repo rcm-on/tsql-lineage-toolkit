@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems:column:LeadTimeDays",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LeadTimeDays",
+    "table": "warehouse.stockitems",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 9
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

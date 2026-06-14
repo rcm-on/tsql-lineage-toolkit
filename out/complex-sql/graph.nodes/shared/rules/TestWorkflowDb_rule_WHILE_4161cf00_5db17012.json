@@ -1,0 +1,27 @@
+﻿{
+  "id": "TestWorkflowDb:rule:WHILE:4161cf00",
+  "labels": [
+    "Rule",
+    "WHILE"
+  ],
+  "properties": {
+    "type": "WHILE",
+    "expression": "@@FETCH_STATUS = 0"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step11",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step23",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ]
+}

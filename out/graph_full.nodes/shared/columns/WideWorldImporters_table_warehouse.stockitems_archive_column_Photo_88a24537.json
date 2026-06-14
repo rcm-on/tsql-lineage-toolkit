@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems_archive:column:Photo",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Photo",
+    "table": "warehouse.stockitems_archive",
+    "data_type": "VARBINARY (MAX)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 19
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

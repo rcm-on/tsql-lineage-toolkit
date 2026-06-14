@@ -1,0 +1,44 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitemholdings:column:StockItemID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "StockItemID",
+    "table": "warehouse.stockitemholdings",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": true,
+    "ordinal": 1
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetStockHoldingUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetStockHoldingUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetStockHoldingUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_StockItemID_46c2e34c.json",
+      "props": {
+        "constraint": "PKFK_Warehouse_StockItemHoldings_StockItemID_Warehouse_StockItems"
+      }
+    }
+  ]
+}

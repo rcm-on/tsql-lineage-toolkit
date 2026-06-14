@@ -1,0 +1,143 @@
+﻿{
+  "id": "WideWorldImporters::Application.CreateRoleIfNonexistent",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Application.CreateRoleIfNonexistent",
+    "has_transaction": false,
+    "has_error_handling": true,
+    "has_cursor": false,
+    "dynamic_sql_calls": 1,
+    "cyclomatic_complexity": 3,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [
+      {
+        "id": "WideWorldImporters::Application.CreateRoleIfNonexistent#param:@RoleName",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@RoleName",
+          "data_type": "sysname",
+          "is_output": false
+        }
+      }
+    ],
+    "variables": [
+      {
+        "id": "WideWorldImporters::Application.CreateRoleIfNonexistent#var:@SQL",
+        "labels": [
+          "Variable"
+        ],
+        "properties": {
+          "name": "@SQL",
+          "data_type": "NVARCHAR (MAX)",
+          "default": "N'CREATE ROLE ' + QUOTENAME(@RoleName) + N';'",
+          "construction": []
+        }
+      }
+    ],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 15,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": true,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.database_principals             WHERE  name = @RoleName                    AND type = N'R')"
+          ],
+          "condition_keys": [
+            "IF#10"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 22,
+          "nesting_level": 1,
+          "action": "THROW",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#12"
+          ],
+          "label": "THROW"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:THROW",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:52742228",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+    }
+  ]
+}

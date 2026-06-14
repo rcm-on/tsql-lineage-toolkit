@@ -1,0 +1,34 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.specialdeals:column:DiscountPercentage",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "DiscountPercentage",
+    "table": "sales.specialdeals",
+    "data_type": "DECIMAL (18, 3)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 11
+  },
+  "refs": {
+    "WideWorldImporters::Website.CalculateCustomerPrice": [
+      {
+        "type": "ASSIGNED_FROM",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#var:@HighestDiscountPercentage",
+        "from_label": "Variable",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "ASSIGNED_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#var:@HighestDiscountPercentage",
+      "from_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    }
+  ],
+  "edges_out": []
+}

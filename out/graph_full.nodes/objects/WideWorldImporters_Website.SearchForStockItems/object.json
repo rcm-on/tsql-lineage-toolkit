@@ -1,0 +1,114 @@
+﻿{
+  "id": "WideWorldImporters::Website.SearchForStockItems",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Website.SearchForStockItems",
+    "has_transaction": false,
+    "has_error_handling": false,
+    "has_cursor": false,
+    "dynamic_sql_calls": 0,
+    "cyclomatic_complexity": 1,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [
+      {
+        "id": "WideWorldImporters::Website.SearchForStockItems#param:@SearchText",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@SearchText",
+          "data_type": "NVARCHAR (1000)",
+          "is_output": false
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.SearchForStockItems#param:@MaximumRowsToReturn",
+        "labels": [
+          "Parameter"
+        ],
+        "properties": {
+          "name": "@MaximumRowsToReturn",
+          "data_type": "INT",
+          "is_output": false
+        }
+      }
+    ],
+    "variables": [],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Website.SearchForStockItems#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 8,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "target_name": "Warehouse.StockItems",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> Warehouse.StockItems"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.SearchForStockItems#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.SearchForStockItems#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_StockItemID_46c2e34c.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.SearchForStockItems#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:StockItemName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_StockItemName_d05eef54.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.SearchForStockItems#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.SearchForStockItems#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.SearchForStockItems#param:@MaximumRowsToReturn",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.SearchForStockItems#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.SearchForStockItems#param:@SearchText",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json"
+    }
+  ]
+}

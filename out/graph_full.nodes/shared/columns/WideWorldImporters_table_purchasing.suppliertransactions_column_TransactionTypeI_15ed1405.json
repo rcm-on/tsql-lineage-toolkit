@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliertransactions:column:TransactionTypeID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "TransactionTypeID",
+    "table": "purchasing.suppliertransactions",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 3
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:application.transactiontypes:column:TransactionTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.transactiontypes_column_TransactionTypeID_3c716b41.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierTransactions_TransactionTypeID_Application_TransactionTypes"
+      }
+    }
+  ]
+}

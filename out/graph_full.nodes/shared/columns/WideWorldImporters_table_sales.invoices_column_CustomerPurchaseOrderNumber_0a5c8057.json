@@ -1,0 +1,41 @@
+﻿{
+  "id": "WideWorldImporters:table:sales.invoices:column:CustomerPurchaseOrderNumber",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "CustomerPurchaseOrderNumber",
+    "table": "sales.invoices",
+    "data_type": "NVARCHAR (20)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 11
+  },
+  "refs": {
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:sales.orders:column:CustomerPurchaseOrderNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_CustomerPurchaseOrderNumber_344a0f2e.json"
+    }
+  ]
+}

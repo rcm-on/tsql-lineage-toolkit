@@ -1,0 +1,104 @@
+﻿{
+  "id": "WideWorldImporters:table:application.stateprovinces_archive",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "name": "Application.StateProvinces_Archive"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.stateprovinces_archive:column:Border",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_archive_column_Border_d6d71eab.json",
+      "props": {
+        "ordinal": 6
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.stateprovinces_archive:column:CountryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_archive_column_CountryID_32db6a72.json",
+      "props": {
+        "ordinal": 4
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.stateprovinces_archive:column:LastEditedBy",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_archive_column_LastEditedBy_de5ff12a.json",
+      "props": {
+        "ordinal": 8
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.stateprovinces_archive:column:LatestRecordedPopulation",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_archive_column_LatestRecorde_f31c925a.json",
+      "props": {
+        "ordinal": 7
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.stateprovinces_archive:column:SalesTerritory",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_archive_column_SalesTerritor_2701f204.json",
+      "props": {
+        "ordinal": 5
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.stateprovinces_archive:column:StateProvinceCode",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_archive_column_StateProvince_40b21109.json",
+      "props": {
+        "ordinal": 2
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.stateprovinces_archive:column:StateProvinceID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_archive_column_StateProvince_7cebd279.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.stateprovinces_archive:column:StateProvinceName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_archive_column_StateProvince_e4301043.json",
+      "props": {
+        "ordinal": 3
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.stateprovinces_archive:column:ValidFrom",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_archive_column_ValidFrom_195a5883.json",
+      "props": {
+        "ordinal": 9
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:application.stateprovinces_archive:column:ValidTo",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_archive_column_ValidTo_bfe78dc6.json",
+      "props": {
+        "ordinal": 10
+      }
+    }
+  ]
+}

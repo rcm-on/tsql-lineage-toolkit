@@ -1,0 +1,96 @@
+﻿{
+  "id": "TestWorkflowDb:table:sales.orders",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "TestWorkflowDb",
+    "name": "Sales.Orders"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "READS_FROM",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step26",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step27",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step29",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      },
+      {
+        "type": "WRITES_TO",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step6",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step1",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step26",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step27",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step29",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step6",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:sales.orders:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_sales.orders_column_CustomerID_f3b773c5.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:sales.orders:column:OrderStatus",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_sales.orders_column_OrderStatus_5535206d.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:sales.orders:column:OrderTotal",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_sales.orders_column_OrderTotal_8cce407a.json"
+    }
+  ]
+}

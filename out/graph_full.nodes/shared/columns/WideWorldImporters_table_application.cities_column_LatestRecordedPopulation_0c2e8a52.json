@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.cities:column:LatestRecordedPopulation",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LatestRecordedPopulation",
+    "table": "application.cities",
+    "data_type": "BIGINT",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 5
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

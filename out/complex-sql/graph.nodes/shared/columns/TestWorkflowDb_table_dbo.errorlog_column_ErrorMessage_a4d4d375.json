@@ -1,0 +1,29 @@
+﻿{
+  "id": "TestWorkflowDb:table:dbo.errorlog:column:ErrorMessage",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ErrorMessage",
+    "table": "dbo.errorlog"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_COLUMN",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": []
+}

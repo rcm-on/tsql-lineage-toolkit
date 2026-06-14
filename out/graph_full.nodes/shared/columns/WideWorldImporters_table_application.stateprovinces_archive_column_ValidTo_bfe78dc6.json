@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.stateprovinces_archive:column:ValidTo",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ValidTo",
+    "table": "application.stateprovinces_archive",
+    "data_type": "DATETIME2",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 10
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

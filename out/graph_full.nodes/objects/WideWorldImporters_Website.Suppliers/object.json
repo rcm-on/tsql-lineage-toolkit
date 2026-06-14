@@ -1,0 +1,22 @@
+﻿{
+  "id": "WideWorldImporters::Website.Suppliers",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Website.Suppliers",
+    "has_transaction": false,
+    "has_error_handling": false,
+    "has_cursor": false,
+    "dynamic_sql_calls": 0,
+    "cyclomatic_complexity": 1,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [],
+    "variables": [],
+    "steps": []
+  },
+  "edges_out": []
+}

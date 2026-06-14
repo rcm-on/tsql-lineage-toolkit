@@ -1,0 +1,39 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:70a20de0",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "XACT_STATE() <> 0"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.InsertCustomerOrders#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.RecordVehicleTemperature#step6",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "to_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_CATCH_7319a8a3_25425193.json"
+    }
+  ]
+}

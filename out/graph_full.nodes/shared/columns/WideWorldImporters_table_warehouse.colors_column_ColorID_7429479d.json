@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.colors:column:ColorID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ColorID",
+    "table": "warehouse.colors",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": true,
+    "ordinal": 1
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

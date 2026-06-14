@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockItemStockGroupID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "StockItemStockGroupID",
+    "table": "warehouse.stockitemstockgroups",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": true,
+    "ordinal": 1
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.suppliertransactions:column:FinalizationDate",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "FinalizationDate",
+    "table": "purchasing.suppliertransactions",
+    "data_type": "DATE",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 12
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

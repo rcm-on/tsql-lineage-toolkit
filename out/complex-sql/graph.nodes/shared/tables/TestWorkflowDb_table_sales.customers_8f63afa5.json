@@ -1,0 +1,42 @@
+﻿{
+  "id": "TestWorkflowDb:table:sales.customers",
+  "labels": [
+    "Table"
+  ],
+  "properties": {
+    "database": "TestWorkflowDb",
+    "name": "Sales.Customers"
+  },
+  "refs": {
+    "TestWorkflowDb::dbo.ProcessOrderWorkflow": [
+      {
+        "type": "READS_FROM",
+        "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step4",
+        "from_label": "Step",
+        "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step4",
+      "from_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:sales.customers:column:AccountBalance",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_sales.customers_column_AccountBalance_586625a6.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "TestWorkflowDb:table:sales.customers:column:CreditLimit",
+      "to_label": "Column",
+      "path": "shared/columns/TestWorkflowDb_table_sales.customers_column_CreditLimit_5e7cf2f2.json"
+    }
+  ]
+}

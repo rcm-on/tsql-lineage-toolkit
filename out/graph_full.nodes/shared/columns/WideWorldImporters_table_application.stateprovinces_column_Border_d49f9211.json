@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.stateprovinces:column:Border",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Border",
+    "table": "application.stateprovinces",
+    "data_type": "geography",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 6
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

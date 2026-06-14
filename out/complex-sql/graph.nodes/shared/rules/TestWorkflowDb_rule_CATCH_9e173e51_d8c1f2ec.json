@@ -1,0 +1,27 @@
+﻿{
+  "id": "TestWorkflowDb:rule:CATCH:9e173e51",
+  "labels": [
+    "Rule",
+    "CATCH"
+  ],
+  "properties": {
+    "type": "CATCH",
+    "expression": "ON ERROR"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step32",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "TestWorkflowDb::dbo.ProcessOrderWorkflow#step33",
+      "to_label": "Step",
+      "path": "objects/TestWorkflowDb_dbo.ProcessOrderWorkflow/object.json"
+    }
+  ]
+}

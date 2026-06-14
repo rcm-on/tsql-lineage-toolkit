@@ -1,0 +1,34 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.purchaseorderlines:column:IsOrderLineFinalized",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "IsOrderLineFinalized",
+    "table": "purchasing.purchaseorderlines",
+    "data_type": "BIT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 10
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetPurchaseUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+    }
+  ],
+  "edges_out": []
+}

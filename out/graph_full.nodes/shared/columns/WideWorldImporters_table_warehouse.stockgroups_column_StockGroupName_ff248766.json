@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockgroups:column:StockGroupName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "StockGroupName",
+    "table": "warehouse.stockgroups",
+    "data_type": "NVARCHAR (50)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

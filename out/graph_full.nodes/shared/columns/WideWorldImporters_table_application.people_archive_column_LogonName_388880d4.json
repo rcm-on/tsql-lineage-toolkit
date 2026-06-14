@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.people_archive:column:LogonName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "LogonName",
+    "table": "application.people_archive",
+    "data_type": "NVARCHAR (50)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 6
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

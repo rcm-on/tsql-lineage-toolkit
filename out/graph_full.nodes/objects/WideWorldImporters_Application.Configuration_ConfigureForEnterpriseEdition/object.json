@@ -1,0 +1,216 @@
+﻿{
+  "id": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+  "labels": [
+    "SqlObject"
+  ],
+  "properties": {
+    "database": "WideWorldImporters",
+    "full_name": "Application.Configuration_ConfigureForEnterpriseEdition",
+    "has_transaction": false,
+    "has_error_handling": false,
+    "has_cursor": false,
+    "dynamic_sql_calls": 0,
+    "cyclomatic_complexity": 1,
+    "parse_error": ""
+  },
+  "owned": {
+    "parameters": [],
+    "variables": [],
+    "steps": [
+      {
+        "id": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "line_no": 6,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "[Application].[Configuration_ApplyColumnstoreIndexing]",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> [Application].[Configuration_ApplyColumnstoreIndexing]"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "line_no": 8,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "[Application].[Configuration_ApplyFullTextIndexing]",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> [Application].[Configuration_ApplyFullTextIndexing]"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "line_no": 10,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "[Application].[Configuration_EnableInMemory]",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> [Application].[Configuration_EnableInMemory]"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "line_no": 12,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "target_name": "[Application].[Configuration_ApplyPartitioning]",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> [Application].[Configuration_ApplyPartitioning]"
+        }
+      }
+    ]
+  },
+  "edges_out": [
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+      "props": {
+        "caller": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+        "callee": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing",
+        "kind": "EXEC"
+      }
+    },
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json",
+      "props": {
+        "caller": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+        "callee": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
+        "kind": "EXEC"
+      }
+    },
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json",
+      "props": {
+        "caller": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+        "callee": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
+        "kind": "EXEC"
+      }
+    },
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+      "props": {
+        "caller": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+        "callee": "WideWorldImporters::Application.Configuration_EnableInMemory",
+        "kind": "EXEC"
+      }
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "TARGETS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "TARGETS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "TARGETS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "TARGETS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    }
+  ]
+}

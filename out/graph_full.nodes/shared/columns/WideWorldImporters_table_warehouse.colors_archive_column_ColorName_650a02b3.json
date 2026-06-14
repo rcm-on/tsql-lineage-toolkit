@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.colors_archive:column:ColorName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "ColorName",
+    "table": "warehouse.colors_archive",
+    "data_type": "NVARCHAR (20)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

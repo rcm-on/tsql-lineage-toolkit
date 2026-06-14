@@ -1,0 +1,21 @@
+﻿{
+  "id": "TestWorkflowDb:rule:IF:703cefd9",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "@AvailableQty IS NULL"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "NESTED_IN",
+      "to": "TestWorkflowDb:rule:WHILE:4161cf00",
+      "to_label": "Rule",
+      "path": "shared/rules/TestWorkflowDb_rule_WHILE_4161cf00_5db17012.json"
+    }
+  ]
+}

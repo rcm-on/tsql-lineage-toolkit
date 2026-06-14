@@ -1,0 +1,48 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems:column:StockItemName",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "StockItemName",
+    "table": "warehouse.stockitems",
+    "data_type": "NVARCHAR (100)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {
+    "WideWorldImporters::Website.SearchForStockItems": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.SearchForStockItems#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.SearchForStockItemsByTags": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.SearchForStockItems#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json"
+    }
+  ],
+  "edges_out": []
+}

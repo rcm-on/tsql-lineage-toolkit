@@ -1,0 +1,27 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:5cc39bac",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "NOT EXISTS (SELECT *             FROM   sys.partition_schemes             WHERE  name = N'PS_TransactionDateTime')"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "to_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_ELSE_16b08ed9_65bb5abf.json"
+    }
+  ]
+}

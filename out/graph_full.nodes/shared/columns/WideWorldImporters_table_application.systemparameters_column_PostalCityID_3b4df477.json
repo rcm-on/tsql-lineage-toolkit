@@ -1,0 +1,28 @@
+﻿{
+  "id": "WideWorldImporters:table:application.systemparameters:column:PostalCityID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "PostalCityID",
+    "table": "application.systemparameters",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 9
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:application.cities:column:CityID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_column_CityID_63dabfa7.json",
+      "props": {
+        "constraint": "FK_Application_SystemParameters_PostalCityID_Application_Cities"
+      }
+    }
+  ]
+}

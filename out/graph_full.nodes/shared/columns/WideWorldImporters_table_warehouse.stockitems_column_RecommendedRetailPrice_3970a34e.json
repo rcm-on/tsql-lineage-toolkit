@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.stockitems:column:RecommendedRetailPrice",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "RecommendedRetailPrice",
+    "table": "warehouse.stockitems",
+    "data_type": "DECIMAL (18, 2)",
+    "is_nullable": true,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 15
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

@@ -1,0 +1,44 @@
+﻿{
+  "id": "WideWorldImporters:table:purchasing.purchaseorders:column:SupplierID",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "SupplierID",
+    "table": "purchasing.purchaseorders",
+    "data_type": "INT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 2
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetPurchaseUpdates": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "REFERENCES",
+      "to": "WideWorldImporters:table:purchasing.suppliers:column:SupplierID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_SupplierID_a2de940a.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrders_SupplierID_Purchasing_Suppliers"
+      }
+    }
+  ]
+}

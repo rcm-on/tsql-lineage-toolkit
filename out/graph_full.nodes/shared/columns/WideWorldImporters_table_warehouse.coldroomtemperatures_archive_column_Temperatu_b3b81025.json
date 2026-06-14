@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:warehouse.coldroomtemperatures_archive:column:Temperature",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "Temperature",
+    "table": "warehouse.coldroomtemperatures_archive",
+    "data_type": "DECIMAL (10, 2)",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 4
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}

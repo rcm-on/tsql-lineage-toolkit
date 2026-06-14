@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters:table:application.people_archive:column:IsExternalLogonProvider",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "IsExternalLogonProvider",
+    "table": "application.people_archive",
+    "data_type": "BIT",
+    "is_nullable": false,
+    "is_identity": false,
+    "is_primary_key": false,
+    "ordinal": 7
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": []
+}
