@@ -146,6 +146,34 @@ if (positional.Count >= 1 && positional[0] == "report")
     return 0;
 }
 
+// "update-nodestore <input.json> <store_dir.nodes> [--columns]": incremental
+// refresh of a node store previously written with --nodestore. Re-analyzes the
+// whole input (cheap) but only rewrites objects/** and shared/** files whose
+// content actually changed since the existing manifest.json, GCs files for
+// removed objects/orphaned shared nodes, and always refreshes model.json,
+// manifest.json and index.json. If <store_dir.nodes> doesn't exist yet, behaves
+// like a full --nodestore write.
+if (positional.Count >= 1 && positional[0] == "update-nodestore")
+{
+    if (positional.Count < 3)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser update-nodestore <input.json> <store_dir.nodes> [--columns]");
+        return 1;
+    }
+    var (updResults, updTableSchemas) = AnalyzeInput(positional[1]);
+    var updGraph = GraphExporter.Build(updResults, includeColumns, updTableSchemas);
+    var updDb = updResults.Select(o => o.ObjectName.Split("::", 2)).FirstOrDefault(p => p.Length == 2)?[0] ?? "";
+    var updJsonOptions = new JsonSerializerOptions
+    {
+        WriteIndented = true,
+        PropertyNameCaseInsensitive = true,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    };
+    var updStats = NodeStoreExporter.Update(updGraph, positional[2], updDb, updJsonOptions);
+    Console.WriteLine($"Updated: {updStats.ObjectsWritten} objects ({updStats.ObjectsUnchanged} unchanged, {updStats.ObjectsRemoved} removed), shared: {updStats.SharedWritten} ({updStats.SharedUnchanged} unchanged, {updStats.SharedRemoved} removed) -> {positional[2]}");
+    return 0;
+}
+
 if (positional.Count < 2)
 {
     Console.Error.WriteLine("Usage: TSqlParser <input.json> <output_graph.json> [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore]");
@@ -154,6 +182,7 @@ if (positional.Count < 2)
     Console.Error.WriteLine("       TSqlParser extract <database> <input.json> [--server <server>] [--tables] [--object schema.name]... [--like pattern]");
     Console.Error.WriteLine("       TSqlParser validate <graph.json> [--server <server>]");
     Console.Error.WriteLine("       TSqlParser extract-tables <graph.json> <input.json> [--server <server>]");
+    Console.Error.WriteLine("       TSqlParser update-nodestore <input.json> <store_dir.nodes> [--columns]");
     return 1;
 }
 
