@@ -1,3 +1,6 @@
+using System.Security.Cryptography;
+using System.Text;
+
 namespace TSqlParser;
 
 public class GraphNode
@@ -398,7 +401,7 @@ public static class GraphExporter
                         var ruleKey = (db, condType, condText);
                         if (!ruleIds.TryGetValue(ruleKey, out var ruleId))
                         {
-                            ruleId = $"{db}:rule:{condType}:{condText.GetHashCode():x}";
+                            ruleId = $"{db}:rule:{condType}:{StableHash(condText)}";
                             ruleIds[ruleKey] = ruleId;
                             graph.Nodes.Add(new GraphNode
                             {
@@ -714,4 +717,13 @@ public static class GraphExporter
 
     /// <summary>Strips brackets/whitespace so "[Schema].[Object]" matches "Schema.Object".</summary>
     private static string NormalizeRef(string raw) => SqlText.NormalizeRef(raw);
+
+    /// <summary>
+    /// Short, stable (cross-process, cross-run) hash for Rule node ids. Unlike
+    /// string.GetHashCode() - randomized per process in .NET - this gives the same
+    /// id for the same condition text every time, so the same input always
+    /// produces the same graph (required for NodeStoreExporter.Update's diffing).
+    /// </summary>
+    private static string StableHash(string text) =>
+        Convert.ToHexStringLower(SHA1.HashData(Encoding.UTF8.GetBytes(text)))[..8];
 }

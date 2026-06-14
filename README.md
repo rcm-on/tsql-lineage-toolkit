@@ -135,15 +135,29 @@ dotnet run -- input.json graph_full.json workflows_full.json --columns
   - `shared_touched`: lista de los nodos compartidos (tablas, columnas,
     acciones, reglas) a los que ese objeto contribuye en `shared/**`.
 
-  Esto deja la estructura lista para un futuro comando incremental: si
-  cambia un objeto, basta con (1) comparar su `content_hash`, (2) si difiere,
-  reescribir solo su `objects/<obj>/object.json`, y (3) usando el
-  `shared_touched` antiguo vs. nuevo, actualizar únicamente las entradas
-  `refs[<objeto>]` de los ficheros `shared/**` afectados - sin tocar el resto
-  de objetos ni regenerar `graph_full.json` completo. El comando en sí
-  (`update-nodestore`) todavía no está implementado; por ahora `--nodestore`
-  siempre regenera el store completo, pero ya escribe `content_hash` y
-  `shared_touched` para que ese comando pueda apoyarse en ellos sin rediseño.
+  **`update-nodestore`: actualización incremental.** Una vez generado el
+  store con `--nodestore`, puedes refrescarlo sin regenerarlo entero:
+
+  ```bash
+  dotnet run -- update-nodestore ../../input.json ../../graph_full.nodes --columns
+  ```
+
+  Reanaliza todo el `input.json` en memoria (barato), pero solo **escribe**
+  los ficheros `objects/**`/`shared/**` cuyo contenido cambió respecto al
+  `manifest.json` existente: compara `content_hash` por objeto y, para
+  `shared/**`, el contenido serializado contra lo que ya hay en disco. Los
+  objetos eliminados del input y los nodos compartidos que se quedan sin
+  `refs` se borran (incluyendo directorios de categoría vacíos). `model.json`,
+  `manifest.json` e `index.json` se reescriben siempre (son pequeños). Si
+  `<store_dir>` no existe todavía, se comporta como un `--nodestore` completo.
+
+  Probado a escala WideWorldImporters (47 objetos, 743 nodos compartidos):
+  con el input sin cambios, `update-nodestore` no reescribe nada (`Updated: 0
+  objects (47 unchanged, 0 removed), shared: 0 (743 unchanged, 0 removed)`); al
+  modificar el SQL de un solo procedimiento (un `UPDATE` adicional a
+  `Warehouse.StockItems`), solo se reescribe ese objeto y los 3 ficheros
+  `shared/**` que tocan (`Updated: 1 objects (46 unchanged, 0 removed), shared:
+  3 (740 unchanged, 0 removed)`).
 
   **Pruebas realizadas.** `dotnet build` (0 errores) y `dotnet test` (42/42)
   pasan con el exporter activo. Ejecutado de extremo a extremo contra
