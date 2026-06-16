@@ -8,7 +8,13 @@
   const has = (n, l) => n.Labels && n.Labels.indexOf(l) >= 0;
 
   function shapeGraph(g, dbHint) {
-    const N = g.Nodes || g.nodes, R = g.Relationships || g.relationships;
+    // Normalize field names: the C# parser serializes camelCase (id/labels/properties,
+    // source/target) while the historic shape expected PascalCase (Id/Labels/Properties,
+    // StartNodeId/EndNodeId). Both formats are supported.
+    const normN = n => n.Id !== undefined ? n : { Id: n.id, Labels: n.labels, Properties: n.properties };
+    const normR = r => r.Type !== undefined ? r : { Id: r.id, Type: r.type, StartNodeId: r.source, EndNodeId: r.target, Properties: r.properties };
+    const N = (g.Nodes || g.nodes || []).map(normN);
+    const R = (g.Relationships || g.relationships || []).map(normR);
     const byId = {}; for (const n of N) byId[n.Id] = n;
 
     // índices de relaciones por nodo origen / destino y por tipo
@@ -78,12 +84,46 @@
       }));
       const params = outOf(id, 'HAS_PARAMETER').map(r => byId[r.EndNodeId]).map(p => ({ name: p.Properties.name, type: p.Properties.data_type, out: !!p.Properties.is_output }));
 
+      // ── RUNTIME PLAN DATA ──────────────────────────────────────
+      // When enrich-from-plans was run, READS_FROM/WRITES_TO relationships
+      // carry actual_rows + confirmed_by (static edge verified by plan) or
+      // source="execution_plan" (runtime-discovered, not visible statically).
+      // Proc-level relationships (source=execution_plan) represent tables the
+      // static analysis couldn't see (dynamic SQL resolved at runtime, views, etc.)
+      const planStats = [];
+      const fmtRows = n => n != null ? Number(n).toLocaleString() : null;
+      // Step-level: confirmed static edges with actual row counts
+      for (const s of steps) {
+        for (const r of outOf(s.Id, 'WRITES_TO')) {
+          const rp = r.Properties;
+          if (rp.actual_rows != null || rp.confirmed_by === 'execution_plan')
+            planStats.push({ table: rp.table, op: 'WRITE', rows: fmtRows(rp.actual_rows), discovered: false, op_label: s.Properties.action });
+        }
+        for (const r of outOf(s.Id, 'READS_FROM')) {
+          const rp = r.Properties;
+          if (rp.actual_rows != null || rp.confirmed_by === 'execution_plan')
+            planStats.push({ table: rp.table, op: 'READ', rows: fmtRows(rp.actual_rows), discovered: false, op_label: 'READ' });
+        }
+      }
+      // Proc-level: runtime-discovered edges (not in static analysis)
+      for (const r of outOf(id, 'READS_FROM').concat(outOf(id, 'WRITES_TO'))) {
+        const rp = r.Properties;
+        if (rp.source === 'execution_plan')
+          planStats.push({ table: rp.table, op: r.Type === 'WRITES_TO' ? 'WRITE' : 'READ', rows: fmtRows(rp.actual_rows), discovered: true, op_label: rp.action_type || r.Type });
+      }
+      const runtime = planStats.length > 0 ? {
+        planSource: P.plan_source || '',
+        rowsWritten: P.actual_rows_written != null ? Number(P.actual_rows_written).toLocaleString() : null,
+        rowsRead: P.actual_rows_read != null ? Number(P.actual_rows_read).toLocaleString() : null,
+        stats: planStats,
+      } : null;
+
       return {
         kind: 'object', name: P.full_name,
         complexity: P.cyclomatic_complexity || 1, hasTx: !!P.has_transaction, hasErr: !!P.has_error_handling,
         hasCursor: !!P.has_cursor, dyn: P.dynamic_sql_calls || 0, parseError: P.parse_error || '',
         params, vars, callsOut, callsIn, reads: [...reads], writes: [...writes.values()], writesByTable,
-        steps: steps.length, flow: buildFlowTree(steps),
+        steps: steps.length, flow: buildFlowTree(steps), runtime,
       };
     });
 

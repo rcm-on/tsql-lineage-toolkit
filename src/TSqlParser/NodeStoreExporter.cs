@@ -46,7 +46,7 @@ public static class NodeStoreExporter
     // than silently dropped, so a reader can rely on the type set.
     public static readonly IReadOnlyList<string> KnownNodeLabels = new[]
     {
-        "SqlObject", "Parameter", "Variable", "Step", "Action", "Table", "Column", "Rule",
+        "SqlObject", "Process", "Workflow", "Parameter", "Variable", "Step", "Action", "Table", "Column", "Rule",
     };
 
     public static readonly IReadOnlyList<string> KnownEdgeTypes = new[]
@@ -54,6 +54,7 @@ public static class NodeStoreExporter
         "HAS_PARAMETER", "DECLARES", "ASSIGNED_FROM", "HAS_STEP", "ACTION", "BUILDS_SQL_FROM",
         "USES_VARIABLE", "TARGETS", "WRITES_TO", "READS_FROM", "READS_COLUMN", "WRITES_COLUMN",
         "DERIVES_FROM", "NESTED_IN", "GOVERNS", "CALLS", "AFFECTS", "HAS_COLUMN", "FK_TO", "REFERENCES",
+        "BELONGS_TO", "WORKFLOW_WRITES_TO",
     };
 
     // Structural edges fully represented by an object's "owned" lists already

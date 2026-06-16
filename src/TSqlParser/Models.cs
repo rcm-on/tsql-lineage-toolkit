@@ -179,5 +179,8 @@ public class ObjectResult
     public int ComplexityScore { get; set; } = 1;
     public string? Error { get; set; }
 
+    /// <summary>Object kind detected from the SQL definition: PROCEDURE, SCALAR_FUNCTION, TABLE_VALUED_FUNCTION, TRIGGER, VIEW, or SCRIPT (bare DML batch).</summary>
+    public string ObjectType { get; set; } = "UNKNOWN";
+
     public ObjectResult(string objectName) => ObjectName = objectName;
 }

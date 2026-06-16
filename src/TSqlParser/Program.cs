@@ -146,6 +146,68 @@ if (positional.Count >= 1 && positional[0] == "report")
     return 0;
 }
 
+// "enrich-from-plans <graph.json> <output_graph.json> <plan1.xml> [plan2.xml ...]":
+// merges SQL Server execution plan XML (ShowPlanXML / .sqlplan) into an existing
+// static-analysis graph. Confirms static READS_FROM/WRITES_TO with runtime data
+// (confidence=1.0, actual_rows) and discovers tables not visible statically
+// (dynamic SQL resolved at runtime, view base tables, linked server objects).
+if (positional.Count >= 1 && positional[0] == "enrich-from-plans")
+{
+    if (positional.Count < 4)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser enrich-from-plans <graph.json> <output_graph.json> <plan1.xml> [plan2.xml ...]");
+        return 1;
+    }
+    var enrichJsonOpts = new JsonSerializerOptions
+    {
+        WriteIndented = true,
+        PropertyNameCaseInsensitive = true,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    };
+    var enrichGraphJson = File.ReadAllText(positional[1]);
+    var enrichGraph = JsonSerializer.Deserialize<GraphPayload>(enrichGraphJson, enrichJsonOpts)!;
+
+    var plans = new List<ExecutionPlanParser.ParsedPlan>();
+    foreach (var planPath in positional.Skip(3))
+    {
+        if (!File.Exists(planPath))
+        {
+            Console.Error.WriteLine($"Plan file not found: {planPath}");
+            continue;
+        }
+        var plan = ExecutionPlanParser.Parse(planPath);
+        plans.Add(plan);
+        Console.Error.Write(ExecutionPlanParser.Summarize(plan));
+    }
+
+    var enrichStats = PlanEnricher.Enrich(enrichGraph, plans);
+    File.WriteAllText(positional[2], JsonSerializer.Serialize(enrichGraph, enrichJsonOpts), Encoding.UTF8);
+    Console.WriteLine($"Plans: {enrichStats.PlansProcessed}  Procs matched: {enrichStats.ProcsMatched}  " +
+                      $"Confirmed: {enrichStats.RelationshipsConfirmed}  Discovered: {enrichStats.RelationshipsDiscovered} -> {positional[2]}");
+    return 0;
+}
+
+// "plan-summary <plan.xml> [plan2.xml ...]": shows what tables each plan reads/writes.
+// Useful for quick inspection of a plan file before integrating into a graph.
+if (positional.Count >= 1 && positional[0] == "plan-summary")
+{
+    if (positional.Count < 2)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser plan-summary <plan.xml> [plan2.xml ...]");
+        return 1;
+    }
+    foreach (var planPath in positional.Skip(1))
+    {
+        if (!File.Exists(planPath))
+        {
+            Console.Error.WriteLine($"Plan file not found: {planPath}");
+            continue;
+        }
+        Console.Write(ExecutionPlanParser.Summarize(ExecutionPlanParser.Parse(planPath)));
+    }
+    return 0;
+}
+
 // "update-nodestore <input.json> <store_dir.nodes> [--columns]": incremental
 // refresh of a node store previously written with --nodestore. Re-analyzes the
 // whole input (cheap) but only rewrites objects/** and shared/** files whose
