@@ -40,14 +40,29 @@ public static class SqlAnalyzer
 
         result.Parameters.AddRange(FindParameters(topStatements));
 
-        var statementList = FindBodyStatementList(topStatements);
-        if (statementList == null)
-            return result; // e.g. inline scalar function: RETURN <expr> with no BEGIN/END body
-
         var dbParts = name.Split("::", 2);
         var db = dbParts.Length == 2 ? dbParts[0] : "";
         var ctx = new WalkContext { Db = db, TableColumns = tableColumns };
-        AstWalker.Walk(statementList.Statements, new List<Condition>(), ctx, depth: 0);
+
+        var statementList = FindBodyStatementList(topStatements);
+        IList<TSqlStatement> bodyStatements;
+        if (statementList != null)
+        {
+            bodyStatements = statementList.Statements;
+        }
+        else
+        {
+            // Bare DML batch (INSERT/UPDATE/DELETE/SELECT/MERGE not inside a CREATE PROC body).
+            // Walk the top-level statements directly so table targets are captured in lineage.
+            var dml = topStatements.Where(s =>
+                s is InsertStatement or UpdateStatement or DeleteStatement or
+                SelectStatement or MergeStatement or ExecuteStatement).ToList();
+            if (dml.Count == 0)
+                return result; // e.g. inline scalar function: RETURN <expr> with no body
+            bodyStatements = dml;
+        }
+
+        AstWalker.Walk(bodyStatements, new List<Condition>(), ctx, depth: 0);
 
         result.Variables.AddRange(ctx.Variables);
         result.FlowLinks.AddRange(ctx.FlowLinks);
@@ -57,7 +72,11 @@ public static class SqlAnalyzer
             result.VariableConstructions[kv.Key] = kv.Value;
 
         var funcCollector = new AstWalker.FunctionCallCollector();
-        statementList.Accept(funcCollector);
+        if (statementList != null)
+            statementList.Accept(funcCollector);
+        else
+            foreach (var s in bodyStatements)
+                s.Accept(funcCollector);
         result.FunctionCalls.AddRange(funcCollector.Names);
 
         result.HasTransaction = ctx.HasTransaction;
@@ -65,8 +84,89 @@ public static class SqlAnalyzer
         result.HasCursor = ctx.HasCursor;
         result.DynamicSqlCount = ctx.DynamicSqlCount;
         result.ComplexityScore = 1 + ctx.DecisionCount;
+        result.ObjectType = statementList != null ? DetectObjectType(topStatements) : "SCRIPT";
+
+        // Re-parse any EXEC steps whose dynamic SQL resolved to a pure literal:
+        // extract INSERT/SELECT/UPDATE/DELETE/MERGE targets from the literal text
+        // and inject them as additional FlowLinks so downstream lineage sees the
+        // real tables the dynamic SQL touches (not just "(dynamic SQL)").
+        ResolveDynamicSqlLinks(result, tableColumns);
 
         return result;
+    }
+
+    /// <summary>
+    /// For each EXEC step in result.FlowLinks whose DynamicSqlText is a non-empty
+    /// resolved literal, parses that literal SQL and walks its DML statements to
+    /// extract table-level lineage (INSERT/SELECT/UPDATE/DELETE targets). The
+    /// resulting FlowLinks are injected immediately after the EXEC step, inheriting
+    /// its condition context, so downstream consumers see the real tables touched
+    /// instead of just "(dynamic SQL)".
+    /// </summary>
+    private static void ResolveDynamicSqlLinks(ObjectResult result, IReadOnlyDictionary<string, List<string>>? tableColumns)
+    {
+        var dbParts = result.ObjectName.Split("::", 2);
+        var db = dbParts.Length == 2 ? dbParts[0] : "";
+        var parser = new TSql160Parser(initialQuotedIdentifiers: true);
+        var toInsert = new List<(int afterIndex, List<FlowLinkInfo> links)>();
+
+        for (int i = 0; i < result.FlowLinks.Count; i++)
+        {
+            var fl = result.FlowLinks[i];
+            if (fl.ConsequenceType != "EXEC" || fl.DynamicSqlText.Length == 0)
+                continue;
+
+            using var reader = new StringReader(fl.DynamicSqlText);
+            var fragment = parser.Parse(reader, out var errors);
+            if (errors.Count > 0)
+                continue;
+
+            var stmts = ((TSqlScript)fragment).Batches.SelectMany(b => b.Statements).ToList();
+            var dml = stmts.Where(s =>
+                s is InsertStatement or UpdateStatement or DeleteStatement or
+                SelectStatement or MergeStatement).ToList();
+            if (dml.Count == 0)
+                continue;
+
+            var innerCtx = new WalkContext { Db = db, TableColumns = tableColumns };
+            AstWalker.Walk(dml, new List<Condition>(), innerCtx, depth: 0);
+
+            // Inherit the EXEC step's condition context so these resolved steps
+            // appear in the same branch of the control flow as their EXEC.
+            var resolved = innerCtx.FlowLinks.Select(inner => inner with
+            {
+                ConditionType = fl.ConditionType,
+                ConditionText = fl.ConditionText,
+                ConditionPath = fl.ConditionPath,
+                ConditionKeys = fl.ConditionKeys,
+                NestingLevel = fl.NestingLevel,
+            }).ToList();
+
+            if (resolved.Count > 0)
+                toInsert.Add((i, resolved));
+        }
+
+        // Insert resolved links in reverse order to keep indices stable.
+        foreach (var (afterIndex, links) in toInsert.OrderByDescending(t => t.afterIndex))
+            result.FlowLinks.InsertRange(afterIndex + 1, links);
+    }
+
+    private static string DetectObjectType(IList<TSqlStatement> topStatements)
+    {
+        foreach (var stmt in topStatements)
+        {
+            var t = stmt.GetType().Name;
+            if (t.Contains("Procedure")) return "PROCEDURE";
+            if (t.Contains("Trigger")) return "TRIGGER";
+            if (t.Contains("View")) return "VIEW";
+            if (t.Contains("Function"))
+            {
+                // TableValuedFunctionReturnType → TVF; else scalar
+                var ret = stmt.GetType().GetProperty("ReturnType")?.GetValue(stmt);
+                return ret?.GetType().Name.Contains("Table") == true ? "TABLE_VALUED_FUNCTION" : "SCALAR_FUNCTION";
+            }
+        }
+        return "UNKNOWN";
     }
 
     /// <summary>

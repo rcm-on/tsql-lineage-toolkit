@@ -1,27 +1,34 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace TSqlParser;
 
 public class GraphNode
 {
-    public required string Id { get; init; }
-    public required List<string> Labels { get; init; }
-    public required Dictionary<string, object> Properties { get; init; }
+    [JsonPropertyName("id")] public required string Id { get; init; }
+    [JsonPropertyName("labels")] public required List<string> Labels { get; init; }
+    [JsonPropertyName("properties")] public required Dictionary<string, object> Properties { get; init; }
 }
 
 public class GraphRel
 {
-    public required string Type { get; init; }
-    public required string StartNodeId { get; init; }
-    public required string EndNodeId { get; init; }
-    public Dictionary<string, object> Properties { get; init; } = new();
+    /// <summary>Stable unique id assigned at the end of GraphExporter.Build (e.g. "r0", "r1", ...).</summary>
+    [JsonPropertyName("id")] public string Id { get; set; } = "";
+    [JsonPropertyName("type")] public required string Type { get; init; }
+    /// <summary>Id of the start (source) node.</summary>
+    [JsonPropertyName("source")] public required string StartNodeId { get; init; }
+    /// <summary>Id of the end (target) node.</summary>
+    [JsonPropertyName("target")] public required string EndNodeId { get; init; }
+    [JsonPropertyName("properties")] public Dictionary<string, object> Properties { get; init; } = new();
 }
 
 public class GraphPayload
 {
-    public List<GraphNode> Nodes { get; } = new();
-    public List<GraphRel> Relationships { get; } = new();
+    // init (not just get) so JsonSerializer.Deserialize can populate these lists
+    // when re-reading a previously serialized graph (e.g. enrich-from-plans).
+    [JsonPropertyName("nodes")] public List<GraphNode> Nodes { get; init; } = new();
+    [JsonPropertyName("relationships")] public List<GraphRel> Relationships { get; init; } = new();
 }
 
 /// <summary>
@@ -79,14 +86,18 @@ public static class GraphExporter
             objectIds.Add(r.ObjectName);
             byPlainName[(db, NormalizeRef(plain))] = r.ObjectName;
 
+            var (schemaName, shortName) = SplitSchemaObject(plain);
             graph.Nodes.Add(new GraphNode
             {
                 Id = r.ObjectName,
-                Labels = new List<string> { "SqlObject" },
+                Labels = new List<string> { "SqlObject", "Process" },
                 Properties = new Dictionary<string, object>
                 {
                     ["database"] = db,
+                    ["schema"] = schemaName,
+                    ["name"] = shortName,
                     ["full_name"] = plain,
+                    ["object_type"] = r.ObjectType,
                     ["has_transaction"] = r.HasTransaction,
                     ["has_error_handling"] = r.HasErrorHandling,
                     ["has_cursor"] = r.HasCursor,
@@ -103,11 +114,11 @@ public static class GraphExporter
         var columnIds = new Dictionary<(string tableId, string column), string>();
         var nestedRelSeen = new HashSet<(string child, string parent)>();
 
-        // ── Table schemas (CREATE TABLE): real Table/Column nodes with types,
-        // nullability, identity, PK and FK relationships, processed before any
-        // procedural step so the latter attach to these typed Column nodes.
-        if (includeColumns && tableSchemas is { Count: > 0 })
-            BuildTableSchemas(graph, tableSchemas, tableIds, columnIds);
+        // ── Table schemas (CREATE TABLE): always emit Table nodes + FK_TO edges
+        // (useful for ER-diagram lineage without --columns). Column nodes and
+        // HAS_COLUMN / REFERENCES are added only when includeColumns is true.
+        if (tableSchemas is { Count: > 0 })
+            BuildTableSchemas(graph, tableSchemas, tableIds, columnIds, includeColumns);
 
         foreach (var r in results)
         {
@@ -205,9 +216,11 @@ public static class GraphExporter
                     Properties = new Dictionary<string, object>
                     {
                         ["order"] = order,
+                        ["sequence"] = order + 1,
                         ["line_no"] = fl.LineNo,
                         ["nesting_level"] = fl.NestingLevel,
                         ["action"] = fl.ConsequenceType,
+                        ["step_type"] = ClassifyStepType(fl.ConsequenceType, fl.ConsequenceTarget),
                         ["target_name"] = fl.ConsequenceTarget,
                         ["detail"] = fl.Detail,
                         ["dynamic_sql"] = fl.DynamicSqlText,
@@ -303,14 +316,28 @@ public static class GraphExporter
                         EndNodeId = targetObjId,
                     });
                 }
-                else if (fl.ConsequenceTarget.Length > 0 && fl.ConsequenceType is "INSERT" or "UPDATE" or "DELETE" or "MERGE" or "SELECT" or "ALTER")
+                else if (fl.ConsequenceTarget.Length > 0 && fl.ConsequenceType is "INSERT" or "UPDATE" or "DELETE" or "MERGE" or "SELECT" or "ALTER" or "TRUNCATE")
                 {
                     var (tableId, tableName) = GetOrCreateTable(graph, tableIds, db, fl.ConsequenceTarget);
+                    var relType = fl.ConsequenceType is "SELECT" ? "READS_FROM" : "WRITES_TO";
+                    var (isCrossDb, targetDbName) = DetectCrossDb(fl.ConsequenceTarget, db);
+                    var relProps = new Dictionary<string, object>
+                    {
+                        ["action_type"] = fl.ConsequenceType,
+                        ["table"] = fl.ConsequenceTarget,
+                    };
+                    if (isCrossDb)
+                    {
+                        relProps["is_cross_database"] = true;
+                        relProps["source_database"] = db;
+                        relProps["target_database"] = targetDbName;
+                    }
                     graph.Relationships.Add(new GraphRel
                     {
-                        Type = fl.ConsequenceType == "SELECT" ? "READS_FROM" : "WRITES_TO",
+                        Type = relType,
                         StartNodeId = stepId,
                         EndNodeId = tableId,
+                        Properties = relProps,
                     });
 
                     // Optional column-level detail: which columns of the table this
@@ -359,11 +386,25 @@ public static class GraphExporter
                     foreach (var extra in fl.ExtraReads)
                     {
                         var (extraTableId, extraTableName) = GetOrCreateTable(graph, tableIds, db, extra.Table);
+                        var (isExtraCrossDb, extraTargetDb) = DetectCrossDb(extra.Table, db);
+                        var extraRelProps = new Dictionary<string, object>
+                        {
+                            ["action_type"] = fl.ConsequenceType,
+                            ["table"] = extra.Table,
+                            ["via"] = "JOIN",
+                        };
+                        if (isExtraCrossDb)
+                        {
+                            extraRelProps["is_cross_database"] = true;
+                            extraRelProps["source_database"] = db;
+                            extraRelProps["target_database"] = extraTargetDb;
+                        }
                         graph.Relationships.Add(new GraphRel
                         {
                             Type = "READS_FROM",
                             StartNodeId = stepId,
                             EndNodeId = extraTableId,
+                            Properties = extraRelProps,
                         });
 
                         if (includeColumns)
@@ -480,7 +521,7 @@ public static class GraphExporter
         // FlowLinks never mention T. This is what answers "if I change @X here,
         // which table further down the call chain ends up modified?".
         var directWrites = new Dictionary<string, HashSet<string>>();
-        foreach (var rel in graph.Relationships.Where(rel => rel.Type == "WRITES_TO"))
+        foreach (var rel in graph.Relationships.Where(rel => rel.Type == "WRITES_TO").ToList())
         {
             var objId = rel.StartNodeId[..rel.StartNodeId.IndexOf("#step", StringComparison.Ordinal)];
             if (!directWrites.TryGetValue(objId, out var set))
@@ -489,7 +530,7 @@ public static class GraphExporter
         }
 
         var callGraph = new Dictionary<string, List<string>>();
-        foreach (var rel in graph.Relationships.Where(rel => rel.Type == "CALLS"))
+        foreach (var rel in graph.Relationships.Where(rel => rel.Type == "CALLS").ToList())
         {
             if (!callGraph.TryGetValue(rel.StartNodeId, out var list))
                 callGraph[rel.StartNodeId] = list = new List<string>();
@@ -535,23 +576,109 @@ public static class GraphExporter
             }
         }
 
+        // ── Workflow nodes: one per (database, schema) pair, grouping all Process
+        // nodes in the same schema under a common container. A Workflow node
+        // represents a business domain / pipeline (e.g. all procs in "dbo" of
+        // "DWH_Pro" belong to the same workflow). Each Process gets a BELONGS_TO
+        // edge pointing to its Workflow. The Workflow carries the count of its
+        // processes (process_count) and the set of tables it collectively writes
+        // to (aggregated from the WRITES_TO / AFFECTS edges of its members).
+        var wfIds = new Dictionary<(string db, string schema), string>(
+            comparer: EqualityComparer<(string, string)>.Default);
+        var wfCount = new Dictionary<(string db, string schema), int>();
+
+        // First pass: count processes per workflow key.
+        foreach (var r in results)
+        {
+            var (rDb, rPlain) = SplitName(r.ObjectName);
+            var (rSchema, _) = SplitSchemaObject(rPlain);
+            var wfKey = (rDb, rSchema.ToLowerInvariant());
+            wfCount[wfKey] = wfCount.GetValueOrDefault(wfKey) + 1;
+        }
+
+        // Second pass: create Workflow nodes + BELONGS_TO edges.
+        foreach (var r in results)
+        {
+            var (rDb, rPlain) = SplitName(r.ObjectName);
+            var (rSchema, _) = SplitSchemaObject(rPlain);
+            var wfKey = (rDb, rSchema.ToLowerInvariant());
+
+            if (!wfIds.TryGetValue(wfKey, out var wfId))
+            {
+                wfId = $"wf:{rDb}:{rSchema.ToLowerInvariant()}";
+                wfIds[wfKey] = wfId;
+                graph.Nodes.Add(new GraphNode
+                {
+                    Id = wfId,
+                    Labels = new List<string> { "Workflow" },
+                    Properties = new Dictionary<string, object>
+                    {
+                        ["name"] = rSchema,
+                        ["database"] = rDb,
+                        ["schema"] = rSchema,
+                        ["process_count"] = wfCount[wfKey],
+                    },
+                });
+            }
+
+            graph.Relationships.Add(new GraphRel
+            {
+                Type = "BELONGS_TO",
+                StartNodeId = r.ObjectName,
+                EndNodeId = wfId,
+                Properties = { ["object_type"] = r.ObjectType },
+            });
+        }
+
+        // ── WORKFLOW_WRITES_TO: roll up WRITES_TO from Steps to the Workflow so
+        // "which tables does this workflow touch?" is a single hop in the graph.
+        // ToList() materializes the filtered set before we add new relationships.
+        var wfWritesSeen = new HashSet<(string wf, string table)>();
+        foreach (var rel in graph.Relationships.Where(r => r.Type == "WRITES_TO").ToList())
+        {
+            var ownerObjId = rel.StartNodeId.Contains("#step", StringComparison.Ordinal)
+                ? rel.StartNodeId[..rel.StartNodeId.IndexOf("#step", StringComparison.Ordinal)]
+                : null;
+            if (ownerObjId == null)
+                continue;
+            var (oDb, oPlain) = SplitName(ownerObjId);
+            var (oSchema, _) = SplitSchemaObject(oPlain);
+            var wfKey = (oDb, oSchema.ToLowerInvariant());
+            if (!wfIds.TryGetValue(wfKey, out var wfId))
+                continue;
+            if (wfWritesSeen.Add((wfId, rel.EndNodeId)))
+            {
+                graph.Relationships.Add(new GraphRel
+                {
+                    Type = "WORKFLOW_WRITES_TO",
+                    StartNodeId = wfId,
+                    EndNodeId = rel.EndNodeId,
+                });
+            }
+        }
+
+        // Assign a stable sequential id to every relationship so consumers can
+        // unambiguously reference individual edges (especially when a single Step
+        // has multiple READS_FROM/WRITES_TO edges for multi-table operations).
+        for (int i = 0; i < graph.Relationships.Count; i++)
+            graph.Relationships[i].Id = $"r{i}";
+
         return graph;
     }
 
     /// <summary>
-    /// Pass 1: emits a typed (:Table)-[:HAS_COLUMN {ordinal}]->(:Column {data_type,
-    /// is_nullable, is_identity, is_primary_key, ...}) for every CREATE TABLE.
+    /// Pass 1: emits :Table nodes (always) and, when includeColumns is true,
+    /// (:Table)-[:HAS_COLUMN {ordinal}]->(:Column {data_type, is_nullable, ...}) for every CREATE TABLE.
     /// Pass 2 (after all tables/columns exist): for each FOREIGN KEY, adds
-    /// (:Column)-[:REFERENCES {constraint}]->(:Column) per column pair plus a
-    /// derived (:Table)-[:FK_TO {constraint}]->(:Table) - the child (many) table
-    /// points to the parent (one) table, so "1 parent -> many children" reads as
-    /// MATCH (child)-[:FK_TO]->(parent) in Cypher.
+    /// (:Table)-[:FK_TO {constraint}]->(:Table) (always) and, when includeColumns,
+    /// (:Column)-[:REFERENCES {constraint}]->(:Column) per column pair.
     /// </summary>
     private static void BuildTableSchemas(
         GraphPayload graph,
         List<TableSchemaResult> tableSchemas,
         Dictionary<(string db, string name), string> tableIds,
-        Dictionary<(string tableId, string column), string> columnIds)
+        Dictionary<(string tableId, string column), string> columnIds,
+        bool includeColumns)
     {
         foreach (var schema in tableSchemas)
         {
@@ -576,39 +703,45 @@ public static class GraphExporter
                 });
             }
 
-            foreach (var col in schema.Columns)
+            if (includeColumns)
             {
-                var colKey = (tableId, col.Name.ToLowerInvariant());
-                if (columnIds.ContainsKey(colKey))
-                    continue;
+                foreach (var col in schema.Columns)
+                {
+                    var colKey = (tableId, col.Name.ToLowerInvariant());
+                    if (columnIds.ContainsKey(colKey))
+                        continue;
 
-                var colId = $"{tableId}:column:{col.Name}";
-                columnIds[colKey] = colId;
-                graph.Nodes.Add(new GraphNode
-                {
-                    Id = colId,
-                    Labels = new List<string> { "Column" },
-                    Properties = new Dictionary<string, object>
+                    var colId = $"{tableId}:column:{col.Name}";
+                    columnIds[colKey] = colId;
+                    graph.Nodes.Add(new GraphNode
                     {
-                        ["name"] = col.Name,
-                        ["table"] = tableKey.Item2,
-                        ["data_type"] = col.DataType,
-                        ["is_nullable"] = col.IsNullable,
-                        ["is_identity"] = col.IsIdentity,
-                        ["is_primary_key"] = col.IsPrimaryKey,
-                        ["ordinal"] = col.Ordinal,
-                    },
-                });
-                graph.Relationships.Add(new GraphRel
-                {
-                    Type = "HAS_COLUMN",
-                    StartNodeId = tableId,
-                    EndNodeId = colId,
-                    Properties = { ["ordinal"] = col.Ordinal },
-                });
+                        Id = colId,
+                        Labels = new List<string> { "Column" },
+                        Properties = new Dictionary<string, object>
+                        {
+                            ["name"] = col.Name,
+                            ["table"] = tableKey.Item2,
+                            ["data_type"] = col.DataType,
+                            ["is_nullable"] = col.IsNullable,
+                            ["is_identity"] = col.IsIdentity,
+                            ["is_primary_key"] = col.IsPrimaryKey,
+                            ["ordinal"] = col.Ordinal,
+                        },
+                    });
+                    graph.Relationships.Add(new GraphRel
+                    {
+                        Type = "HAS_COLUMN",
+                        StartNodeId = tableId,
+                        EndNodeId = colId,
+                        Properties = { ["ordinal"] = col.Ordinal },
+                    });
+                }
             }
         }
 
+        // Pass 2: FK relationships. FK_TO (table-table) is always emitted so the
+        // ER lineage is available even without --columns. REFERENCES (column-column)
+        // is only emitted when includeColumns (column nodes must exist first).
         foreach (var schema in tableSchemas)
         {
             if (schema.Error != null || schema.ForeignKeys.Count == 0)
@@ -639,19 +772,22 @@ public static class GraphExporter
                     Properties = { ["constraint"] = fk.ConstraintName ?? "" },
                 });
 
-                for (int i = 0; i < fk.Columns.Count && i < fk.ReferencedColumns.Count; i++)
+                if (includeColumns)
                 {
-                    var colKey = (tableId, fk.Columns[i].ToLowerInvariant());
-                    var refColKey = (refTableId, fk.ReferencedColumns[i].ToLowerInvariant());
-                    if (columnIds.TryGetValue(colKey, out var colId) && columnIds.TryGetValue(refColKey, out var refColId))
+                    for (int i = 0; i < fk.Columns.Count && i < fk.ReferencedColumns.Count; i++)
                     {
-                        graph.Relationships.Add(new GraphRel
+                        var colKey = (tableId, fk.Columns[i].ToLowerInvariant());
+                        var refColKey = (refTableId, fk.ReferencedColumns[i].ToLowerInvariant());
+                        if (columnIds.TryGetValue(colKey, out var colId) && columnIds.TryGetValue(refColKey, out var refColId))
                         {
-                            Type = "REFERENCES",
-                            StartNodeId = colId,
-                            EndNodeId = refColId,
-                            Properties = { ["constraint"] = fk.ConstraintName ?? "" },
-                        });
+                            graph.Relationships.Add(new GraphRel
+                            {
+                                Type = "REFERENCES",
+                                StartNodeId = colId,
+                                EndNodeId = refColId,
+                                Properties = { ["constraint"] = fk.ConstraintName ?? "" },
+                            });
+                        }
                     }
                 }
             }
@@ -726,4 +862,61 @@ public static class GraphExporter
     /// </summary>
     private static string StableHash(string text) =>
         Convert.ToHexStringLower(SHA1.HashData(Encoding.UTF8.GetBytes(text)))[..8];
+
+    /// <summary>
+    /// Classifies a step into a high-level workflow step type based on the SQL
+    /// operation and target, matching common ETL/process patterns:
+    /// Extraction (read from source), Load (write to target), Transformation
+    /// (modify/derive data), Staging (temp/variable tables), Cleanup, Orchestration,
+    /// Maintenance, Transaction, Notification, Cursor, Control, or Operation.
+    /// </summary>
+    private static string ClassifyStepType(string consequenceType, string target)
+    {
+        var isTemp = target.StartsWith("#") || target.StartsWith("@");
+        return consequenceType switch
+        {
+            "INSERT" => isTemp ? "Staging" : "Load",
+            "SELECT" => isTemp ? "Staging" : "Extraction",
+            "UPDATE" => "Transformation",
+            "DELETE" => "Cleanup",
+            "MERGE" => "Load",
+            "EXEC" => "Orchestration",
+            "TRUNCATE" => "Cleanup",
+            "ALTER" or "CREATE_TABLE" or "CREATE_INDEX" or "DROP_TABLE" => "Maintenance",
+            "BEGIN_TRAN" or "COMMIT_TRAN" or "ROLLBACK" => "Transaction",
+            "THROW" or "RAISERROR" => "Notification",
+            "RETURN" => "Control",
+            "OPEN_CURSOR" or "FETCH" or "CLOSE_CURSOR" or "DEALLOCATE" or "DECLARE_CURSOR" => "Cursor",
+            _ => "Operation"
+        };
+    }
+
+    /// <summary>
+    /// Detects cross-database table references (3-part names like "OtherDb.dbo.Table").
+    /// Returns (true, targetDb) when the table belongs to a different database than
+    /// currentDb; (false, currentDb) for same-database or 2-part references.
+    /// </summary>
+    private static (bool isCross, string targetDb) DetectCrossDb(string tableName, string currentDb)
+    {
+        var parts = NormalizeRef(tableName).Split('.');
+        if (parts.Length >= 3)
+        {
+            var tableDb = parts[0];
+            if (!string.Equals(tableDb, NormalizeRef(currentDb), StringComparison.OrdinalIgnoreCase))
+                return (true, tableDb);
+        }
+        return (false, currentDb);
+    }
+
+    /// <summary>
+    /// Splits "Schema.Object" into ("Schema", "Object"). Single-part names default
+    /// schema to "dbo". Used to populate the schema/name properties on SqlObject nodes.
+    /// </summary>
+    private static (string schema, string name) SplitSchemaObject(string plain)
+    {
+        var dot = plain.IndexOf('.');
+        return dot > 0
+            ? (plain[..dot], plain[(dot + 1)..])
+            : ("dbo", plain);
+    }
 }

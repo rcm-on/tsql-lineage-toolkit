@@ -311,6 +311,44 @@
       <div class="tree">${FlowTree(o.flow, DATA.byName)}</div></details>` : ''}
 
       ${(() => { const df = DataFlowMermaid(o, DATA); return df ? `<h3>Flujo de datos</h3>${SD.mm.block(df, 'Flujo de datos')}` : ''; })()}
+
+      ${o.runtime ? (() => {
+        const rt = o.runtime;
+        const totals = [
+          rt.rowsWritten != null ? `<span class="chip w">escritas: <b>${esc(rt.rowsWritten)}</b></span>` : '',
+          rt.rowsRead    != null ? `<span class="chip r">leídas: <b>${esc(rt.rowsRead)}</b></span>` : '',
+        ].filter(Boolean).join(' ');
+        const rows = rt.stats.map(s => {
+          const disc = s.discovered
+            ? `<span class="b dyn" title="No visible en análisis estático; descubierto al ejecutar">⚡ descubierto</span>`
+            : `<span class="b" style="background:var(--ok,#2a4a2a);color:#7ef07e" title="Confirmado por plan de ejecución">✓ confirmado</span>`;
+          const rowsTd = s.rows != null ? `<b>${esc(s.rows)}</b>` : '<span class="muted">—</span>';
+          const opCls = s.op === 'WRITE' ? 'a-write' : 'a-read';
+          return `<tr>
+            <td>${esc(s.table)}</td>
+            <td><span class="act ${opCls}">${esc(s.op_label || s.op)}</span></td>
+            <td style="text-align:right">${rowsTd}</td>
+            <td>${disc}</td>
+          </tr>`;
+        }).join('');
+        return `
+          <h3>📊 Ejecución real (plan de ejecución SQL Server)</h3>
+          <div class="summary" style="border-left-color:#4db6ac">
+            <span class="sumicon" style="color:#4db6ac">▶</span>
+            <div>Datos capturados del plan de ejecución real.
+            ${rt.planSource ? `Plan: <code>${esc(rt.planSource)}</code>.` : ''}
+            ${totals || ''}
+            <span class="muted" style="display:block;margin-top:4px;font-size:11px">
+              ✓ confirmado = la tabla ya estaba en el análisis estático y el plan lo verifica.
+              ⚡ descubierto = tabla solo visible en runtime (SQL dinámico resuelto, vistas, etc.).
+            </span>
+            </div>
+          </div>
+          <table class="t">
+            <tr><th>Tabla</th><th>Operación</th><th style="text-align:right">Filas reales</th><th>Estado</th></tr>
+            ${rows}
+          </table>`;
+      })() : ''}
     `;
   }
 

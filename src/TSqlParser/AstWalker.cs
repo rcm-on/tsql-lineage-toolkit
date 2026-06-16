@@ -121,8 +121,22 @@ public static class AstWalker
                     break;
 
                 case UpdateStatement upd:
-                    AddLink(ctx, condStack, "UPDATE", TargetName(upd.UpdateSpecification?.Target, cteNames, upd.UpdateSpecification?.FromClause), stmt,
-                        columns: UpdateColumns(upd));
+                    {
+                        var updTarget = TargetName(upd.UpdateSpecification?.Target, cteNames, upd.UpdateSpecification?.FromClause);
+                        var updColumns = UpdateColumns(upd);
+                        List<TableColumnRef>? updExtraReads = null;
+                        var updFrom = upd.UpdateSpecification?.FromClause;
+                        if (updFrom != null && updTarget.Length > 0)
+                        {
+                            var allRefs = CollectTableRefs(updFrom, cteNames, cteBaseTables);
+                            var partners = allRefs
+                                .Where(r => !string.Equals(r.Table, updTarget, StringComparison.OrdinalIgnoreCase))
+                                .ToList();
+                            if (partners.Count > 0)
+                                updExtraReads = BuildExtraReads(partners, new List<TableColumnRef>(), skipFirst: false);
+                        }
+                        AddLink(ctx, condStack, "UPDATE", updTarget, stmt, columns: updColumns, extraReads: updExtraReads);
+                    }
                     break;
 
                 case DeleteStatement del:
@@ -174,9 +188,26 @@ public static class AstWalker
                             }
                     }
 
-                    // Mirrors the Python analyzer's "SELECT ... FROM <table>" read-reference
-                    // tracking: only SELECTs with a FROM clause are recorded as steps.
-                    if (sel.QueryExpression is QuerySpecification { FromClause.TableReferences.Count: > 0 } qs)
+                    // "SELECT ... INTO #Target FROM Source [JOIN ...]":
+                    // creates and populates #Target - treated as INSERT (WRITES_TO #Target)
+                    // with all FROM tables as ExtraReads (READS_FROM each source).
+                    if (sel.Into != null)
+                    {
+                        var intoName = SqlText.Generate(sel.Into);
+                        if (sel.QueryExpression is QuerySpecification qsInto)
+                        {
+                            var tableRefs = CollectTableRefs(qsInto.FromClause, cteNames, cteBaseTables);
+                            var extraReads = BuildExtraReads(tableRefs, new List<TableColumnRef>(), skipFirst: false);
+                            AddLink(ctx, condStack, "INSERT", intoName, stmt, extraReads: extraReads);
+                        }
+                        else
+                        {
+                            AddLink(ctx, condStack, "INSERT", intoName, stmt);
+                        }
+                    }
+                    // "SELECT ... FROM <table>" read-reference tracking.
+                    // Only SELECTs with a FROM clause are recorded as steps.
+                    else if (sel.QueryExpression is QuerySpecification { FromClause.TableReferences.Count: > 0 } qs)
                     {
                         var tableRefs = CollectTableRefs(qs.FromClause, cteNames, cteBaseTables);
                         var selTarget = tableRefs.Count > 0 ? tableRefs[0].Table : "";
@@ -185,9 +216,7 @@ public static class AstWalker
 
                         if (qs.SelectElements.Any(e => e is SelectStarExpression))
                         {
-                            // "SELECT * FROM T" (or "SELECT t.*, ...") with no other columns
-                            // resolved: expand "*" to T's full column list when known
-                            // (single-table FROMs only - "*" across a JOIN can't be split).
+                            // "SELECT * FROM T": expand to T's full column list when known.
                             selColumns = (tableRefs.Count == 1 ? ResolveAllColumns(selTarget, ctx) : null) ?? new List<string>();
                             extraReads = BuildExtraReads(tableRefs, new List<TableColumnRef>(), skipFirst: true);
                         }
@@ -825,6 +854,10 @@ public static class AstWalker
     /// </summary>
     private static string TargetName(TableReference? target, HashSet<string> cteNames, FromClause? fromClause = null)
     {
+        // INSERT/UPDATE into a table variable: @TableVar
+        if (target is VariableTableReference vtr)
+            return vtr.Variable?.Name ?? "";
+
         if (target is not NamedTableReference ntr)
             return "";
 
