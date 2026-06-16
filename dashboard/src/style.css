@@ -134,6 +134,21 @@ table.t th{background:#2d2d2d;color:var(--mut)}
 code.ctor{display:inline-block;font-family:Consolas,monospace;font-size:12px;color:#7dd3fc;background:#1e2a3a;border:1px solid #2d4259;border-radius:4px;padding:4px 8px;max-width:560px;white-space:pre-wrap;word-break:break-word}
 .ctor-block{margin:6px 0}
 
+/* schema explorer / ORM diagram */
+.schema-toolbar{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:10px 12px;background:var(--pan);border:1px solid var(--bd);border-radius:8px;margin-bottom:14px}
+.schema-toolbar select{padding:5px 10px;background:#2d2d2d;color:var(--fg);border:1px solid var(--bd);border-radius:6px;min-width:220px;font-size:13px}
+.schema-chip{display:inline-flex;align-items:center;gap:3px;background:#2a2a2a;border:1px solid var(--bd);border-radius:14px;padding:3px 4px 3px 10px;font-size:12px;white-space:nowrap}
+.schema-chip-name{max-width:180px;overflow:hidden;text-overflow:ellipsis}
+.s-btn-exp{background:#1a3a2a;color:#66bb6a;border:1px solid #2a5a3a;border-radius:8px;padding:1px 6px;font-size:10px;cursor:pointer;line-height:1.5}
+.s-btn-exp:hover{background:#2a5a3a}
+.s-btn-rm{background:none;color:var(--mut);border:none;cursor:pointer;font-size:13px;padding:0 3px;line-height:1}
+.s-btn-rm:hover{color:#ff5252}
+.s-btn-clear{background:none;color:var(--mut);border:1px solid var(--bd);border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;margin-left:auto}
+.s-btn-clear:hover{color:var(--fg);border-color:var(--fg)}
+#schema-er-wrap .mm-wrap{margin-top:0}
+.schema-quick-add{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.schema-tip{color:var(--mut);font-size:11px;margin:6px 0 0;line-height:1.5}
+
 /* riesgos */
 .risk-card .n{color:#ff8a80}
 .sev{font-size:10px;font-weight:bold;padding:2px 7px;border-radius:10px;white-space:nowrap}
