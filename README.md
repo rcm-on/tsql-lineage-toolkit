@@ -3,17 +3,16 @@
 > **Know what breaks before you touch it.**  
 > Production-grade T-SQL data lineage — static AST analysis fused with SQL Server execution plans, visualised in a zero-install browser dashboard.
 
-<p align="center">
-  <img src="docs/dashboard-overview.png" alt="Dashboard overview" width="780"/>
-</p>
+![Dashboard overview](docs/dashboard-overview.png)
 
-<p align="center">
-  <a href="#quick-start"><img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white" alt=".NET 10"/></a>
-  <img src="https://img.shields.io/badge/T--SQL-ScriptDom%20AST-blue?logo=microsoftsqlserver&logoColor=white" alt="ScriptDom"/>
-  <img src="https://img.shields.io/badge/dashboard-vanilla%20JS%20%7C%20offline-green" alt="Offline dashboard"/>
-  <img src="https://img.shields.io/badge/export-Neo4j%20%7C%20GraphML%20%7C%20D3-orange" alt="Export formats"/>
-  <a href="CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs welcome"/></a>
-</p>
+[![.NET 10](https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&logoColor=white)](#quick-start)
+[![ScriptDom AST](https://img.shields.io/badge/T--SQL-ScriptDom%20AST-blue?logo=microsoftsqlserver&logoColor=white)](#)
+[![Offline dashboard](https://img.shields.io/badge/dashboard-vanilla%20JS%20%7C%20offline-green)](#dashboard)
+[![Exports](https://img.shields.io/badge/export-Neo4j%20%7C%20GraphML%20%7C%20D3-orange)](#export-formats)
+[![License MIT](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](CONTRIBUTING.md)
+[![Blog](https://img.shields.io/badge/blog-rcmon.dev-informational)](https://blog.rcmon.dev)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Ramón%20Campos-0077B5?logo=linkedin)](https://www.linkedin.com/in/ramón-campos-78aba234)
 
 ---
 
@@ -21,51 +20,96 @@
 
 Before touching a stored procedure or renaming a column in a large SQL Server database, the question is always the same: **what breaks if I change this?** Answering it manually means reading hundreds of procedures. Commercial tools (Purview, DataHub) cost a fortune and still miss runtime-only table access.
 
-This toolkit parses the real AST of every procedure / function / trigger / view (not regex), builds the full lineage graph, and then *fuses it with the SQL Server execution plan XML* to surface tables that are invisible to static analysis (dynamic SQL, view expansion, cross-DB calls).
+This toolkit parses the real AST of every procedure / function / trigger / view (not regex), builds the full lineage graph, and then *fuses it with the SQL Server execution plan XML* to surface tables that are invisible to static analysis — dynamic SQL, view expansion, cross-database calls.
 
 ---
 
-## What makes it different
+## All advantages at a glance
 
-| Feature | This tool | Purview / DataHub |
+| # | Advantage | Why it matters |
 |---|---|---|
-| True AST parse (ScriptDom, not regex) | Yes | No |
-| Execution plan enrichment (ShowPlanXML) | Yes — actual row counts | No |
-| Runtime-discovered tables | Yes (tagged, confidence-scored) | No |
-| Condition path per step (IF/WHILE/TRY) | Yes | No |
-| Variable & dynamic-SQL tracking | Yes | No |
-| Offline, zero-install dashboard | Yes | No |
-| Agent-friendly NodeStore | Yes (16x less data to read) | No |
-| Multi-source (Python, Spark, REST…) | No | Yes |
-| Cost | Free / open source | €€€€ |
+| 1 | **True AST parse** via ScriptDom | No false positives from regex; handles nested IF/WHILE/TRY, dynamic SQL, cursors |
+| 2 | **Execution plan fusion** (ShowPlanXML) | Surfaces runtime-only tables with actual row counts — unique in the open-source space |
+| 3 | **Confidence scoring** on every edge | Static=inferred · confirmed=plan verified · discovered=runtime-only |
+| 4 | **Cyclomatic complexity** per object | Identifies high-risk procs before a migration |
+| 5 | **Condition path** per step | Each SQL step knows which IF/WHILE/TRY branch it lives in |
+| 6 | **Column-level lineage** | Tracks which columns each proc reads/writes (`--columns` flag) |
+| 7 | **Variable & dynamic SQL tracking** | Detects variables used to build `EXEC(@sql)` strings |
+| 8 | **Table variable tracking** (`@TableVar`) | Captures INSERT into `@TableVar` as a lineage target |
+| 9 | **Offline dashboard** — zero install | Drop `index.html` in a browser; no npm, no server, no cloud |
+| 10 | **Interactive ORM diagram** | Select tables → Mermaid ER diagram with columns and FK arrows |
+| 11 | **Multiple export formats** | Neo4j JSON · GraphML · D3/Graphify · navigable NodeStore |
+| 12 | **Agent-friendly NodeStore** | AI tools read 16x less data to answer lineage questions |
+| 13 | **Incremental updates** | `update-nodestore` only rewrites changed objects |
+| 14 | **No cloud, no telemetry, no license fee** | Runs fully on-premise on Windows/Linux/macOS |
+| 15 | **Live SQL Server integration** | `extract` + `validate` commands; or work from `.sql` files offline |
 
 ---
 
-## Capabilities at a glance
+## Comparison with other tools
 
-- **Impact analysis** — "if I change `dbo.Customers.Email`, which procedures read or write it, directly or transitively?"
-- **Migration planning** — detect hidden dependencies (dynamic SQL, `EXEC`, cascaded views) before refactoring
-- **Onboarding / audit** — explore an unknown database visually without reading each SP line by line
-- **Cyclomatic complexity** per object, with drill-down into each conditional branch
-- **Execution plan fusion** — `Confirmed: 8, Discovered: 2` means 8 static edges verified by the real plan, 2 new runtime-only tables added
-- **Multiple exports** — Neo4j JSON · GraphML (Gephi/yEd/Cytoscape) · Graphify/D3 · navigable NodeStore
+### vs. free / open-source tools
+
+| Tool | AST parse | Execution plan | Dashboard | Column lineage | ORM diagram | Agent-ready |
+|---|---|---|---|---|---|---|
+| **TSql Lineage Toolkit** | ScriptDom | Yes (actual rows) | Yes, offline | Yes | Yes | Yes (NodeStore) |
+| sqllineage (Python) | Statement-level regex | No | No | No | No | No |
+| Apache Atlas | Metadata catalog | No | Generic | No | No | No |
+| dbt lineage | dbt models only | No | dbt Cloud | Limited | No | No |
+| OpenLineage | Emission-based | No | External | No | No | No |
+| Custom regex scripts | Regex (errors) | No | No | No | No | No |
+
+### vs. commercial / enterprise tools
+
+| Tool | Price | AST parse | Execution plan | Offline | Customisable |
+|---|---|---|---|---|---|
+| **TSql Lineage Toolkit** | Free | Yes | Yes | Yes | Full source |
+| Microsoft Purview | €€€€ / Azure-only | No (catalog) | No | No | No |
+| DataHub (Acryl) | €€€ SaaS | No | No | No | Plugin API |
+| Octopai | €€€€ enterprise | No | No | No | No |
+| Informatica IDMC | €€€€€ enterprise | No | No | No | No |
+| Redgate SQL Source Control | €€ | Schema diff only | No | Partial | No |
+| dbt Cloud | €€ | dbt only | No | No | Partial |
+
+**Bottom line**: no free tool parses the ScriptDom AST or reads execution plan XML. No paid tool at any price tier fuses static analysis with actual execution plan data for runtime table discovery.
 
 ---
 
 ## Screenshots
 
-<table>
-<tr>
-<td align="center"><strong>General overview</strong></td>
-<td align="center"><strong>Object detail: flow, risks, columns</strong></td>
-</tr>
-<tr>
-<td><img src="docs/dashboard-overview.png" width="420"/></td>
-<td><img src="dashboard/e2e/screenshot-object.png" width="420"/></td>
-</tr>
-</table>
+### General overview — database-level stats
 
-The dashboard runs entirely in the browser — no server, no build step, no npm. Drop `index.html` and upload your `graph_full.json`.
+![Dashboard overview](docs/dashboard-overview.png)
+
+### Object detail — metrics, risks, references, call graph
+
+![Object detail](docs/dashboard-object.png)
+
+### Complex procedure — cursor, variables, multi-table lineage
+
+![Workflow and complex proc](docs/dashboard-workflow.png)
+
+### Execution plan fusion — actual row counts, confirmed vs discovered
+
+![Execution plan data](docs/dashboard-execution-zoom.png)
+
+### Table schema — columns, types, FK graph, writers/readers
+
+![Table columns and FK](docs/dashboard-columns.png)
+
+### Interactive ORM diagram — add/remove tables dynamically, FK arrows drawn automatically
+
+- Dropdown to **add** any table → it appears in the diagram with full column design
+- **✕** on each chip to remove it
+- **+NFk** to expand all FK neighbours in one click
+- **Click a table inside the SVG** to expand its relations directly in the diagram
+- Export as `.mmd`, SVG or PNG with the toolbar buttons
+
+![Schema ORM diagram](docs/dashboard-schema-orm.png)
+
+### Risk analysis — code quality findings across all objects
+
+![Risks panel](docs/dashboard-risks.png)
 
 ---
 
@@ -74,18 +118,18 @@ The dashboard runs entirely in the browser — no server, no build step, no npm.
 ### Option A — from SQL files (no database connection needed)
 
 ```bash
-git clone https://github.com/YOUR_GITHUB/tsql-lineage-toolkit
+git clone https://github.com/rcm-on/tsql-lineage-toolkit
 cd tsql-lineage-toolkit/src/TSqlParser
 
-# Build an input.json from local .sql files (one CREATE PROC/TABLE per file)
+# Build input.json from local .sql files (one CREATE PROC/TABLE per file)
 dotnet run -- from-sql MyDatabase ../../input.json path/to/sql/*.sql
 
-# Generate the lineage graph with column nodes
+# Generate the lineage graph with column nodes and table design
 dotnet run -- ../../input.json ../../graph_full.json --columns
 
-# Open the dashboard
+# Open the dashboard (no install needed)
 start ../../dashboard/index.html   # Windows
-open ../../dashboard/index.html    # macOS/Linux
+open  ../../dashboard/index.html   # macOS/Linux
 ```
 
 ### Option B — from a live SQL Server
@@ -103,13 +147,13 @@ dotnet run -- enrich-from-plans ../../graph_full.json ../../graph_enriched.json 
 
 Upload `graph_full.json` (or `graph_enriched.json`) to `dashboard/index.html`. Done.
 
-> No database? Use `samples/from-sql-demo/graph.json` — it's the pre-built output for the bundled SQL examples.
+> No database? Use `samples/from-sql-demo/graph.json` — pre-built output for the bundled SQL examples, ready to drop into the dashboard.
 
 ---
 
 ## Execution plan enrichment
 
-SQL Server can save an actual execution plan as XML (`.sqlplan` or `.xml`).  
+SQL Server can export any query's actual execution plan as XML (`.sqlplan` / `.xml`).  
 Point the toolkit at it and it will:
 
 1. **Confirm** static edges in-place — adds `confidence=1.0`, `confirmed_by="execution_plan"`, `actual_rows`
@@ -120,17 +164,19 @@ dotnet run -- enrich-from-plans graph_full.json graph_enriched.json plan1.xml pl
 # Plans: 2  Procs matched: 2  Confirmed: 14  Discovered: 3
 ```
 
+![Execution plan section](docs/dashboard-execution.png)
+
 ---
 
 ## All CLI commands
 
 ```
-dotnet run -- <input.json> <graph.json> [workflows.json] [--columns] [--graphify] [--graphml] [--nodestore]
+dotnet run -- <input.json> <graph.json> [--columns] [--graphify] [--graphml] [--nodestore]
 dotnet run -- from-sql <database> <input.json> <file.sql|dir|glob>
-dotnet run -- extract <database> <input.json> [--server <server>] [--tables] [--object schema.name] [--like pattern]
+dotnet run -- extract <database> <input.json> [--server <srv>] [--tables] [--object schema.name] [--like pattern]
 dotnet run -- enrich-from-plans <graph.json> <out.json> <plan.xml> [plan2.xml ...]
 dotnet run -- plan-summary <plan.xml>
-dotnet run -- validate <graph.json> [--server <server>]
+dotnet run -- validate <graph.json> [--server <srv>]
 dotnet run -- update-nodestore <input.json> <graph.nodes/> [--columns]
 ```
 
@@ -140,27 +186,25 @@ dotnet run -- update-nodestore <input.json> <graph.nodes/> [--columns]
 
 ```
 tsql-lineage-toolkit/
-├── src/TSqlParser/          # .NET CLI + library
-│   ├── AstWalker.cs          # ScriptDom AST traversal (the core)
-│   ├── GraphExporter.cs      # Emits nodes/relationships (Neo4j JSON shape)
-│   ├── ExecutionPlanParser.cs # Reads ShowPlanXML (actual + estimated)
-│   ├── PlanEnricher.cs        # Noise-free static + runtime graph merge
-│   ├── NodeStoreExporter.cs   # Agent-friendly partitioned node store
-│   ├── GraphMlExporter.cs     # GraphML for Gephi / yEd / Cytoscape
-│   └── GraphifyExporter.cs    # Flat {meta,stats,nodes,edges} for D3
+├── src/TSqlParser/            # .NET CLI + library
+│   ├── AstWalker.cs            # ScriptDom AST traversal (the core)
+│   ├── GraphExporter.cs        # Emits nodes/relationships (Neo4j JSON shape)
+│   ├── ExecutionPlanParser.cs  # Reads ShowPlanXML (actual + estimated)
+│   ├── PlanEnricher.cs         # Noise-free static + runtime graph merge
+│   ├── NodeStoreExporter.cs    # Agent-friendly partitioned node store
+│   ├── GraphMlExporter.cs      # GraphML for Gephi / yEd / Cytoscape
+│   └── GraphifyExporter.cs     # Flat {meta,stats,nodes,edges} for D3
 │
-├── tests/TSqlParser.Tests/   # xUnit test suite (42 tests)
+├── tests/TSqlParser.Tests/    # xUnit test suite (42 tests)
 │
-├── dashboard/                # Offline browser dashboard (vanilla JS)
-│   ├── src/shape.js           # JSON → dashboard model
-│   ├── src/components.js      # All UI components
-│   └── e2e/                   # Playwright smoke tests
+├── dashboard/                 # Offline browser dashboard (vanilla JS, no build)
+│   ├── src/shape.js            # JSON → dashboard model
+│   ├── src/components.js       # All UI components incl. ORM diagram builder
+│   └── e2e/                    # Playwright smoke tests + screenshot generator
 │
-├── samples/                  # Ready-to-use example inputs & outputs
-│   └── from-sql-demo/         # Pre-built graph for WideWorldImporters-style demo
-│
-└── eval/                     # Evaluation scripts and execution plan samples
-    └── plans/                 # Sample ShowPlanXML files
+├── docs/                      # Screenshots for this README
+├── samples/                   # Ready-to-use example inputs and outputs
+└── eval/                      # Evaluation scripts and execution plan samples
 ```
 
 ---
@@ -174,7 +218,7 @@ tsql-lineage-toolkit/
 | Graphify/D3 | `--graphify` | vis-network · D3 · any flat-graph viewer |
 | NodeStore | `--nodestore` | AI agents (Claude Code, Copilot, custom) |
 
-**NodeStore** splits the graph into small, navigable files. An agent answering "what writes to `Warehouse.StockItems`?" reads 3 files (93 KB) instead of the full 1.5 MB graph — **16x less data, answer already pre-structured**.
+**NodeStore** splits the graph into small, navigable files. An agent answering "what writes to `Warehouse.StockItems`?" reads 3 files (93 KB) instead of the full 1.5 MB graph — **16x less data**, answer already pre-structured.
 
 ---
 
@@ -183,7 +227,7 @@ tsql-lineage-toolkit/
 ```bash
 dotnet build
 dotnet test
-# All 42 tests pass (xUnit)
+# 42/42 tests pass (xUnit)
 ```
 
 End-to-end dashboard smoke test:
@@ -191,63 +235,73 @@ End-to-end dashboard smoke test:
 ```bash
 cd dashboard/e2e
 npm ci
-npx playwright test
+node check-dashboard.js
+```
+
+Regenerate README screenshots:
+
+```bash
+cd dashboard/e2e
+node screenshots.js
 ```
 
 ---
 
 ## Contributing
 
-Contributions are welcome — whether it's a bug report, a new SQL pattern that isn't tracked, a dashboard improvement, or a new export format.
+All contributions are welcome — bug reports, new SQL patterns, dashboard improvements, export format plugins.
 
 ### Good first issues
-- Add support for `MERGE` statement target tracking
-- Detect `TRUNCATE TABLE` as a WRITES_TO edge
-- Dashboard: dark/light theme toggle
+
+- `MERGE` statement target tracking
+- `TRUNCATE TABLE` → WRITES_TO edge
+- Dashboard: light/dark theme toggle
 - Dashboard: export current view as PNG / SVG
-- Add confidence scoring to all static READS_FROM / WRITES_TO edges
-- Support `INSERT INTO ... SELECT` column-level derivation
+- Confidence scoring on all static READS_FROM / WRITES_TO
+- `INSERT INTO ... SELECT` column-level derivation
+- VIEW expansion (resolve to base tables at lineage time)
 
 ### How to contribute
 
 ```bash
 # 1. Fork + clone
-git clone https://github.com/YOUR_GITHUB/tsql-lineage-toolkit
+git clone https://github.com/rcm-on/tsql-lineage-toolkit
 
 # 2. Create a branch
 git checkout -b feature/my-improvement
 
-# 3. Make your change + add a test in tests/TSqlParser.Tests/
+# 3. Change + test
 dotnet test   # must stay green
 
-# 4. Open a PR — describe the SQL pattern or dashboard behaviour you changed
+# 4. Open a PR — include a minimal CREATE PROCEDURE example and expected edges
 ```
 
-If you're adding a new T-SQL pattern, please include a minimal `CREATE PROCEDURE` example and the expected edges in your PR description. The `eval/` folder has examples you can follow.
+If you add a new T-SQL pattern, include a test case in `tests/TSqlParser.Tests/LineageTests.cs` with the minimal SQL and the expected READS_FROM / WRITES_TO edges.
 
 ---
 
-## Roadmap ideas
+## Roadmap
 
 - [ ] VIEW expansion — resolve `INSERT INTO view` to base table at lineage time
 - [ ] Cross-database EXEC lineage (follow `EXEC OtherDb.dbo.spProc`)
 - [ ] Lineage diff between two graph snapshots (what changed between releases?)
-- [ ] REST API mode — serve the graph over HTTP for IDE plugins
-- [ ] VS Code extension — hover a table name, see who writes to it
+- [ ] REST API / HTTP server mode for IDE plugins
+- [ ] VS Code extension — hover a table name → instant lineage popup
 
 ---
 
 ## Author
 
-Built by **R. Campos Martín** — data engineer & SQL Server specialist.
+Built and maintained by **Ramón Campos Martín** — data engineer & SQL Server specialist.
 
-- Email: [rcamposmartin@hotmail.com](mailto:rcamposmartin@hotmail.com)
-- GitHub: [@YOUR_GITHUB](https://github.com/YOUR_GITHUB)
-- LinkedIn: [linkedin.com/in/YOUR_LINKEDIN](https://linkedin.com/in/YOUR_LINKEDIN)
+📧 [rcamposmartin@hotmail.com](mailto:rcamposmartin@hotmail.com)  
+🐙 [@rcm-on](https://github.com/rcm-on)  
+💼 [linkedin.com/in/ramón-campos-78aba234](https://www.linkedin.com/in/ramón-campos-78aba234)  
+📝 [blog.rcmon.dev](https://blog.rcmon.dev)
 
-If this tool saves you time, a star on GitHub helps others find it.  
-If you use it in a project or company, I'd love to hear about it — open a Discussion or send an email.
+If this tool saves you time, a ⭐ on GitHub helps others find it.  
+If you use it at your company, open a Discussion or send me an email — I'd love to hear about it.
 
 ---
 
-*Built with [Microsoft.SqlServer.TransactSql.ScriptDom](https://www.nuget.org/packages/Microsoft.SqlServer.TransactSql.ScriptDom) · Visualised with [Mermaid.js](https://mermaid.js.org/) · No cloud, no telemetry, no lock-in.*
+*Built with [Microsoft.SqlServer.TransactSql.ScriptDom](https://www.nuget.org/packages/Microsoft.SqlServer.TransactSql.ScriptDom) · Visualised with [Mermaid.js](https://mermaid.js.org/) · No cloud · No telemetry · No lock-in · [MIT License](LICENSE)*

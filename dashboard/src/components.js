@@ -410,5 +410,109 @@
     `;
   }
 
-  SD.components = { Sidebar, Overview, ObjectView, TableView, FlowTree, FlowChartMermaid, DataFlowMermaid, Summary, RisksView };
+  // ── SCHEMA EXPLORER ───────────────────────────────────────────────────────────
+
+  // Mermaid erDiagram names must be alphanumeric+underscore only.
+  const erSafe = name => name.replace(/[^a-zA-Z0-9]/g, '_');
+
+  function buildErDiagram(pinned, DATA) {
+    if (!pinned || pinned.size === 0) return '';
+    let out = 'erDiagram\n';
+    for (const name of pinned) {
+      const t = DATA.byName[name];
+      if (!t || t.kind !== 'table') continue;
+      const sn = erSafe(name);
+      out += `  ${sn} {\n`;
+      if (t.columns.length) {
+        for (const col of t.columns) {
+          // Mermaid erDiagram types must be a single word — strip "(size)" and spaces
+          const type = (col.type || 'varchar')
+            .replace(/\s*\([^)]*\)/g, '')   // remove (200), (18,2) etc.
+            .replace(/[^a-zA-Z0-9_]/g, '')   // remove remaining non-word chars
+            .trim() || 'varchar';
+          const colName = (col.name || 'col').replace(/[^a-zA-Z0-9_]/g, '_') || 'col';
+          const pk = (col.pk || col.identity) ? ' PK' : '';
+          out += `    ${type} ${colName}${pk}\n`;
+        }
+      } else {
+        out += `    varchar sin_DDL\n`;
+      }
+      out += `  }\n`;
+    }
+    // FK relationships between pinned tables only
+    const seen = new Set();
+    for (const name of pinned) {
+      const t = DATA.byName[name];
+      if (!t || t.kind !== 'table') continue;
+      for (const fk of (t.fkOut || [])) {
+        if (!pinned.has(fk.table)) continue;
+        const key = `${name}|${fk.table}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        const label = (fk.constraint || '').replace(/[^a-zA-Z0-9_\s]/g, '').trim() || 'FK';
+        out += `  ${erSafe(name)} }o--|| ${erSafe(fk.table)} : "${label}"\n`;
+      }
+    }
+    return out;
+  }
+
+  function SchemaView(DATA, pinned) {
+    const realTables = DATA.tables.filter(t => !t.temp);
+    const notPinned  = realTables.filter(t => !pinned.has(t.name));
+
+    const chips = [...pinned].map(name => {
+      const t = DATA.byName[name];
+      const neighbors = [
+        ...(t ? (t.fkOut || []).map(f => f.table) : []),
+        ...(t ? (t.fkIn  || []).map(f => f.table) : []),
+      ].filter(n => DATA.byName[n] && DATA.byName[n].kind === 'table' && !pinned.has(n));
+      const expandBtn = neighbors.length
+        ? `<button class="s-btn-exp" onclick="SD.app.schemaExpand('${esc(name)}')" title="Añadir ${neighbors.length} tabla(s) relacionada(s)">+${neighbors.length}FK</button>`
+        : '';
+      return `<span class="schema-chip">
+        <span class="schema-chip-name">${esc(name)}</span>
+        ${expandBtn}
+        <button class="s-btn-rm" onclick="SD.app.schemaRemove('${esc(name)}')" title="Quitar">✕</button>
+      </span>`;
+    }).join('');
+
+    const addOpts = notPinned
+      .map(t => `<option value="${esc(t.name)}">${esc(t.name)} (${t.columns.length}c)</option>`)
+      .join('');
+
+    const er = buildErDiagram(pinned, DATA);
+    const diagram = er
+      ? SD.mm.block(er, 'esquema-orm')
+      : `<div class="muted" style="padding:40px;text-align:center">
+           Selecciona tablas con el desplegable o haciendo clic en la lista de abajo para componer el diagrama ER.
+         </div>`;
+
+    const quickAdd = pinned.size === 0 && realTables.length
+      ? `<h3 style="margin-top:20px">Tablas disponibles — clic para añadir</h3>
+         <div class="schema-quick-add">
+           ${realTables.map(t => `<span class="chip" style="cursor:pointer" onclick="SD.app.schemaAdd('${esc(t.name)}')">${esc(t.name)}<span class="muted" style="font-size:10px;margin-left:4px">${t.columns.length}c</span></span>`).join('')}
+         </div>`
+      : '';
+
+    return `
+      <h2>📐 Esquema ORM — Diagrama ER interactivo</h2>
+      <div class="schema-toolbar">
+        <select onchange="if(this.value){SD.app.schemaAdd(this.value);this.value=''}">
+          <option value="">＋ Añadir tabla al diagrama…</option>
+          ${addOpts}
+        </select>
+        ${chips}
+        ${pinned.size > 1 ? `<button class="s-btn-clear" onclick="SD.app.schemaClear()">Limpiar todo</button>` : ''}
+      </div>
+      <div id="schema-er-wrap">${diagram}</div>
+      <p class="schema-tip">
+        💡 Haz clic en el nombre de una tabla <b>dentro del diagrama</b> para expandir sus relaciones FK ·
+        Usa <b>+NFk</b> para añadir vecinas directamente · <b>✕</b> para quitar ·
+        Exporta el diagrama como SVG / PNG con los botones de la barra superior
+      </p>
+      ${quickAdd}
+    `;
+  }
+
+  SD.components = { Sidebar, Overview, ObjectView, TableView, FlowTree, FlowChartMermaid, DataFlowMermaid, Summary, RisksView, SchemaView, buildErDiagram };
 })(window.SD = window.SD || {});

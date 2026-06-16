@@ -3,6 +3,18 @@
 (function (SD) {
   const $ = s => document.querySelector(s);
   let DATA = null, current = null, kindFilter = 'all', dynOnly = false;
+  let schemaPinned = new Set();  // tables currently pinned in the Schema Explorer
+
+  // Shared nav bar: always includes Overview, Risks and Schema ORM buttons.
+  function navBar(active) {
+    const btn = (id, label, onclick) =>
+      `<button class="${active === id ? 'on' : ''}" onclick="${onclick}">${label}</button>`;
+    return `<div class="nav">
+      ${btn('overview', '◉ Resumen general', 'SD.app.openOverview()')}
+      ${btn('risks',    '⚠ Riesgos',          'SD.app.openRisks()')}
+      ${btn('schema',   '📐 Esquema ORM',      'SD.app.openSchema()')}
+    </div>`;
+  }
 
   // ¿Pasa la entidad el filtro de tipo activo? 'table' = solo tablas reales;
   // 'temp' = solo tablas temporales (#nombre); el resto por kind.
@@ -49,7 +61,7 @@
   function openOverview() {
     current = null;
     document.querySelectorAll('.item').forEach(e => e.classList.remove('sel'));
-    $('#main').innerHTML = `<div class="nav"><button class="on" onclick="SD.app.openOverview()">◉ Resumen general</button></div>` + SD.components.Overview(DATA);
+    $('#main').innerHTML = navBar('overview') + SD.components.Overview(DATA);
     $('#main').scrollTop = 0;
     SD.mm.renderAll($('#main'));
   }
@@ -57,7 +69,7 @@
   function openRisks() {
     current = null;
     document.querySelectorAll('.item').forEach(e => e.classList.remove('sel'));
-    $('#main').innerHTML = `<div class="nav"><button onclick="SD.app.openOverview()">◉ Resumen general</button><button class="on">⚠ Riesgos</button></div><h2>Riesgos y malas prácticas</h2>` + SD.components.RisksView(DATA);
+    $('#main').innerHTML = navBar('risks') + '<h2>Riesgos y malas prácticas</h2>' + SD.components.RisksView(DATA);
     $('#main').scrollTop = 0;
     SD.mm.renderAll($('#main'));
   }
@@ -67,9 +79,73 @@
     current = name;
     document.querySelectorAll('.item').forEach(el => el.classList.toggle('sel', el.dataset.n === name));
     const view = e.kind === 'table' ? SD.components.TableView(e, DATA) : SD.components.ObjectView(e, DATA);
-    $('#main').innerHTML = `<div class="nav"><button onclick="SD.app.openOverview()">◉ Resumen general</button></div>` + view;
+    $('#main').innerHTML = navBar('') + view;
     $('#main').scrollTop = 0;
     SD.mm.renderAll($('#main'));
+  }
+
+  // ── SCHEMA EXPLORER ──────────────────────────────────────────────────────────
+
+  function openSchema() {
+    current = 'schema';
+    document.querySelectorAll('.item').forEach(e => e.classList.remove('sel'));
+    $('#main').innerHTML = navBar('schema') + SD.components.SchemaView(DATA, schemaPinned);
+    $('#main').scrollTop = 0;
+    SD.mm.renderAll($('#main')).then(attachSchemaClicks);
+  }
+
+  function schemaAdd(name) {
+    if (DATA.byName[name]) { schemaPinned.add(name); openSchema(); }
+  }
+
+  function schemaRemove(name) {
+    schemaPinned.delete(name); openSchema();
+  }
+
+  function schemaExpand(name) {
+    const t = DATA.byName[name];
+    if (!t || t.kind !== 'table') return;
+    [...(t.fkOut || []).map(f => f.table), ...(t.fkIn || []).map(f => f.table)]
+      .filter(n => DATA.byName[n] && DATA.byName[n].kind === 'table')
+      .forEach(n => schemaPinned.add(n));
+    openSchema();
+  }
+
+  function schemaClear() { schemaPinned.clear(); openSchema(); }
+
+  // After Mermaid renders the erDiagram SVG, make entity nodes clickable:
+  // clicking a table name in the diagram expands its FK neighbours.
+  function attachSchemaClicks() {
+    const wrap = document.getElementById('schema-er-wrap');
+    if (!wrap) return;
+    const svg = wrap.querySelector('svg');
+    if (!svg) return;
+    const safe = name => name.replace(/[^a-zA-Z0-9]/g, '_');
+    // Build reverse map: safeName -> realName
+    const s2r = {};
+    for (const name of schemaPinned) s2r[safe(name)] = name;
+
+    // Mermaid erDiagram renders entity headers as <text> elements inside <g> groups.
+    // We walk up from each matching <text> to its nearest <g> ancestor and wire the click.
+    const visited = new Set();
+    svg.querySelectorAll('text, tspan').forEach(el => {
+      const txt = (el.textContent || '').trim();
+      const realName = s2r[txt];
+      if (!realName) return;
+      let g = el.parentElement;
+      while (g && g.tagName.toLowerCase() !== 'g') g = g.parentElement;
+      if (!g || visited.has(g)) return;
+      visited.add(g);
+      const t = DATA.byName[realName];
+      const neighbors = [
+        ...(t ? (t.fkOut || []).map(f => f.table) : []),
+        ...(t ? (t.fkIn  || []).map(f => f.table) : []),
+      ].filter(n => DATA.byName[n] && DATA.byName[n].kind === 'table' && !schemaPinned.has(n));
+      if (!neighbors.length) return;  // nothing to expand — skip
+      g.style.cursor = 'pointer';
+      g.setAttribute('title', `Clic: añadir ${neighbors.length} tabla(s) FK de "${realName}"`);
+      g.addEventListener('click', e => { e.stopPropagation(); SD.app.schemaExpand(realName); });
+    });
   }
 
   function load(text, fileName) {
@@ -83,7 +159,7 @@
     $('#subtitle').textContent = `${DATA.objects.length} objetos · ${DATA.tables.length} tablas · ${db}`;
     $('#search').disabled = false;
     document.body.classList.add('loaded');
-    kindFilter = 'all'; dynOnly = false;
+    kindFilter = 'all'; dynOnly = false; schemaPinned = new Set();
     renderFilter();
     renderSidebar('');
     openOverview();
@@ -105,6 +181,7 @@
     document.addEventListener('drop', e => { e.preventDefault(); dz && dz.classList.remove('hot'); readFile(e.dataTransfer.files[0]); });
   }
 
-  SD.app = { init, load, openObject, openOverview, openRisks, setFilter };
+  SD.app = { init, load, openObject, openOverview, openRisks, openSchema, setFilter,
+             schemaAdd, schemaRemove, schemaExpand, schemaClear };
   document.addEventListener('DOMContentLoaded', init);
 })(window.SD = window.SD || {});
