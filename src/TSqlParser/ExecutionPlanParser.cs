@@ -97,7 +97,14 @@ public static class ExecutionPlanParser
 
             foreach (var topStmt in stmtContainer.Elements())
             {
-                if (topStmt.Name == Ns + "StmtProc")
+                // StmtProc: classic format (SQL Server pre-2025)
+                // StmtSimple StatementType="EXECUTE PROC": SQL Server 2025+ format
+                bool isExecProc = topStmt.Name == Ns + "StmtProc"
+                    || (topStmt.Name == Ns + "StmtSimple"
+                        && topStmt.Attribute("StatementType")?.Value == "EXECUTE PROC"
+                        && topStmt.Element(Ns + "StoredProc") != null);
+
+                if (isExecProc)
                 {
                     // Stored procedure call: identify the procedure and recurse
                     // into its nested <Statements> block.
@@ -144,9 +151,11 @@ public static class ExecutionPlanParser
                 procName = objName;
         }
 
-        // Nested statements are in <Statements> inside the StmtProc.
+        // Nested statements are in <Statements> inside StmtProc, or inside <StoredProc> for SS2025.
         var stmts = new List<PlanStatement>();
-        var innerStmts = stmtProc.Element(Ns + "Statements") ?? stmtProc;
+        var innerStmts = stmtProc.Element(Ns + "Statements")
+            ?? stmtProc.Element(Ns + "StoredProc")?.Element(Ns + "Statements")
+            ?? stmtProc;
         foreach (var child in innerStmts.Elements())
         {
             var parsed = ParseStatement(child, isActual);
