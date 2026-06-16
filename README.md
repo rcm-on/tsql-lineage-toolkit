@@ -43,6 +43,7 @@ This toolkit parses the real AST of every procedure / function / trigger / view 
 | 13 | **Incremental updates** | `update-nodestore` only rewrites changed objects |
 | 14 | **No cloud, no telemetry, no license fee** | Runs fully on-premise on Windows/Linux/macOS |
 | 15 | **Live SQL Server integration** | `extract` + `validate` commands; or work from `.sql` files offline |
+| 16 | **AI-cost optimised** | NodeStore: 16–60× fewer tokens vs full graph load; fits any context window |
 
 ---
 
@@ -218,7 +219,9 @@ tsql-lineage-toolkit/
 | Graphify/D3 | `--graphify` | vis-network · D3 · any flat-graph viewer |
 | NodeStore | `--nodestore` | AI agents (Claude Code, Copilot, custom) |
 
-**NodeStore** splits the graph into small, navigable files. An agent answering "what writes to `Warehouse.StockItems`?" reads 3 files (93 KB) instead of the full 1.5 MB graph — **16x less data**, answer already pre-structured.
+**NodeStore** splits the graph into small, navigable files. An agent answering "what writes to `Warehouse.StockItems`?" reads 3 files (93 KB) instead of the full 1.5 MB graph — **16x less data, 6.5x faster, answer already pre-structured with indirect hop chains**.
+
+→ Full analysis with token costs, agent navigation protocol and framework integrations: **[docs/ai-agents.md](docs/ai-agents.md)**
 
 ---
 
