@@ -53,6 +53,13 @@ public record VariableInfo(string Name, string Type, string Default);
 /// in the SELECT list (via an "alias.Column"/"table.Column" qualifier). Empty for
 /// single-table FROMs or when a JOIN partner's columns can't be resolved.
 /// </param>
+/// <param name="FilterColumns">
+/// Columns referenced in this step's WHERE clause and JOIN predicates (not the
+/// SELECT/SET list), grouped by table the same way as ExtraReads. Lets a
+/// consumer distinguish "columns written/selected" from "columns used to decide
+/// which rows are touched". Empty when there's no WHERE/JOIN condition, or none
+/// of its columns could be attributed to a known table.
+/// </param>
 public record FlowLinkInfo(
     string ConditionType, string ConditionText,
     string ConsequenceType, string ConsequenceTarget,
@@ -64,6 +71,7 @@ public record FlowLinkInfo(
     IReadOnlyList<ColumnDerivation>? ColumnLineage = null,
     IReadOnlyList<string>? UsedVariables = null,
     IReadOnlyList<TableColumnRef>? ExtraReads = null,
+    IReadOnlyList<TableColumnRef>? FilterColumns = null,
     string Detail = "",
     string DynamicSqlText = "")
 {
@@ -75,6 +83,7 @@ public record FlowLinkInfo(
     public IReadOnlyList<ColumnDerivation> ColumnLineage { get; init; } = ColumnLineage ?? Array.Empty<ColumnDerivation>();
     public IReadOnlyList<string> UsedVariables { get; init; } = UsedVariables ?? Array.Empty<string>();
     public IReadOnlyList<TableColumnRef> ExtraReads { get; init; } = ExtraReads ?? Array.Empty<TableColumnRef>();
+    public IReadOnlyList<TableColumnRef> FilterColumns { get; init; } = FilterColumns ?? Array.Empty<TableColumnRef>();
     /// <summary>Short subtype label for ALTER steps (e.g. "DROP PERIOD", "ADD CONSTRAINT"). Empty for other action types.</summary>
     public string Detail { get; init; } = Detail;
     /// <summary>
@@ -139,6 +148,40 @@ public class WalkContext
     /// and column-list-less INSERTs into their real column lists.
     /// </summary>
     public IReadOnlyDictionary<string, List<string>>? TableColumns { get; init; }
+
+    /// <summary>
+    /// Same key shape as TableColumns ("{Database}::{schema.table}", normalized), but for
+    /// tables discovered while walking this object's own body: table variables
+    /// ("DECLARE @T TABLE (...)") and local temp tables ("CREATE TABLE #T (...)").
+    /// Lets a later "SELECT * FROM @T"/"INSERT INTO #T" in the same body resolve its
+    /// column list even though the table never existed in the database schema.
+    /// Checked before the static TableColumns map (see TryGetColumns).
+    /// </summary>
+    public Dictionary<string, List<string>> TransientTableColumns { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>Resolves a column list, preferring a transient table/table-variable discovered in this body over the static schema map.</summary>
+    public bool TryGetColumns(string key, out List<string>? columns)
+    {
+        if (TransientTableColumns.TryGetValue(key, out columns))
+            return true;
+
+        if (TableColumns != null && TableColumns.TryGetValue(key, out var baseCols))
+        {
+            columns = baseCols;
+            return true;
+        }
+
+        columns = null;
+        return false;
+    }
+
+    /// <summary>Registers the column list of a table variable or local temp table discovered while walking this body, keyed the same way as TableColumns.</summary>
+    public void RegisterTransientTable(string tableName, List<string> columns)
+    {
+        if (string.IsNullOrEmpty(tableName)) return;
+        var key = $"{Db}::{SqlText.NormalizeRef(tableName)}";
+        TransientTableColumns[key] = columns;
+    }
 }
 
 /// <summary>One column of a CREATE TABLE, as declared in its DDL.</summary>

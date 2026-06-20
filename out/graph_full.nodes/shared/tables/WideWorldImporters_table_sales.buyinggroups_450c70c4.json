@@ -25,13 +25,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step19",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Sales].[BuyingGroups]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step20",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Sales].[BuyingGroups]"
+        }
       }
     ],
     "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": [
@@ -51,33 +59,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step19",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Sales].[BuyingGroups]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step20",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
-      }
-    ],
-    "WideWorldImporters::Integration.GetCustomerUpdates": [
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      },
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      },
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Sales].[BuyingGroups]"
+        }
       }
     ]
   },
@@ -96,13 +92,21 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step19",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Sales].[BuyingGroups]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step20",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Sales].[BuyingGroups]"
+      }
     },
     {
       "type": "AFFECTS",
@@ -118,31 +122,21 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step19",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Sales].[BuyingGroups]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step20",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Sales].[BuyingGroups]"
+      }
     }
   ],
   "edges_out": [

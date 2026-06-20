@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Integration.GetSupplierUpdates",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Integration",
+    "name": "GetSupplierUpdates",
     "full_name": "Integration.GetSupplierUpdates",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": true,
@@ -108,9 +112,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 14,
           "nesting_level": 0,
           "action": "CREATE_TABLE",
+          "step_type": "Maintenance",
           "target_name": "#SupplierChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -127,9 +133,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 33,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "SupplierCategoryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -146,9 +154,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 50,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
+          "step_type": "Cursor",
           "target_name": "SupplierCategoryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -165,9 +175,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 51,
           "nesting_level": 0,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "SupplierCategoryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -184,9 +196,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 55,
           "nesting_level": 1,
           "action": "INSERT",
+          "step_type": "Staging",
           "target_name": "#SupplierChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -207,9 +221,11 @@
         ],
         "properties": {
           "order": 5,
+          "sequence": 6,
           "line_no": 67,
           "nesting_level": 1,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "SupplierCategoryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -230,9 +246,11 @@
         ],
         "properties": {
           "order": 6,
+          "sequence": 7,
           "line_no": 70,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "SupplierCategoryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -249,9 +267,11 @@
         ],
         "properties": {
           "order": 7,
+          "sequence": 8,
           "line_no": 71,
           "nesting_level": 0,
           "action": "DEALLOCATE",
+          "step_type": "Cursor",
           "target_name": "SupplierCategoryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -268,9 +288,11 @@
         ],
         "properties": {
           "order": 8,
+          "sequence": 9,
           "line_no": 75,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "SupplierChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -287,9 +309,11 @@
         ],
         "properties": {
           "order": 9,
+          "sequence": 10,
           "line_no": 90,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
+          "step_type": "Cursor",
           "target_name": "SupplierChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -306,9 +330,11 @@
         ],
         "properties": {
           "order": 10,
+          "sequence": 11,
           "line_no": 91,
           "nesting_level": 0,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "SupplierChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -325,9 +351,11 @@
         ],
         "properties": {
           "order": 11,
+          "sequence": 12,
           "line_no": 95,
           "nesting_level": 1,
           "action": "INSERT",
+          "step_type": "Staging",
           "target_name": "#SupplierChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -348,9 +376,11 @@
         ],
         "properties": {
           "order": 12,
+          "sequence": 13,
           "line_no": 107,
           "nesting_level": 1,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "SupplierChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -371,9 +401,11 @@
         ],
         "properties": {
           "order": 13,
+          "sequence": 14,
           "line_no": 110,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "SupplierChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -390,9 +422,11 @@
         ],
         "properties": {
           "order": 14,
+          "sequence": 15,
           "line_no": 111,
           "nesting_level": 0,
           "action": "DEALLOCATE",
+          "step_type": "Cursor",
           "target_name": "SupplierChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -409,9 +443,11 @@
         ],
         "properties": {
           "order": 15,
+          "sequence": 16,
           "line_no": 115,
           "nesting_level": 0,
           "action": "CREATE_INDEX",
+          "step_type": "Maintenance",
           "target_name": "#SupplierChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -428,9 +464,11 @@
         ],
         "properties": {
           "order": 16,
+          "sequence": 17,
           "line_no": 120,
           "nesting_level": 0,
           "action": "UPDATE",
+          "step_type": "Transformation",
           "target_name": "#SupplierChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -447,9 +485,11 @@
         ],
         "properties": {
           "order": 17,
+          "sequence": 18,
           "line_no": 126,
           "nesting_level": 0,
           "action": "SELECT",
+          "step_type": "Staging",
           "target_name": "#SupplierChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -466,9 +506,11 @@
         ],
         "properties": {
           "order": 18,
+          "sequence": 19,
           "line_no": 132,
           "nesting_level": 0,
           "action": "DROP_TABLE",
+          "step_type": "Maintenance",
           "target_name": "#SupplierChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -485,9 +527,11 @@
         ],
         "properties": {
           "order": 19,
+          "sequence": 20,
           "line_no": 134,
           "nesting_level": 0,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -500,6 +544,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:integration",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_integration_41813d49.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetSupplierUpdates#step0",
@@ -573,46 +628,6 @@
       "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
     },
     {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.people:column:FullName",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.people_column_FullName_af371d2e.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:purchasing.suppliercategories:column:SupplierCategoryName",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliercategories_column_SupplierCategoryNa_c620668b.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.people",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:purchasing.suppliercategories",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:purchasing.suppliers",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json"
-    },
-    {
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
       "from_label": "Step",
@@ -627,86 +642,6 @@
       "to": "WideWorldImporters::Integration.GetSupplierUpdates#var:@ValidFrom",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Category",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Category_9528c606.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Payment Days",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Payment_Days_2a91d243.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Postal Code",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Postal_Code_0741b22a.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Primary Contact",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Primary_Contact_27753826.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Supplier",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Supplier_a4fd1dd0.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Supplier Reference",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Supplier_Reference_9b0d6e23.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Valid From",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Valid_From_5a7c78f8.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Valid_To_1724f646.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:WWI Supplier ID",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_WWI_Supplier_ID_3825d11d.json"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_supplierchanges_2ef5ae4f.json"
     },
     {
       "type": "ACTION",
@@ -773,108 +708,12 @@
       "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
     },
     {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step16",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Valid_To_1724f646.json"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step16",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_supplierchanges_2ef5ae4f.json"
-    },
-    {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
       "from_label": "Step",
       "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Category",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Category_9528c606.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Payment Days",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Payment_Days_2a91d243.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Postal Code",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Postal_Code_0741b22a.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Primary Contact",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Primary_Contact_27753826.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Supplier",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Supplier_a4fd1dd0.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Supplier Reference",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Supplier_Reference_9b0d6e23.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Valid From",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Valid_From_5a7c78f8.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Valid_To_1724f646.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:WWI Supplier ID",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_WWI_Supplier_ID_3825d11d.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step17",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_supplierchanges_2ef5ae4f.json"
     },
     {
       "type": "ACTION",
@@ -933,46 +772,6 @@
       "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
     },
     {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.people:column:FullName",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.people_column_FullName_af371d2e.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:purchasing.suppliercategories:column:SupplierCategoryName",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliercategories_column_SupplierCategoryNa_c620668b.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.people",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:purchasing.suppliercategories",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:purchasing.suppliers",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json"
-    },
-    {
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
       "from_label": "Step",
@@ -987,86 +786,6 @@
       "to": "WideWorldImporters::Integration.GetSupplierUpdates#var:@ValidFrom",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Category",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Category_9528c606.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Payment Days",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Payment_Days_2a91d243.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Postal Code",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Postal_Code_0741b22a.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Primary Contact",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Primary_Contact_27753826.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Supplier",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Supplier_a4fd1dd0.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Supplier Reference",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Supplier_Reference_9b0d6e23.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Valid From",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Valid_From_5a7c78f8.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_Valid_To_1724f646.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges:column:WWI Supplier ID",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_supplierchanges_column_WWI_Supplier_ID_3825d11d.json"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#supplierchanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_supplierchanges_2ef5ae4f.json"
     },
     {
       "type": "ACTION",
@@ -1142,7 +861,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
       "to_label": "Step",
@@ -1150,7 +869,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetSupplierUpdates#step12",
       "to_label": "Step",
@@ -1158,7 +877,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
       "to_label": "Step",
@@ -1166,7 +885,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetSupplierUpdates#step5",
       "to_label": "Step",

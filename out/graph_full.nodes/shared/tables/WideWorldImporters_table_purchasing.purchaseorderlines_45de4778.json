@@ -13,7 +13,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Purchasing.PurchaseOrderLines",
+          "via": "JOIN"
+        }
       }
     ]
   },
@@ -22,7 +27,12 @@
       "type": "READS_FROM",
       "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Purchasing.PurchaseOrderLines",
+        "via": "JOIN"
+      }
     }
   ],
   "edges_out": [

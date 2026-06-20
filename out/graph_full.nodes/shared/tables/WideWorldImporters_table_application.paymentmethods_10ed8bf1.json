@@ -25,13 +25,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step7",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Application].[PaymentMethods]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step8",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Application].[PaymentMethods]"
+        }
       }
     ],
     "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": [
@@ -51,21 +59,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step7",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Application].[PaymentMethods]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step8",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
-      }
-    ],
-    "WideWorldImporters::Integration.GetPaymentMethodUpdates": [
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Application].[PaymentMethods]"
+        }
       }
     ]
   },
@@ -84,13 +92,21 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step7",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[PaymentMethods]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step8",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[PaymentMethods]"
+      }
     },
     {
       "type": "AFFECTS",
@@ -106,19 +122,21 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step7",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[PaymentMethods]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step8",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[PaymentMethods]"
+      }
     }
   ],
   "edges_out": [

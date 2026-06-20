@@ -13,7 +13,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Sales.OrderLines",
+          "via": "JOIN"
+        }
       }
     ],
     "WideWorldImporters::Website.InsertCustomerOrders": [
@@ -21,7 +26,11 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+        "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Sales.OrderLines"
+        }
       }
     ],
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
@@ -29,7 +38,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Sales.OrderLines",
+          "via": "JOIN"
+        }
       }
     ]
   },
@@ -38,19 +52,33 @@
       "type": "READS_FROM",
       "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.OrderLines",
+        "via": "JOIN"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.OrderLines"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.OrderLines",
+        "via": "JOIN"
+      }
     }
   ],
   "edges_out": [

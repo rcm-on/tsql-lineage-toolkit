@@ -13,7 +13,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables",
+          "via": "JOIN"
+        }
       }
     ]
   },
@@ -22,8 +27,26 @@
       "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables",
+        "via": "JOIN"
+      }
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sys.tables:column:object_id",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sys.tables_column_object_id_458bb4f2.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "to": "WideWorldImporters:table:sys.tables:column:temporal_type",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sys.tables_column_temporal_type_8f40eb17.json"
+    }
+  ]
 }

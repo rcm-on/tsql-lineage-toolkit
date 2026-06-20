@@ -1,0 +1,27 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:0b79b786",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "NOT EXISTS (SELECT 1             FROM   sys.database_audit_specifications             WHERE  name = N'WWI_DatabaseAuditSpecification')"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "WideWorldImporters:rule:IF:05060b5c",
+      "to_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_05060b5c_0c7787a5.json"
+    }
+  ]
+}

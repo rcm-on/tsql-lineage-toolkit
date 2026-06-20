@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Website.SearchForPeople",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Website",
+    "name": "SearchForPeople",
     "full_name": "Website.SearchForPeople",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -47,9 +51,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 7,
           "nesting_level": 0,
           "action": "SELECT",
+          "step_type": "Extraction",
           "target_name": "[Application].People",
           "detail": "",
           "dynamic_sql": "",
@@ -63,12 +69,63 @@
   },
   "edges_out": [
     {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.SearchForPeople",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:website",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Website.SearchForPeople#step0",
       "from_label": "Step",
       "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForPeople#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:PersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForPeople#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:SearchName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_SearchName_2733137e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForPeople#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:purchasing.suppliers:column:AlternateContactPersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_AlternateContactPersonID_7650a9b0.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForPeople#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:purchasing.suppliers:column:PrimaryContactPersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_PrimaryContactPersonID_381848e6.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForPeople#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customers:column:PrimaryContactPersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_PrimaryContactPersonID_61c9deed.json"
     },
     {
       "type": "READS_COLUMN",
@@ -148,7 +205,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People"
+      }
     },
     {
       "type": "READS_FROM",
@@ -156,7 +217,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json"
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Purchasing.Suppliers",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -164,7 +230,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.Customers",
+        "via": "JOIN"
+      }
     },
     {
       "type": "USES_VARIABLE",

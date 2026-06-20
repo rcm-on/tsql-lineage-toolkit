@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Application",
+    "name": "Configuration_ApplyPartitioning",
     "full_name": "Application.Configuration_ApplyPartitioning",
+    "object_type": "PROCEDURE",
     "has_transaction": true,
     "has_error_handling": false,
     "has_cursor": false,
@@ -60,9 +64,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 14,
           "nesting_level": 1,
           "action": "BEGIN_TRAN",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -83,9 +89,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 24,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PARTITION FUNCTION PF_TransactionDateTime(datetime) AS RANGE RIGHT FOR VALUES (N'20140101', N'20150101', N'20160101', N'20170101');",
@@ -108,9 +116,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 33,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PARTITION FUNCTION PF_TransactionDate(date) AS RANGE RIGHT FOR VALUES (N'20140101', N'20150101', N'20160101', N'20170101');",
@@ -133,9 +143,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 52,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PARTITION SCHEME PS_TransactionDateTime AS PARTITION PF_TransactionDateTime ALL TO ([USERDATA]);",
@@ -158,9 +170,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 70,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PARTITION SCHEME PS_TransactionDate AS PARTITION PF_TransactionDate ALL TO ([USERDATA]);",
@@ -183,9 +197,11 @@
         ],
         "properties": {
           "order": 5,
+          "sequence": 6,
           "line_no": 78,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "ALTER TABLE Sales.CustomerTransactions DROP CONSTRAINT PK_Sales_CustomerTransactions;",
@@ -208,9 +224,11 @@
         ],
         "properties": {
           "order": 6,
+          "sequence": 7,
           "line_no": 86,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "ALTER TABLE Sales.CustomerTransactions ADD CONSTRAINT PK_Sales_CustomerTransactions PRIMARY KEY NONCLUSTERED ( CustomerTransactionID );",
@@ -233,9 +251,11 @@
         ],
         "properties": {
           "order": 7,
+          "sequence": 8,
           "line_no": 95,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE CLUSTERED INDEX CX_Sales_CustomerTransactions ON Sales.CustomerTransactions ( TransactionDate ) ON PS_TransactionDate(TransactionDate);",
@@ -258,9 +278,11 @@
         ],
         "properties": {
           "order": 8,
+          "sequence": 9,
           "line_no": 105,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_CustomerID ON Sales.CustomerTransactions ( CustomerID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
@@ -283,9 +305,11 @@
         ],
         "properties": {
           "order": 9,
+          "sequence": 10,
           "line_no": 115,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_InvoiceID ON Sales.CustomerTransactions ( InvoiceID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
@@ -308,9 +332,11 @@
         ],
         "properties": {
           "order": 10,
+          "sequence": 11,
           "line_no": 125,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_PaymentMethodID ON Sales.CustomerTransactions ( PaymentMethodID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
@@ -333,9 +359,11 @@
         ],
         "properties": {
           "order": 11,
+          "sequence": 12,
           "line_no": 135,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_TransactionTypeID ON Sales.CustomerTransactions ( TransactionTypeID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
@@ -358,9 +386,11 @@
         ],
         "properties": {
           "order": 12,
+          "sequence": 13,
           "line_no": 145,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE INDEX IX_Sales_CustomerTransactions_IsFinalized ON Sales.CustomerTransactions ( IsFinalized ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
@@ -383,9 +413,11 @@
         ],
         "properties": {
           "order": 13,
+          "sequence": 14,
           "line_no": 153,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "ALTER TABLE Purchasing.SupplierTransactions DROP CONSTRAINT PK_Purchasing_SupplierTransactions;",
@@ -408,9 +440,11 @@
         ],
         "properties": {
           "order": 14,
+          "sequence": 15,
           "line_no": 161,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "ALTER TABLE Purchasing.SupplierTransactions ADD CONSTRAINT PK_Purchasing_SupplierTransactions PRIMARY KEY NONCLUSTERED ( SupplierTransactionID );",
@@ -433,9 +467,11 @@
         ],
         "properties": {
           "order": 15,
+          "sequence": 16,
           "line_no": 170,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE CLUSTERED INDEX CX_Purchasing_SupplierTransactions ON Purchasing.SupplierTransactions ( TransactionDate ) ON PS_TransactionDate(TransactionDate);",
@@ -458,9 +494,11 @@
         ],
         "properties": {
           "order": 16,
+          "sequence": 17,
           "line_no": 180,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_PaymentMethodID ON Purchasing.SupplierTransactions ( PaymentMethodID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
@@ -483,9 +521,11 @@
         ],
         "properties": {
           "order": 17,
+          "sequence": 18,
           "line_no": 190,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_PurchaseOrderID ON Purchasing.SupplierTransactions ( PurchaseOrderID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
@@ -508,9 +548,11 @@
         ],
         "properties": {
           "order": 18,
+          "sequence": 19,
           "line_no": 200,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_SupplierID ON Purchasing.SupplierTransactions ( SupplierID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
@@ -533,9 +575,11 @@
         ],
         "properties": {
           "order": 19,
+          "sequence": 20,
           "line_no": 210,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_TransactionTypeID ON Purchasing.SupplierTransactions ( TransactionTypeID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
@@ -558,9 +602,11 @@
         ],
         "properties": {
           "order": 20,
+          "sequence": 21,
           "line_no": 220,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE INDEX IX_Purchasing_SupplierTransactions_IsFinalized ON Purchasing.SupplierTransactions ( IsFinalized ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
@@ -583,9 +629,11 @@
         ],
         "properties": {
           "order": 21,
+          "sequence": 22,
           "line_no": 223,
           "nesting_level": 1,
           "action": "COMMIT_TRAN",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -602,6 +650,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:application",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_application_552b8a6f.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step0",
@@ -1100,103 +1159,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:17c1ae0a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step10",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:17c1ae0a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step11",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:17c1ae0a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step12",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:17c1ae0a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step5",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:17c1ae0a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step6",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:17c1ae0a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step7",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:17c1ae0a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step8",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:17c1ae0a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:3dc83b10",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step4",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:5cc39bac",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e0539828",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step1",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:ed4a0b6",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step2",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:ed536503",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step13",
       "to_label": "Step",
@@ -1204,7 +1167,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:ed536503",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step14",
       "to_label": "Step",
@@ -1212,7 +1175,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:ed536503",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step15",
       "to_label": "Step",
@@ -1220,7 +1183,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:ed536503",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step16",
       "to_label": "Step",
@@ -1228,7 +1191,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:ed536503",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step17",
       "to_label": "Step",
@@ -1236,7 +1199,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:ed536503",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step18",
       "to_label": "Step",
@@ -1244,7 +1207,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:ed536503",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step19",
       "to_label": "Step",
@@ -1252,7 +1215,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:ed536503",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step20",
       "to_label": "Step",
@@ -1260,7 +1223,103 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from": "WideWorldImporters:rule:IF:28d00036",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step10",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:28d00036",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step11",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:28d00036",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step12",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:28d00036",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:28d00036",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step6",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:28d00036",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step7",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:28d00036",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step8",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:28d00036",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:28ed5103",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b1c9dbba",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:d85b3adb",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:e0a079b1",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step0",
       "to_label": "Step",
@@ -1268,7 +1327,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:16b08ed9",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step21",
       "to_label": "Step",

@@ -1,0 +1,378 @@
+﻿{
+  "id": "wf:WideWorldImporters:website",
+  "labels": [
+    "Workflow"
+  ],
+  "properties": {
+    "name": "Website",
+    "database": "WideWorldImporters",
+    "schema": "Website",
+    "process_count": 15
+  },
+  "refs": {
+    "WideWorldImporters::Website.ActivateWebsiteLogon": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.ActivateWebsiteLogon",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.CalculateCustomerPrice": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+        "props": {
+          "object_type": "SCALAR_FUNCTION"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.ChangePassword": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.ChangePassword",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.ChangePassword/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.Customers": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.Customers",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.Customers/object.json",
+        "props": {
+          "object_type": "UNKNOWN"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.InsertCustomerOrders": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.InsertCustomerOrders",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.RecordColdRoomTemperatures": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.RecordColdRoomTemperatures",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.RecordVehicleTemperature": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.RecordVehicleTemperature",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.SearchForCustomers": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.SearchForCustomers",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.SearchForPeople": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.SearchForPeople",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.SearchForStockItems": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.SearchForStockItems",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.SearchForStockItemsByTags": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.SearchForStockItemsByTags",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.SearchForSuppliers": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.SearchForSuppliers",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.Suppliers": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.Suppliers",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+        "props": {
+          "object_type": "UNKNOWN"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.VehicleTemperatures": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Website.VehicleTemperatures",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json",
+        "props": {
+          "object_type": "UNKNOWN"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+      "props": {
+        "object_type": "SCALAR_FUNCTION"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.ChangePassword",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.Customers/object.json",
+      "props": {
+        "object_type": "UNKNOWN"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.SearchForCustomers",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.SearchForPeople",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.SearchForStockItems",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.SearchForStockItemsByTags",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.SearchForSuppliers",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.Suppliers",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+      "props": {
+        "object_type": "UNKNOWN"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.VehicleTemperatures",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json",
+      "props": {
+        "object_type": "UNKNOWN"
+      }
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:sales.customertransactions",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customertransactions_39c8f4a7.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:sales.invoicelines",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:sales.invoices",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:sales.orderlines",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:sales.orders",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.stockitemholdings",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemholdings_7baae308.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemtransactions_3348b64c.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json"
+    }
+  ]
+}

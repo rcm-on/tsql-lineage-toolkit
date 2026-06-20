@@ -13,7 +13,11 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Integration.GetStockHoldingUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItemHoldings"
+        }
       }
     ],
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
@@ -21,13 +25,22 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Warehouse.StockItemHoldings",
+          "via": "JOIN"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "action_type": "UPDATE",
+          "table": "Warehouse.StockItemHoldings"
+        }
       }
     ]
   },
@@ -36,19 +49,32 @@
       "type": "READS_FROM",
       "from": "WideWorldImporters::Integration.GetStockHoldingUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemHoldings"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.StockItemHoldings",
+        "via": "JOIN"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "action_type": "UPDATE",
+        "table": "Warehouse.StockItemHoldings"
+      }
     }
   ],
   "edges_out": [

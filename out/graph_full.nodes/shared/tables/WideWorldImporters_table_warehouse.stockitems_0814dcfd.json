@@ -25,13 +25,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step33",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Warehouse].[StockItems]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step34",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Warehouse].[StockItems]"
+        }
       }
     ],
     "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": [
@@ -51,13 +59,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step33",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Warehouse].[StockItems]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step34",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Warehouse].[StockItems]"
+        }
       }
     ],
     "WideWorldImporters::Integration.GetPurchaseUpdates": [
@@ -65,7 +81,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItems",
+          "via": "JOIN"
+        }
       }
     ],
     "WideWorldImporters::Integration.GetSaleUpdates": [
@@ -73,15 +94,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
-      }
-    ],
-    "WideWorldImporters::Integration.GetStockItemUpdates": [
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItems",
+          "via": "JOIN"
+        }
       }
     ],
     "WideWorldImporters::Website.CalculateCustomerPrice": [
@@ -89,7 +107,11 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.CalculateCustomerPrice#step1",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItems"
+        }
       }
     ],
     "WideWorldImporters::Website.InsertCustomerOrders": [
@@ -97,7 +119,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+        "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Warehouse.StockItems",
+          "via": "JOIN"
+        }
       }
     ],
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
@@ -105,7 +132,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Warehouse.StockItems",
+          "via": "JOIN"
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForStockItems": [
@@ -113,7 +145,11 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.SearchForStockItems#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItems"
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForStockItemsByTags": [
@@ -121,7 +157,11 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItems"
+        }
       }
     ]
   },
@@ -140,13 +180,21 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step33",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[StockItems]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step34",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[StockItems]"
+      }
     },
     {
       "type": "AFFECTS",
@@ -162,61 +210,95 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step33",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[StockItems]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step34",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[StockItems]"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step1",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.StockItems",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.StockItems",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForStockItems#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems"
+      }
     }
   ],
   "edges_out": [

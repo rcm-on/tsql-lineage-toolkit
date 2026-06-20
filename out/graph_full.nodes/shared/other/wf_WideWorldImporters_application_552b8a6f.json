@@ -1,0 +1,264 @@
+﻿{
+  "id": "wf:WideWorldImporters:application",
+  "labels": [
+    "Workflow"
+  ],
+  "properties": {
+    "name": "Application",
+    "database": "WideWorldImporters",
+    "schema": "Application",
+    "process_count": 12
+  },
+  "refs": {
+    "WideWorldImporters::Application.AddRoleMemberIfNonexistent": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyAuditing": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.Configuration_ApplyAuditing",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyPartitioning": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.Configuration_ConfigureForEnterpriseEdition/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_EnableInMemory": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_RemoveAuditing": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.Configuration_RemoveAuditing",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.Configuration_RemoveRowLevelSecurity/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.CreateRoleIfNonexistent": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.CreateRoleIfNonexistent",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.DetermineCustomerAccess": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Application.DetermineCustomerAccess",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.DetermineCustomerAccess/object.json",
+        "props": {
+          "object_type": "UNKNOWN"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_ApplyAuditing",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ConfigureForEnterpriseEdition/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveRowLevelSecurity/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.DetermineCustomerAccess",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.DetermineCustomerAccess/object.json",
+      "props": {
+        "object_type": "UNKNOWN"
+      }
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json"
+    }
+  ]
+}

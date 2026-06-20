@@ -12,7 +12,23 @@
     "is_primary_key": false,
     "ordinal": 21
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Website.SearchForStockItemsByTags": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json"
+    }
+  ],
   "edges_out": []
 }

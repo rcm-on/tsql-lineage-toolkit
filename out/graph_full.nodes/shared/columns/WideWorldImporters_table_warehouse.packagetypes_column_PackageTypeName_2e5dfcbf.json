@@ -36,14 +36,6 @@
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
       }
-    ],
-    "WideWorldImporters::Integration.GetStockItemUpdates": [
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
-      }
     ]
   },
   "edges_in": [
@@ -64,12 +56,6 @@
       "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
     }
   ],
   "edges_out": []

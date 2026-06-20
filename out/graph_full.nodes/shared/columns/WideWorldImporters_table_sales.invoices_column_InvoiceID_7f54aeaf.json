@@ -15,6 +15,12 @@
   "refs": {
     "WideWorldImporters::Integration.GetSaleUpdates": [
       {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+      },
+      {
         "type": "READS_COLUMN",
         "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
         "from_label": "Step",
@@ -37,6 +43,12 @@
     ]
   },
   "edges_in": [
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+    },
     {
       "type": "READS_COLUMN",
       "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",

@@ -1,0 +1,277 @@
+﻿{
+  "id": "wf:WideWorldImporters:integration",
+  "labels": [
+    "Workflow"
+  ],
+  "properties": {
+    "name": "Integration",
+    "database": "WideWorldImporters",
+    "schema": "Integration",
+    "process_count": 13
+  },
+  "refs": {
+    "WideWorldImporters::Integration.GetCityUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetCityUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetCustomerUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetEmployeeUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetEmployeeUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetMovementUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetMovementUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetOrderUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetOrderUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetPaymentMethodUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetPurchaseUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetPurchaseUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetSaleUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetSaleUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetStockHoldingUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetStockHoldingUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetStockItemUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetSupplierUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetTransactionTypeUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetTransactionUpdates": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Integration.GetTransactionUpdates",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetCityUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetMovementUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetPurchaseUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetStockHoldingUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    }
+  ],
+  "edges_out": []
+}

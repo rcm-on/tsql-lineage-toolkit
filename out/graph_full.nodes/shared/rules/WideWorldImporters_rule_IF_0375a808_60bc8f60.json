@@ -1,0 +1,45 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:0375a808",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CCX_Warehouse_StockItemTransactions')"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step6",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step8",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "to_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_ELSE_e7e944e0_be25a7ce.json"
+    }
+  ]
+}

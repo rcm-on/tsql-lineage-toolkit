@@ -13,41 +13,21 @@
     "ordinal": 2
   },
   "refs": {
-    "WideWorldImporters::Integration.GetCustomerUpdates": [
+    "WideWorldImporters::Website.ChangePassword": [
       {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.ChangePassword#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      },
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      },
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      }
-    ],
-    "WideWorldImporters::Integration.GetSupplierUpdates": [
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-      },
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+        "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
       }
     ],
     "WideWorldImporters::Website.SearchForCustomers": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForCustomers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+      },
       {
         "type": "READS_COLUMN",
         "from": "WideWorldImporters::Website.SearchForCustomers#step0",
@@ -65,6 +45,12 @@
     ],
     "WideWorldImporters::Website.SearchForSuppliers": [
       {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      },
+      {
         "type": "READS_COLUMN",
         "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
         "from_label": "Step",
@@ -74,34 +60,16 @@
   },
   "edges_in": [
     {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.ChangePassword#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
     },
     {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForCustomers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
     },
     {
       "type": "READS_COLUMN",
@@ -114,6 +82,12 @@
       "from": "WideWorldImporters::Website.SearchForPeople#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
     },
     {
       "type": "READS_COLUMN",

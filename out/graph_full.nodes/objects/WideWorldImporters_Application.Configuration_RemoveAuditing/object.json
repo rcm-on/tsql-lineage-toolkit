@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Application.Configuration_RemoveAuditing",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Application",
+    "name": "Configuration_RemoveAuditing",
     "full_name": "Application.Configuration_RemoveAuditing",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": true,
     "has_cursor": false,
@@ -55,9 +59,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 23,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "DROP DATABASE AUDIT SPECIFICATION WWI_DatabaseAuditSpecification;",
@@ -80,9 +86,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 33,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "DROP SERVER AUDIT SPECIFICATION WWI_ServerAuditSpecification;",
@@ -103,9 +111,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 42,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "DROP SERVER AUDIT [WWI_Audit];",
@@ -126,9 +136,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 49,
           "nesting_level": 1,
           "action": "THROW",
+          "step_type": "Notification",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -145,6 +157,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:application",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_application_552b8a6f.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step0",
@@ -227,7 +250,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
       "to_label": "Step",
@@ -235,15 +258,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:263bfaa0",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step2",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:2a0fe306",
+      "from": "WideWorldImporters:rule:IF:0a5c32e0",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step0",
       "to_label": "Step",
@@ -251,7 +266,15 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:62e7e444",
+      "from": "WideWorldImporters:rule:IF:0d6e4be3",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:436f8b8f",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step1",
       "to_label": "Step",

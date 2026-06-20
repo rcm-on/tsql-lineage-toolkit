@@ -1,0 +1,51 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:d673d53a",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step11",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step12",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step14",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step15",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "to_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_ELSE_e7e944e0_be25a7ce.json"
+    }
+  ]
+}

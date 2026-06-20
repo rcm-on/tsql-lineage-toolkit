@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Website.InvoiceCustomerOrders",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Website",
+    "name": "InvoiceCustomerOrders",
     "full_name": "Website.InvoiceCustomerOrders",
+    "object_type": "PROCEDURE",
     "has_transaction": true,
     "has_error_handling": true,
     "has_cursor": false,
@@ -71,16 +75,18 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 23,
           "nesting_level": 0,
           "action": "INSERT",
-          "target_name": "",
+          "step_type": "Staging",
+          "target_name": "@InvoicesToGenerate",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "INSERT"
+          "label": "INSERT -> @InvoicesToGenerate"
         }
       },
       {
@@ -90,9 +96,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 46,
           "nesting_level": 1,
           "action": "THROW",
+          "step_type": "Notification",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -113,9 +121,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 49,
           "nesting_level": 0,
           "action": "BEGIN_TRAN",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -132,9 +142,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 51,
           "nesting_level": 0,
           "action": "INSERT",
+          "step_type": "Load",
           "target_name": "Sales.Invoices",
           "detail": "",
           "dynamic_sql": "",
@@ -151,9 +163,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 75,
           "nesting_level": 0,
           "action": "INSERT",
+          "step_type": "Load",
           "target_name": "Sales.InvoiceLines",
           "detail": "",
           "dynamic_sql": "",
@@ -170,9 +184,11 @@
         ],
         "properties": {
           "order": 5,
+          "sequence": 6,
           "line_no": 95,
           "nesting_level": 0,
           "action": "INSERT",
+          "step_type": "Load",
           "target_name": "Warehouse.StockItemTransactions",
           "detail": "",
           "dynamic_sql": "",
@@ -189,9 +205,11 @@
         ],
         "properties": {
           "order": 6,
+          "sequence": 7,
           "line_no": 108,
           "nesting_level": 0,
           "action": "UPDATE",
+          "step_type": "Transformation",
           "target_name": "Warehouse.StockItemHoldings",
           "detail": "",
           "dynamic_sql": "",
@@ -208,9 +226,11 @@
         ],
         "properties": {
           "order": 7,
+          "sequence": 8,
           "line_no": 124,
           "nesting_level": 0,
           "action": "INSERT",
+          "step_type": "Load",
           "target_name": "Sales.CustomerTransactions",
           "detail": "",
           "dynamic_sql": "",
@@ -227,9 +247,11 @@
         ],
         "properties": {
           "order": 8,
+          "sequence": 9,
           "line_no": 144,
           "nesting_level": 0,
           "action": "COMMIT_TRAN",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -246,9 +268,11 @@
         ],
         "properties": {
           "order": 9,
+          "sequence": 10,
           "line_no": 148,
           "nesting_level": 2,
           "action": "ROLLBACK",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -271,9 +295,11 @@
         ],
         "properties": {
           "order": 10,
+          "sequence": 11,
           "line_no": 150,
           "nesting_level": 1,
           "action": "THROW",
+          "step_type": "Notification",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -294,9 +320,11 @@
         ],
         "properties": {
           "order": 11,
+          "sequence": 12,
           "line_no": 151,
           "nesting_level": 1,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -317,9 +345,11 @@
         ],
         "properties": {
           "order": 12,
+          "sequence": 13,
           "line_no": 154,
           "nesting_level": 0,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -332,6 +362,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:website",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step0",
@@ -474,7 +515,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Customers",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -482,7 +528,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orders",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Orders",
+        "via": "JOIN"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -698,7 +749,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Invoices"
+      }
     },
     {
       "type": "ACTION",
@@ -722,7 +777,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orderlines",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.OrderLines",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -730,7 +790,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemholdings",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemholdings_7baae308.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemholdings_7baae308.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.StockItemHoldings",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -738,7 +803,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.StockItems",
+        "via": "JOIN"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -858,7 +928,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.InvoiceLines"
+      }
     },
     {
       "type": "ACTION",
@@ -890,7 +964,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.InvoiceLines",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -898,7 +977,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Invoices",
+        "via": "JOIN"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1002,7 +1086,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemtransactions_3348b64c.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemtransactions_3348b64c.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.StockItemTransactions"
+      }
     },
     {
       "type": "ACTION",
@@ -1011,6 +1099,27 @@
       "to": "WideWorldImporters:action:UPDATE",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_UPDATE_605dec54.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemholdings:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_StockItemID_09ba3f31.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoicelines",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json",
+      "props": {
+        "action_type": "UPDATE",
+        "table": "Sales.InvoiceLines",
+        "via": "JOIN"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1058,7 +1167,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemholdings",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemholdings_7baae308.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemholdings_7baae308.json",
+      "props": {
+        "action_type": "UPDATE",
+        "table": "Warehouse.StockItemHoldings"
+      }
     },
     {
       "type": "ACTION",
@@ -1074,7 +1187,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Invoices",
+        "via": "JOIN"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1194,7 +1312,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customertransactions_39c8f4a7.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.customertransactions_39c8f4a7.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.CustomerTransactions"
+      }
     },
     {
       "type": "ACTION",
@@ -1214,7 +1336,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
       "to_label": "Step",
@@ -1222,7 +1344,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step11",
       "to_label": "Step",
@@ -1230,7 +1352,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:70a20de0",
+      "from": "WideWorldImporters:rule:IF:96cd9fce",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "to_label": "Step",
@@ -1238,7 +1360,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:8ad4e571",
+      "from": "WideWorldImporters:rule:IF:fecfc94a",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
       "to_label": "Step",

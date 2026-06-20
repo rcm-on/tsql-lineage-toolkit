@@ -12,8 +12,24 @@
     "is_primary_key": false,
     "ordinal": 2
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Integration.GetPurchaseUpdates": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

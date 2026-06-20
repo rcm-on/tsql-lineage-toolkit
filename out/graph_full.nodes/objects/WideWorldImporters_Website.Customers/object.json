@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Website.Customers",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Website",
+    "name": "Customers",
     "full_name": "Website.Customers",
+    "object_type": "UNKNOWN",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -18,5 +22,17 @@
     "variables": [],
     "steps": []
   },
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:website",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json",
+      "props": {
+        "object_type": "UNKNOWN"
+      }
+    }
+  ]
 }

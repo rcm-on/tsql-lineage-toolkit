@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Website.CalculateCustomerPrice",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Website",
+    "name": "CalculateCustomerPrice",
     "full_name": "Website.CalculateCustomerPrice",
+    "object_type": "SCALAR_FUNCTION",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -174,9 +178,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 21,
           "nesting_level": 0,
           "action": "SELECT",
+          "step_type": "Extraction",
           "target_name": "Sales.Customers",
           "detail": "",
           "dynamic_sql": "",
@@ -193,9 +199,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 26,
           "nesting_level": 0,
           "action": "SELECT",
+          "step_type": "Extraction",
           "target_name": "Warehouse.StockItems",
           "detail": "",
           "dynamic_sql": "",
@@ -212,9 +220,74 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
+          "line_no": 32,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "Sales.SpecialDeals",
+          "detail": "→ @LowestUnitPrice",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT (→ @LowestUnitPrice) -> Sales.SpecialDeals"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "sequence": 4,
+          "line_no": 49,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "Sales.SpecialDeals",
+          "detail": "→ @HighestDiscountAmount",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT (→ @HighestDiscountAmount) -> Sales.SpecialDeals"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 4,
+          "sequence": 5,
+          "line_no": 66,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "Sales.SpecialDeals",
+          "detail": "→ @HighestDiscountPercentage",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT (→ @HighestDiscountPercentage) -> Sales.SpecialDeals"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.CalculateCustomerPrice#step5",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 5,
+          "sequence": 6,
           "line_no": 85,
           "nesting_level": 0,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -228,6 +301,17 @@
   },
   "edges_out": [
     {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:website",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json",
+      "props": {
+        "object_type": "SCALAR_FUNCTION"
+      }
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step0",
       "from_label": "Step",
@@ -236,12 +320,24 @@
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customers:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerID_e70cb692.json"
+    },
+    {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step0",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.Customers"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -276,12 +372,24 @@
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_StockItemID_46c2e34c.json"
+    },
+    {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step1",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -303,13 +411,520 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:BuyingGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_BuyingGroupID_428fe438.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:CustomerCategoryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_CustomerCategoryID_d6c547bf.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_CustomerID_7ca8921f.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:EndDate",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_EndDate_fb035643.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:StartDate",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StartDate_fe5ac8ec.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:StockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StockGroupID_8b497562.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StockItemID_e985c135.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:UnitPrice",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_UnitPrice_346320b7.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockGroupID_ca5f1bdb.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockItemID_7202250e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:UnitPrice",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_UnitPrice_346320b7.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.SpecialDeals"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemStockGroups",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#param:@CustomerID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#param:@PricingDate",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#param:@StockItemID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#var:@BuyingGroupID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#var:@CustomerCategoryID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#var:@LowestUnitPrice",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:BuyingGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_BuyingGroupID_428fe438.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:CustomerCategoryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_CustomerCategoryID_d6c547bf.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_CustomerID_7ca8921f.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:DiscountAmount",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_DiscountAmount_89bfcdb1.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:EndDate",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_EndDate_fb035643.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:StartDate",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StartDate_fe5ac8ec.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:StockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StockGroupID_8b497562.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StockItemID_e985c135.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockGroupID_ca5f1bdb.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockItemID_7202250e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:DiscountAmount",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_DiscountAmount_89bfcdb1.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.SpecialDeals"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemStockGroups",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#param:@CustomerID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#param:@PricingDate",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#param:@StockItemID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#var:@BuyingGroupID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#var:@CustomerCategoryID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#var:@HighestDiscountAmount",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:BuyingGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_BuyingGroupID_428fe438.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:CustomerCategoryID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_CustomerCategoryID_d6c547bf.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_CustomerID_7ca8921f.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:DiscountPercentage",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_DiscountPercentage_f4b74c07.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:EndDate",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_EndDate_fb035643.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:StartDate",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StartDate_fe5ac8ec.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:StockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StockGroupID_8b497562.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StockItemID_e985c135.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockGroupID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockGroupID_ca5f1bdb.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockItemID_7202250e.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals:column:DiscountPercentage",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_DiscountPercentage_f4b74c07.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.SpecialDeals"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemStockGroups",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#param:@CustomerID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#param:@PricingDate",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#param:@StockItemID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#var:@BuyingGroupID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#var:@CustomerCategoryID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice#var:@HighestDiscountPercentage",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step5",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step5",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.CalculateCustomerPrice#var:@CalculatedPrice",
       "to_label": "Variable",

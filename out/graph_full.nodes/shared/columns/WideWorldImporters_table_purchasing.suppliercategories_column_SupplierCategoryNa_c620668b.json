@@ -12,35 +12,7 @@
     "is_primary_key": false,
     "ordinal": 2
   },
-  "refs": {
-    "WideWorldImporters::Integration.GetSupplierUpdates": [
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-      },
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-      }
-    ]
-  },
-  "edges_in": [
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-    }
-  ],
+  "refs": {},
+  "edges_in": [],
   "edges_out": []
 }

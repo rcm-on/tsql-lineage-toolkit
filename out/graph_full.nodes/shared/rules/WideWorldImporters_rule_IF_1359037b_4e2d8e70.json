@@ -1,0 +1,129 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:1359037b",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step10",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step11",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step12",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step13",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step14",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step15",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step16",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step17",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step18",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step19",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step20",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step6",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step7",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step8",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step9",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    }
+  ]
+}

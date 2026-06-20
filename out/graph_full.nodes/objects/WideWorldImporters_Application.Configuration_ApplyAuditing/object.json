@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Application.Configuration_ApplyAuditing",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Application",
+    "name": "Configuration_ApplyAuditing",
     "full_name": "Application.Configuration_ApplyAuditing",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": true,
     "has_cursor": false,
@@ -55,9 +59,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 29,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE SERVER AUDIT [WWI_Audit] TO APPLICATION_LOG WITH ( QUEUE_DELAY = 1000, ON_FAILURE = CONTINUE );",
@@ -78,9 +84,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 50,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE SERVER AUDIT SPECIFICATION [WWI_ServerAuditSpecification] FOR SERVER AUDIT [WWI_Audit] ADD (AUDIT_CHANGE_GROUP), ADD (DATABASE_CHANGE_GROUP), ADD (DATABASE_OWNERSHIP_CHANGE_GROUP), ADD (DATABAS",
@@ -101,9 +109,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 68,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE DATABASE AUDIT SPECIFICATION [WWI_DatabaseAuditSpecification] FOR SERVER AUDIT [WWI_Audit] ADD (AUDIT_CHANGE_GROUP), ADD (DATABASE_CHANGE_GROUP), ADD (DATABASE_OWNERSHIP_CHANGE_GROUP), ADD (DAT",
@@ -126,9 +136,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 75,
           "nesting_level": 1,
           "action": "THROW",
+          "step_type": "Notification",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -145,6 +157,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_ApplyAuditing",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:application",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_application_552b8a6f.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step0",
@@ -227,7 +250,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step3",
       "to_label": "Step",
@@ -235,15 +258,15 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1ee90a30",
+      "from": "WideWorldImporters:rule:IF:0b79b786",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step1",
+      "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:c60d6845",
+      "from": "WideWorldImporters:rule:IF:2ccafe90",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step0",
       "to_label": "Step",
@@ -251,9 +274,9 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:d4656270",
+      "from": "WideWorldImporters:rule:IF:ccdbdf9c",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step2",
+      "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step1",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
     }

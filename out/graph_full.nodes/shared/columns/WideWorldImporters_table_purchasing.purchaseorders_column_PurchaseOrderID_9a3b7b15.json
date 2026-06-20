@@ -15,6 +15,12 @@
   "refs": {
     "WideWorldImporters::Integration.GetPurchaseUpdates": [
       {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+      },
+      {
         "type": "READS_COLUMN",
         "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
         "from_label": "Step",
@@ -23,6 +29,12 @@
     ]
   },
   "edges_in": [
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+    },
     {
       "type": "READS_COLUMN",
       "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",

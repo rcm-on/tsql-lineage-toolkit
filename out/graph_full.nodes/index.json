@@ -1,7 +1,7 @@
 ﻿{
   "meta": {
     "database": "WideWorldImporters",
-    "generated_at": "2026-06-14T11:32:50.3153949+02:00",
+    "generated_at": "2026-06-19T20:33:55.1635591+02:00",
     "tool": "sql-analyzer/tsql-parser",
     "format": "nodestore-v1"
   },
@@ -16,6 +16,8 @@
   "schema": {
     "node_labels": [
       "SqlObject",
+      "Process",
+      "Workflow",
       "Parameter",
       "Variable",
       "Step",
@@ -37,6 +39,7 @@
       "READS_FROM",
       "READS_COLUMN",
       "WRITES_COLUMN",
+      "FILTERS_ON",
       "DERIVES_FROM",
       "NESTED_IN",
       "GOVERNS",
@@ -44,46 +47,52 @@
       "AFFECTS",
       "HAS_COLUMN",
       "FK_TO",
-      "REFERENCES"
+      "REFERENCES",
+      "BELONGS_TO",
+      "WORKFLOW_WRITES_TO"
     ]
   },
   "stats": {
-    "total_nodes": 1384,
-    "total_edges": 3365,
+    "total_nodes": 1328,
+    "total_edges": 3134,
     "objects": 47,
-    "shared_nodes": 743,
+    "shared_nodes": 682,
     "orphan_edges": 0,
     "nodes_by_label": {
       "SqlObject": 47,
       "Parameter": 65,
       "Variable": 80,
-      "Step": 449,
-      "Table": 58,
-      "Column": 625,
+      "Step": 454,
+      "Table": 51,
+      "Column": 566,
       "Action": 18,
-      "Rule": 42
+      "Rule": 42,
+      "Workflow": 5
     },
     "edges_by_type": {
-      "HAS_COLUMN": 625,
+      "HAS_COLUMN": 566,
       "FK_TO": 98,
       "REFERENCES": 98,
       "HAS_PARAMETER": 65,
       "DECLARES": 80,
-      "HAS_STEP": 449,
+      "HAS_STEP": 454,
       "BUILDS_SQL_FROM": 141,
-      "USES_VARIABLE": 322,
-      "ACTION": 449,
-      "GOVERNS": 177,
+      "USES_VARIABLE": 341,
+      "ACTION": 454,
+      "GOVERNS": 178,
       "NESTED_IN": 22,
       "ASSIGNED_FROM": 9,
-      "READS_FROM": 79,
+      "READS_FROM": 46,
+      "FILTERS_ON": 92,
       "TARGETS": 38,
       "CALLS": 12,
-      "WRITES_TO": 99,
-      "WRITES_COLUMN": 226,
-      "DERIVES_FROM": 143,
-      "READS_COLUMN": 199,
-      "AFFECTS": 34
+      "WRITES_TO": 81,
+      "WRITES_COLUMN": 111,
+      "READS_COLUMN": 103,
+      "DERIVES_FROM": 35,
+      "AFFECTS": 35,
+      "BELONGS_TO": 47,
+      "WORKFLOW_WRITES_TO": 28
     },
     "unknown_labels": [],
     "unknown_edge_types": []

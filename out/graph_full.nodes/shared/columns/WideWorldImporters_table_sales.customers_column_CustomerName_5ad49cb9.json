@@ -13,27 +13,13 @@
     "ordinal": 2
   },
   "refs": {
-    "WideWorldImporters::Integration.GetCustomerUpdates": [
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      },
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      },
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      }
-    ],
     "WideWorldImporters::Website.SearchForCustomers": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForCustomers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+      },
       {
         "type": "READS_COLUMN",
         "from": "WideWorldImporters::Website.SearchForCustomers#step0",
@@ -52,22 +38,10 @@
   },
   "edges_in": [
     {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForCustomers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
     },
     {
       "type": "READS_COLUMN",

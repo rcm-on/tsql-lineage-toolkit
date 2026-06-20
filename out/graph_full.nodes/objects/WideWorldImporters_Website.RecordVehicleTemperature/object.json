@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Website.RecordVehicleTemperature",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Website",
+    "name": "RecordVehicleTemperature",
     "full_name": "Website.RecordVehicleTemperature",
+    "object_type": "PROCEDURE",
     "has_transaction": true,
     "has_error_handling": true,
     "has_cursor": false,
@@ -61,9 +65,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 21,
           "nesting_level": 1,
           "action": "THROW",
+          "step_type": "Notification",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -84,9 +90,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 22,
           "nesting_level": 1,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -107,9 +115,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 27,
           "nesting_level": 0,
           "action": "BEGIN_TRAN",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -126,9 +136,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 29,
           "nesting_level": 0,
           "action": "INSERT",
+          "step_type": "Load",
           "target_name": "Warehouse.VehicleTemperatures",
           "detail": "",
           "dynamic_sql": "",
@@ -145,9 +157,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 47,
           "nesting_level": 0,
           "action": "COMMIT_TRAN",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -164,9 +178,11 @@
         ],
         "properties": {
           "order": 5,
+          "sequence": 6,
           "line_no": 53,
           "nesting_level": 1,
           "action": "THROW",
+          "step_type": "Notification",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -187,9 +203,11 @@
         ],
         "properties": {
           "order": 6,
+          "sequence": 7,
           "line_no": 55,
           "nesting_level": 2,
           "action": "ROLLBACK",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -212,9 +230,11 @@
         ],
         "properties": {
           "order": 7,
+          "sequence": 8,
           "line_no": 57,
           "nesting_level": 1,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -231,6 +251,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:website",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Website.RecordVehicleTemperature#step0",
@@ -333,7 +364,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.vehicletemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.VehicleTemperatures"
+      }
     },
     {
       "type": "ACTION",
@@ -369,7 +404,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.RecordVehicleTemperature#step5",
       "to_label": "Step",
@@ -377,7 +412,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.RecordVehicleTemperature#step7",
       "to_label": "Step",
@@ -385,7 +420,15 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:47ac7eba",
+      "from": "WideWorldImporters:rule:IF:96cd9fce",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Website.RecordVehicleTemperature#step6",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:df78455f",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.RecordVehicleTemperature#step0",
       "to_label": "Step",
@@ -393,17 +436,9 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:47ac7eba",
+      "from": "WideWorldImporters:rule:IF:df78455f",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.RecordVehicleTemperature#step1",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:70a20de0",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Website.RecordVehicleTemperature#step6",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
     }

@@ -12,23 +12,7 @@
     "is_primary_key": false,
     "ordinal": 2
   },
-  "refs": {
-    "WideWorldImporters::Integration.GetStockItemUpdates": [
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
-      }
-    ]
-  },
-  "edges_in": [
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
-    }
-  ],
+  "refs": {},
+  "edges_in": [],
   "edges_out": []
 }

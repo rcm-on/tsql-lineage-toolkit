@@ -7,6 +7,14 @@
     "name": "INSERT"
   },
   "refs": {
+    "WideWorldImporters::Application.Configuration_EnableInMemory": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      }
+    ],
     "WideWorldImporters::Integration.GetCityUpdates": [
       {
         "type": "ACTION",
@@ -163,6 +171,12 @@
     ]
   },
   "edges_in": [
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetCityUpdates#step11",

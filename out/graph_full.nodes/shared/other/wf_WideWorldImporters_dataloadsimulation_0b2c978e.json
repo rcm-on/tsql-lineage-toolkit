@@ -1,0 +1,220 @@
+﻿{
+  "id": "wf:WideWorldImporters:dataloadsimulation",
+  "labels": [
+    "Workflow"
+  ],
+  "properties": {
+    "name": "DataLoadSimulation",
+    "database": "WideWorldImporters",
+    "schema": "DataLoadSimulation",
+    "process_count": 5
+  },
+  "refs": {
+    "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_RemoveDataLoadSimulationProc/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_RemoveDataLoadSimulationProc/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:application.cities",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:application.countries",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:application.deliverymethods",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:application.paymentmethods",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:application.stateprovinces",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:application.transactiontypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:purchasing.suppliercategories",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:purchasing.suppliers",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:sales.buyinggroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:sales.customercategories",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:sales.customers",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.colors",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.packagetypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.stockgroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json"
+    }
+  ]
+}

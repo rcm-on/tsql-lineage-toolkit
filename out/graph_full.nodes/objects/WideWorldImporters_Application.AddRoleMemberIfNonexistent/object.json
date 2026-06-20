@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Application.AddRoleMemberIfNonexistent",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Application",
+    "name": "AddRoleMemberIfNonexistent",
     "full_name": "Application.AddRoleMemberIfNonexistent",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": true,
     "has_cursor": false,
@@ -60,9 +64,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 25,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "",
@@ -83,9 +89,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 32,
           "nesting_level": 1,
           "action": "THROW",
+          "step_type": "Notification",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -102,6 +110,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:application",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_application_552b8a6f.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
@@ -136,7 +155,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
       "to_label": "Step",
@@ -144,7 +163,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:d771c529",
+      "from": "WideWorldImporters:rule:IF:7f34f1b2",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
       "to_label": "Step",

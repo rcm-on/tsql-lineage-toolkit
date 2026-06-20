@@ -12,8 +12,24 @@
     "is_primary_key": false,
     "ordinal": 5
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Website.SearchForPeople": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForPeople#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForPeople#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

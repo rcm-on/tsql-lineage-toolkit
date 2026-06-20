@@ -25,13 +25,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step17",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Purchasing].[Suppliers]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step18",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Purchasing].[Suppliers]"
+        }
       }
     ],
     "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": [
@@ -51,27 +59,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step17",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Purchasing].[Suppliers]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step18",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
-      }
-    ],
-    "WideWorldImporters::Integration.GetSupplierUpdates": [
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-      },
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Purchasing].[Suppliers]"
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForPeople": [
@@ -79,7 +81,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.SearchForPeople#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Purchasing.Suppliers",
+          "via": "JOIN"
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForSuppliers": [
@@ -87,7 +94,11 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Purchasing.Suppliers"
+        }
       }
     ]
   },
@@ -106,13 +117,21 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step17",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Purchasing].[Suppliers]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step18",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Purchasing].[Suppliers]"
+      }
     },
     {
       "type": "AFFECTS",
@@ -128,37 +147,42 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step17",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Purchasing].[Suppliers]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step18",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Purchasing].[Suppliers]"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForPeople#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Purchasing.Suppliers",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Purchasing.Suppliers"
+      }
     }
   ],
   "edges_out": [

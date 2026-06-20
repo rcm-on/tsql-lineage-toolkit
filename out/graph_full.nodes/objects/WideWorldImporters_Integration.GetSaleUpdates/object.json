@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Integration.GetSaleUpdates",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Integration",
+    "name": "GetSaleUpdates",
     "full_name": "Integration.GetSaleUpdates",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -47,9 +51,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 11,
           "nesting_level": 0,
           "action": "SELECT",
+          "step_type": "Extraction",
           "target_name": "Sales.Invoices",
           "detail": "",
           "dynamic_sql": "",
@@ -66,9 +72,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 46,
           "nesting_level": 0,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -82,12 +90,111 @@
   },
   "edges_out": [
     {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:integration",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_integration_41813d49.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
       "from_label": "Step",
       "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customers:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerID_e70cb692.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:InvoiceID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_InvoiceID_32c8347f.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:LastEditedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_LastEditedWhen_e6f97598.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:PackageTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_PackageTypeID_e680be99.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoicelines:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_StockItemID_f273d53f.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoices:column:BillToCustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_BillToCustomerID_f9827551.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoices:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_CustomerID_befadb1f.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoices:column:InvoiceID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_InvoiceID_7f54aeaf.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoices:column:LastEditedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_LastEditedWhen_353786e1.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_PackageTypeID_bf4218cb.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:StockItemID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_StockItemID_46c2e34c.json"
     },
     {
       "type": "READS_COLUMN",
@@ -247,7 +354,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.Customers",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -255,7 +367,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.InvoiceLines",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -263,7 +380,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.Invoices"
+      }
     },
     {
       "type": "READS_FROM",
@@ -271,7 +392,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.PackageTypes",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -279,7 +405,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems",
+        "via": "JOIN"
+      }
     },
     {
       "type": "USES_VARIABLE",

@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "DataLoadSimulation",
+    "name": "ReactivateTemporalTablesAfterDataLoad",
     "full_name": "DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -24,9 +28,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 9,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "[Application].Configuration_ApplyRowLevelSecurity",
           "detail": "",
           "dynamic_sql": "",
@@ -47,9 +53,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 13,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[Cities]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -66,9 +74,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 14,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[Cities]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -85,9 +95,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 17,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[Countries]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -104,9 +116,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 18,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[Countries]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -123,9 +137,11 @@
         ],
         "properties": {
           "order": 5,
+          "sequence": 6,
           "line_no": 21,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[DeliveryMethods]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -142,9 +158,11 @@
         ],
         "properties": {
           "order": 6,
+          "sequence": 7,
           "line_no": 22,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[DeliveryMethods]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -161,9 +179,11 @@
         ],
         "properties": {
           "order": 7,
+          "sequence": 8,
           "line_no": 25,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[PaymentMethods]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -180,9 +200,11 @@
         ],
         "properties": {
           "order": 8,
+          "sequence": 9,
           "line_no": 26,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[PaymentMethods]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -199,9 +221,11 @@
         ],
         "properties": {
           "order": 9,
+          "sequence": 10,
           "line_no": 29,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[People]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -218,9 +242,11 @@
         ],
         "properties": {
           "order": 10,
+          "sequence": 11,
           "line_no": 30,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[People]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -237,9 +263,11 @@
         ],
         "properties": {
           "order": 11,
+          "sequence": 12,
           "line_no": 33,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[StateProvinces]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -256,9 +284,11 @@
         ],
         "properties": {
           "order": 12,
+          "sequence": 13,
           "line_no": 34,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[StateProvinces]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -275,9 +305,11 @@
         ],
         "properties": {
           "order": 13,
+          "sequence": 14,
           "line_no": 37,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[TransactionTypes]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -294,9 +326,11 @@
         ],
         "properties": {
           "order": 14,
+          "sequence": 15,
           "line_no": 38,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Application].[TransactionTypes]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -313,9 +347,11 @@
         ],
         "properties": {
           "order": 15,
+          "sequence": 16,
           "line_no": 41,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Purchasing].[SupplierCategories]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -332,9 +368,11 @@
         ],
         "properties": {
           "order": 16,
+          "sequence": 17,
           "line_no": 42,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Purchasing].[SupplierCategories]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -351,9 +389,11 @@
         ],
         "properties": {
           "order": 17,
+          "sequence": 18,
           "line_no": 45,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Purchasing].[Suppliers]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -370,9 +410,11 @@
         ],
         "properties": {
           "order": 18,
+          "sequence": 19,
           "line_no": 46,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Purchasing].[Suppliers]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -389,9 +431,11 @@
         ],
         "properties": {
           "order": 19,
+          "sequence": 20,
           "line_no": 49,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Sales].[BuyingGroups]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -408,9 +452,11 @@
         ],
         "properties": {
           "order": 20,
+          "sequence": 21,
           "line_no": 50,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Sales].[BuyingGroups]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -427,9 +473,11 @@
         ],
         "properties": {
           "order": 21,
+          "sequence": 22,
           "line_no": 53,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Sales].[CustomerCategories]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -446,9 +494,11 @@
         ],
         "properties": {
           "order": 22,
+          "sequence": 23,
           "line_no": 54,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Sales].[CustomerCategories]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -465,9 +515,11 @@
         ],
         "properties": {
           "order": 23,
+          "sequence": 24,
           "line_no": 57,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Sales].[Customers]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -484,9 +536,11 @@
         ],
         "properties": {
           "order": 24,
+          "sequence": 25,
           "line_no": 58,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Sales].[Customers]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -503,9 +557,11 @@
         ],
         "properties": {
           "order": 25,
+          "sequence": 26,
           "line_no": 61,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Warehouse].[ColdRoomTemperatures]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -522,9 +578,11 @@
         ],
         "properties": {
           "order": 26,
+          "sequence": 27,
           "line_no": 62,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Warehouse].[ColdRoomTemperatures]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -541,9 +599,11 @@
         ],
         "properties": {
           "order": 27,
+          "sequence": 28,
           "line_no": 65,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Warehouse].[Colors]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -560,9 +620,11 @@
         ],
         "properties": {
           "order": 28,
+          "sequence": 29,
           "line_no": 66,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Warehouse].[Colors]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -579,9 +641,11 @@
         ],
         "properties": {
           "order": 29,
+          "sequence": 30,
           "line_no": 69,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Warehouse].[PackageTypes]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -598,9 +662,11 @@
         ],
         "properties": {
           "order": 30,
+          "sequence": 31,
           "line_no": 70,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Warehouse].[PackageTypes]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -617,9 +683,11 @@
         ],
         "properties": {
           "order": 31,
+          "sequence": 32,
           "line_no": 73,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Warehouse].[StockGroups]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -636,9 +704,11 @@
         ],
         "properties": {
           "order": 32,
+          "sequence": 33,
           "line_no": 74,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Warehouse].[StockGroups]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -655,9 +725,11 @@
         ],
         "properties": {
           "order": 33,
+          "sequence": 34,
           "line_no": 77,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Warehouse].[StockItems]",
           "detail": "ADD PERIOD",
           "dynamic_sql": "",
@@ -674,9 +746,11 @@
         ],
         "properties": {
           "order": 34,
+          "sequence": 35,
           "line_no": 78,
           "nesting_level": 0,
           "action": "ALTER",
+          "step_type": "Maintenance",
           "target_name": "[Warehouse].[StockItems]",
           "detail": "SET SYSTEM_VERSIONING=ON",
           "dynamic_sql": "",
@@ -689,6 +763,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:dataloadsimulation",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_dataloadsimulation_0b2c978e.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "CALLS",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
@@ -732,7 +817,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json"
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[Cities]"
+      }
     },
     {
       "type": "ACTION",
@@ -748,7 +837,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[People]"
+      }
     },
     {
       "type": "ACTION",
@@ -764,7 +857,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.stateprovinces",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json"
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[StateProvinces]"
+      }
     },
     {
       "type": "ACTION",
@@ -780,7 +877,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.stateprovinces",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json"
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[StateProvinces]"
+      }
     },
     {
       "type": "ACTION",
@@ -796,7 +897,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.transactiontypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json"
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[TransactionTypes]"
+      }
     },
     {
       "type": "ACTION",
@@ -812,7 +917,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.transactiontypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json"
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[TransactionTypes]"
+      }
     },
     {
       "type": "ACTION",
@@ -828,7 +937,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json"
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Purchasing].[SupplierCategories]"
+      }
     },
     {
       "type": "ACTION",
@@ -844,7 +957,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json"
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Purchasing].[SupplierCategories]"
+      }
     },
     {
       "type": "ACTION",
@@ -860,7 +977,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json"
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Purchasing].[Suppliers]"
+      }
     },
     {
       "type": "ACTION",
@@ -876,7 +997,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json"
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Purchasing].[Suppliers]"
+      }
     },
     {
       "type": "ACTION",
@@ -892,7 +1017,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Sales].[BuyingGroups]"
+      }
     },
     {
       "type": "ACTION",
@@ -908,7 +1037,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json"
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[Cities]"
+      }
     },
     {
       "type": "ACTION",
@@ -924,7 +1057,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Sales].[BuyingGroups]"
+      }
     },
     {
       "type": "ACTION",
@@ -940,7 +1077,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Sales].[CustomerCategories]"
+      }
     },
     {
       "type": "ACTION",
@@ -956,7 +1097,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Sales].[CustomerCategories]"
+      }
     },
     {
       "type": "ACTION",
@@ -972,7 +1117,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Sales].[Customers]"
+      }
     },
     {
       "type": "ACTION",
@@ -988,7 +1137,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Sales].[Customers]"
+      }
     },
     {
       "type": "ACTION",
@@ -1004,7 +1157,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[ColdRoomTemperatures]"
+      }
     },
     {
       "type": "ACTION",
@@ -1020,7 +1177,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[ColdRoomTemperatures]"
+      }
     },
     {
       "type": "ACTION",
@@ -1036,7 +1197,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.colors",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[Colors]"
+      }
     },
     {
       "type": "ACTION",
@@ -1052,7 +1217,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.colors",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[Colors]"
+      }
     },
     {
       "type": "ACTION",
@@ -1068,7 +1237,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[PackageTypes]"
+      }
     },
     {
       "type": "ACTION",
@@ -1084,7 +1257,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.countries",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json"
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[Countries]"
+      }
     },
     {
       "type": "ACTION",
@@ -1100,7 +1277,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[PackageTypes]"
+      }
     },
     {
       "type": "ACTION",
@@ -1116,7 +1297,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockgroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[StockGroups]"
+      }
     },
     {
       "type": "ACTION",
@@ -1132,7 +1317,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockgroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[StockGroups]"
+      }
     },
     {
       "type": "ACTION",
@@ -1148,7 +1337,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[StockItems]"
+      }
     },
     {
       "type": "ACTION",
@@ -1164,7 +1357,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[StockItems]"
+      }
     },
     {
       "type": "ACTION",
@@ -1180,7 +1377,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.countries",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json"
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[Countries]"
+      }
     },
     {
       "type": "ACTION",
@@ -1196,7 +1397,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.deliverymethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json"
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[DeliveryMethods]"
+      }
     },
     {
       "type": "ACTION",
@@ -1212,7 +1417,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.deliverymethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json"
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[DeliveryMethods]"
+      }
     },
     {
       "type": "ACTION",
@@ -1228,7 +1437,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.paymentmethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json"
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[PaymentMethods]"
+      }
     },
     {
       "type": "ACTION",
@@ -1244,7 +1457,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.paymentmethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json"
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[PaymentMethods]"
+      }
     },
     {
       "type": "ACTION",
@@ -1260,11 +1477,15 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[People]"
+      }
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e05f079f",
+      "from": "WideWorldImporters:rule:IF:133e0756",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step0",
       "to_label": "Step",

@@ -12,7 +12,23 @@
     "is_primary_key": false,
     "ordinal": 5
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Application.Configuration_EnableInMemory": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    }
+  ],
   "edges_out": []
 }

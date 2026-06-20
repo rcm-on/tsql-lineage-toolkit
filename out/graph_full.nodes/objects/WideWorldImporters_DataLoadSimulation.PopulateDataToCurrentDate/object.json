@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "DataLoadSimulation",
+    "name": "PopulateDataToCurrentDate",
     "full_name": "DataLoadSimulation.PopulateDataToCurrentDate",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -117,9 +121,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 12,
           "nesting_level": 0,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
           "detail": "",
           "dynamic_sql": "",
@@ -136,9 +142,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 18,
           "nesting_level": 0,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "DataLoadSimulation.DailyProcessToCreateHistory",
           "detail": "",
           "dynamic_sql": "",
@@ -155,9 +163,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 28,
           "nesting_level": 0,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
           "detail": "",
           "dynamic_sql": "",
@@ -372,6 +382,17 @@
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 2
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:dataloadsimulation",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_dataloadsimulation_0b2c978e.json",
+      "props": {
+        "object_type": "PROCEDURE"
       }
     },
     {

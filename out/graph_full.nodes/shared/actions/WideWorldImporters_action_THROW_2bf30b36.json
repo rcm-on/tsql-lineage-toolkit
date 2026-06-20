@@ -42,7 +42,7 @@
     "WideWorldImporters::Application.Configuration_EnableInMemory": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step29",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step30",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
       }
@@ -159,7 +159,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step29",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step30",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },

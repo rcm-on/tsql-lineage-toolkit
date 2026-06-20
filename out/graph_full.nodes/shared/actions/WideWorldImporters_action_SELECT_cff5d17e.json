@@ -111,6 +111,14 @@
         "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
       }
     ],
+    "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+      }
+    ],
     "WideWorldImporters::Website.CalculateCustomerPrice": [
       {
         "type": "ACTION",
@@ -121,6 +129,24 @@
       {
         "type": "ACTION",
         "from": "WideWorldImporters::Website.CalculateCustomerPrice#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
       }
@@ -255,6 +281,12 @@
     },
     {
       "type": "ACTION",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    },
+    {
+      "type": "ACTION",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
@@ -262,6 +294,24 @@
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
     },

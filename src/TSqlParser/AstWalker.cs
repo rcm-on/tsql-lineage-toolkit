@@ -48,7 +48,18 @@ public static class AstWalker
                     break;
 
                 case DeclareTableVariableStatement dtv:
-                    ctx.Variables.Add(new VariableInfo(dtv.Body.VariableName.Value, "TABLE", ""));
+                    {
+                        var varName = dtv.Body.VariableName.Value;
+                        ctx.Variables.Add(new VariableInfo(varName, "TABLE", ""));
+
+                        // Register the table variable's own column list so a later
+                        // "SELECT * FROM @T"/"INSERT INTO @T" in the same body can
+                        // resolve its columns (see WalkContext.TryGetColumns).
+                        var cols = dtv.Body.Definition?.ColumnDefinitions
+                            .Select(c => c.ColumnIdentifier.Value)
+                            .ToList() ?? new List<string>();
+                        ctx.RegisterTransientTable(varName, cols);
+                    }
                     break;
 
                 case DeclareCursorStatement dcs:
@@ -62,6 +73,7 @@ public static class AstWalker
                         CollectAssignment(svs.Variable.Name, null, svs.Expression, ctx, cteNames, cteBaseTables);
                         RecordConstruction(ctx, svs.Variable.Name, svs.Expression);
                         TrackResolvedValue(ctx, svs.Variable.Name, svs.Expression);
+                        WalkScalarSubqueryAssignment(svs.Variable.Name, svs.Expression, stmt, condStack, ctx, cteNames, cteBaseTables);
                     }
                     break;
 
@@ -73,8 +85,14 @@ public static class AstWalker
                     ctx.DecisionCount++;
                     var whileText = SqlText.Truncate(SqlText.Generate(ws.Predicate), 140);
                     condStack.Add(new Condition("WHILE", whileText, depth, ws.StartLine));
-                    WalkSingleOrBlock(ws.Statement, condStack, ctx, depth + 1, cteNames, cteBaseTables);
-                    condStack.RemoveAt(condStack.Count - 1);
+                    try
+                    {
+                        WalkSingleOrBlock(ws.Statement, condStack, ctx, depth + 1, cteNames, cteBaseTables);
+                    }
+                    finally
+                    {
+                        condStack.RemoveAt(condStack.Count - 1);
+                    }
                     break;
 
                 case TryCatchStatement tcs:
@@ -116,7 +134,9 @@ public static class AstWalker
                         if (insColumns.Count == 0)
                             insColumns = ResolveAllColumns(insTarget, ctx) ?? insColumns;
                         var (lineage, insExtraReads) = InsertSelectLineage(ins, insColumns, cteNames, cteBaseTables);
-                        AddLink(ctx, condStack, "INSERT", insTarget, stmt, columns: insColumns, columnLineage: lineage, extraReads: insExtraReads);
+                        ProcessOutputClause(ins.InsertSpecification?.OutputClause, insTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+
+                        AddLink(ctx, condStack, "INSERT", insTarget, stmt, cteNames, cteBaseTables, columns: insColumns, columnLineage: lineage, extraReads: insExtraReads);
                     }
                     break;
 
@@ -135,20 +155,57 @@ public static class AstWalker
                             if (partners.Count > 0)
                                 updExtraReads = BuildExtraReads(partners, new List<TableColumnRef>(), skipFirst: false);
                         }
-                        AddLink(ctx, condStack, "UPDATE", updTarget, stmt, columns: updColumns, extraReads: updExtraReads);
+
+                        ProcessOutputClause(upd.UpdateSpecification?.OutputClause, updTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+
+                        AddLink(ctx, condStack, "UPDATE", updTarget, stmt, cteNames, cteBaseTables, columns: updColumns, extraReads: updExtraReads);
                     }
                     break;
 
                 case DeleteStatement del:
-                    AddLink(ctx, condStack, "DELETE", TargetName(del.DeleteSpecification?.Target, cteNames, del.DeleteSpecification?.FromClause), stmt);
+                    {
+                        var delTarget = TargetName(del.DeleteSpecification?.Target, cteNames, del.DeleteSpecification?.FromClause);
+                        List<TableColumnRef>? delExtraReads = null;
+
+                        // "DELETE t FROM TargetTable t JOIN Other o ON ...": Other is read
+                        // (to decide which rows of TargetTable to delete) but never written.
+                        if (del.DeleteSpecification?.FromClause != null)
+                        {
+                            var allRefs = CollectTableRefs(del.DeleteSpecification.FromClause, cteNames, cteBaseTables);
+                            var partners = allRefs
+                                .Where(r => !string.Equals(r.Table, delTarget, StringComparison.OrdinalIgnoreCase))
+                                .ToList();
+                            if (partners.Count > 0)
+                                delExtraReads = BuildExtraReads(partners, new List<TableColumnRef>(), skipFirst: false);
+                        }
+
+                        ProcessOutputClause(del.DeleteSpecification?.OutputClause, delTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+                        AddLink(ctx, condStack, "DELETE", delTarget, stmt, cteNames, cteBaseTables, extraReads: delExtraReads);
+                    }
                     break;
 
                 case MergeStatement mrg:
-                    AddLink(ctx, condStack, "MERGE", TargetName(mrg.MergeSpecification?.Target, cteNames), stmt);
+                    {
+                        var mrgTarget = TargetName(mrg.MergeSpecification?.Target, cteNames);
+                        List<TableColumnRef>? mrgExtraReads = null;
+
+                        // MERGE's source ("USING <TableReference> ...") can itself be a JOIN,
+                        // unlike Target - so it's flattened the same way a FROM clause is,
+                        // rather than resolved as a single TargetName.
+                        if (mrg.MergeSpecification?.TableReference != null)
+                        {
+                            var refs = new List<(string Alias, string Table)>();
+                            CollectTableRefsInto(mrg.MergeSpecification.TableReference, cteNames, cteBaseTables, refs);
+                            mrgExtraReads = BuildExtraReads(refs, new List<TableColumnRef>(), skipFirst: false);
+                        }
+
+                        ProcessOutputClause(mrg.MergeSpecification?.OutputClause, mrgTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+                        AddLink(ctx, condStack, "MERGE", mrgTarget, stmt, cteNames, cteBaseTables, extraReads: mrgExtraReads);
+                    }
                     break;
 
                 case AlterTableStatement alt:
-                    AddLink(ctx, condStack, "ALTER", SqlText.Generate(alt.SchemaObjectName), stmt, detail: AlterDetail(alt));
+                    AddLink(ctx, condStack, "ALTER", SqlText.Generate(alt.SchemaObjectName), stmt, cteNames, cteBaseTables, detail: AlterDetail(alt));
                     break;
 
                 case ExecuteStatement exec:
@@ -158,7 +215,7 @@ public static class AstWalker
                         // *what* it runs (e.g. "CREATE PARTITION FUNCTION ...") - descriptive
                         // only; not re-parsed into lineage (see ResolveExecLiteral).
                         var dynText = isDynamic ? ResolveExecLiteral(exec, ctx) : "";
-                        AddLink(ctx, condStack, "EXEC", target, stmt, isDynamic ? dynamicVars : null, dynamicSqlText: dynText);
+                        AddLink(ctx, condStack, "EXEC", target, stmt, cteNames, cteBaseTables, isDynamic ? dynamicVars : null, dynamicSqlText: dynText);
                         if (!isDynamic && target.Length > 0)
                             ctx.ExecCalls.Add(target);
                         if (isDynamic)
@@ -235,7 +292,7 @@ public static class AstWalker
                             extraReads = BuildExtraReads(tableRefs, extras, skipFirst: true);
                         }
 
-                        AddLink(ctx, condStack, "SELECT", selTarget, stmt, columns: selColumns, extraReads: extraReads);
+                        AddLink(ctx, condStack, "SELECT", selTarget, stmt, cteNames, cteBaseTables, columns: selColumns, extraReads: extraReads);
                     }
                     break;
 
@@ -263,7 +320,18 @@ public static class AstWalker
                 // #temp names don't pollute the Table graph), giving the flowchart the
                 // CREATE/DROP scaffolding it was missing.
                 case CreateTableStatement cts2:
-                    AddLink(ctx, condStack, "CREATE_TABLE", SqlText.Generate(cts2.SchemaObjectName), stmt);
+                    {
+                        var tableName = SqlText.Generate(cts2.SchemaObjectName);
+                        AddLink(ctx, condStack, "CREATE_TABLE", tableName, stmt);
+
+                        // Register columns (e.g. "CREATE TABLE #Staging (...)") so a later
+                        // reference to this table in the same body can resolve them - see
+                        // WalkContext.TryGetColumns.
+                        var cols = cts2.Definition?.ColumnDefinitions
+                            .Select(c => c.ColumnIdentifier.Value)
+                            .ToList() ?? new List<string>();
+                        ctx.RegisterTransientTable(tableName, cols);
+                    }
                     break;
 
                 case CreateIndexStatement cis:
@@ -292,8 +360,14 @@ public static class AstWalker
         var ifText = SqlText.Truncate(SqlText.Generate(ifs.Predicate), 140);
 
         condStack.Add(new Condition("IF", ifText, depth, ifs.StartLine));
-        WalkSingleOrBlock(ifs.ThenStatement, condStack, ctx, depth + 1, cteNames, cteBaseTables);
-        condStack.RemoveAt(condStack.Count - 1);
+        try
+        {
+            WalkSingleOrBlock(ifs.ThenStatement, condStack, ctx, depth + 1, cteNames, cteBaseTables);
+        }
+        finally
+        {
+            condStack.RemoveAt(condStack.Count - 1);
+        }
 
         if (ifs.ElseStatement == null)
             return;
@@ -304,8 +378,14 @@ public static class AstWalker
         // giving each rung of the ladder both its negated-parent context and
         // its own positive condition.
         condStack.Add(new Condition("IF_ELSE", $"NOT ({ifText})", depth, ifs.StartLine));
-        WalkSingleOrBlock(ifs.ElseStatement, condStack, ctx, depth + 1, cteNames, cteBaseTables);
-        condStack.RemoveAt(condStack.Count - 1);
+        try
+        {
+            WalkSingleOrBlock(ifs.ElseStatement, condStack, ctx, depth + 1, cteNames, cteBaseTables);
+        }
+        finally
+        {
+            condStack.RemoveAt(condStack.Count - 1);
+        }
     }
 
     private static void WalkSingleOrBlock(TSqlStatement stmt, List<Condition> condStack, WalkContext ctx, int depth, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
@@ -385,7 +465,21 @@ public static class AstWalker
         return "";
     }
 
-    private static void AddLink(WalkContext ctx, List<Condition> condStack, string consequenceType, string target, TSqlStatement stmt, IReadOnlyList<string>? dynamicSqlVars = null, IReadOnlyList<string>? columns = null, IReadOnlyList<ColumnDerivation>? columnLineage = null, IReadOnlyList<TableColumnRef>? extraReads = null, string detail = "", string dynamicSqlText = "")
+    private static void AddLink(
+        WalkContext ctx,
+        List<Condition> condStack,
+        string consequenceType,
+        string target,
+        TSqlStatement stmt,
+        HashSet<string>? cteNames = null,
+        Dictionary<string, List<(string Alias, string Table)>>? cteBaseTables = null,
+        IReadOnlyList<string>? dynamicSqlVars = null,
+        IReadOnlyList<string>? columns = null,
+        IReadOnlyList<ColumnDerivation>? columnLineage = null,
+        IReadOnlyList<TableColumnRef>? extraReads = null,
+        IReadOnlyList<TableColumnRef>? filterColumnsOverride = null,
+        string detail = "",
+        string dynamicSqlText = "")
     {
         var (condType, condText) = condStack.Count > 0
             ? (condStack[^1].Type, condStack[^1].Text)
@@ -398,10 +492,212 @@ public static class AstWalker
         var keys = condStack.Select(c => $"{c.Type}#{c.BlockId}").ToList();
         var usedVariables = CollectVariableNames(stmt);
 
+        // FilterColumns: columns from this step's own WHERE/JOIN predicates, resolved
+        // against the same FROM-clause table refs the step's other column tracking
+        // uses (callers that already computed their own filter columns - e.g. MERGE's
+        // ON clause isn't a WhereClause - pass filterColumnsOverride directly instead).
+        var filterColumns = filterColumnsOverride;
+        var nestedTableRefs = new List<(string Alias, string Table)>();
+        if (filterColumns == null && cteNames != null && cteBaseTables != null)
+        {
+            // UPDATE/DELETE without an explicit FROM clause has no FromClause to walk -
+            // the target itself is the implicit single source table, so a bare
+            // "WHERE Status = 'X'" still resolves (tableRefs.Count == 1, same rule
+            // SplitColumnsByTable already uses for unqualified columns).
+            List<(string Alias, string Table)> currentTableRefs = stmt switch
+            {
+                SelectStatement { QueryExpression: QuerySpecification { FromClause: not null } qs } => CollectTableRefs(qs.FromClause, cteNames, cteBaseTables),
+                UpdateStatement { UpdateSpecification.FromClause: not null } upd => CollectTableRefs(upd.UpdateSpecification!.FromClause, cteNames, cteBaseTables),
+                UpdateStatement upd2 when TargetName(upd2.UpdateSpecification?.Target, cteNames) is { Length: > 0 } tn => new List<(string Alias, string Table)> { ("", tn) },
+                DeleteStatement { DeleteSpecification.FromClause: not null } del => CollectTableRefs(del.DeleteSpecification!.FromClause, cteNames, cteBaseTables),
+                DeleteStatement del2 when TargetName(del2.DeleteSpecification?.Target, cteNames) is { Length: > 0 } tn => new List<(string Alias, string Table)> { ("", tn) },
+                _ => new List<(string Alias, string Table)>(),
+            };
+            (filterColumns, nestedTableRefs) = ExtractFilterColumns(stmt, currentTableRefs, cteNames, cteBaseTables);
+        }
+
+        // A nested EXISTS/IN/scalar-comparison subquery's own table (e.g.
+        // "EXISTS (SELECT 1 FROM T2 WHERE ...)") isn't read via the step's normal
+        // INSERT/UPDATE/SELECT target tracking, only surfaces through FilterColumns -
+        // mirror it into extraReads too so it gets a real READS_FROM, not just FILTERS_ON.
+        var mergedExtraReads = extraReads;
+        if (nestedTableRefs.Count > 0)
+        {
+            var merged = (extraReads ?? Array.Empty<TableColumnRef>()).ToList();
+            foreach (var (_, table) in nestedTableRefs)
+                if (!merged.Any(e => string.Equals(e.Table, table, StringComparison.OrdinalIgnoreCase)))
+                    merged.Add(new TableColumnRef(table, Array.Empty<string>()));
+            mergedExtraReads = merged;
+        }
+
         ctx.FlowLinks.Add(new FlowLinkInfo(
             condType, condText, consequenceType, target,
-            condStack.Count, stmt.StartLine, dynamicSqlVars, path, keys, columns, columnLineage, usedVariables, extraReads, detail, dynamicSqlText
+            condStack.Count, stmt.StartLine, dynamicSqlVars, path, keys, columns, columnLineage, usedVariables, mergedExtraReads,
+            FilterColumns: filterColumns,
+            Detail: detail,
+            DynamicSqlText: dynamicSqlText
         ));
+    }
+
+    /// <summary>
+    /// Pulls the columns referenced in a step's own WHERE clause and JOIN ON
+    /// predicates (not its SELECT/SET list), resolved against the same FROM-clause
+    /// table refs used elsewhere for this step - i.e. "what decided which rows this
+    /// step touched", as opposed to Columns/ColumnLineage ("what got read/written").
+    /// Only SELECT/UPDATE/DELETE have a WhereClause; other statement kinds (INSERT,
+    /// MERGE's ON clause, EXEC, ...) simply yield no filter columns here.
+    /// </summary>
+    private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs) ExtractFilterColumns(
+        TSqlStatement stmt, List<(string Alias, string Table)> tableRefs, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    {
+        WhereClause? whereClause = stmt switch
+        {
+            SelectStatement { QueryExpression: QuerySpecification qs } => qs.WhereClause,
+            UpdateStatement upd => upd.UpdateSpecification?.WhereClause,
+            DeleteStatement del => del.DeleteSpecification?.WhereClause,
+            _ => null,
+        };
+
+        var tRefs = (stmt switch
+        {
+            SelectStatement { QueryExpression: QuerySpecification qs } => qs.FromClause?.TableReferences,
+            UpdateStatement upd => upd.UpdateSpecification?.FromClause?.TableReferences,
+            DeleteStatement del => del.DeleteSpecification?.FromClause?.TableReferences,
+            _ => null,
+        }) ?? new List<TableReference>();
+
+        return ExtractFilterColumnsCore(whereClause, tRefs, tableRefs, cteNames, cteBaseTables);
+    }
+
+    /// <summary>
+    /// Core of <see cref="ExtractFilterColumns"/>, usable directly with a WhereClause +
+    /// FROM table references instead of re-deriving them from a top-level
+    /// TSqlStatement - needed for "SET @v = (SELECT ... WHERE ...)" scalar subqueries,
+    /// which have their own QuerySpecification but aren't a TSqlStatement of their own.
+    ///
+    /// Also resolves columns from any EXISTS/IN/scalar-comparison subquery nested
+    /// inside the WHERE/JOIN-ON predicates: QualifiedColumnCollector already descends
+    /// into them and collects their column refs (e.g. "sisg.StockGroupID" inside an
+    /// "EXISTS (SELECT 1 FROM ... AS sisg WHERE ...)"), but until now they were
+    /// silently dropped by SplitColumnsByTable because "sisg" wasn't in the outer
+    /// tableRefs. NestedTableRefs (each nested subquery's own FROM tables) is merged
+    /// in before resolving, and returned separately so the caller (AddLink) can also
+    /// add a READS_FROM for those tables, not just FILTERS_ON.
+    /// </summary>
+    private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs) ExtractFilterColumnsCore(
+        WhereClause? whereClause, IList<TableReference> fromTableReferences, List<(string Alias, string Table)> tableRefs,
+        HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    {
+        var filterRefs = new List<(string? Qualifier, string Column)>();
+        var nestedTableRefs = new List<(string Alias, string Table)>();
+
+        void CollectFrom(TSqlFragment? fragment)
+        {
+            if (fragment == null)
+                return;
+
+            var collector = new QualifiedColumnCollector();
+            fragment.Accept(collector);
+            filterRefs.AddRange(collector.Refs);
+
+            var nested = new NestedSubqueryCollector();
+            fragment.Accept(nested);
+            foreach (var nestedQs in nested.Subqueries)
+            {
+                if (nestedQs.FromClause == null)
+                    continue;
+                foreach (var nestedRef in CollectTableRefs(nestedQs.FromClause, cteNames, cteBaseTables))
+                    if (!nestedTableRefs.Contains(nestedRef))
+                        nestedTableRefs.Add(nestedRef);
+            }
+        }
+
+        CollectFrom(whereClause?.SearchCondition);
+
+        var joinConditions = new List<BooleanExpression>();
+        CollectJoinExpressions(fromTableReferences, joinConditions);
+        foreach (var expr in joinConditions)
+            CollectFrom(expr);
+
+        var mergedTableRefs = nestedTableRefs.Count > 0 ? tableRefs.Concat(nestedTableRefs).ToList() : tableRefs;
+        var (primaryCols, extras) = SplitColumnsByTable(filterRefs, mergedTableRefs);
+
+        var result = new List<TableColumnRef>();
+        if (primaryCols.Count > 0 && tableRefs.Count > 0)
+            result.Add(new TableColumnRef(tableRefs[0].Table, primaryCols));
+        result.AddRange(extras);
+        return (result, nestedTableRefs);
+    }
+
+    /// <summary>
+    /// Collects every ScalarSubquery in a fragment - ScriptDom's shared wrapper for
+    /// "(SELECT ...)", used identically for a plain scalar comparison
+    /// ("col = (SELECT ...)"), the contents of EXISTS(...)/IN(...), and a parenthesized
+    /// SET assignment. Recurses naturally (doesn't stop descending once one is found),
+    /// so a subquery nested inside another subquery is also collected.
+    /// </summary>
+    private sealed class NestedSubqueryCollector : TSqlFragmentVisitor
+    {
+        public List<QuerySpecification> Subqueries { get; } = new();
+
+        public override void Visit(ScalarSubquery node)
+        {
+            if (node.QueryExpression is QuerySpecification qs)
+                Subqueries.Add(qs);
+        }
+    }
+
+    /// <summary>Recursively collects every JOIN's ON predicate from a list of table references (both sides of nested JOINs).</summary>
+    private static void CollectJoinExpressions(IList<TableReference> refs, List<BooleanExpression> expressions)
+    {
+        foreach (var tref in refs)
+        {
+            if (tref is QualifiedJoin qj)
+            {
+                if (qj.SearchCondition != null)
+                    expressions.Add(qj.SearchCondition);
+                CollectJoinExpressions(new[] { qj.FirstTableReference, qj.SecondTableReference }, expressions);
+            }
+            else if (tref is UnqualifiedJoin uqj)
+            {
+                CollectJoinExpressions(new[] { uqj.FirstTableReference, uqj.SecondTableReference }, expressions);
+            }
+        }
+    }
+
+    /// <summary>
+    /// For an INSERT/UPDATE/DELETE/MERGE with an "OUTPUT ... INTO OutputTable" clause:
+    /// records a separate INSERT step writing OutputTable, reading from the
+    /// inserted/deleted pseudo-tables (mapped here to the real actionTarget, since
+    /// that's the only table whose columns they actually mirror).
+    /// </summary>
+    private static void ProcessOutputClause(TSqlFragment? output, string actionTarget, WalkContext ctx, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>>? cteBaseTables, List<Condition> condStack, TSqlStatement stmt)
+    {
+        if (output is not OutputIntoClause outputInto || outputInto.IntoTable == null)
+            return;
+
+        string outputTargetName;
+        if (outputInto.IntoTable is NamedTableReference ntr)
+            outputTargetName = IsCte(ntr.SchemaObject, cteNames) ? "" : SqlText.Generate(ntr.SchemaObject);
+        else if (outputInto.IntoTable is VariableTableReference vtr)
+            outputTargetName = vtr.Variable?.Name ?? "";
+        else
+            outputTargetName = TargetName(outputInto.IntoTable, cteNames);
+
+        if (string.IsNullOrEmpty(outputTargetName))
+            return;
+
+        var tableRefs = new List<(string Alias, string Table)> { ("inserted", actionTarget), ("deleted", actionTarget) };
+        var allRefs = new List<(string? Qualifier, string Column)>();
+        foreach (var element in outputInto.SelectColumns.OfType<SelectScalarExpression>())
+        {
+            var collector = new QualifiedColumnCollector();
+            element.Expression.Accept(collector);
+            allRefs.AddRange(collector.Refs);
+        }
+
+        var (_, extras) = SplitColumnsByTable(allRefs, tableRefs);
+        AddLink(ctx, condStack, "OUTPUT", outputTargetName, stmt, cteNames, cteBaseTables, extraReads: extras);
     }
 
     /// <summary>
@@ -614,6 +910,52 @@ public static class AstWalker
             }
         }
         return (lineage, extraReads);
+    }
+
+    /// <summary>
+    /// "SET @var = (SELECT ... FROM T [JOIN ...] WHERE ...)": previously invisible -
+    /// CollectAssignment only records which column(s) of T feed @var (ASSIGNED_FROM,
+    /// still emitted separately, unaffected by this), with no Step/READS_FROM/
+    /// FILTERS_ON, so T and its WHERE/JOIN predicates never showed up in the graph or
+    /// flowchart. Now also emitted as a "SELECT" step (detail names the variable it
+    /// feeds), mirroring the top-level "SELECT @var = Col FROM T WHERE ..." case in
+    /// Walk's SelectStatement branch. No-ops for a plain literal/expression (no
+    /// ScalarSubquery) or a subquery with no FROM clause.
+    /// </summary>
+    private static void WalkScalarSubqueryAssignment(string varName, ScalarExpression expr, TSqlStatement stmt, List<Condition> condStack, WalkContext ctx, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    {
+        while (expr is ParenthesisExpression pe)
+            expr = pe.Expression;
+        if (expr is not ScalarSubquery { QueryExpression: QuerySpecification { FromClause.TableReferences.Count: > 0 } qs })
+            return;
+
+        var tableRefs = CollectTableRefs(qs.FromClause, cteNames, cteBaseTables);
+        if (tableRefs.Count == 0)
+            return;
+        var target = tableRefs[0].Table;
+
+        // Columns actually selected - mirrors Walk's SelectStatement branch, minus the
+        // SELECT * case (a scalar subquery has exactly one select element by construction).
+        var refs = new List<(string? Qualifier, string Column)>();
+        foreach (var el in qs.SelectElements)
+            if (el is SelectScalarExpression sse)
+            {
+                var collector = new QualifiedColumnCollector();
+                sse.Expression.Accept(collector);
+                refs.AddRange(collector.Refs);
+            }
+        var (selColumns, extras) = SplitColumnsByTable(refs, tableRefs);
+        var extraReads = BuildExtraReads(tableRefs, extras, skipFirst: true);
+
+        var (filterColumns, nestedTableRefs) = ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables);
+        if (nestedTableRefs.Count > 0)
+            foreach (var (_, nestedTable) in nestedTableRefs)
+                if (!extraReads.Any(e => string.Equals(e.Table, nestedTable, StringComparison.OrdinalIgnoreCase)))
+                    extraReads.Add(new TableColumnRef(nestedTable, Array.Empty<string>()));
+
+        AddLink(ctx, condStack, "SELECT", target, stmt, cteNames, cteBaseTables,
+            columns: selColumns, extraReads: extraReads, filterColumnsOverride: filterColumns,
+            detail: $"→ {varName}");
     }
 
     /// <summary>
@@ -836,11 +1178,11 @@ public static class AstWalker
     /// </summary>
     private static List<string>? ResolveAllColumns(string tableName, WalkContext ctx)
     {
-        if (tableName.Length == 0 || ctx.TableColumns == null)
+        if (tableName.Length == 0)
             return null;
 
         var key = $"{ctx.Db}::{SqlText.NormalizeRef(tableName)}";
-        return ctx.TableColumns.TryGetValue(key, out var cols) ? cols : null;
+        return ctx.TryGetColumns(key, out var cols) ? cols : null;
     }
 
     /// <summary>

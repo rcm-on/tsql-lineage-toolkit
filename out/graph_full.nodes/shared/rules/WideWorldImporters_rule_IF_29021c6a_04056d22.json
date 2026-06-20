@@ -1,0 +1,33 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:29021c6a",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "NOT EXISTS (SELECT 1             FROM   sys.filegroups             WHERE  name = N'WWI_InMemory_Data')"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "WideWorldImporters:rule:IF:dd060970",
+      "to_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_dd060970_77ffc7f8.json"
+    }
+  ]
+}

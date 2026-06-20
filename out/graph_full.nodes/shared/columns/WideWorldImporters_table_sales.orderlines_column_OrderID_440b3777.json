@@ -13,6 +13,14 @@
     "ordinal": 2
   },
   "refs": {
+    "WideWorldImporters::Integration.GetOrderUpdates": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+      }
+    ],
     "WideWorldImporters::Website.InsertCustomerOrders": [
       {
         "type": "WRITES_COLUMN",
@@ -23,6 +31,12 @@
     ]
   },
   "edges_in": [
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+    },
     {
       "type": "WRITES_COLUMN",
       "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",

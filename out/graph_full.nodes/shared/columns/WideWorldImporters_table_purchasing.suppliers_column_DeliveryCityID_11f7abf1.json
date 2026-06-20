@@ -12,8 +12,24 @@
     "is_primary_key": false,
     "ordinal": 7
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Website.SearchForSuppliers": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Website.InsertCustomerOrders",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Website",
+    "name": "InsertCustomerOrders",
     "full_name": "Website.InsertCustomerOrders",
+    "object_type": "PROCEDURE",
     "has_transaction": true,
     "has_error_handling": true,
     "has_cursor": false,
@@ -82,16 +86,18 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 21,
           "nesting_level": 0,
           "action": "INSERT",
-          "target_name": "",
+          "step_type": "Staging",
+          "target_name": "@OrdersToGenerate",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "INSERT"
+          "label": "INSERT -> @OrdersToGenerate"
         }
       },
       {
@@ -101,9 +107,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 27,
           "nesting_level": 0,
           "action": "BEGIN_TRAN",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -120,9 +128,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 29,
           "nesting_level": 0,
           "action": "INSERT",
+          "step_type": "Load",
           "target_name": "Sales.Orders",
           "detail": "",
           "dynamic_sql": "",
@@ -139,9 +149,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 40,
           "nesting_level": 0,
           "action": "INSERT",
+          "step_type": "Load",
           "target_name": "Sales.OrderLines",
           "detail": "",
           "dynamic_sql": "",
@@ -158,9 +170,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 54,
           "nesting_level": 0,
           "action": "COMMIT_TRAN",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -177,9 +191,11 @@
         ],
         "properties": {
           "order": 5,
+          "sequence": 6,
           "line_no": 58,
           "nesting_level": 2,
           "action": "ROLLBACK",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -202,9 +218,11 @@
         ],
         "properties": {
           "order": 6,
+          "sequence": 7,
           "line_no": 60,
           "nesting_level": 1,
           "action": "THROW",
+          "step_type": "Notification",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -225,9 +243,11 @@
         ],
         "properties": {
           "order": 7,
+          "sequence": 8,
           "line_no": 61,
           "nesting_level": 1,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -248,9 +268,11 @@
         ],
         "properties": {
           "order": 8,
+          "sequence": 9,
           "line_no": 64,
           "nesting_level": 0,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -263,6 +285,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:website",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "CALLS",
       "from": "WideWorldImporters::Website.InsertCustomerOrders",
@@ -482,7 +515,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orders",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Orders"
+      }
     },
     {
       "type": "ACTION",
@@ -498,7 +535,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.StockItems",
+        "via": "JOIN"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -626,7 +668,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orderlines",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.OrderLines"
+      }
     },
     {
       "type": "ACTION",
@@ -670,7 +716,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.InsertCustomerOrders#step6",
       "to_label": "Step",
@@ -678,7 +724,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.InsertCustomerOrders#step7",
       "to_label": "Step",
@@ -686,7 +732,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:70a20de0",
+      "from": "WideWorldImporters:rule:IF:96cd9fce",
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.InsertCustomerOrders#step5",
       "to_label": "Step",

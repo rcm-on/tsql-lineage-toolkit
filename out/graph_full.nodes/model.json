@@ -47,14 +47,14 @@
       "label": "SqlObject",
       "name": "Application.Configuration_ConfigureForEnterpriseEdition",
       "path": "objects/WideWorldImporters_Application.Configuration_ConfigureForEnterpriseEdition/object.json",
-      "degree": 4
+      "degree": 5
     },
     {
       "id": "WideWorldImporters::Application.Configuration_EnableInMemory",
       "label": "SqlObject",
       "name": "Application.Configuration_EnableInMemory",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
-      "degree": 1
+      "degree": 2
     },
     {
       "id": "WideWorldImporters::Application.Configuration_RemoveAuditing",
@@ -124,21 +124,21 @@
       "label": "SqlObject",
       "name": "Integration.GetCityUpdates",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
-      "degree": 5
+      "degree": 0
     },
     {
       "id": "WideWorldImporters::Integration.GetCustomerUpdates",
       "label": "SqlObject",
       "name": "Integration.GetCustomerUpdates",
       "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
-      "degree": 6
+      "degree": 0
     },
     {
       "id": "WideWorldImporters::Integration.GetEmployeeUpdates",
       "label": "SqlObject",
       "name": "Integration.GetEmployeeUpdates",
       "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
-      "degree": 3
+      "degree": 0
     },
     {
       "id": "WideWorldImporters::Integration.GetMovementUpdates",
@@ -159,7 +159,7 @@
       "label": "SqlObject",
       "name": "Integration.GetPaymentMethodUpdates",
       "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json",
-      "degree": 3
+      "degree": 0
     },
     {
       "id": "WideWorldImporters::Integration.GetPurchaseUpdates",
@@ -187,21 +187,21 @@
       "label": "SqlObject",
       "name": "Integration.GetStockItemUpdates",
       "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
-      "degree": 5
+      "degree": 0
     },
     {
       "id": "WideWorldImporters::Integration.GetSupplierUpdates",
       "label": "SqlObject",
       "name": "Integration.GetSupplierUpdates",
       "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
-      "degree": 5
+      "degree": 0
     },
     {
       "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates",
       "label": "SqlObject",
       "name": "Integration.GetTransactionTypeUpdates",
       "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
-      "degree": 3
+      "degree": 0
     },
     {
       "id": "WideWorldImporters::Integration.GetTransactionUpdates",
@@ -236,7 +236,7 @@
       "label": "SqlObject",
       "name": "Website.CalculateCustomerPrice",
       "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
-      "degree": 3
+      "degree": 5
     },
     {
       "id": "WideWorldImporters::Website.ChangePassword",
@@ -334,7 +334,7 @@
       "label": "Table",
       "name": "Application.Cities",
       "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
-      "degree": 12
+      "degree": 11
     },
     {
       "id": "WideWorldImporters:table:application.cities_archive",
@@ -348,7 +348,7 @@
       "label": "Table",
       "name": "Application.Countries",
       "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
-      "degree": 7
+      "degree": 6
     },
     {
       "id": "WideWorldImporters:table:application.countries_archive",
@@ -376,7 +376,7 @@
       "label": "Table",
       "name": "Application.PaymentMethods",
       "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
-      "degree": 8
+      "degree": 7
     },
     {
       "id": "WideWorldImporters:table:application.paymentmethods_archive",
@@ -390,7 +390,7 @@
       "label": "Table",
       "name": "Application.People",
       "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
-      "degree": 42
+      "degree": 39
     },
     {
       "id": "WideWorldImporters:table:application.people_archive",
@@ -404,7 +404,7 @@
       "label": "Table",
       "name": "Application.StateProvinces",
       "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
-      "degree": 8
+      "degree": 7
     },
     {
       "id": "WideWorldImporters:table:application.stateprovinces_archive",
@@ -425,7 +425,7 @@
       "label": "Table",
       "name": "Application.TransactionTypes",
       "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
-      "degree": 9
+      "degree": 8
     },
     {
       "id": "WideWorldImporters:table:application.transactiontypes_archive",
@@ -453,7 +453,7 @@
       "label": "Table",
       "name": "Purchasing.SupplierCategories",
       "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
-      "degree": 7
+      "degree": 6
     },
     {
       "id": "WideWorldImporters:table:purchasing.suppliercategories_archive",
@@ -467,7 +467,7 @@
       "label": "Table",
       "name": "Purchasing.Suppliers",
       "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
-      "degree": 15
+      "degree": 14
     },
     {
       "id": "WideWorldImporters:table:purchasing.suppliers_archive",
@@ -488,7 +488,7 @@
       "label": "Table",
       "name": "Sales.BuyingGroups",
       "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
-      "degree": 8
+      "degree": 7
     },
     {
       "id": "WideWorldImporters:table:sales.buyinggroups_archive",
@@ -502,7 +502,7 @@
       "label": "Table",
       "name": "Sales.CustomerCategories",
       "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
-      "degree": 8
+      "degree": 7
     },
     {
       "id": "WideWorldImporters:table:sales.customercategories_archive",
@@ -516,7 +516,7 @@
       "label": "Table",
       "name": "Sales.Customers",
       "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
-      "degree": 23
+      "degree": 22
     },
     {
       "id": "WideWorldImporters:table:sales.customers_archive",
@@ -565,14 +565,14 @@
       "label": "Table",
       "name": "Sales.SpecialDeals",
       "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
-      "degree": 6
+      "degree": 7
     },
     {
       "id": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "label": "Table",
       "name": "Warehouse.ColdRoomTemperatures",
       "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
-      "degree": 5
+      "degree": 7
     },
     {
       "id": "WideWorldImporters:table:warehouse.coldroomtemperatures_archive",
@@ -586,7 +586,7 @@
       "label": "Table",
       "name": "Warehouse.Colors",
       "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
-      "degree": 7
+      "degree": 6
     },
     {
       "id": "WideWorldImporters:table:warehouse.colors_archive",
@@ -600,7 +600,7 @@
       "label": "Table",
       "name": "Warehouse.PackageTypes",
       "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
-      "degree": 13
+      "degree": 12
     },
     {
       "id": "WideWorldImporters:table:warehouse.packagetypes_archive",
@@ -635,7 +635,7 @@
       "label": "Table",
       "name": "Warehouse.StockItems",
       "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
-      "degree": 23
+      "degree": 22
     },
     {
       "id": "WideWorldImporters:table:warehouse.stockitems_archive",
@@ -649,7 +649,7 @@
       "label": "Table",
       "name": "Warehouse.StockItemStockGroups",
       "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.json",
-      "degree": 3
+      "degree": 4
     },
     {
       "id": "WideWorldImporters:table:warehouse.stockitemtransactions",
@@ -678,55 +678,6 @@
       "name": "sys.tables",
       "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
       "degree": 1
-    },
-    {
-      "id": "WideWorldImporters:table:#citychanges",
-      "label": "Table",
-      "name": "#CityChanges",
-      "path": "shared/tables/WideWorldImporters_table_citychanges_70fb6552.json",
-      "degree": 2
-    },
-    {
-      "id": "WideWorldImporters:table:#customerchanges",
-      "label": "Table",
-      "name": "#CustomerChanges",
-      "path": "shared/tables/WideWorldImporters_table_customerchanges_67a9a51e.json",
-      "degree": 2
-    },
-    {
-      "id": "WideWorldImporters:table:#employeechanges",
-      "label": "Table",
-      "name": "#EmployeeChanges",
-      "path": "shared/tables/WideWorldImporters_table_employeechanges_36d21ad8.json",
-      "degree": 2
-    },
-    {
-      "id": "WideWorldImporters:table:#paymentmethodchanges",
-      "label": "Table",
-      "name": "#PaymentMethodChanges",
-      "path": "shared/tables/WideWorldImporters_table_paymentmethodchanges_9de89353.json",
-      "degree": 2
-    },
-    {
-      "id": "WideWorldImporters:table:#stockitemchanges",
-      "label": "Table",
-      "name": "#StockItemChanges",
-      "path": "shared/tables/WideWorldImporters_table_stockitemchanges_5d4b85a8.json",
-      "degree": 2
-    },
-    {
-      "id": "WideWorldImporters:table:#supplierchanges",
-      "label": "Table",
-      "name": "#SupplierChanges",
-      "path": "shared/tables/WideWorldImporters_table_supplierchanges_2ef5ae4f.json",
-      "degree": 2
-    },
-    {
-      "id": "WideWorldImporters:table:#transactiontypechanges",
-      "label": "Table",
-      "name": "#TransactionTypeChanges",
-      "path": "shared/tables/WideWorldImporters_table_transactiontypechanges_21b1c375.json",
-      "degree": 2
     },
     {
       "id": "WideWorldImporters:table:#currentvalue",
@@ -1173,6 +1124,11 @@
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning"
     },
     {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures"
+    },
+    {
       "type": "CALLS",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad"
@@ -1373,76 +1329,6 @@
       "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity"
     },
     {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetCityUpdates",
-      "to": "WideWorldImporters:table:#citychanges"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates",
-      "to": "WideWorldImporters:table:application.cities"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates",
-      "to": "WideWorldImporters:table:application.stateprovinces"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates",
-      "to": "WideWorldImporters:table:application.countries"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates",
-      "to": "WideWorldImporters:table:#citychanges"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates",
-      "to": "WideWorldImporters:table:#customerchanges"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates",
-      "to": "WideWorldImporters:table:sales.customers"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates",
-      "to": "WideWorldImporters:table:sales.buyinggroups"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates",
-      "to": "WideWorldImporters:table:sales.customercategories"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates",
-      "to": "WideWorldImporters:table:application.people"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates",
-      "to": "WideWorldImporters:table:#customerchanges"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates",
-      "to": "WideWorldImporters:table:#employeechanges"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates",
-      "to": "WideWorldImporters:table:application.people"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates",
-      "to": "WideWorldImporters:table:#employeechanges"
-    },
-    {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Integration.GetMovementUpdates",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions"
@@ -1466,21 +1352,6 @@
       "type": "READS_FROM",
       "from": "WideWorldImporters::Integration.GetOrderUpdates",
       "to": "WideWorldImporters:table:sales.customers"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates",
-      "to": "WideWorldImporters:table:#paymentmethodchanges"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates",
-      "to": "WideWorldImporters:table:application.paymentmethods"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates",
-      "to": "WideWorldImporters:table:#paymentmethodchanges"
     },
     {
       "type": "READS_FROM",
@@ -1533,71 +1404,6 @@
       "to": "WideWorldImporters:table:warehouse.stockitemholdings"
     },
     {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetStockItemUpdates",
-      "to": "WideWorldImporters:table:#stockitemchanges"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetStockItemUpdates",
-      "to": "WideWorldImporters:table:warehouse.stockitems"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetStockItemUpdates",
-      "to": "WideWorldImporters:table:warehouse.packagetypes"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetStockItemUpdates",
-      "to": "WideWorldImporters:table:warehouse.colors"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetStockItemUpdates",
-      "to": "WideWorldImporters:table:#stockitemchanges"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates",
-      "to": "WideWorldImporters:table:#supplierchanges"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates",
-      "to": "WideWorldImporters:table:purchasing.suppliers"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates",
-      "to": "WideWorldImporters:table:purchasing.suppliercategories"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates",
-      "to": "WideWorldImporters:table:application.people"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates",
-      "to": "WideWorldImporters:table:#supplierchanges"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates",
-      "to": "WideWorldImporters:table:#transactiontypechanges"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates",
-      "to": "WideWorldImporters:table:application.transactiontypes"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates",
-      "to": "WideWorldImporters:table:#transactiontypechanges"
-    },
-    {
       "type": "CALLS",
       "from": "WideWorldImporters::Sequences.ReseedAllSequences",
       "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues"
@@ -1616,6 +1422,16 @@
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice",
       "to": "WideWorldImporters:table:warehouse.stockitems"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice",
+      "to": "WideWorldImporters:table:sales.specialdeals"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups"
     },
     {
       "type": "WRITES_TO",
@@ -1766,6 +1582,11 @@
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForSuppliers",
       "to": "WideWorldImporters:table:application.people"
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures"
     },
     {
       "type": "AFFECTS",

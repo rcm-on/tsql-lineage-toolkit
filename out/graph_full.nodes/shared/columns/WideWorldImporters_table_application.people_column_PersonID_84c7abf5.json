@@ -13,21 +13,89 @@
     "ordinal": 1
   },
   "refs": {
+    "WideWorldImporters::Website.ActivateWebsiteLogon": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.ChangePassword": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.ChangePassword#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.SearchForCustomers": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForCustomers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+      }
+    ],
     "WideWorldImporters::Website.SearchForPeople": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForPeople#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+      },
       {
         "type": "READS_COLUMN",
         "from": "WideWorldImporters::Website.SearchForPeople#step0",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
       }
+    ],
+    "WideWorldImporters::Website.SearchForSuppliers": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      }
     ]
   },
   "edges_in": [
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.ChangePassword#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForCustomers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForPeople#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+    },
     {
       "type": "READS_COLUMN",
       "from": "WideWorldImporters::Website.SearchForPeople#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
     }
   ],
   "edges_out": []

@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Application",
+    "name": "Configuration_ApplyRowLevelSecurity",
     "full_name": "Application.Configuration_ApplyRowLevelSecurity",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": true,
     "has_cursor": false,
@@ -42,9 +46,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 14,
           "nesting_level": 0,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "DROP SECURITY POLICY IF EXISTS [Application].FilterCustomersBySalesTerritoryRole;",
@@ -61,9 +67,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 17,
           "nesting_level": 0,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "DROP FUNCTION IF EXISTS [Application].DetermineCustomerAccess;",
@@ -80,9 +88,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 38,
           "nesting_level": 0,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE FUNCTION [Application].DetermineCustomerAccess(@CityID int) RETURNS TABLE WITH SCHEMABINDING AS RETURN (SELECT 1 AS AccessResult WHERE IS_ROLEMEMBER(N'db_owner') <> 0 OR IS_ROLEMEMBER((SELECT s",
@@ -99,9 +109,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 46,
           "nesting_level": 0,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE SECURITY POLICY [Application].FilterCustomersBySalesTerritoryRole ADD FILTER PREDICATE [Application].DetermineCustomerAccess(DeliveryCityID) ON Sales.Customers, ADD BLOCK PREDICATE [Application",
@@ -118,9 +130,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 53,
           "nesting_level": 1,
           "action": "THROW",
+          "step_type": "Notification",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -137,6 +151,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:application",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_application_552b8a6f.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step0",
@@ -243,7 +268,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:CATCH:7319a8a3",
+      "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity#step4",
       "to_label": "Step",

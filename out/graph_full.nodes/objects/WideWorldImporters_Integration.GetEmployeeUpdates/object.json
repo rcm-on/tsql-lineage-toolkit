@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Integration.GetEmployeeUpdates",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Integration",
+    "name": "GetEmployeeUpdates",
     "full_name": "Integration.GetEmployeeUpdates",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": true,
@@ -84,9 +88,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 13,
           "nesting_level": 0,
           "action": "CREATE_TABLE",
+          "step_type": "Maintenance",
           "target_name": "#EmployeeChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -103,9 +109,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 29,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "EmployeeChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -122,9 +130,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 46,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
+          "step_type": "Cursor",
           "target_name": "EmployeeChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -141,9 +151,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 47,
           "nesting_level": 0,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "EmployeeChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -160,9 +172,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 51,
           "nesting_level": 1,
           "action": "INSERT",
+          "step_type": "Staging",
           "target_name": "#EmployeeChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -183,9 +197,11 @@
         ],
         "properties": {
           "order": 5,
+          "sequence": 6,
           "line_no": 59,
           "nesting_level": 1,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "EmployeeChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -206,9 +222,11 @@
         ],
         "properties": {
           "order": 6,
+          "sequence": 7,
           "line_no": 62,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "EmployeeChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -225,9 +243,11 @@
         ],
         "properties": {
           "order": 7,
+          "sequence": 8,
           "line_no": 63,
           "nesting_level": 0,
           "action": "DEALLOCATE",
+          "step_type": "Cursor",
           "target_name": "EmployeeChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -244,9 +264,11 @@
         ],
         "properties": {
           "order": 8,
+          "sequence": 9,
           "line_no": 67,
           "nesting_level": 0,
           "action": "CREATE_INDEX",
+          "step_type": "Maintenance",
           "target_name": "#EmployeeChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -263,9 +285,11 @@
         ],
         "properties": {
           "order": 9,
+          "sequence": 10,
           "line_no": 72,
           "nesting_level": 0,
           "action": "UPDATE",
+          "step_type": "Transformation",
           "target_name": "#EmployeeChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -282,9 +306,11 @@
         ],
         "properties": {
           "order": 10,
+          "sequence": 11,
           "line_no": 78,
           "nesting_level": 0,
           "action": "SELECT",
+          "step_type": "Staging",
           "target_name": "#EmployeeChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -301,9 +327,11 @@
         ],
         "properties": {
           "order": 11,
+          "sequence": 12,
           "line_no": 83,
           "nesting_level": 0,
           "action": "DROP_TABLE",
+          "step_type": "Maintenance",
           "target_name": "#EmployeeChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -320,9 +348,11 @@
         ],
         "properties": {
           "order": 12,
+          "sequence": 13,
           "line_no": 85,
           "nesting_level": 0,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -335,6 +365,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:integration",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_integration_41813d49.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step0",
@@ -374,70 +415,6 @@
       "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step10",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Employee",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Employee_e9bce3ba.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step10",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Is Salesperson",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Is_Salesperson_d19af1d9.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step10",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Photo",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Photo_7a78ebc8.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step10",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Preferred Name",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Preferred_Name_c98e6b27.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step10",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Valid From",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Valid_From_d5d5f0ab.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step10",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Valid_To_5f81d2c9.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step10",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:WWI Employee ID",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_WWI_Employee_ID_b1f1c982.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step10",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_employeechanges_36d21ad8.json"
     },
     {
       "type": "ACTION",
@@ -496,14 +473,6 @@
       "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
     },
     {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.people",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
-    },
-    {
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
       "from_label": "Step",
@@ -518,70 +487,6 @@
       "to": "WideWorldImporters::Integration.GetEmployeeUpdates#var:@ValidFrom",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Employee",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Employee_e9bce3ba.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Is Salesperson",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Is_Salesperson_d19af1d9.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Photo",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Photo_7a78ebc8.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Preferred Name",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Preferred_Name_c98e6b27.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Valid From",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Valid_From_d5d5f0ab.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Valid_To_5f81d2c9.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:WWI Employee ID",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_WWI_Employee_ID_b1f1c982.json"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_employeechanges_36d21ad8.json"
     },
     {
       "type": "ACTION",
@@ -648,24 +553,8 @@
       "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
     },
     {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step9",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_employeechanges_column_Valid_To_5f81d2c9.json"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step9",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#employeechanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_employeechanges_36d21ad8.json"
-    },
-    {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
       "to_label": "Step",
@@ -673,7 +562,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetEmployeeUpdates#step5",
       "to_label": "Step",

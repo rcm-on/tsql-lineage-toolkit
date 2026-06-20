@@ -28,6 +28,14 @@
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
       }
+    ],
+    "WideWorldImporters::Website.SearchForCustomers": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForCustomers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+      }
     ]
   },
   "edges_in": [
@@ -42,6 +50,12 @@
       "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForCustomers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
     }
   ],
   "edges_out": [

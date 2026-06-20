@@ -1,0 +1,29 @@
+﻿{
+  "id": "WideWorldImporters:table:sys.tables:column:temporal_type",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "temporal_type",
+    "table": "sys.tables"
+  },
+  "refs": {
+    "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    }
+  ],
+  "edges_out": []
+}

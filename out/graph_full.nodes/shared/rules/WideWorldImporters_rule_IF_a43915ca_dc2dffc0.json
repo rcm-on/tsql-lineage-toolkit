@@ -1,0 +1,51 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:a43915ca",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "@@ROWCOUNT = 0"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.ChangePassword#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.ChangePassword#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "to": "WideWorldImporters:rule:WHILE:2d470e82",
+      "to_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_WHILE_2d470e82_f43e319b.json"
+    }
+  ]
+}

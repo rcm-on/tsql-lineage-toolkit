@@ -480,6 +480,12 @@
       },
       {
         "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step29",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      },
+      {
+        "type": "ACTION",
         "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step3",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
@@ -499,12 +505,6 @@
       {
         "type": "ACTION",
         "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step6",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-      },
-      {
-        "type": "ACTION",
-        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
       },
@@ -1116,7 +1116,7 @@
       },
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
       }
@@ -1581,6 +1581,12 @@
     },
     {
       "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step29",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step3",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
@@ -1600,12 +1606,6 @@
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step6",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "ACTION",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
@@ -2199,7 +2199,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
     }

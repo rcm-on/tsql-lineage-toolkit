@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Sequences",
+    "name": "ReseedSequenceBeyondTableValues",
     "full_name": "Sequences.ReseedSequenceBeyondTableValues",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -125,9 +129,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 18,
           "nesting_level": 0,
           "action": "CREATE_TABLE",
+          "step_type": "Maintenance",
           "target_name": "#CurrentValue",
           "detail": "",
           "dynamic_sql": "",
@@ -144,9 +150,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 24,
           "nesting_level": 0,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "",
@@ -163,9 +171,32 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
+          "line_no": 25,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Staging",
+          "target_name": "#CurrentValue",
+          "detail": "→ @CurrentTableMaximumValue",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT (→ @CurrentTableMaximumValue) -> #CurrentValue"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "sequence": 4,
           "line_no": 26,
           "nesting_level": 0,
           "action": "DROP_TABLE",
+          "step_type": "Maintenance",
           "target_name": "#CurrentValue",
           "detail": "",
           "dynamic_sql": "",
@@ -176,15 +207,17 @@
         }
       },
       {
-        "id": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+        "id": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 3,
+          "order": 4,
+          "sequence": 5,
           "line_no": 32,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "",
@@ -201,6 +234,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:sequences",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_sequences_a20287ee.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step0",
@@ -237,13 +281,29 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@CurrentTableMaximumValue",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:DROP_TABLE",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_DROP_TABLE_d4bc7329.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:action:EXEC",
       "to_label": "Action",
@@ -251,7 +311,7 @@
     },
     {
       "type": "BUILDS_SQL_FROM",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
       "from_label": "Step",
       "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@SQL",
       "to_label": "Variable",
@@ -259,7 +319,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
       "from_label": "Step",
       "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@SQL",
       "to_label": "Variable",
@@ -275,9 +335,9 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:c14bf17b",
+      "from": "WideWorldImporters:rule:IF:67abcccd",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
     }

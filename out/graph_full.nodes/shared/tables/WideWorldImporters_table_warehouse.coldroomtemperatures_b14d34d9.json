@@ -8,6 +8,30 @@
     "name": "Warehouse.ColdRoomTemperatures"
   },
   "refs": {
+    "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition": [
+      {
+        "type": "AFFECTS",
+        "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.Configuration_ConfigureForEnterpriseEdition/object.json",
+        "props": {
+          "via": "WideWorldImporters::Application.Configuration_EnableInMemory",
+          "hops": 1
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_EnableInMemory": [
+      {
+        "type": "WRITES_TO",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Warehouse.ColdRoomTemperatures"
+        }
+      }
+    ],
     "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures": [
       {
         "type": "AFFECTS",
@@ -25,13 +49,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step25",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Warehouse].[ColdRoomTemperatures]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step26",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Warehouse].[ColdRoomTemperatures]"
+        }
       }
     ],
     "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": [
@@ -51,13 +83,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step25",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Warehouse].[ColdRoomTemperatures]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step26",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Warehouse].[ColdRoomTemperatures]"
+        }
       }
     ],
     "WideWorldImporters::Website.RecordColdRoomTemperatures": [
@@ -65,17 +105,45 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json",
+        "props": {
+          "action_type": "UPDATE",
+          "table": "Warehouse.ColdRoomTemperatures"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Warehouse.ColdRoomTemperatures"
+        }
       }
     ]
   },
   "edges_in": [
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ConfigureForEnterpriseEdition/object.json",
+      "props": {
+        "via": "WideWorldImporters::Application.Configuration_EnableInMemory",
+        "hops": 1
+      }
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.ColdRoomTemperatures"
+      }
+    },
     {
       "type": "AFFECTS",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
@@ -90,13 +158,21 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step25",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[ColdRoomTemperatures]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step26",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[ColdRoomTemperatures]"
+      }
     },
     {
       "type": "AFFECTS",
@@ -112,25 +188,41 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step25",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[ColdRoomTemperatures]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step26",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[ColdRoomTemperatures]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json",
+      "props": {
+        "action_type": "UPDATE",
+        "table": "Warehouse.ColdRoomTemperatures"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.ColdRoomTemperatures"
+      }
     }
   ],
   "edges_out": [

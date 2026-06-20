@@ -7,8 +7,78 @@
     "database": "WideWorldImporters",
     "name": "Warehouse.StockItemStockGroups"
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Website.CalculateCustomerPrice": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItemStockGroups",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItemStockGroups",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItemStockGroups",
+          "via": "JOIN"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemStockGroups",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemStockGroups",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemStockGroups",
+        "via": "JOIN"
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "FK_TO",

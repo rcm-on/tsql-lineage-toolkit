@@ -19,6 +19,18 @@
         "from": "WideWorldImporters::Website.CalculateCustomerPrice#var:@HighestDiscountPercentage",
         "from_label": "Variable",
         "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      },
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      },
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
       }
     ]
   },
@@ -27,6 +39,18 @@
       "type": "ASSIGNED_FROM",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#var:@HighestDiscountPercentage",
       "from_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
+      "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
     }
   ],

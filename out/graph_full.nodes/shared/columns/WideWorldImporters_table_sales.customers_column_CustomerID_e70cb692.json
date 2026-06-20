@@ -15,10 +15,32 @@
   "refs": {
     "WideWorldImporters::Integration.GetOrderUpdates": [
       {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+      },
+      {
         "type": "READS_COLUMN",
         "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Integration.GetSaleUpdates": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.CalculateCustomerPrice": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
       }
     ],
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
@@ -48,10 +70,28 @@
   },
   "edges_in": [
     {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+    },
+    {
       "type": "READS_COLUMN",
       "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
     },
     {
       "type": "READS_COLUMN",

@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Integration.GetOrderUpdates",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Integration",
+    "name": "GetOrderUpdates",
     "full_name": "Integration.GetOrderUpdates",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -47,9 +51,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 12,
           "nesting_level": 0,
           "action": "SELECT",
+          "step_type": "Extraction",
           "target_name": "Sales.Orders",
           "detail": "",
           "dynamic_sql": "",
@@ -66,9 +72,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 41,
           "nesting_level": 0,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -82,12 +90,87 @@
   },
   "edges_out": [
     {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:integration",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_integration_41813d49.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
       "from_label": "Step",
       "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customers:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerID_e70cb692.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orderlines:column:LastEditedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_LastEditedWhen_98150a9c.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orderlines:column:OrderID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_OrderID_440b3777.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orderlines:column:PackageTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PackageTypeID_2894e8ca.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orders:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_CustomerID_22c4cfad.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orders:column:LastEditedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_LastEditedWhen_69d368ae.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orders:column:OrderID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_OrderID_b755fb13.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_PackageTypeID_bf4218cb.json"
     },
     {
       "type": "READS_COLUMN",
@@ -223,7 +306,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.Customers",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -231,7 +319,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orderlines",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.OrderLines",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -239,7 +332,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orders",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json"
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.Orders"
+      }
     },
     {
       "type": "READS_FROM",
@@ -247,7 +344,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.PackageTypes",
+        "via": "JOIN"
+      }
     },
     {
       "type": "USES_VARIABLE",

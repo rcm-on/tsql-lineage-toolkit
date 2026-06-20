@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "DataLoadSimulation",
+    "name": "Configuration_ApplyDataLoadSimulationProcedures",
     "full_name": "DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -58,9 +62,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 9,
           "nesting_level": 0,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
           "detail": "",
           "dynamic_sql": "",
@@ -77,9 +83,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 395,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE FUNCTION DataLoadSimulation.GetAreaCode ( @StateProvinceCode nvarchar(2) ) RETURNS INT WITH EXECUTE AS OWNER AS BEGIN DECLARE @AreaCode int; WITH AreaCodes AS ( SELECT StateProvinceCode, AreaCo",
@@ -100,9 +108,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 449,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ActivateWebsiteLogons @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT O",
@@ -123,9 +133,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 870,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.AddCustomers @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT ON; SET XA",
@@ -146,9 +158,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 922,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.AddSpecialDeals @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF CAS",
@@ -169,9 +183,11 @@
         ],
         "properties": {
           "order": 5,
+          "sequence": 6,
           "line_no": 1009,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.AddStockItems @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; DECLARE ",
@@ -192,9 +208,11 @@
         ],
         "properties": {
           "order": 6,
+          "sequence": 7,
           "line_no": 1060,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ChangePasswords @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT ON; SET",
@@ -215,9 +233,11 @@
         ],
         "properties": {
           "order": 7,
+          "sequence": 8,
           "line_no": 1173,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.CreateCustomerOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @NumberOfCustomerOrders int, @IsSilentMode bit WITH EXECUTE AS ",
@@ -238,9 +258,11 @@
         ],
         "properties": {
           "order": 8,
+          "sequence": 9,
           "line_no": 1376,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.InvoicePickedOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF",
@@ -261,9 +283,11 @@
         ],
         "properties": {
           "order": 9,
+          "sequence": 10,
           "line_no": 1539,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.MakeTemporalChanges @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; DE",
@@ -284,9 +308,11 @@
         ],
         "properties": {
           "order": 10,
+          "sequence": 11,
           "line_no": 1604,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PaySuppliers @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF @IsSil",
@@ -307,9 +333,11 @@
         ],
         "properties": {
           "order": 11,
+          "sequence": 12,
           "line_no": 1674,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PerformStocktake @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF @I",
@@ -330,9 +358,11 @@
         ],
         "properties": {
           "order": 12,
+          "sequence": 13,
           "line_no": 1797,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PickStockForCustomerOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT",
@@ -353,9 +383,11 @@
         ],
         "properties": {
           "order": 13,
+          "sequence": 14,
           "line_no": 1925,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PlaceSupplierOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF",
@@ -376,9 +408,11 @@
         ],
         "properties": {
           "order": 14,
+          "sequence": 15,
           "line_no": 1990,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ProcessCustomerPayments @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT",
@@ -399,9 +433,11 @@
         ],
         "properties": {
           "order": 15,
+          "sequence": 16,
           "line_no": 2099,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ReceivePurchaseOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; ",
@@ -422,9 +458,11 @@
         ],
         "properties": {
           "order": 16,
+          "sequence": 17,
           "line_no": 2158,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.RecordColdRoomTemperatures @AverageSecondsBetweenReadings int, @NumberOfSensors int, @CurrentDateTime datetime2(7), @EndOfTime datetime2(7), @IsSilentMode bit WITH ",
@@ -445,9 +483,11 @@
         ],
         "properties": {
           "order": 17,
+          "sequence": 18,
           "line_no": 2234,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.RecordDeliveryVanTemperatures @AverageSecondsBetweenReadings int, @NumberOfSensors int, @CurrentDateTime datetime2(7), @StartingWhen datetime, @IsSilentMode bit WIT",
@@ -468,9 +508,11 @@
         ],
         "properties": {
           "order": 18,
+          "sequence": 19,
           "line_no": 2329,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.RecordInvoiceDeliveries @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT",
@@ -491,9 +533,11 @@
         ],
         "properties": {
           "order": 19,
+          "sequence": 20,
           "line_no": 2574,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.UpdateCustomFields @CurrentDateTime AS date WITH EXECUTE AS OWNER AS BEGIN DECLARE @StartingWhen datetime2(7) = CAST(@CurrentDateTime AS date); SET @StartingWhen = ",
@@ -514,9 +558,11 @@
         ],
         "properties": {
           "order": 20,
+          "sequence": 21,
           "line_no": 2766,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.DailyProcessToCreateHistory @StartDate date, @EndDate date, @AverageNumberOfCustomerOrdersPerDay int, @SaturdayPercentageOfNormalWorkDay int, @SundayPercentageOfNor",
@@ -537,9 +583,11 @@
         ],
         "properties": {
           "order": 21,
+          "sequence": 22,
           "line_no": 2769,
           "nesting_level": 0,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
           "detail": "",
           "dynamic_sql": "",
@@ -754,6 +802,17 @@
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:dataloadsimulation",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_dataloadsimulation_0b2c978e.json",
+      "props": {
+        "object_type": "PROCEDURE"
       }
     },
     {
@@ -1296,15 +1355,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:815d042b",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step1",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step10",
       "to_label": "Step",
@@ -1312,7 +1363,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step11",
       "to_label": "Step",
@@ -1320,7 +1371,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step12",
       "to_label": "Step",
@@ -1328,7 +1379,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step13",
       "to_label": "Step",
@@ -1336,7 +1387,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step14",
       "to_label": "Step",
@@ -1344,7 +1395,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step15",
       "to_label": "Step",
@@ -1352,7 +1403,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step16",
       "to_label": "Step",
@@ -1360,7 +1411,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step17",
       "to_label": "Step",
@@ -1368,7 +1419,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step18",
       "to_label": "Step",
@@ -1376,7 +1427,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step19",
       "to_label": "Step",
@@ -1384,7 +1435,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step2",
       "to_label": "Step",
@@ -1392,7 +1443,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step20",
       "to_label": "Step",
@@ -1400,7 +1451,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
       "to_label": "Step",
@@ -1408,7 +1459,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step4",
       "to_label": "Step",
@@ -1416,7 +1467,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step5",
       "to_label": "Step",
@@ -1424,7 +1475,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step6",
       "to_label": "Step",
@@ -1432,7 +1483,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step7",
       "to_label": "Step",
@@ -1440,7 +1491,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step8",
       "to_label": "Step",
@@ -1448,9 +1499,17 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:e72c3c9e",
+      "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step9",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:51a1fac6",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step1",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
     }

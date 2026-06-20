@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Integration.GetCityUpdates",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Integration",
+    "name": "GetCityUpdates",
     "full_name": "Integration.GetCityUpdates",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": true,
@@ -120,9 +124,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 14,
           "nesting_level": 0,
           "action": "CREATE_TABLE",
+          "step_type": "Maintenance",
           "target_name": "#CityChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -139,9 +145,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 37,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "CountryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -158,9 +166,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 54,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
+          "step_type": "Cursor",
           "target_name": "CountryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -177,9 +187,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 55,
           "nesting_level": 0,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "CountryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -196,9 +208,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 59,
           "nesting_level": 1,
           "action": "INSERT",
+          "step_type": "Staging",
           "target_name": "#CityChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -219,9 +233,11 @@
         ],
         "properties": {
           "order": 5,
+          "sequence": 6,
           "line_no": 71,
           "nesting_level": 1,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "CountryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -242,9 +258,11 @@
         ],
         "properties": {
           "order": 6,
+          "sequence": 7,
           "line_no": 74,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "CountryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -261,9 +279,11 @@
         ],
         "properties": {
           "order": 7,
+          "sequence": 8,
           "line_no": 75,
           "nesting_level": 0,
           "action": "DEALLOCATE",
+          "step_type": "Cursor",
           "target_name": "CountryChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -280,9 +300,11 @@
         ],
         "properties": {
           "order": 8,
+          "sequence": 9,
           "line_no": 79,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "StateProvinceChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -299,9 +321,11 @@
         ],
         "properties": {
           "order": 9,
+          "sequence": 10,
           "line_no": 96,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
+          "step_type": "Cursor",
           "target_name": "StateProvinceChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -318,9 +342,11 @@
         ],
         "properties": {
           "order": 10,
+          "sequence": 11,
           "line_no": 97,
           "nesting_level": 0,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "StateProvinceChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -337,9 +363,11 @@
         ],
         "properties": {
           "order": 11,
+          "sequence": 12,
           "line_no": 101,
           "nesting_level": 1,
           "action": "INSERT",
+          "step_type": "Staging",
           "target_name": "#CityChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -360,9 +388,11 @@
         ],
         "properties": {
           "order": 12,
+          "sequence": 13,
           "line_no": 113,
           "nesting_level": 1,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "StateProvinceChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -383,9 +413,11 @@
         ],
         "properties": {
           "order": 13,
+          "sequence": 14,
           "line_no": 116,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "StateProvinceChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -402,9 +434,11 @@
         ],
         "properties": {
           "order": 14,
+          "sequence": 15,
           "line_no": 117,
           "nesting_level": 0,
           "action": "DEALLOCATE",
+          "step_type": "Cursor",
           "target_name": "StateProvinceChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -421,9 +455,11 @@
         ],
         "properties": {
           "order": 15,
+          "sequence": 16,
           "line_no": 121,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "CityChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -440,9 +476,11 @@
         ],
         "properties": {
           "order": 16,
+          "sequence": 17,
           "line_no": 136,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
+          "step_type": "Cursor",
           "target_name": "CityChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -459,9 +497,11 @@
         ],
         "properties": {
           "order": 17,
+          "sequence": 18,
           "line_no": 137,
           "nesting_level": 0,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "CityChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -478,9 +518,11 @@
         ],
         "properties": {
           "order": 18,
+          "sequence": 19,
           "line_no": 141,
           "nesting_level": 1,
           "action": "INSERT",
+          "step_type": "Staging",
           "target_name": "#CityChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -501,9 +543,11 @@
         ],
         "properties": {
           "order": 19,
+          "sequence": 20,
           "line_no": 153,
           "nesting_level": 1,
           "action": "FETCH",
+          "step_type": "Cursor",
           "target_name": "CityChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -524,9 +568,11 @@
         ],
         "properties": {
           "order": 20,
+          "sequence": 21,
           "line_no": 156,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
+          "step_type": "Cursor",
           "target_name": "CityChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -543,9 +589,11 @@
         ],
         "properties": {
           "order": 21,
+          "sequence": 22,
           "line_no": 157,
           "nesting_level": 0,
           "action": "DEALLOCATE",
+          "step_type": "Cursor",
           "target_name": "CityChangeList",
           "detail": "",
           "dynamic_sql": "",
@@ -562,9 +610,11 @@
         ],
         "properties": {
           "order": 22,
+          "sequence": 23,
           "line_no": 161,
           "nesting_level": 0,
           "action": "CREATE_INDEX",
+          "step_type": "Maintenance",
           "target_name": "#CityChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -581,9 +631,11 @@
         ],
         "properties": {
           "order": 23,
+          "sequence": 24,
           "line_no": 166,
           "nesting_level": 0,
           "action": "UPDATE",
+          "step_type": "Transformation",
           "target_name": "#CityChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -600,9 +652,11 @@
         ],
         "properties": {
           "order": 24,
+          "sequence": 25,
           "line_no": 172,
           "nesting_level": 0,
           "action": "SELECT",
+          "step_type": "Staging",
           "target_name": "#CityChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -619,9 +673,11 @@
         ],
         "properties": {
           "order": 25,
+          "sequence": 26,
           "line_no": 178,
           "nesting_level": 0,
           "action": "DROP_TABLE",
+          "step_type": "Maintenance",
           "target_name": "#CityChanges",
           "detail": "",
           "dynamic_sql": "",
@@ -638,9 +694,11 @@
         ],
         "properties": {
           "order": 26,
+          "sequence": 27,
           "line_no": 180,
           "nesting_level": 0,
           "action": "RETURN",
+          "step_type": "Control",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
@@ -653,6 +711,17 @@
     ]
   },
   "edges_out": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Integration.GetCityUpdates",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:integration",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_integration_41813d49.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetCityUpdates#step0",
@@ -726,78 +795,6 @@
       "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
     },
     {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:Continent",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_Continent_2d19f3c5.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:CountryName",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_CountryName_1b8585aa.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:Region",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_Region_21f7bc63.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:Subregion",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_Subregion_b454bb5c.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces:column:SalesTerritory",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_SalesTerritory_444b37ed.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces:column:StateProvinceName",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_StateProvinceName_70110c3a.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.cities",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json"
-    },
-    {
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
       "from_label": "Step",
@@ -812,110 +809,6 @@
       "to": "WideWorldImporters::Integration.GetCityUpdates#var:@ValidFrom",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:City",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_City_e667ee7a.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Continent",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Continent_b45e6a09.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Country",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Country_955682e5.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Latest Recorded Population",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Latest_Recorded_Population_8cebc02c.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Location",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Location_416eebba.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Region",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Region_92dade00.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Sales Territory",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Sales_Territory_e46245d7.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:State Province",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_State_Province_c4c70acb.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Subregion",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Subregion_fb9dfa7f.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Valid From",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Valid_From_57c352ce.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Valid_To_76b0f577.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:WWI City ID",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_WWI_City_ID_330ca08a.json"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_citychanges_70fb6552.json"
     },
     {
       "type": "ACTION",
@@ -1022,78 +915,6 @@
       "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
     },
     {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:Continent",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_Continent_2d19f3c5.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:CountryName",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_CountryName_1b8585aa.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:Region",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_Region_21f7bc63.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:Subregion",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_Subregion_b454bb5c.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces:column:SalesTerritory",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_SalesTerritory_444b37ed.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces:column:StateProvinceName",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_StateProvinceName_70110c3a.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.cities",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json"
-    },
-    {
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
       "from_label": "Step",
@@ -1108,110 +929,6 @@
       "to": "WideWorldImporters::Integration.GetCityUpdates#var:@ValidFrom",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:City",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_City_e667ee7a.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Continent",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Continent_b45e6a09.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Country",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Country_955682e5.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Latest Recorded Population",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Latest_Recorded_Population_8cebc02c.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Location",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Location_416eebba.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Region",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Region_92dade00.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Sales Territory",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Sales_Territory_e46245d7.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:State Province",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_State_Province_c4c70acb.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Subregion",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Subregion_fb9dfa7f.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Valid From",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Valid_From_57c352ce.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Valid_To_76b0f577.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:WWI City ID",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_WWI_City_ID_330ca08a.json"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step18",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_citychanges_70fb6552.json"
     },
     {
       "type": "ACTION",
@@ -1286,132 +1003,12 @@
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
     },
     {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step23",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Valid_To_76b0f577.json"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step23",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_citychanges_70fb6552.json"
-    },
-    {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
       "from_label": "Step",
       "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:City",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_City_e667ee7a.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Continent",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Continent_b45e6a09.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Country",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Country_955682e5.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Latest Recorded Population",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Latest_Recorded_Population_8cebc02c.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Location",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Location_416eebba.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Region",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Region_92dade00.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Sales Territory",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Sales_Territory_e46245d7.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:State Province",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_State_Province_c4c70acb.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Subregion",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Subregion_fb9dfa7f.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Valid From",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Valid_From_57c352ce.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Valid_To_76b0f577.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:WWI City ID",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_WWI_City_ID_330ca08a.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_citychanges_70fb6552.json"
     },
     {
       "type": "ACTION",
@@ -1462,78 +1059,6 @@
       "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
     },
     {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:Continent",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_Continent_2d19f3c5.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:CountryName",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_CountryName_1b8585aa.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:Region",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_Region_21f7bc63.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries:column:Subregion",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.countries_column_Subregion_b454bb5c.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces:column:SalesTerritory",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_SalesTerritory_444b37ed.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces:column:StateProvinceName",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_StateProvinceName_70110c3a.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.cities",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json"
-    },
-    {
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
       "from_label": "Step",
@@ -1548,110 +1073,6 @@
       "to": "WideWorldImporters::Integration.GetCityUpdates#var:@ValidFrom",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:City",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_City_e667ee7a.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Continent",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Continent_b45e6a09.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Country",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Country_955682e5.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Latest Recorded Population",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Latest_Recorded_Population_8cebc02c.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Location",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Location_416eebba.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Region",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Region_92dade00.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Sales Territory",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Sales_Territory_e46245d7.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:State Province",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_State_Province_c4c70acb.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Subregion",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Subregion_fb9dfa7f.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Valid From",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Valid_From_57c352ce.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:Valid To",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_Valid_To_76b0f577.json"
-    },
-    {
-      "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges:column:WWI City ID",
-      "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_citychanges_column_WWI_City_ID_330ca08a.json"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:#citychanges",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_citychanges_70fb6552.json"
     },
     {
       "type": "ACTION",
@@ -1735,7 +1156,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetCityUpdates#step11",
       "to_label": "Step",
@@ -1743,7 +1164,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetCityUpdates#step12",
       "to_label": "Step",
@@ -1751,7 +1172,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetCityUpdates#step18",
       "to_label": "Step",
@@ -1759,7 +1180,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetCityUpdates#step19",
       "to_label": "Step",
@@ -1767,7 +1188,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetCityUpdates#step4",
       "to_label": "Step",
@@ -1775,7 +1196,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:WHILE:7d3b26ed",
+      "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetCityUpdates#step5",
       "to_label": "Step",

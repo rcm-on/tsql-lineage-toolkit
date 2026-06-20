@@ -1,0 +1,29 @@
+﻿{
+  "id": "WideWorldImporters:table:sys.indexes:column:object_id",
+  "labels": [
+    "Column"
+  ],
+  "properties": {
+    "name": "object_id",
+    "table": "sys.indexes"
+  },
+  "refs": {
+    "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    }
+  ],
+  "edges_out": []
+}

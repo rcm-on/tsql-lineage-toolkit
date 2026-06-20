@@ -13,7 +13,11 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Sales.CustomerTransactions"
+        }
       }
     ]
   },
@@ -22,7 +26,11 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.CustomerTransactions"
+      }
     }
   ],
   "edges_out": [

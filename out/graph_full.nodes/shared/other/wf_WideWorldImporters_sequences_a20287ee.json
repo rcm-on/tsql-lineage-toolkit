@@ -1,0 +1,57 @@
+﻿{
+  "id": "wf:WideWorldImporters:sequences",
+  "labels": [
+    "Workflow"
+  ],
+  "properties": {
+    "name": "Sequences",
+    "database": "WideWorldImporters",
+    "schema": "Sequences",
+    "process_count": 2
+  },
+  "refs": {
+    "WideWorldImporters::Sequences.ReseedAllSequences": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Sequences.ReseedAllSequences",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Sequences.ReseedAllSequences/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ],
+    "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues": [
+      {
+        "type": "BELONGS_TO",
+        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json",
+        "props": {
+          "object_type": "PROCEDURE"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Sequences.ReseedAllSequences",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Sequences.ReseedAllSequences/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    }
+  ],
+  "edges_out": []
+}

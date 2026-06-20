@@ -23,6 +23,12 @@
     ],
     "WideWorldImporters::Website.SearchForSuppliers": [
       {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      },
+      {
         "type": "READS_COLUMN",
         "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
         "from_label": "Step",
@@ -36,6 +42,12 @@
       "from": "WideWorldImporters::Website.SearchForPeople#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
     },
     {
       "type": "READS_COLUMN",

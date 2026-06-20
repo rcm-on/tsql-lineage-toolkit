@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Website.SearchForStockItems",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Website",
+    "name": "SearchForStockItems",
     "full_name": "Website.SearchForStockItems",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -47,9 +51,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 8,
           "nesting_level": 0,
           "action": "SELECT",
+          "step_type": "Extraction",
           "target_name": "Warehouse.StockItems",
           "detail": "",
           "dynamic_sql": "",
@@ -63,12 +69,31 @@
   },
   "edges_out": [
     {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.SearchForStockItems",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:website",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Website.SearchForStockItems#step0",
       "from_label": "Step",
       "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForStockItems#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:SearchDetails",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_SearchDetails_8e62eaed.json"
     },
     {
       "type": "READS_COLUMN",
@@ -92,7 +117,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json"
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems"
+      }
     },
     {
       "type": "USES_VARIABLE",

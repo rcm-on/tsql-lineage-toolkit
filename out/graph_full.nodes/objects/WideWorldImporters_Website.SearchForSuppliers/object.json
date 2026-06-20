@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Website.SearchForSuppliers",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Website",
+    "name": "SearchForSuppliers",
     "full_name": "Website.SearchForSuppliers",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -47,9 +51,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 8,
           "nesting_level": 0,
           "action": "SELECT",
+          "step_type": "Extraction",
           "target_name": "Purchasing.Suppliers",
           "detail": "",
           "dynamic_sql": "",
@@ -63,12 +69,79 @@
   },
   "edges_out": [
     {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Website.SearchForSuppliers",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:website",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
       "from_label": "Step",
       "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.cities:column:CityID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_column_CityID_63dabfa7.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:FullName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_FullName_af371d2e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:PersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:PreferredName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PreferredName_442d05e2.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:purchasing.suppliers:column:DeliveryCityID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_DeliveryCityID_11f7abf1.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:purchasing.suppliers:column:PrimaryContactPersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_PrimaryContactPersonID_381848e6.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:purchasing.suppliers:column:SupplierName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_SupplierName_50de4b4b.json"
     },
     {
       "type": "READS_COLUMN",
@@ -132,7 +205,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json"
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].Cities",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -140,7 +218,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json"
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
@@ -148,7 +231,11 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json"
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Purchasing.Suppliers"
+      }
     },
     {
       "type": "USES_VARIABLE",

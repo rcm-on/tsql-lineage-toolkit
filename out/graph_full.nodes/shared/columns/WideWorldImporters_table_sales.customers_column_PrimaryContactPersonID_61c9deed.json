@@ -20,6 +20,22 @@
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
+    ],
+    "WideWorldImporters::Website.SearchForCustomers": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForCustomers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.SearchForPeople": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.SearchForPeople#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+      }
     ]
   },
   "edges_in": [
@@ -28,6 +44,18 @@
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForCustomers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.SearchForPeople#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
     }
   ],
   "edges_out": [

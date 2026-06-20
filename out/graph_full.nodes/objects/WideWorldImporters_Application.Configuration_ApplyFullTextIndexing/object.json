@@ -1,11 +1,15 @@
 ﻿{
   "id": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
   "labels": [
-    "SqlObject"
+    "SqlObject",
+    "Process"
   ],
   "properties": {
     "database": "WideWorldImporters",
+    "schema": "Application",
+    "name": "Configuration_ApplyFullTextIndexing",
     "full_name": "Application.Configuration_ApplyFullTextIndexing",
+    "object_type": "PROCEDURE",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -53,9 +57,11 @@
         ],
         "properties": {
           "order": 0,
+          "sequence": 1,
           "line_no": 15,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE FULLTEXT CATALOG FTCatalog AS DEFAULT;",
@@ -78,9 +84,11 @@
         ],
         "properties": {
           "order": 1,
+          "sequence": 2,
           "line_no": 25,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE FULLTEXT INDEX ON [Application].People (SearchName, CustomFields, OtherLanguages) KEY INDEX PK_Application_People WITH CHANGE_TRACKING AUTO;",
@@ -103,9 +111,11 @@
         ],
         "properties": {
           "order": 2,
+          "sequence": 3,
           "line_no": 35,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE FULLTEXT INDEX ON Sales.Customers (CustomerName) KEY INDEX PK_Sales_Customers WITH CHANGE_TRACKING AUTO;",
@@ -128,9 +138,11 @@
         ],
         "properties": {
           "order": 3,
+          "sequence": 4,
           "line_no": 45,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE FULLTEXT INDEX ON Purchasing.Suppliers (SupplierName) KEY INDEX PK_Purchasing_Suppliers WITH CHANGE_TRACKING AUTO;",
@@ -153,9 +165,11 @@
         ],
         "properties": {
           "order": 4,
+          "sequence": 5,
           "line_no": 55,
           "nesting_level": 2,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE FULLTEXT INDEX ON Warehouse.StockItems (SearchDetails, CustomFields, Tags) KEY INDEX PK_Warehouse_StockItems WITH CHANGE_TRACKING AUTO;",
@@ -178,9 +192,11 @@
         ],
         "properties": {
           "order": 5,
+          "sequence": 6,
           "line_no": 59,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.SearchForPeople;",
@@ -201,9 +217,11 @@
         ],
         "properties": {
           "order": 6,
+          "sequence": 7,
           "line_no": 89,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE Website.SearchForPeople @SearchText nvarchar(1000), @MaximumRowsToReturn int AS BEGIN SELECT p.PersonID, p.FullName, p.PreferredName, CASE WHEN p.IsSalesperson <> 0 THEN N'Salesperson",
@@ -224,9 +242,11 @@
         ],
         "properties": {
           "order": 7,
+          "sequence": 8,
           "line_no": 92,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.SearchForSuppliers;",
@@ -247,9 +267,11 @@
         ],
         "properties": {
           "order": 8,
+          "sequence": 9,
           "line_no": 117,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE Website.SearchForSuppliers @SearchText nvarchar(1000), @MaximumRowsToReturn int AS BEGIN SELECT s.SupplierID, s.SupplierName, c.CityName, s.PhoneNumber, s.FaxNumber , p.FullName AS Pr",
@@ -270,9 +292,11 @@
         ],
         "properties": {
           "order": 9,
+          "sequence": 10,
           "line_no": 120,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.SearchForCustomers;",
@@ -293,9 +317,11 @@
         ],
         "properties": {
           "order": 10,
+          "sequence": 11,
           "line_no": 146,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE Website.SearchForCustomers @SearchText nvarchar(1000), @MaximumRowsToReturn int WITH EXECUTE AS OWNER AS BEGIN SELECT c.CustomerID, c.CustomerName, ct.CityName, c.PhoneNumber, c.FaxNu",
@@ -316,9 +342,11 @@
         ],
         "properties": {
           "order": 11,
+          "sequence": 12,
           "line_no": 149,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.SearchForStockItems;",
@@ -339,9 +367,11 @@
         ],
         "properties": {
           "order": 12,
+          "sequence": 13,
           "line_no": 166,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE Website.SearchForStockItems @SearchText nvarchar(1000), @MaximumRowsToReturn int WITH EXECUTE AS OWNER AS BEGIN SELECT si.StockItemID, si.StockItemName FROM Warehouse.StockItems AS si",
@@ -362,9 +392,11 @@
         ],
         "properties": {
           "order": 13,
+          "sequence": 14,
           "line_no": 169,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.SearchForStockItemsByTags;",
@@ -385,9 +417,11 @@
         ],
         "properties": {
           "order": 14,
+          "sequence": 15,
           "line_no": 186,
           "nesting_level": 1,
           "action": "EXEC",
+          "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
           "dynamic_sql": "CREATE PROCEDURE Website.SearchForStockItemsByTags @SearchText nvarchar(1000), @MaximumRowsToReturn int WITH EXECUTE AS OWNER AS BEGIN SELECT si.StockItemID, si.StockItemName FROM Warehouse.StockItems",
@@ -405,6 +439,17 @@
   },
   "edges_out": [
     {
+      "type": "BELONGS_TO",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
+      "from_label": "SqlObject",
+      "to": "wf:WideWorldImporters:application",
+      "to_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_application_552b8a6f.json",
+      "props": {
+        "object_type": "PROCEDURE"
+      }
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step0",
       "from_label": "Step",
@@ -766,23 +811,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:4caab360",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step2",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:7f408905",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step3",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:8bd784a9",
+      "from": "WideWorldImporters:rule:IF:04760a6d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step1",
       "to_label": "Step",
@@ -790,7 +819,23 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:976ab4f8",
+      "from": "WideWorldImporters:rule:IF:36ea1163",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step3",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:83976488",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:af98b638",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step4",
       "to_label": "Step",
@@ -798,7 +843,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:f6283241",
+      "from": "WideWorldImporters:rule:IF:f8f7177e",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step0",
       "to_label": "Step",
@@ -806,7 +851,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:d5532688",
+      "from": "WideWorldImporters:rule:IF_ELSE:65d3a769",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step10",
       "to_label": "Step",
@@ -814,7 +859,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:d5532688",
+      "from": "WideWorldImporters:rule:IF_ELSE:65d3a769",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step11",
       "to_label": "Step",
@@ -822,7 +867,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:d5532688",
+      "from": "WideWorldImporters:rule:IF_ELSE:65d3a769",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step12",
       "to_label": "Step",
@@ -830,7 +875,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:d5532688",
+      "from": "WideWorldImporters:rule:IF_ELSE:65d3a769",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step13",
       "to_label": "Step",
@@ -838,7 +883,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:d5532688",
+      "from": "WideWorldImporters:rule:IF_ELSE:65d3a769",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step14",
       "to_label": "Step",
@@ -846,7 +891,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:d5532688",
+      "from": "WideWorldImporters:rule:IF_ELSE:65d3a769",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step5",
       "to_label": "Step",
@@ -854,7 +899,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:d5532688",
+      "from": "WideWorldImporters:rule:IF_ELSE:65d3a769",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step6",
       "to_label": "Step",
@@ -862,7 +907,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:d5532688",
+      "from": "WideWorldImporters:rule:IF_ELSE:65d3a769",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step7",
       "to_label": "Step",
@@ -870,7 +915,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:d5532688",
+      "from": "WideWorldImporters:rule:IF_ELSE:65d3a769",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step8",
       "to_label": "Step",
@@ -878,7 +923,7 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:d5532688",
+      "from": "WideWorldImporters:rule:IF_ELSE:65d3a769",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step9",
       "to_label": "Step",

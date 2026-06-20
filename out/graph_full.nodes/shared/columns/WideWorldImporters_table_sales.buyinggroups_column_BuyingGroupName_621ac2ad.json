@@ -12,47 +12,7 @@
     "is_primary_key": false,
     "ordinal": 2
   },
-  "refs": {
-    "WideWorldImporters::Integration.GetCustomerUpdates": [
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      },
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      },
-      {
-        "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      }
-    ]
-  },
-  "edges_in": [
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    }
-  ],
+  "refs": {},
+  "edges_in": [],
   "edges_out": []
 }

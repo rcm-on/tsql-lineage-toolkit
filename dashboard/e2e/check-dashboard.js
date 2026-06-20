@@ -25,6 +25,13 @@ const { chromium } = require('playwright');
   await page.waitForFunction(() => document.body.classList.contains('loaded'), { timeout: 10000 }).catch(() => {});
   await page.waitForTimeout(1000);
 
+  // Open an object with a CALLS edge (Sales.usp_UpdateCustomerEmail -> dbo.usp_GetCustomerEmail
+  // in the sample graph) so the new "Cadena de impacto" section renders its Mermaid diagram.
+  await page.evaluate(() => SD.app.openObject('Sales.usp_UpdateCustomerEmail'));
+  await page.waitForTimeout(1000);
+  const impactHeading = await page.evaluate(() => Array.from(document.querySelectorAll('h3')).some(h => h.textContent.includes('Cadena de impacto')));
+  console.log('Impact chain section present:', impactHeading);
+
   await page.screenshot({ path: path.join(__dirname, 'screenshot.png'), fullPage: true });
 
   console.log('Screenshot saved to', path.join(__dirname, 'screenshot.png'));

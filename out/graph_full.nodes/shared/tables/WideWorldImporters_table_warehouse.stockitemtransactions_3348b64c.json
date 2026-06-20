@@ -13,7 +13,11 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Integration.GetMovementUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItemTransactions"
+        }
       }
     ],
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
@@ -21,7 +25,11 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Warehouse.StockItemTransactions"
+        }
       }
     ]
   },
@@ -30,13 +38,21 @@
       "type": "READS_FROM",
       "from": "WideWorldImporters::Integration.GetMovementUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemTransactions"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.StockItemTransactions"
+      }
     }
   ],
   "edges_out": [

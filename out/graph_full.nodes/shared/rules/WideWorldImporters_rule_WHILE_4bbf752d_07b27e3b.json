@@ -1,0 +1,159 @@
+﻿{
+  "id": "WideWorldImporters:rule:WHILE:4bbf752d",
+  "labels": [
+    "Rule",
+    "WHILE"
+  ],
+  "properties": {
+    "type": "WHILE",
+    "expression": "@@FETCH_STATUS = 0"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCityUpdates#step11",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCityUpdates#step12",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCityUpdates#step18",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCityUpdates#step19",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCityUpdates#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCityUpdates#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step12",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step19",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetEmployeeUpdates#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetStockItemUpdates#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetSupplierUpdates#step12",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetSupplierUpdates#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    }
+  ]
+}

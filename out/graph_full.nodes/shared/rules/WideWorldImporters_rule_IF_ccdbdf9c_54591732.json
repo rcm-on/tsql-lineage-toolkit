@@ -1,0 +1,21 @@
+﻿{
+  "id": "WideWorldImporters:rule:IF:ccdbdf9c",
+  "labels": [
+    "Rule",
+    "IF"
+  ],
+  "properties": {
+    "type": "IF",
+    "expression": "NOT EXISTS (SELECT 1             FROM   sys.server_audit_specifications             WHERE  name = N'WWI_ServerAuditSpecification')"
+  },
+  "refs": {},
+  "edges_in": [],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+    }
+  ]
+}

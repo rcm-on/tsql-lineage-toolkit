@@ -25,13 +25,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step10",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Application].[People]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step9",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Application].[People]"
+        }
       }
     ],
     "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": [
@@ -51,55 +59,21 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step10",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Application].[People]"
+        }
       },
       {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step9",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
-      }
-    ],
-    "WideWorldImporters::Integration.GetCustomerUpdates": [
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      },
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      },
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-      }
-    ],
-    "WideWorldImporters::Integration.GetEmployeeUpdates": [
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
-      }
-    ],
-    "WideWorldImporters::Integration.GetSupplierUpdates": [
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-      },
-      {
-        "type": "READS_FROM",
-        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+        "props": {
+          "action_type": "ALTER",
+          "table": "[Application].[People]"
+        }
       }
     ],
     "WideWorldImporters::Website.ActivateWebsiteLogon": [
@@ -107,7 +81,11 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+        "props": {
+          "action_type": "UPDATE",
+          "table": "[Application].People"
+        }
       }
     ],
     "WideWorldImporters::Website.ChangePassword": [
@@ -115,7 +93,11 @@
         "type": "WRITES_TO",
         "from": "WideWorldImporters::Website.ChangePassword#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+        "path": "objects/WideWorldImporters_Website.ChangePassword/object.json",
+        "props": {
+          "action_type": "UPDATE",
+          "table": "[Application].People"
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForCustomers": [
@@ -123,7 +105,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.SearchForCustomers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].People",
+          "via": "JOIN"
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForPeople": [
@@ -131,7 +118,11 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.SearchForPeople#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].People"
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForSuppliers": [
@@ -139,7 +130,12 @@
         "type": "READS_FROM",
         "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].People",
+          "via": "JOIN"
+        }
       }
     ]
   },
@@ -158,13 +154,21 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step10",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[People]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step9",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[People]"
+      }
     },
     {
       "type": "AFFECTS",
@@ -180,79 +184,73 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step10",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[People]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step9",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step11",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step18",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step11",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
-    },
-    {
-      "type": "READS_FROM",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Application].[People]"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+      "props": {
+        "action_type": "UPDATE",
+        "table": "[Application].People"
+      }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::Website.ChangePassword#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json",
+      "props": {
+        "action_type": "UPDATE",
+        "table": "[Application].People"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForCustomers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People",
+        "via": "JOIN"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForPeople#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People"
+      }
     },
     {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People",
+        "via": "JOIN"
+      }
     }
   ],
   "edges_out": [
