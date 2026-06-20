@@ -291,7 +291,6 @@ If you add a new T-SQL pattern, include a test case in `tests/TSqlParser.Tests/L
 ## Roadmap
 
 - [ ] Transitive lineage through `#temp`/`@table` variables (bridge `RealTableA -> #Temp -> RealTableB` into a direct `DERIVES_FROM`, tagged `via_transient`)
-- [ ] `CONDITIONED_BY` edges — link a written column to the `WHERE`/`JOIN` columns that decided which rows it touched (business-rule lineage, not just data-flow lineage)
 - [ ] VIEW expansion — resolve `INSERT INTO view` to base table at lineage time
 - [ ] Cross-database EXEC lineage (follow `EXEC OtherDb.dbo.spProc`)
 - [ ] Lineage diff between two graph snapshots (what changed between releases?)
