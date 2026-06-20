@@ -364,6 +364,42 @@ public static class GraphExporter
                             });
                         }
 
+                        // CONDITIONED_BY: for "UPDATE T SET Col = ... WHERE FilterCol = ...",
+                        // (:Column T.Col)-[:CONDITIONED_BY]->(:Column FilterCol) per written
+                        // column - business-rule lineage ("what determined this row got
+                        // mutated") rather than data-flow lineage (DERIVES_FROM, below).
+                        // UPDATE is the only case where Columns (SET targets) and
+                        // FilterColumns (WHERE/JOIN-ON) coexist with a direct causal link.
+                        if (fl.ConsequenceType == "UPDATE" && fl.FilterColumns.Count > 0)
+                        {
+                            foreach (var colName in fl.Columns)
+                            {
+                                var writtenColId = GetOrCreateColumn(graph, columnIds, tableId, tableName, colName);
+                                foreach (var filterCol in fl.FilterColumns)
+                                {
+                                    if (IsTempOrVariable(filterCol.Table))
+                                        continue;
+
+                                    var (filterTableId, filterTableName) = GetOrCreateTable(graph, tableIds, db, filterCol.Table);
+                                    foreach (var filterColName in filterCol.Columns)
+                                    {
+                                        var filterColId = GetOrCreateColumn(graph, columnIds, filterTableId, filterTableName, filterColName);
+                                        graph.Relationships.Add(new GraphRel
+                                        {
+                                            Type = "CONDITIONED_BY",
+                                            StartNodeId = writtenColId,
+                                            EndNodeId = filterColId,
+                                            Properties = new Dictionary<string, object>
+                                            {
+                                                ["line_no"] = fl.LineNo,
+                                                ["caused_by_step"] = stepId,
+                                            },
+                                        });
+                                    }
+                                }
+                            }
+                        }
+
                         // DERIVES_FROM: for "INSERT INTO T (...) SELECT ... FROM S ...",
                         // (:Column T.Col)-[:DERIVES_FROM]->(:Column S.SrcCol) per target
                         // column whose value was positionally traced back to source
@@ -380,6 +416,12 @@ public static class GraphExporter
                                     Type = "DERIVES_FROM",
                                     StartNodeId = targetColId,
                                     EndNodeId = srcColId,
+                                    Properties = new Dictionary<string, object>
+                                    {
+                                        ["logic"] = deriv.TransformationExpression,
+                                        ["line_no"] = fl.LineNo,
+                                        ["caused_by_step"] = stepId,
+                                    },
                                 });
                             }
                         }

@@ -141,7 +141,21 @@
       const id = n.Id, P = n.Properties;
       const columns = outOf(id, 'HAS_COLUMN').map(r => byId[r.EndNodeId])
         .sort((a, b) => (a.Properties.ordinal || 99) - (b.Properties.ordinal || 99))
-        .map(c => ({ name: c.Properties.name, type: c.Properties.data_type || '', pk: !!c.Properties.is_primary_key, nullable: c.Properties.is_nullable !== false, identity: !!c.Properties.is_identity }));
+        .map(c => ({
+          name: c.Properties.name, type: c.Properties.data_type || '', pk: !!c.Properties.is_primary_key, nullable: c.Properties.is_nullable !== false, identity: !!c.Properties.is_identity,
+          // DERIVES_FROM points TARGET column -> SOURCE column (see AstWalker/GraphExporter):
+          // outgoing edges off this column are "what it's computed from".
+          derivesFrom: outOf(c.Id, 'DERIVES_FROM').map(r2 => {
+            const src = byId[r2.EndNodeId];
+            return { table: src.Properties.table || '', column: src.Properties.name || '', logic: r2.Properties.logic || '', line: r2.Properties.line_no, step: r2.Properties.caused_by_step || '' };
+          }),
+          // CONDITIONED_BY points WRITTEN column -> WHERE/JOIN-ON filter column
+          // (business-rule lineage, not a calculation - no "logic" expression).
+          conditionedBy: outOf(c.Id, 'CONDITIONED_BY').map(r2 => {
+            const flt = byId[r2.EndNodeId];
+            return { table: flt.Properties.table || '', column: flt.Properties.name || '', line: r2.Properties.line_no, step: r2.Properties.caused_by_step || '' };
+          }),
+        }));
 
       const writers = [], readers = [], seenW = new Set(), seenR = new Set();
       const opCounts = {};

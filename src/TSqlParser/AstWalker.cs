@@ -903,10 +903,11 @@ public static class AstWalker
                     continue;
 
                 var (primaryCols, extras) = SplitColumnsByTable(collector.Refs, tableRefs);
+                var exprText = SqlText.Generate(sse.Expression);
                 if (primaryCols.Count > 0)
-                    lineage.Add(new ColumnDerivation(insColumns[i], tableRefs[0].Table, primaryCols));
+                    lineage.Add(new ColumnDerivation(insColumns[i], tableRefs[0].Table, primaryCols, exprText));
                 foreach (var extra in extras)
-                    lineage.Add(new ColumnDerivation(insColumns[i], extra.Table, extra.Columns));
+                    lineage.Add(new ColumnDerivation(insColumns[i], extra.Table, extra.Columns, exprText));
             }
         }
         return (lineage, extraReads);

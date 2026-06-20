@@ -95,8 +95,8 @@ public record FlowLinkInfo(
     public string DynamicSqlText { get; init; } = DynamicSqlText;
 }
 
-/// <summary>One target column of an INSERT...SELECT, paired with the source table/columns its value comes from.</summary>
-public record ColumnDerivation(string TargetColumn, string SourceTable, IReadOnlyList<string> SourceColumns);
+/// <summary>One target column of an INSERT...SELECT, paired with the source table/columns its value comes from, and the SQL expression (e.g. "s.Col1 + s.Col2") that computed it.</summary>
+public record ColumnDerivation(string TargetColumn, string SourceTable, IReadOnlyList<string> SourceColumns, string TransformationExpression = "");
 
 /// <summary>One table referenced in a FROM/JOIN, paired with the columns of it that a step reads.</summary>
 public record TableColumnRef(string Table, IReadOnlyList<string> Columns);

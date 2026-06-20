@@ -459,7 +459,9 @@
 
   function TableView(t, DATA, impactDepth) {
     const chip = n => DATA.byName[n] ? `<span class="chip" onclick="SD.app.openObject('${esc(n)}')">${esc(n)}</span>` : `<span class="chip muted">${esc(n)}</span>`;
-    const colRow = c => `<tr><td>${c.pk ? '🔑 ' : ''}${esc(c.name)}</td><td>${esc(c.type)}</td><td>${c.nullable ? '' : 'NOT NULL'}</td><td>${c.identity ? 'IDENTITY' : ''}</td></tr>`;
+    const deriv = d => `<span class="chip" title="${esc(d.logic)}${d.line != null ? ' (línea ' + d.line + ')' : ''}" ${DATA.byName[d.table] ? `onclick="SD.app.openObject('${esc(d.table)}')"` : ''}>${esc(d.table)}.${esc(d.column)}</span>`;
+    const cond = d => `<span class="chip" title="WHERE/JOIN${d.line != null ? ' (línea ' + d.line + ')' : ''}" ${DATA.byName[d.table] ? `onclick="SD.app.openObject('${esc(d.table)}')"` : ''}>${esc(d.table)}.${esc(d.column)}</span>`;
+    const colRow = c => `<tr><td>${c.pk ? '🔑 ' : ''}${esc(c.name)}</td><td>${esc(c.type)}</td><td>${c.nullable ? '' : 'NOT NULL'}</td><td>${c.identity ? 'IDENTITY' : ''}</td><td>${c.derivesFrom && c.derivesFrom.length ? c.derivesFrom.map(deriv).join('') : ''}</td><td>${c.conditionedBy && c.conditionedBy.length ? c.conditionedBy.map(cond).join('') : ''}</td></tr>`;
     const neighbors = t.writers.map(w => ({ label: w.object, dir: 'in', color: '#ff8a80', role: w.op, onClick: DATA.byName[w.object] ? `SD.app.openObject('${esc(w.object)}')` : '' }))
       .concat(t.readers.map(r => ({ label: r, dir: 'in', color: '#9cdcfe', role: 'lee', onClick: DATA.byName[r] ? `SD.app.openObject('${esc(r)}')` : '' })))
       .concat(t.fkOut.map(f => ({ label: f.table, dir: 'out', color: '#cddc39', role: 'FK→', onClick: DATA.byName[f.table] ? `SD.app.openObject('${esc(f.table)}')` : '' })));
@@ -486,7 +488,7 @@
       ${impactSection(t.name, DATA, impactDepth || 3)}
 
       <h3>Columnas (${t.columns.length})</h3>
-      ${t.columns.length ? `<table class="t"><tr><th>Columna</th><th>Tipo</th><th>Null</th><th></th></tr>${t.columns.map(colRow).join('')}</table>` : '<span class="muted">sin esquema (no se analizó su CREATE TABLE)</span>'}
+      ${t.columns.length ? `<table class="t"><tr><th>Columna</th><th>Tipo</th><th>Null</th><th></th><th>Deriva de</th><th>Condicionado por</th></tr>${t.columns.map(colRow).join('')}</table>` : '<span class="muted">sin esquema (no se analizó su CREATE TABLE)</span>'}
 
       ${(() => { const f = SD.risks.forComponent(DATA, t.name); return f.length ? `<h3>Riesgos de la tabla (${f.length})</h3>${FindingsTable(f, false)}` : ''; })()}
     `;

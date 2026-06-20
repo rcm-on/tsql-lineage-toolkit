@@ -22,6 +22,8 @@ Before touching a stored procedure or renaming a column in a large SQL Server da
 
 This toolkit parses the real AST of every procedure / function / trigger / view (not regex), builds the full lineage graph, and then *fuses it with the SQL Server execution plan XML* to surface tables that are invisible to static analysis — dynamic SQL, view expansion, cross-database calls.
 
+It doesn't stop at "table A feeds table B". Every column-to-column edge carries the **exact T-SQL expression that produced it** (`logic`), the **line of code it ran on** (`line_no`) and the **step that caused the mutation** (`caused_by_step`) — so "where does `TaxAmount` come from?" is answered with the literal formula (`ROUND(ol.PickedQuantity * ol.UnitPrice * ol.TaxRate / 100.0, 2)`), not just a table name.
+
 ---
 
 ## All advantages at a glance
@@ -33,7 +35,7 @@ This toolkit parses the real AST of every procedure / function / trigger / view 
 | 3 | **Confidence scoring** on every edge | Static=inferred · confirmed=plan verified · discovered=runtime-only |
 | 4 | **Cyclomatic complexity** per object | Identifies high-risk procs before a migration |
 | 5 | **Condition path** per step | Each SQL step knows which IF/WHILE/TRY branch it lives in |
-| 6 | **Column-level lineage** | Tracks which columns each proc reads/writes (`--columns` flag) |
+| 6 | **Column-level lineage with the transformation formula** | `DERIVES_FROM` edges carry the literal T-SQL expression (`logic`), source line (`line_no`) and causing step (`caused_by_step`) — not just "column A feeds column B" |
 | 7 | **Variable & dynamic SQL tracking** | Detects variables used to build `EXEC(@sql)` strings |
 | 8 | **Table variable tracking** (`@TableVar`) | Captures INSERT into `@TableVar` as a lineage target |
 | 9 | **Offline dashboard** — zero install | Drop `index.html` in a browser; no npm, no server, no cloud |
@@ -51,14 +53,14 @@ This toolkit parses the real AST of every procedure / function / trigger / view 
 
 ### vs. free / open-source tools
 
-| Tool | AST parse | Execution plan | Dashboard | Column lineage | ORM diagram | Agent-ready |
-|---|---|---|---|---|---|---|
-| **TSql Lineage Toolkit** | ScriptDom | Yes (actual rows) | Yes, offline | Yes | Yes | Yes (NodeStore) |
-| sqllineage (Python) | Statement-level regex | No | No | No | No | No |
-| Apache Atlas | Metadata catalog | No | Generic | No | No | No |
-| dbt lineage | dbt models only | No | dbt Cloud | Limited | No | No |
-| OpenLineage | Emission-based | No | External | No | No | No |
-| Custom regex scripts | Regex (errors) | No | No | No | No | No |
+| Tool | AST parse | Execution plan | Dashboard | Column lineage | Transformation logic on edge | ORM diagram | Agent-ready |
+|---|---|---|---|---|---|---|---|
+| **TSql Lineage Toolkit** | ScriptDom | Yes (actual rows) | Yes, offline | Yes | Yes (`logic` + `line_no`) | Yes | Yes (NodeStore) |
+| sqllineage (Python) | Statement-level regex | No | No | No | No | No | No |
+| Apache Atlas | Metadata catalog | No | Generic | No | No | No | No |
+| dbt lineage | dbt models only | No | dbt Cloud | Limited | No | No | No |
+| OpenLineage | Emission-based | No | External | No | No | No | No |
+| Custom regex scripts | Regex (errors) | No | No | No | No | No | No |
 
 ### vs. commercial / enterprise tools
 
@@ -72,7 +74,7 @@ This toolkit parses the real AST of every procedure / function / trigger / view 
 | Redgate SQL Source Control | €€ | Schema diff only | No | Partial | No |
 | dbt Cloud | €€ | dbt only | No | No | Partial |
 
-**Bottom line**: no free tool parses the ScriptDom AST or reads execution plan XML. No paid tool at any price tier fuses static analysis with actual execution plan data for runtime table discovery.
+**Bottom line**: no free tool parses the ScriptDom AST, reads execution plan XML, or attaches the actual transformation expression to a column-lineage edge. No paid tool at any price tier fuses static analysis with actual execution plan data for runtime table discovery.
 
 ---
 
@@ -288,6 +290,8 @@ If you add a new T-SQL pattern, include a test case in `tests/TSqlParser.Tests/L
 
 ## Roadmap
 
+- [ ] Transitive lineage through `#temp`/`@table` variables (bridge `RealTableA -> #Temp -> RealTableB` into a direct `DERIVES_FROM`, tagged `via_transient`)
+- [ ] `CONDITIONED_BY` edges — link a written column to the `WHERE`/`JOIN` columns that decided which rows it touched (business-rule lineage, not just data-flow lineage)
 - [ ] VIEW expansion — resolve `INSERT INTO view` to base table at lineage time
 - [ ] Cross-database EXEC lineage (follow `EXEC OtherDb.dbo.spProc`)
 - [ ] Lineage diff between two graph snapshots (what changed between releases?)
