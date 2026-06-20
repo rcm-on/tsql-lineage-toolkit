@@ -104,10 +104,16 @@
     return [...byTable.entries()].map(([table, cols]) => `${table}(${cols.join(', ')})`);
   }
 
-  function FlowTree(nodes, byName) {
+  // depth/maxDepth/stack: expande recursivamente los pasos EXEC con el flow del
+  // procedimiento llamado (hasta maxDepth niveles), igual que la cadena de impacto.
+  // stack lleva la pila de llamadas activa para detectar recursión y no colgarse.
+  function FlowTree(nodes, byName, depth, maxDepth, stack) {
+    depth = depth || 0;
+    maxDepth = maxDepth == null ? 3 : maxDepth;
+    stack = stack || [];
     return nodes.map(n => {
       if (n.kind === 'cond')
-        return `<details open><summary class="cond">${esc(n.label)}</summary>${FlowTree(n.children, byName)}</details>`;
+        return `<details open><summary class="cond">${esc(n.label)}</summary>${FlowTree(n.children, byName, depth, maxDepth, stack)}</details>`;
       const tgt = n.target ? ` <span class="tgt">→ ${esc(n.target)}</span>` : '';
       const from = (n.sqlFrom && n.sqlFrom.length) ? ` ← ${esc(n.sqlFrom.join(', '))}` : '';
       const dyn = n.dynamic ? ` <span class="dyn">[SQL dinámico${from}]</span>` : '';
@@ -116,7 +122,21 @@
       const filt = filterGroups.length ? ` <span class="filt">⌕ ${esc(filterGroups.join(', '))}</span>` : '';
       const link = byName[n.target] ? ` <a href="#" onclick="SD.app.openObject('${esc(n.target)}');return false" class="muted" title="ir">↗</a>` : '';
       const detail = n.detail ? ` <span class="muted">(${esc(n.detail)})</span>` : '';
-      return `<div class="step"><span class="act ${actClass(n.action)}">${esc(n.action)}</span>${detail}${tgt}${dyn}${runs}${filt}${link} <span class="muted">· L${n.line}</span></div>`;
+      const line = `<div class="step"><span class="act ${actClass(n.action)}">${esc(n.action)}</span>${detail}${tgt}${dyn}${runs}${filt}${link} <span class="muted">· L${n.line}</span></div>`;
+      let nested = '';
+      if (n.action === 'EXEC' && n.target && byName[n.target]) {
+        const calleeFlow = byName[n.target].flow;
+        if (stack.includes(n.target)) {
+          nested = `<div class="step muted">↻ recursión: ${esc(n.target)} ya está en la pila de llamadas, no se expande</div>`;
+        } else if (depth >= maxDepth) {
+          nested = calleeFlow && calleeFlow.length
+            ? `<div class="step muted">… nivel máximo (${maxDepth}) alcanzado, ver ${esc(n.target)} <a href="#" onclick="SD.app.openObject('${esc(n.target)}');return false">↗</a></div>`
+            : '';
+        } else if (calleeFlow && calleeFlow.length) {
+          nested = `<details class="tree-fold sub"><summary>↳ pasos de ${esc(n.target)}</summary>${FlowTree(calleeFlow, byName, depth + 1, maxDepth, stack.concat(n.target))}</details>`;
+        }
+      }
+      return line + nested;
     }).join('');
   }
 
@@ -390,8 +410,8 @@
 
       <h3>Flujograma de control (desde INICIO hasta FIN)</h3>
       ${o.flow.length ? SD.mm.block(FlowChartMermaid(o.flow, DATA.byName), 'Flujograma de control') : '<span class="muted">sin pasos</span>'}
-      ${o.flow.length ? `<details class="tree-fold"><summary>Ver como árbol de texto (condiciones en lenguaje natural)</summary>
-      <div class="tree">${FlowTree(o.flow, DATA.byName)}</div></details>` : ''}
+      ${o.flow.length ? `<details class="tree-fold"><summary>Ver como árbol de texto (condiciones en lenguaje natural, EXEC expandido hasta ${impactDepth || 3} niveles)</summary>
+      <div class="tree">${FlowTree(o.flow, DATA.byName, 0, impactDepth || 3, [o.name])}</div></details>` : ''}
 
       ${(() => { const df = DataFlowMermaid(o, DATA); return df ? `<h3>Flujo de datos</h3>${SD.mm.block(df, 'Flujo de datos')}` : ''; })()}
 

@@ -619,6 +619,8 @@ public static class NodeStoreExporter
                 ["open_shared"] = "shared/<category>/<slug>.json holds a Table/Column/Action/Rule: `refs` partitions its incoming edges by the SqlObject that contributed them, `edges_in`/`edges_out` give the flattened view.",
                 ["downstream"] = "Follow edges_out (WRITES_TO, CALLS, AFFECTS) for what an object affects.",
                 ["upstream"] = "Follow edges_in / refs (WRITES_TO, READS_FROM, CALLS) for what affects a node.",
+                ["completeness"] = "model.json is EXHAUSTIVE for CALLS/AFFECTS/FK_TO and for WRITES_TO/READS_FROM rolled up to object/table scale (deduplicated from every Step that touches that table, including ones built from dynamic SQL). Cross-check counts against index.json's stats.edges_by_type if you need certainty. You never need to open an object's object.json just to discover more object-level edges of these types — they are already all in model.json.",
+                ["exec_resolution"] = "An EXEC step resolves one of two ways, and model.json already has both rolled up: (1) a named-procedure call -> a CALLS edge object->object; (2) EXEC of a dynamically-built @variable (is_dynamic_sql=true on the Step, target_name='(dynamic SQL)') -> its inferred targets appear as WRITES_TO/READS_FROM edges with action_type in their `props`, not as CALLS. To see a Step's own is_dynamic_sql/dynamic_sql/target_name detail you do need objects/<slug>/object.json, but the object-level write/read targets themselves are already in model.json.",
             },
             ["schema"] = new Dictionary<string, object>
             {
