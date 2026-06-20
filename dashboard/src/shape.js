@@ -53,7 +53,13 @@
         // FILTERS_ON: columnas reales del WHERE/JOIN ON de este step (qué decidió
         // qué filas se tocaron) - distinto de los reads/writes ("qué se leyó/escribió").
         const filters = outOf(s.Id, 'FILTERS_ON').map(r => byId[r.EndNodeId].Properties);
-        level.push({ kind: 'step', action: p.action, detail: p.detail || '', target: p.target_name || '', dynamic: !!p.is_dynamic_sql, dynSql: p.dynamic_sql || '', line: p.line_no, sqlFrom, filters });
+        // target_name es el texto crudo del AST (conserva corchetes: "[Schema].Proc")
+        // y no coincide con byName si el SQL citó el identificador entre corchetes.
+        // La arista TARGETS (Step -> SqlObject) ya resuelve el nodo real: usarla
+        // cuando exista para que el enlace y la expansión recursiva de EXEC funcionen.
+        const targetsEdge = outOf(s.Id, 'TARGETS')[0];
+        const target = targetsEdge ? nameOf(targetsEdge.EndNodeId) : (p.target_name || '');
+        level.push({ kind: 'step', action: p.action, detail: p.detail || '', target, dynamic: !!p.is_dynamic_sql, dynSql: p.dynamic_sql || '', line: p.line_no, sqlFrom, filters });
       }
       return root;
     }
