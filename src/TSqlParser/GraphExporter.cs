@@ -85,11 +85,41 @@ public static class GraphExporter
         var objectIds = new HashSet<string>();
         var byPlainName = new Dictionary<(string db, string plain), string>();
 
+        // viewBaseTables: for every analyzed VIEW, the real base table(s)/column(s)
+        // its own SELECT body ultimately reads - built from that VIEW's own SELECT
+        // step(s) (Columns = primary-table columns, ExtraReads = JOIN partners),
+        // the same data every other object's own SELECT step already carries. Lets
+        // a consumer's "SELECT ... FROM AnalyzedView" bridge straight through to the
+        // view's base table(s) instead of dead-ending at the VIEW's SqlObject node.
+        var viewBaseTables = new Dictionary<string, List<(string Table, string Column)>>();
+
         foreach (var r in results)
         {
             var (db, plain) = SplitName(r.ObjectName);
             objectIds.Add(r.ObjectName);
-            byPlainName[(db, NormalizeRef(plain))] = r.ObjectName;
+            // Keyed by NormalizeRef(db) (not the raw db string) so a cross-database
+            // CALLS/EXEC lookup - whose database segment comes from arbitrary SQL
+            // text casing, not from an ObjectName - reliably matches regardless of
+            // case (see ResolveCalleeKey below).
+            byPlainName[(NormalizeRef(db), NormalizeRef(plain))] = r.ObjectName;
+
+            if (r.ObjectType == "VIEW")
+            {
+                var bases = new List<(string Table, string Column)>();
+                foreach (var flv in r.FlowLinks)
+                {
+                    if (flv.ConsequenceType != "SELECT" || IsTempOrVariable(flv.ConsequenceTarget))
+                        continue;
+                    foreach (var col in flv.Columns)
+                        bases.Add((flv.ConsequenceTarget, col));
+                    foreach (var extra in flv.ExtraReads)
+                        if (!IsTempOrVariable(extra.Table))
+                            foreach (var col in extra.Columns)
+                                bases.Add((extra.Table, col));
+                }
+                if (bases.Count > 0)
+                    viewBaseTables[r.ObjectName] = bases;
+            }
 
             var (schemaName, shortName) = SplitSchemaObject(plain);
             graph.Nodes.Add(new GraphNode
@@ -128,6 +158,61 @@ public static class GraphExporter
         foreach (var r in results)
         {
             var (db, _) = SplitName(r.ObjectName);
+
+            // tempOrigin: for every step in THIS object that writes into a
+            // #temp/@table-variable target (e.g. "INSERT #Staging SELECT Col FROM
+            // RealTable"), maps (NormalizeRef(tempTarget), TargetColumn) -> the real
+            // origin(s) AstWalker already computed in that step's own ColumnLineage.
+            // That ColumnLineage is otherwise silently dropped below (temp/variable
+            // targets never get their own WRITES_TO/DERIVES_FROM branch - see
+            // "!IsTempOrVariable(fl.ConsequenceTarget)" further down), so without
+            // this map a later "INSERT RealTable2 SELECT Col FROM #Staging" would
+            // dead-end its DERIVES_FROM at a phantom #Staging Table node instead of
+            // bridging straight through to RealTable. Scoped per-object: a temp
+            // table only lives for the duration of one procedure's batch.
+            var tempOrigin = new Dictionary<(string Table, string Column), List<(string SourceTable, string SourceColumn, string Logic, int LineNo, string StepId)>>();
+            for (int ord = 0; ord < r.FlowLinks.Count; ord++)
+            {
+                var flx = r.FlowLinks[ord];
+                if (!IsTempOrVariable(flx.ConsequenceTarget))
+                    continue;
+                var stepIdX = $"{r.ObjectName}#step{ord}";
+                var tempKey = NormalizeRef(flx.ConsequenceTarget);
+                foreach (var deriv in flx.ColumnLineage)
+                {
+                    var key = (tempKey, deriv.TargetColumn);
+                    if (!tempOrigin.TryGetValue(key, out var list))
+                        tempOrigin[key] = list = new();
+                    foreach (var srcCol in deriv.SourceColumns)
+                        list.Add((deriv.SourceTable, srcCol, deriv.TransformationExpression, flx.LineNo, stepIdX));
+                }
+            }
+
+            // Follows tempOrigin through any number of #temp/@var hops (capped to
+            // avoid runaway recursion on a self-referencing chain) down to the real
+            // table(s) a transient column ultimately came from. Empty when the chain
+            // can't be resolved (e.g. the temp was filled by "SELECT *" or something
+            // other than a positional INSERT...SELECT) - no edge is invented in that
+            // case, same as today's behavior for an unresolvable derivation.
+            List<(string Table, string Column, string Logic, int LineNo, string StepId, List<string> Via)> ResolveTransient(
+                string table, string column, List<string> viaChain, int depth)
+            {
+                if (!IsTempOrVariable(table) || depth > 5)
+                    return new();
+                if (!tempOrigin.TryGetValue((NormalizeRef(table), column), out var origins))
+                    return new();
+
+                var resolved = new List<(string, string, string, int, string, List<string>)>();
+                var nextVia = new List<string>(viaChain) { table };
+                foreach (var (srcTable, srcCol, logic, lineNo, stepIdX) in origins)
+                {
+                    if (IsTempOrVariable(srcTable))
+                        resolved.AddRange(ResolveTransient(srcTable, srcCol, nextVia, depth + 1));
+                    else
+                        resolved.Add((srcTable, srcCol, logic, lineNo, stepIdX, nextVia));
+                }
+                return resolved;
+            }
 
             // ── Parameters ───────────────────────────────────────────────
             foreach (var p in r.Parameters)
@@ -312,7 +397,7 @@ public static class GraphExporter
                 // "this Step touches PROCEDURE X" apart from "this Step touches TABLE Y"
                 // without guessing from the name.
                 if (fl.ConsequenceTarget.Length > 0 &&
-                    byPlainName.TryGetValue((db, NormalizeRef(fl.ConsequenceTarget)), out var targetObjId))
+                    byPlainName.TryGetValue((NormalizeRef(db), NormalizeRef(fl.ConsequenceTarget)), out var targetObjId))
                 {
                     graph.Relationships.Add(new GraphRel
                     {
@@ -320,6 +405,47 @@ public static class GraphExporter
                         StartNodeId = stepId,
                         EndNodeId = targetObjId,
                     });
+
+                    // VIEW expansion: "SELECT ... FROM AnalyzedView" also reads straight
+                    // through to the view's own real base table(s)/column(s) - not just
+                    // the VIEW's SqlObject node - so impact analysis on a base table finds
+                    // every consumer of a view built on it. Read-side only: a write into a
+                    // VIEW (rare, requires an updatable view) still resolves only as far as
+                    // TARGETS today.
+                    if (fl.ConsequenceType == "SELECT" && viewBaseTables.TryGetValue(targetObjId, out var viewBases))
+                    {
+                        var viewDb = SplitName(targetObjId).db;
+                        var seenViewTables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                        foreach (var (baseTable, baseCol) in viewBases)
+                        {
+                            var (baseTableId, baseTableName) = GetOrCreateTable(graph, tableIds, viewDb, baseTable);
+                            if (seenViewTables.Add(baseTable))
+                            {
+                                graph.Relationships.Add(new GraphRel
+                                {
+                                    Type = "READS_FROM",
+                                    StartNodeId = stepId,
+                                    EndNodeId = baseTableId,
+                                    Properties = new Dictionary<string, object>
+                                    {
+                                        ["action_type"] = fl.ConsequenceType,
+                                        ["table"] = baseTable,
+                                        ["via_view"] = targetObjId,
+                                    },
+                                });
+                            }
+                            if (includeColumns)
+                            {
+                                var baseColId = GetOrCreateColumn(graph, columnIds, baseTableId, baseTableName, baseCol);
+                                graph.Relationships.Add(new GraphRel
+                                {
+                                    Type = "READS_COLUMN",
+                                    StartNodeId = stepId,
+                                    EndNodeId = baseColId,
+                                });
+                            }
+                        }
+                    }
                 }
                 else if (fl.ConsequenceTarget.Length > 0 && fl.ConsequenceType is "INSERT" or "UPDATE" or "DELETE" or "MERGE" or "SELECT" or "ALTER" or "TRUNCATE" && !IsTempOrVariable(fl.ConsequenceTarget))
                 {
@@ -407,6 +533,41 @@ public static class GraphExporter
                         foreach (var deriv in fl.ColumnLineage)
                         {
                             var targetColId = GetOrCreateColumn(graph, columnIds, tableId, tableName, deriv.TargetColumn);
+
+                            // SourceTable is a #temp/@table-variable bridge (not the real
+                            // origin): never create a Table node for it (it doesn't exist
+                            // once the batch ends) - instead chase tempOrigin through to
+                            // the real table(s), tagging the edge with via_transient so the
+                            // bridge is still visible without polluting the Table graph.
+                            if (IsTempOrVariable(deriv.SourceTable))
+                            {
+                                foreach (var srcCol in deriv.SourceColumns)
+                                {
+                                    foreach (var origin in ResolveTransient(deriv.SourceTable, srcCol, new List<string>(), 0))
+                                    {
+                                        var (origTableId, origTableName) = GetOrCreateTable(graph, tableIds, db, origin.Table);
+                                        var origColId = GetOrCreateColumn(graph, columnIds, origTableId, origTableName, origin.Column);
+                                        graph.Relationships.Add(new GraphRel
+                                        {
+                                            Type = "DERIVES_FROM",
+                                            StartNodeId = targetColId,
+                                            EndNodeId = origColId,
+                                            Properties = new Dictionary<string, object>
+                                            {
+                                                ["logic"] = deriv.TransformationExpression,
+                                                ["line_no"] = fl.LineNo,
+                                                ["caused_by_step"] = stepId,
+                                                ["via_transient"] = string.Join(" -> ", origin.Via),
+                                                ["origin_logic"] = origin.Logic,
+                                                ["origin_line_no"] = origin.LineNo,
+                                                ["origin_step"] = origin.StepId,
+                                            },
+                                        });
+                                    }
+                                }
+                                continue;
+                            }
+
                             var (srcTableId, srcTableName) = GetOrCreateTable(graph, tableIds, db, deriv.SourceTable);
                             foreach (var srcCol in deriv.SourceColumns)
                             {
@@ -562,17 +723,30 @@ public static class GraphExporter
                 }
             }
 
-            // ── CALLS: caller -> callee, resolved within the same database ─
+            // ── CALLS: caller -> callee. callee may be a bare "Schema.Object" (same
+            // database as the caller) or a 3-part "OtherDb.Schema.Object" (cross-
+            // database EXEC/function call) - resolved against byPlainName using the
+            // TARGET database, not always the caller's, so cross-db calls to an
+            // object that *was* analyzed actually resolve instead of silently
+            // falling through to no edge at all (the previous behavior).
             foreach (var callee in r.ExecCalls)
             {
-                if (byPlainName.TryGetValue((db, NormalizeRef(callee)), out var calleeId) && calleeId != r.ObjectName)
+                var (calleeDb, calleePlain, isCrossDbCall) = ResolveCalleeKey(callee, db);
+                if (byPlainName.TryGetValue((calleeDb, calleePlain), out var calleeId) && calleeId != r.ObjectName)
                 {
+                    var callProps = new Dictionary<string, object> { ["caller"] = r.ObjectName, ["callee"] = calleeId, ["kind"] = "EXEC" };
+                    if (isCrossDbCall)
+                    {
+                        callProps["is_cross_database"] = true;
+                        callProps["source_database"] = db;
+                        callProps["target_database"] = SplitName(calleeId).db;
+                    }
                     graph.Relationships.Add(new GraphRel
                     {
                         Type = "CALLS",
                         StartNodeId = r.ObjectName,
                         EndNodeId = calleeId,
-                        Properties = { ["caller"] = r.ObjectName, ["callee"] = calleeId, ["kind"] = "EXEC" },
+                        Properties = callProps,
                     });
                 }
             }
@@ -581,14 +755,22 @@ public static class GraphExporter
             // known SQL_SCALAR_FUNCTION / SQL_TABLE_VALUED_FUNCTION object ─────
             foreach (var callee in r.FunctionCalls)
             {
-                if (byPlainName.TryGetValue((db, NormalizeRef(callee)), out var calleeId) && calleeId != r.ObjectName)
+                var (calleeDb, calleePlain, isCrossDbCall) = ResolveCalleeKey(callee, db);
+                if (byPlainName.TryGetValue((calleeDb, calleePlain), out var calleeId) && calleeId != r.ObjectName)
                 {
+                    var callProps = new Dictionary<string, object> { ["caller"] = r.ObjectName, ["callee"] = calleeId, ["kind"] = "FUNCTION" };
+                    if (isCrossDbCall)
+                    {
+                        callProps["is_cross_database"] = true;
+                        callProps["source_database"] = db;
+                        callProps["target_database"] = SplitName(calleeId).db;
+                    }
                     graph.Relationships.Add(new GraphRel
                     {
                         Type = "CALLS",
                         StartNodeId = r.ObjectName,
                         EndNodeId = calleeId,
-                        Properties = { ["caller"] = r.ObjectName, ["callee"] = calleeId, ["kind"] = "FUNCTION" },
+                        Properties = callProps,
                     });
                 }
             }
@@ -988,6 +1170,25 @@ public static class GraphExporter
                 return (true, tableDb);
         }
         return (false, currentDb);
+    }
+
+    /// <summary>
+    /// Resolves a CALLS target (EXEC/function callee, e.g. "dbo.Proc" or the
+    /// cross-database "OtherDb.dbo.Proc") to the (db, plain) key byPlainName is
+    /// indexed by, plus whether it crossed a database boundary. Mirrors
+    /// DetectCrossDb's 3-part-name detection, but - unlike table refs, which keep
+    /// their full "Db.Schema.Table" string as ConsequenceTarget - also strips the
+    /// leading database part so the remaining "Schema.Object" matches the same
+    /// "plain" shape byPlainName/SplitName use for every analyzed SqlObject.
+    /// </summary>
+    private static (string db, string plain, bool isCross) ResolveCalleeKey(string callee, string currentDb)
+    {
+        var normalized = NormalizeRef(callee);
+        var parts = normalized.Split('.');
+        var normalizedCurrentDb = NormalizeRef(currentDb);
+        if (parts.Length >= 3 && !string.Equals(parts[0], normalizedCurrentDb, StringComparison.OrdinalIgnoreCase))
+            return (parts[0], string.Join('.', parts.Skip(1)), true);
+        return (normalizedCurrentDb, normalized, false);
     }
 
     /// <summary>

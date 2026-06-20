@@ -543,6 +543,105 @@ public class LineageTests
     }
 
     [Fact]
+    public void ExecCall_CrossDatabase_ResolvesToCalleeAndTagsCrossDb()
+    {
+        const string otherDb = "OtherDb";
+        var callerSql = """
+            CREATE PROCEDURE dbo.A
+            AS
+            BEGIN
+                EXEC OtherDb.dbo.B
+            END
+            """;
+        var calleeSql = """
+            CREATE PROCEDURE dbo.B
+            AS
+            BEGIN
+                SELECT 1
+            END
+            """;
+
+        var resultA = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.A", callerSql);
+        var resultB = SqlAnalyzer.AnalyzeObject($"{otherDb}::dbo.B", calleeSql);
+        Assert.Null(resultA.Error);
+        Assert.Null(resultB.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { resultA, resultB });
+
+        var rel = FindRel(graph, "CALLS",
+            r => r.StartNodeId == $"{Db}::dbo.A" && r.EndNodeId == $"{otherDb}::dbo.B");
+        Assert.NotNull(rel);
+        Assert.True((bool)rel!.Properties["is_cross_database"]);
+        Assert.Equal(Db, rel.Properties["source_database"]);
+        Assert.Equal(otherDb, rel.Properties["target_database"]);
+    }
+
+    [Fact]
+    public void InsertSelect_ThroughTempTable_BridgesDerivesFromToRealSourceTable()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                CREATE TABLE #Temp (Col INT);
+                INSERT INTO #Temp (Col) SELECT Col FROM dbo.Fisico1;
+                INSERT INTO dbo.Fisico2 (Col) SELECT Col FROM #Temp;
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        // No phantom Table node for the #temp bridge.
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).Contains("Temp", StringComparison.OrdinalIgnoreCase));
+
+        var rel = FindRel(graph, "DERIVES_FROM", r =>
+            r.StartNodeId.EndsWith(":table:dbo.fisico2:column:Col", StringComparison.OrdinalIgnoreCase) &&
+            r.EndNodeId.EndsWith(":table:dbo.fisico1:column:Col", StringComparison.OrdinalIgnoreCase));
+        Assert.NotNull(rel);
+        Assert.Equal("#Temp", rel!.Properties["via_transient"]);
+    }
+
+    [Fact]
+    public void SelectFromAnalyzedView_BridgesToViewsRealBaseTable()
+    {
+        var viewSql = """
+            CREATE VIEW dbo.VCustomers
+            AS
+            SELECT CustomerID, CustomerName FROM dbo.Customers
+            """;
+        var consumerSql = """
+            CREATE PROCEDURE dbo.Consumer
+            AS
+            BEGIN
+                SELECT CustomerID, CustomerName FROM dbo.VCustomers
+            END
+            """;
+
+        var view = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.VCustomers", viewSql);
+        var consumer = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.Consumer", consumerSql);
+        Assert.Null(view.Error);
+        Assert.Null(consumer.Error);
+        Assert.Equal("VIEW", view.ObjectType);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { view, consumer }, includeColumns: true);
+
+        // Still resolves the VIEW itself (Step -> SqlObject).
+        Assert.NotNull(FindRel(graph, "TARGETS",
+            r => r.StartNodeId == $"{Db}::dbo.Consumer#step0" && r.EndNodeId == $"{Db}::dbo.VCustomers"));
+
+        // ...and bridges straight through to the view's real base table/columns.
+        var readsFrom = FindRel(graph, "READS_FROM",
+            r => r.StartNodeId == $"{Db}::dbo.Consumer#step0" &&
+                 r.EndNodeId == $"{Db}:table:dbo.customers");
+        Assert.NotNull(readsFrom);
+        Assert.Equal($"{Db}::dbo.VCustomers", readsFrom!.Properties["via_view"]);
+
+        Assert.NotNull(FindRel(graph, "READS_COLUMN",
+            r => r.StartNodeId == $"{Db}::dbo.Consumer#step0" &&
+                 r.EndNodeId == $"{Db}:table:dbo.customers:column:CustomerName"));
+    }
+
+    [Fact]
     public void NestedIf_ProducesNestedRulesAndGoverns()
     {
         var sql = """
