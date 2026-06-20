@@ -2,7 +2,7 @@
 // cableado de los componentes. Expuesto como SD.app.
 (function (SD) {
   const $ = s => document.querySelector(s);
-  let DATA = null, current = null, kindFilter = 'all', dynOnly = false;
+  let DATA = null, current = null, kindFilter = 'all', dynOnly = false, impactDepth = 3;
   let schemaPinned = new Set();  // tables currently pinned in the Schema Explorer
 
   // Shared nav bar: always includes Overview, Risks and Schema ORM buttons.
@@ -78,10 +78,17 @@
     const e = DATA.byName[name]; if (!e) return;
     current = name;
     document.querySelectorAll('.item').forEach(el => el.classList.toggle('sel', el.dataset.n === name));
-    const view = e.kind === 'table' ? SD.components.TableView(e, DATA) : SD.components.ObjectView(e, DATA);
+    const view = e.kind === 'table' ? SD.components.TableView(e, DATA, impactDepth) : SD.components.ObjectView(e, DATA, impactDepth);
     $('#main').innerHTML = navBar('') + view;
     $('#main').scrollTop = 0;
     SD.mm.renderAll($('#main'));
+  }
+
+  // Cambia la profundidad de la "Cadena de impacto" (1-5) y re-renderiza la
+  // vista actual con el nuevo valor (mismo patrón que schemaAdd -> openSchema()).
+  function setImpactDepth(n) {
+    impactDepth = +n || 3;
+    if (current) openObject(current);
   }
 
   // ── SCHEMA EXPLORER ──────────────────────────────────────────────────────────
@@ -182,6 +189,6 @@
   }
 
   SD.app = { init, load, openObject, openOverview, openRisks, openSchema, setFilter,
-             schemaAdd, schemaRemove, schemaExpand, schemaClear };
+             schemaAdd, schemaRemove, schemaExpand, schemaClear, setImpactDepth };
   document.addEventListener('DOMContentLoaded', init);
 })(window.SD = window.SD || {});

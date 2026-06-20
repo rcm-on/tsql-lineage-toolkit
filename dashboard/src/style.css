@@ -109,6 +109,7 @@ h3{font-size:12px;color:var(--ac);text-transform:uppercase;letter-spacing:.5px;m
 .tree .a-call{background:#3a2a5a;color:#c8a2e8}       /* EXEC */
 .tree .a-ctrl{background:#3a3a3a;color:#bbb}          /* RETURN/THROW/TRAN */
 .tree .tgt{color:var(--ok)}.tree .dyn{color:var(--dyn);font-weight:bold}
+.tree .filt{color:var(--warn)}
 .tree details{margin-left:14px}.tree summary{cursor:pointer;list-style:none}
 .tree summary::-webkit-details-marker{display:none}
 .tree summary::before{content:'▸ ';color:var(--mut)}.tree details[open]>summary::before{content:'▾ '}

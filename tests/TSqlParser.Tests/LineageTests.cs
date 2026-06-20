@@ -350,6 +350,151 @@ public class LineageTests
     }
 
     [Fact]
+    public void Update_FiltersOnWhereColumn()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                UPDATE dbo.Target SET Val = 1 WHERE Status = 'X'
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var step = FindNode(graph, n => n.Labels.Contains("Step") && (string)n.Properties["action"] == "UPDATE");
+        Assert.NotNull(step);
+
+        var statusCol = FindNode(graph, n => n.Labels.Contains("Column") &&
+            (string)n.Properties["table"] == "dbo.target" && (string)n.Properties["name"] == "Status");
+        Assert.NotNull(statusCol);
+        Assert.NotNull(FindRel(graph, "FILTERS_ON", r => r.StartNodeId == step!.Id && r.EndNodeId == statusCol!.Id));
+    }
+
+    [Fact]
+    public void SetScalarSubquery_BecomesStep_WithReadsFromAndFiltersOn()
+    {
+        // "SET @v = (SELECT ...)" used to be entirely invisible - no Step, so no
+        // READS_FROM/FILTERS_ON for dbo.Source or its WHERE column.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                DECLARE @MinVal INT;
+                SET @MinVal = (SELECT MIN(s.Val) FROM dbo.Source AS s WHERE s.Status = 'X');
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var step = FindNode(graph, n => n.Labels.Contains("Step") && (string)n.Properties["action"] == "SELECT");
+        Assert.NotNull(step);
+        Assert.Equal("→ @MinVal", (string)step!.Properties["detail"]);
+
+        var source = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source");
+        Assert.NotNull(source);
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.StartNodeId == step.Id && r.EndNodeId == source!.Id));
+
+        var statusCol = FindNode(graph, n => n.Labels.Contains("Column") &&
+            (string)n.Properties["table"] == "dbo.source" && (string)n.Properties["name"] == "Status");
+        Assert.NotNull(statusCol);
+        Assert.NotNull(FindRel(graph, "FILTERS_ON", r => r.StartNodeId == step.Id && r.EndNodeId == statusCol!.Id));
+    }
+
+    [Fact]
+    public void NestedExistsSubquery_ResolvesItsOwnTableAndFilterColumns()
+    {
+        // The EXISTS subquery's own table/columns ("inner") used to be silently
+        // dropped (qualifier "i" didn't match the outer query's tableRefs).
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                DECLARE @MinVal INT;
+                SET @MinVal = (SELECT MIN(o.Val) FROM dbo.Parent AS o
+                               WHERE o.Status = 'X'
+                               AND EXISTS (SELECT 1 FROM dbo.Child AS i WHERE i.ParentId = o.Id AND i.Flag = 1));
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var step = FindNode(graph, n => n.Labels.Contains("Step") && (string)n.Properties["action"] == "SELECT");
+        Assert.NotNull(step);
+
+        var inner = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Child");
+        Assert.NotNull(inner);
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.StartNodeId == step!.Id && r.EndNodeId == inner!.Id));
+
+        var flagCol = FindNode(graph, n => n.Labels.Contains("Column") &&
+            (string)n.Properties["table"] == "dbo.child" && (string)n.Properties["name"] == "Flag");
+        Assert.NotNull(flagCol);
+        Assert.NotNull(FindRel(graph, "FILTERS_ON", r => r.StartNodeId == step!.Id && r.EndNodeId == flagCol!.Id));
+
+        // Outer table's own filter column must still resolve unchanged.
+        var statusCol = FindNode(graph, n => n.Labels.Contains("Column") &&
+            (string)n.Properties["table"] == "dbo.parent" && (string)n.Properties["name"] == "Status");
+        Assert.NotNull(statusCol);
+        Assert.NotNull(FindRel(graph, "FILTERS_ON", r => r.StartNodeId == step!.Id && r.EndNodeId == statusCol!.Id));
+    }
+
+    [Fact]
+    public void TopLevelSelect_WhereInSubquery_ResolvesSubqueryTableFilterColumns()
+    {
+        // Same nested-subquery fix, but for a top-level SELECT's WHERE ... IN (subquery) -
+        // confirms the fix isn't specific to SET assignments.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                SELECT * FROM dbo.Orders AS o
+                WHERE o.CustomerId IN (SELECT c.Id FROM dbo.Customers AS c WHERE c.Active = 1);
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var step = FindNode(graph, n => n.Labels.Contains("Step") && (string)n.Properties["action"] == "SELECT");
+        Assert.NotNull(step);
+
+        var customers = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Customers");
+        Assert.NotNull(customers);
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.StartNodeId == step!.Id && r.EndNodeId == customers!.Id));
+
+        var activeCol = FindNode(graph, n => n.Labels.Contains("Column") &&
+            (string)n.Properties["table"] == "dbo.customers" && (string)n.Properties["name"] == "Active");
+        Assert.NotNull(activeCol);
+        Assert.NotNull(FindRel(graph, "FILTERS_ON", r => r.StartNodeId == step!.Id && r.EndNodeId == activeCol!.Id));
+    }
+
+    [Fact]
+    public void DynamicSql_LiteralWhereClause_ResolvesToFiltersOnColumn()
+    {
+        // The executed string is a pure literal (no @variables), so
+        // SqlAnalyzer.ResolveDynamicSqlLinks re-parses it and the inner UPDATE's
+        // own WHERE clause should surface as FILTERS_ON, same as a direct UPDATE.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                EXEC ('UPDATE dbo.Target SET Val = 1 WHERE Status = ''X''')
+            END
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.TestProc", sql);
+        Assert.Null(result.Error);
+        Assert.Equal(1, result.DynamicSqlCount);
+
+        var resolvedUpdate = result.FlowLinks.FirstOrDefault(fl => fl.ConsequenceType == "UPDATE");
+        Assert.NotNull(resolvedUpdate);
+        Assert.Contains(resolvedUpdate!.FilterColumns, tc => tc.Table == "dbo.Target" && tc.Columns.Contains("Status"));
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { result }, includeColumns: true);
+        var step = FindNode(graph, n => n.Labels.Contains("Step") && (string)n.Properties["action"] == "UPDATE");
+        Assert.NotNull(step);
+
+        var statusCol = FindNode(graph, n => n.Labels.Contains("Column") &&
+            (string)n.Properties["table"] == "dbo.target" && (string)n.Properties["name"] == "Status");
+        Assert.NotNull(statusCol);
+        Assert.NotNull(FindRel(graph, "FILTERS_ON", r => r.StartNodeId == step!.Id && r.EndNodeId == statusCol!.Id));
+    }
+
+    [Fact]
     public void TableVariable_IsNotEmittedAsTable()
     {
         var sql = """

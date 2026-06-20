@@ -91,6 +91,19 @@
     return 'a-ctrl'; // RETURN, THROW, BEGIN_TRAN, COMMIT_TRAN, ROLLBACK…
   }
 
+  // Agrupa las columnas de FILTERS_ON por tabla para mostrarlas legibles:
+  // [{table:'A',name:'x'},{table:'A',name:'y'},{table:'B',name:'z'}] -> ["A(x, y)", "B(z)"].
+  function groupFilters(filters) {
+    if (!filters || !filters.length) return [];
+    const byTable = new Map();
+    for (const f of filters) {
+      const cols = byTable.get(f.table) || [];
+      if (!cols.includes(f.name)) cols.push(f.name);
+      byTable.set(f.table, cols);
+    }
+    return [...byTable.entries()].map(([table, cols]) => `${table}(${cols.join(', ')})`);
+  }
+
   function FlowTree(nodes, byName) {
     return nodes.map(n => {
       if (n.kind === 'cond')
@@ -99,9 +112,11 @@
       const from = (n.sqlFrom && n.sqlFrom.length) ? ` ← ${esc(n.sqlFrom.join(', '))}` : '';
       const dyn = n.dynamic ? ` <span class="dyn">[SQL dinámico${from}]</span>` : '';
       const runs = n.dynSql ? ` <span class="dyn">⚡ ejecuta: ${esc(n.dynSql)}</span>` : '';
+      const filterGroups = groupFilters(n.filters);
+      const filt = filterGroups.length ? ` <span class="filt">⌕ ${esc(filterGroups.join(', '))}</span>` : '';
       const link = byName[n.target] ? ` <a href="#" onclick="SD.app.openObject('${esc(n.target)}');return false" class="muted" title="ir">↗</a>` : '';
       const detail = n.detail ? ` <span class="muted">(${esc(n.detail)})</span>` : '';
-      return `<div class="step"><span class="act ${actClass(n.action)}">${esc(n.action)}</span>${detail}${tgt}${dyn}${runs}${link} <span class="muted">· L${n.line}</span></div>`;
+      return `<div class="step"><span class="act ${actClass(n.action)}">${esc(n.action)}</span>${detail}${tgt}${dyn}${runs}${filt}${link} <span class="muted">· L${n.line}</span></div>`;
     }).join('');
   }
 
@@ -175,7 +190,9 @@
             ? (node.sqlFrom && node.sqlFrom.length ? ` ⚡ ${node.sqlFrom.join(', ')}` : ' ⚡din')
             : '';
           const tgt = (node.target && node.target !== '(dynamic SQL)') ? ` → ${node.target}` : '';
-          const txt = node.action + (node.detail ? ` (${node.detail})` : '') + tgt + run + dyn + (node.line ? ` · L${node.line}` : '');
+          const filterGroups = groupFilters(node.filters);
+          const filt = filterGroups.length ? ` ⌕ ${filterGroups.join(', ')}` : '';
+          const txt = node.action + (node.detail ? ` (${node.detail})` : '') + tgt + run + dyn + filt + (node.line ? ` · L${node.line}` : '');
           lines.push(`${id}["${mmWrap(txt, 34)}"]:::${mmClass(node.action)}`);
           connect(pending, id);
           if (node.target && byName[node.target]) clicks.push(`click ${id} call sdOpen("${mmEsc(node.target)}")`);
@@ -244,13 +261,79 @@
     return [...lines, ...clicks].join('\n');
   }
 
+  // Cadena de impacto (`flowchart LR`) hasta N niveles, en ambas direcciones,
+  // combinando CALLS (entre objetos) y reads/writes (objeto<->tabla) - ver
+  // SD.impact.chain (impact.js) para el BFS. Un `subgraph` por nivel (negativo
+  // = upstream/"qué alimenta esto", positivo = downstream/"qué afecta esto")
+  // para que la profundidad se vea como columnas, no como un grafo plano.
+  const IMPACT_CLASSDEFS = [
+    'classDef obj fill:#2a2a30,stroke:#9cdcfe,color:#9cdcfe',
+    'classDef tbl fill:#2a3a2a,stroke:#9be7b4,color:#9be7b4',
+    'classDef root fill:#3a2a5a,stroke:#c8a2e8,color:#ffffff,stroke-width:2px',
+    'classDef more fill:#2a2a2a,stroke:#777,color:#999',
+  ];
+  function ImpactChainMermaid(rootName, DATA, maxDepth) {
+    const { levels, edges } = SD.impact.chain(rootName, DATA, maxDepth);
+    if (!levels.length) return null;
+
+    const ids = {};        // name -> mermaid node id
+    let counter = 0;
+    const idOf = name => ids[name] || (ids[name] = 'i' + (++counter));
+
+    const lines = ['flowchart LR'];
+    const clicks = [];
+    const rootLevelIdx = levels.findIndex(lv => lv.some(n => n.name === rootName));
+
+    levels.forEach((levelNodes, li) => {
+      const depth = li - rootLevelIdx;
+      if (depth === 0) {
+        for (const n of levelNodes) {
+          const id = idOf(n.name);
+          lines.push(`${id}{{"${mmWrap(n.name, 28)}"}}:::root`);
+          clicks.push(`click ${id} call sdOpen("${mmEsc(n.name)}")`);
+        }
+        return;
+      }
+      const label = depth < 0 ? `Nivel ${depth}` : `Nivel +${depth}`;
+      lines.push(`subgraph L${li}["${label}"]`);
+      for (const n of levelNodes) {
+        const id = idOf(n.name);
+        if (n.kind === 'more') { lines.push(`${id}["${mmSanitize(n.name)}"]:::more`); continue; }
+        const shape = n.kind === 'table' ? `[["${mmWrap(n.name, 24)}"]]` : `["${mmWrap(n.name, 24)}"]`;
+        lines.push(`${id}${shape}:::${n.kind === 'table' ? 'tbl' : 'obj'}`);
+        if (DATA.byName[n.name]) clicks.push(`click ${id} call sdOpen("${mmEsc(n.name)}")`);
+      }
+      lines.push('end');
+    });
+
+    for (const e of edges) {
+      const a = ids[e.from], b = ids[e.to];
+      if (!a || !b) continue;
+      lines.push(`${a} -->${e.label ? `|${mmSanitize(e.label)}|` : ''} ${b}`);
+    }
+
+    return [...lines, ...IMPACT_CLASSDEFS, ...clicks].join('\n');
+  }
+
   function paramTable(title, ps) {
     if (!ps.length) return '';
     return `<h3>${title} (${ps.length})</h3><table class="t"><tr><th>Nombre</th><th>Tipo</th></tr>` +
       ps.map(p => `<tr><td>${esc(p.name)}</td><td>${esc(p.type)}</td></tr>`).join('') + `</table>`;
   }
 
-  function ObjectView(o, DATA) {
+  // Selector de profundidad (1-5) para la cadena de impacto, compartido por
+  // ObjectView/TableView. Re-renderiza toda la vista al cambiar (SD.app.setImpactDepth).
+  function depthSelector(depth) {
+    const opts = [1, 2, 3, 4, 5].map(n => `<option value="${n}" ${n === depth ? 'selected' : ''}>${n} nivel${n > 1 ? 'es' : ''}</option>`).join('');
+    return `<select onchange="SD.app.setImpactDepth(this.value)">${opts}</select>`;
+  }
+
+  function impactSection(name, DATA, depth) {
+    const def = ImpactChainMermaid(name, DATA, depth);
+    return `<h3>Cadena de impacto ${depthSelector(depth)}</h3>${def ? SD.mm.block(def, 'Cadena de impacto') : '<span class="muted">sin relaciones encadenables</span>'}`;
+  }
+
+  function ObjectView(o, DATA, impactDepth) {
     const chip = n => DATA.byName[n] ? `<span class="chip" onclick="SD.app.openObject('${esc(n)}')">${esc(n)}</span>` : `<span class="chip muted">${esc(n)}</span>`;
     const actionTally = () => {
       const counts = {};
@@ -312,6 +395,8 @@
 
       ${(() => { const df = DataFlowMermaid(o, DATA); return df ? `<h3>Flujo de datos</h3>${SD.mm.block(df, 'Flujo de datos')}` : ''; })()}
 
+      ${impactSection(o.name, DATA, impactDepth || 3)}
+
       ${o.runtime ? (() => {
         const rt = o.runtime;
         const totals = [
@@ -352,7 +437,7 @@
     `;
   }
 
-  function TableView(t, DATA) {
+  function TableView(t, DATA, impactDepth) {
     const chip = n => DATA.byName[n] ? `<span class="chip" onclick="SD.app.openObject('${esc(n)}')">${esc(n)}</span>` : `<span class="chip muted">${esc(n)}</span>`;
     const colRow = c => `<tr><td>${c.pk ? '🔑 ' : ''}${esc(c.name)}</td><td>${esc(c.type)}</td><td>${c.nullable ? '' : 'NOT NULL'}</td><td>${c.identity ? 'IDENTITY' : ''}</td></tr>`;
     const neighbors = t.writers.map(w => ({ label: w.object, dir: 'in', color: '#ff8a80', role: w.op, onClick: DATA.byName[w.object] ? `SD.app.openObject('${esc(w.object)}')` : '' }))
@@ -377,6 +462,8 @@
         </div>
         <div><h3>Grafo rápido</h3>${SD.charts.miniGraph(t.name, neighbors)}</div>
       </div>
+
+      ${impactSection(t.name, DATA, impactDepth || 3)}
 
       <h3>Columnas (${t.columns.length})</h3>
       ${t.columns.length ? `<table class="t"><tr><th>Columna</th><th>Tipo</th><th>Null</th><th></th></tr>${t.columns.map(colRow).join('')}</table>` : '<span class="muted">sin esquema (no se analizó su CREATE TABLE)</span>'}

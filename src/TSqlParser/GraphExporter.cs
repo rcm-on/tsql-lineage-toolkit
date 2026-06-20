@@ -43,6 +43,11 @@ public class GraphPayload
 ///   (:Step)-[:TARGETS]->(:SqlObject)        when the target is a known proc/function/view
 ///   (:Step)-[:WRITES_TO]->(:Table)          for INSERT/UPDATE/DELETE/MERGE/ALTER targets
 ///   (:Step)-[:READS_FROM]->(:Table)         for SELECT ... FROM targets
+///   (:Step)-[:FILTERS_ON]->(:Column)        WHERE/JOIN-ON columns (--columns only) - what
+///                                            decided which rows the step touched, separate
+///                                            from READS_COLUMN/WRITES_COLUMN ("what got
+///                                            read/written"); also populated for steps
+///                                            injected from a resolved dynamic-SQL literal
 ///   (:SqlObject)-[:CALLS]->(:SqlObject)     caller -> callee, de-duplicated
 ///
 /// Node ids are "<Database>::<Schema.Object>" for SqlObjects (globally unique
@@ -316,7 +321,7 @@ public static class GraphExporter
                         EndNodeId = targetObjId,
                     });
                 }
-                else if (fl.ConsequenceTarget.Length > 0 && fl.ConsequenceType is "INSERT" or "UPDATE" or "DELETE" or "MERGE" or "SELECT" or "ALTER" or "TRUNCATE")
+                else if (fl.ConsequenceTarget.Length > 0 && fl.ConsequenceType is "INSERT" or "UPDATE" or "DELETE" or "MERGE" or "SELECT" or "ALTER" or "TRUNCATE" && !IsTempOrVariable(fl.ConsequenceTarget))
                 {
                     var (tableId, tableName) = GetOrCreateTable(graph, tableIds, db, fl.ConsequenceTarget);
                     var relType = fl.ConsequenceType is "SELECT" ? "READS_FROM" : "WRITES_TO";
@@ -385,6 +390,9 @@ public static class GraphExporter
                     // plus READS_COLUMN for the columns of B referenced via "b.Col".
                     foreach (var extra in fl.ExtraReads)
                     {
+                        if (IsTempOrVariable(extra.Table))
+                            continue;
+
                         var (extraTableId, extraTableName) = GetOrCreateTable(graph, tableIds, db, extra.Table);
                         var (isExtraCrossDb, extraTargetDb) = DetectCrossDb(extra.Table, db);
                         var extraRelProps = new Dictionary<string, object>
@@ -419,6 +427,35 @@ public static class GraphExporter
                                     EndNodeId = colId,
                                 });
                             }
+                        }
+                    }
+                }
+
+                // FILTERS_ON: columns from this step's own WHERE/JOIN-ON predicates -
+                // "what decided which rows got touched", as opposed to READS_COLUMN/
+                // WRITES_COLUMN ("what got read/written"). Independent of which branch
+                // above resolved the consequence target (or whether it resolved to
+                // another SqlObject), and works the same for steps injected by
+                // SqlAnalyzer.ResolveDynamicSqlLinks - dynamic SQL's own WHERE clause
+                // surfaces here too, since FilterColumns is just carried over from the
+                // inner re-parsed FlowLinkInfo.
+                if (includeColumns)
+                {
+                    foreach (var filterCol in fl.FilterColumns)
+                    {
+                        if (IsTempOrVariable(filterCol.Table))
+                            continue;
+
+                        var (filterTableId, filterTableName) = GetOrCreateTable(graph, tableIds, db, filterCol.Table);
+                        foreach (var colName in filterCol.Columns)
+                        {
+                            var colId = GetOrCreateColumn(graph, columnIds, filterTableId, filterTableName, colName);
+                            graph.Relationships.Add(new GraphRel
+                            {
+                                Type = "FILTERS_ON",
+                                StartNodeId = stepId,
+                                EndNodeId = colId,
+                            });
                         }
                     }
                 }
@@ -872,7 +909,7 @@ public static class GraphExporter
     /// </summary>
     private static string ClassifyStepType(string consequenceType, string target)
     {
-        var isTemp = target.StartsWith("#") || target.StartsWith("@");
+        var isTemp = IsTempOrVariable(target);
         return consequenceType switch
         {
             "INSERT" => isTemp ? "Staging" : "Load",
@@ -890,6 +927,9 @@ public static class GraphExporter
             _ => "Operation"
         };
     }
+
+    /// <summary>True for a table variable ("@T") or local/global temp table ("#T"/"##T") reference - never emitted as a :Table node, so the Table graph only contains real persisted tables/views.</summary>
+    private static bool IsTempOrVariable(string target) => target.StartsWith('#') || target.StartsWith('@');
 
     /// <summary>
     /// Detects cross-database table references (3-part names like "OtherDb.dbo.Table").
