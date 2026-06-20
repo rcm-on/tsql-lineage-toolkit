@@ -35,13 +35,23 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.invoices:column:TransactionTypeID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_TransactionTypeID_dce88c36.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_TransactionTypeID_dce88c36.json",
+      "props": {
+        "logic": "(SELECT TransactionTypeID  FROM   [Application].TransactionTypes  WHERE  TransactionTypeName = N'Customer Invoice')",
+        "line_no": 124,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step7"
+      }
     },
     {
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.invoices:column:TransactionTypeName",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_TransactionTypeName_3417d534.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_TransactionTypeName_3417d534.json",
+      "props": {
+        "logic": "(SELECT TransactionTypeID  FROM   [Application].TransactionTypes  WHERE  TransactionTypeName = N'Customer Invoice')",
+        "line_no": 124,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step7"
+      }
     },
     {
       "type": "REFERENCES",

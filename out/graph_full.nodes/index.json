@@ -1,7 +1,7 @@
 ﻿{
   "meta": {
     "database": "WideWorldImporters",
-    "generated_at": "2026-06-20T07:10:49.9362064+02:00",
+    "generated_at": "2026-06-20T10:32:07.6797894+02:00",
     "tool": "sql-analyzer/tsql-parser",
     "format": "nodestore-v1"
   },
@@ -43,6 +43,7 @@
       "WRITES_COLUMN",
       "FILTERS_ON",
       "DERIVES_FROM",
+      "CONDITIONED_BY",
       "NESTED_IN",
       "GOVERNS",
       "CALLS",
@@ -56,7 +57,7 @@
   },
   "stats": {
     "total_nodes": 1328,
-    "total_edges": 3134,
+    "total_edges": 3153,
     "objects": 47,
     "shared_nodes": 682,
     "orphan_edges": 0,
@@ -91,6 +92,7 @@
       "WRITES_TO": 81,
       "WRITES_COLUMN": 111,
       "READS_COLUMN": 103,
+      "CONDITIONED_BY": 19,
       "DERIVES_FROM": 35,
       "AFFECTS": 35,
       "BELONGS_TO": 47,

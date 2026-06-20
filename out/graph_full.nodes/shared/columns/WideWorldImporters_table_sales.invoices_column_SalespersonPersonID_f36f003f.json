@@ -49,7 +49,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orders:column:SalespersonPersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_SalespersonPersonID_3eada378.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_SalespersonPersonID_3eada378.json",
+      "props": {
+        "logic": "o.SalespersonPersonID",
+        "line_no": 51,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step3"
+      }
     },
     {
       "type": "REFERENCES",

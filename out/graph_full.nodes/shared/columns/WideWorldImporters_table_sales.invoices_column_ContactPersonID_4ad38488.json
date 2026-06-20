@@ -35,7 +35,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orders:column:ContactPersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_ContactPersonID_ec9da63f.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_ContactPersonID_ec9da63f.json",
+      "props": {
+        "logic": "o.ContactPersonID",
+        "line_no": 51,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step3"
+      }
     },
     {
       "type": "REFERENCES",

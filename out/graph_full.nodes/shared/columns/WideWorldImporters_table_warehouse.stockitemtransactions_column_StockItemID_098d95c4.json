@@ -49,7 +49,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.invoicelines:column:StockItemID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_StockItemID_f273d53f.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_StockItemID_f273d53f.json",
+      "props": {
+        "logic": "il.StockItemID",
+        "line_no": 95,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step5"
+      }
     },
     {
       "type": "REFERENCES",

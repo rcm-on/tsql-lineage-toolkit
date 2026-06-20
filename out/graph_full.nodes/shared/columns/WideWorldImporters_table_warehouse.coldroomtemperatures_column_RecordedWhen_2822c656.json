@@ -56,5 +56,16 @@
       "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "CONDITIONED_BY",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ColdRoomSensorNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_ColdRoomSensorNum_8f23eeb1.json",
+      "props": {
+        "line_no": 30,
+        "caused_by_step": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1"
+      }
+    }
+  ]
 }

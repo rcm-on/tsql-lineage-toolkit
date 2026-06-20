@@ -30,5 +30,26 @@
       "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "CONDITIONED_BY",
+      "to": "WideWorldImporters:table:application.people:column:IsPermittedToLogon",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_IsPermittedToLogon_6b16c213.json",
+      "props": {
+        "line_no": 12,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0"
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "to": "WideWorldImporters:table:application.people:column:PersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
+      "props": {
+        "line_no": 12,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0"
+      }
+    }
+  ]
 }

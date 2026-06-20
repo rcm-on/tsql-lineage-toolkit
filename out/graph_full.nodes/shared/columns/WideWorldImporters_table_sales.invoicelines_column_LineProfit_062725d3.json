@@ -49,19 +49,34 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orderlines:column:PickedQuantity",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PickedQuantity_7a0db540.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PickedQuantity_7a0db540.json",
+      "props": {
+        "logic": "ROUND(ol.PickedQuantity * (ol.UnitPrice - sih.LastCostPrice), 2)",
+        "line_no": 75,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
     },
     {
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orderlines:column:UnitPrice",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_UnitPrice_52388afa.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_UnitPrice_52388afa.json",
+      "props": {
+        "logic": "ROUND(ol.PickedQuantity * (ol.UnitPrice - sih.LastCostPrice), 2)",
+        "line_no": 75,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
     },
     {
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:warehouse.stockitemholdings:column:LastCostPrice",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_LastCostPrice_1e5b87f4.json"
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_LastCostPrice_1e5b87f4.json",
+      "props": {
+        "logic": "ROUND(ol.PickedQuantity * (ol.UnitPrice - sih.LastCostPrice), 2)",
+        "line_no": 75,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
     }
   ]
 }

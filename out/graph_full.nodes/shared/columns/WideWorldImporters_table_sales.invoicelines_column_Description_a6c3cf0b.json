@@ -49,7 +49,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orderlines:column:Description",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_Description_99cbfd91.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_Description_99cbfd91.json",
+      "props": {
+        "logic": "ol.[Description]",
+        "line_no": 75,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
     }
   ]
 }

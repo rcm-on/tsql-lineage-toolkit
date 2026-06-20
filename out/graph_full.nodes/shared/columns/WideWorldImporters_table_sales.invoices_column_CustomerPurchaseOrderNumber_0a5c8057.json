@@ -35,7 +35,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orders:column:CustomerPurchaseOrderNumber",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_CustomerPurchaseOrderNumber_344a0f2e.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_CustomerPurchaseOrderNumber_344a0f2e.json",
+      "props": {
+        "logic": "o.CustomerPurchaseOrderNumber",
+        "line_no": 51,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step3"
+      }
     }
   ]
 }

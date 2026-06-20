@@ -35,7 +35,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.customers:column:DeliveryMethodID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryMethodID_926417bd.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryMethodID_926417bd.json",
+      "props": {
+        "logic": "c.DeliveryMethodID",
+        "line_no": 51,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step3"
+      }
     },
     {
       "type": "REFERENCES",

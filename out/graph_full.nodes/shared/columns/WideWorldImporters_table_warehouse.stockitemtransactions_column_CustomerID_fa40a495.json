@@ -49,7 +49,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.invoices:column:CustomerID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_CustomerID_befadb1f.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_CustomerID_befadb1f.json",
+      "props": {
+        "logic": "i.CustomerID",
+        "line_no": 95,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step5"
+      }
     },
     {
       "type": "REFERENCES",

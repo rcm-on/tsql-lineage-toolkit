@@ -49,7 +49,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orderlines:column:PickedQuantity",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PickedQuantity_7a0db540.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PickedQuantity_7a0db540.json",
+      "props": {
+        "logic": "ol.PickedQuantity",
+        "line_no": 75,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
     }
   ]
 }

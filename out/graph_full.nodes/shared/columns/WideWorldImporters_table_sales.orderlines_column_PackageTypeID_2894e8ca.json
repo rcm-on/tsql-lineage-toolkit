@@ -49,7 +49,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:warehouse.stockitems:column:UnitPackageID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_UnitPackageID_63c6c6d7.json"
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_UnitPackageID_63c6c6d7.json",
+      "props": {
+        "logic": "si.UnitPackageID",
+        "line_no": 40,
+        "caused_by_step": "WideWorldImporters::Website.InsertCustomerOrders#step3"
+      }
     },
     {
       "type": "REFERENCES",

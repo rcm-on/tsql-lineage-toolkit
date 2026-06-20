@@ -49,7 +49,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orderlines:column:TaxRate",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_TaxRate_c3c42b15.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_TaxRate_c3c42b15.json",
+      "props": {
+        "logic": "ol.TaxRate",
+        "line_no": 75,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
     }
   ]
 }

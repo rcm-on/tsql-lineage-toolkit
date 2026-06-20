@@ -49,19 +49,34 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orderlines:column:PickedQuantity",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PickedQuantity_7a0db540.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PickedQuantity_7a0db540.json",
+      "props": {
+        "logic": "ROUND(ol.PickedQuantity * ol.UnitPrice, 2) + ROUND(ol.PickedQuantity * ol.UnitPrice * ol.TaxRate / 100.0, 2)",
+        "line_no": 75,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
     },
     {
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orderlines:column:TaxRate",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_TaxRate_c3c42b15.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_TaxRate_c3c42b15.json",
+      "props": {
+        "logic": "ROUND(ol.PickedQuantity * ol.UnitPrice, 2) + ROUND(ol.PickedQuantity * ol.UnitPrice * ol.TaxRate / 100.0, 2)",
+        "line_no": 75,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
     },
     {
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.orderlines:column:UnitPrice",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_UnitPrice_52388afa.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_UnitPrice_52388afa.json",
+      "props": {
+        "logic": "ROUND(ol.PickedQuantity * ol.UnitPrice, 2) + ROUND(ol.PickedQuantity * ol.UnitPrice * ol.TaxRate / 100.0, 2)",
+        "line_no": 75,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
     }
   ]
 }

@@ -35,7 +35,12 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.customers:column:PrimaryContactPersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_PrimaryContactPersonID_61c9deed.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_PrimaryContactPersonID_61c9deed.json",
+      "props": {
+        "logic": "btc.PrimaryContactPersonID",
+        "line_no": 51,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step3"
+      }
     },
     {
       "type": "REFERENCES",

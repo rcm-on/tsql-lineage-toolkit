@@ -35,13 +35,23 @@
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.customers:column:DeliveryAddressLine1",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryAddressLine1_0c3d03c7.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryAddressLine1_0c3d03c7.json",
+      "props": {
+        "logic": "c.DeliveryAddressLine1 + N', ' + c.DeliveryAddressLine2",
+        "line_no": 51,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step3"
+      }
     },
     {
       "type": "DERIVES_FROM",
       "to": "WideWorldImporters:table:sales.customers:column:DeliveryAddressLine2",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryAddressLine2_fa7348a3.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryAddressLine2_fa7348a3.json",
+      "props": {
+        "logic": "c.DeliveryAddressLine1 + N', ' + c.DeliveryAddressLine2",
+        "line_no": 51,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step3"
+      }
     }
   ]
 }
