@@ -39,8 +39,8 @@ This toolkit parses the real AST of every procedure / function / trigger / view 
 | 9 | **Offline dashboard** — zero install | Drop `index.html` in a browser; no npm, no server, no cloud |
 | 10 | **Interactive ORM diagram** | Select tables → Mermaid ER diagram with columns and FK arrows |
 | 11 | **Multiple export formats** | Neo4j JSON · GraphML · D3/Graphify · navigable NodeStore |
-| 12 | **Agent-friendly NodeStore** | AI tools read 16x less data to answer lineage questions |
-| 13 | **Incremental updates** | `update-nodestore` only rewrites changed objects |
+| 12 | **Agent-friendly NodeStore** | AI tools read 16–60x less data to answer lineage questions |
+| 13 | **Incremental updates** | `update-nodestore` only rewrites objects whose content actually changed — 11–57x less I/O than regenerating the full graph, measured on real edits ([proof](docs/nodestore-analysis.md#caso-3--actualizar-tras-editar-1-de-47-objetos-coste-de-escritura-no-de-lectura-wideworldimporters-mismo-corpus-que-el-caso-1)) |
 | 14 | **No cloud, no telemetry, no license fee** | Runs fully on-premise on Windows/Linux/macOS |
 | 15 | **Live SQL Server integration** | `extract` + `validate` commands; or work from `.sql` files offline |
 | 16 | **AI-cost optimised** | NodeStore: 16–60× fewer tokens vs full graph load; fits any context window |
@@ -221,7 +221,10 @@ tsql-lineage-toolkit/
 
 **NodeStore** splits the graph into small, navigable files. An agent answering "what writes to `Warehouse.StockItems`?" reads 3 files (93 KB) instead of the full 1.5 MB graph — **16x less data, 6.5x faster, answer already pre-structured with indirect hop chains**.
 
+That's the *read* side. On the *write* side, `update-nodestore` hashes every object/shared resource and only rewrites what actually changed: editing 1 of 47 procedures rewrites ~144 KB (the object file + the small global indexes) instead of regenerating the full 1.54 MB graph — **11–57x less I/O**, and a comment-only edit that doesn't change the analysis rewrites **0 bytes**.
+
 → Full analysis with token costs, agent navigation protocol and framework integrations: **[docs/ai-agents.md](docs/ai-agents.md)**
+→ Measured read/write benchmarks (files, bytes, hops, time) on real WideWorldImporters data: **[docs/nodestore-analysis.md](docs/nodestore-analysis.md)**
 
 ---
 
