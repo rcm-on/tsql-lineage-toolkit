@@ -46,6 +46,7 @@ It doesn't stop at "table A feeds table B". Every column-to-column edge carries 
 | 14 | **No cloud, no telemetry, no license fee** | Runs fully on-premise on Windows/Linux/macOS |
 | 15 | **Live SQL Server integration** | `extract` + `validate` commands; or work from `.sql` files offline |
 | 16 | **AI-cost optimised** | NodeStore: 16–60× fewer tokens vs full graph load; fits any context window |
+| 17 | **Business-rule lineage** (`CONDITIONED_BY`) | For `UPDATE T SET Col = ... WHERE Filter`, links the written column directly to the `WHERE`/`JOIN-ON` columns that decided which rows changed — answers "what condition gated this mutation?" in one hop, distinct from `DERIVES_FROM`'s "what was it computed from?" |
 
 ---
 
