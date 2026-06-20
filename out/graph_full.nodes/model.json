@@ -250,7 +250,7 @@
       "label": "SqlObject",
       "name": "Website.Customers",
       "path": "objects/WideWorldImporters_Website.Customers/object.json",
-      "degree": 0
+      "degree": 6
     },
     {
       "id": "WideWorldImporters::Website.InsertCustomerOrders",
@@ -320,21 +320,21 @@
       "label": "SqlObject",
       "name": "Website.Suppliers",
       "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
-      "degree": 0
+      "degree": 5
     },
     {
       "id": "WideWorldImporters::Website.VehicleTemperatures",
       "label": "SqlObject",
       "name": "Website.VehicleTemperatures",
       "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json",
-      "degree": 0
+      "degree": 1
     },
     {
       "id": "WideWorldImporters:table:application.cities",
       "label": "Table",
       "name": "Application.Cities",
       "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
-      "degree": 11
+      "degree": 13
     },
     {
       "id": "WideWorldImporters:table:application.cities_archive",
@@ -362,7 +362,7 @@
       "label": "Table",
       "name": "Application.DeliveryMethods",
       "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
-      "degree": 9
+      "degree": 11
     },
     {
       "id": "WideWorldImporters:table:application.deliverymethods_archive",
@@ -390,7 +390,7 @@
       "label": "Table",
       "name": "Application.People",
       "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
-      "degree": 39
+      "degree": 41
     },
     {
       "id": "WideWorldImporters:table:application.people_archive",
@@ -453,7 +453,7 @@
       "label": "Table",
       "name": "Purchasing.SupplierCategories",
       "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
-      "degree": 6
+      "degree": 7
     },
     {
       "id": "WideWorldImporters:table:purchasing.suppliercategories_archive",
@@ -467,7 +467,7 @@
       "label": "Table",
       "name": "Purchasing.Suppliers",
       "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
-      "degree": 14
+      "degree": 15
     },
     {
       "id": "WideWorldImporters:table:purchasing.suppliers_archive",
@@ -488,7 +488,7 @@
       "label": "Table",
       "name": "Sales.BuyingGroups",
       "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
-      "degree": 7
+      "degree": 8
     },
     {
       "id": "WideWorldImporters:table:sales.buyinggroups_archive",
@@ -502,7 +502,7 @@
       "label": "Table",
       "name": "Sales.CustomerCategories",
       "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
-      "degree": 7
+      "degree": 8
     },
     {
       "id": "WideWorldImporters:table:sales.customercategories_archive",
@@ -516,7 +516,7 @@
       "label": "Table",
       "name": "Sales.Customers",
       "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
-      "degree": 22
+      "degree": 23
     },
     {
       "id": "WideWorldImporters:table:sales.customers_archive",
@@ -663,7 +663,7 @@
       "label": "Table",
       "name": "Warehouse.VehicleTemperatures",
       "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json",
-      "degree": 1
+      "degree": 2
     },
     {
       "id": "WideWorldImporters:table:sys.indexes",
@@ -1439,6 +1439,36 @@
       "to": "WideWorldImporters:table:application.people"
     },
     {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Customers",
+      "to": "WideWorldImporters:table:sales.customers"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Customers",
+      "to": "WideWorldImporters:table:sales.customercategories"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Customers",
+      "to": "WideWorldImporters:table:application.people"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Customers",
+      "to": "WideWorldImporters:table:sales.buyinggroups"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Customers",
+      "to": "WideWorldImporters:table:application.deliverymethods"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Customers",
+      "to": "WideWorldImporters:table:application.cities"
+    },
+    {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::Website.InsertCustomerOrders",
       "to": "WideWorldImporters:table:sales.orders"
@@ -1582,6 +1612,36 @@
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForSuppliers",
       "to": "WideWorldImporters:table:application.people"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Suppliers",
+      "to": "WideWorldImporters:table:purchasing.suppliers"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Suppliers",
+      "to": "WideWorldImporters:table:purchasing.suppliercategories"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Suppliers",
+      "to": "WideWorldImporters:table:application.people"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Suppliers",
+      "to": "WideWorldImporters:table:application.deliverymethods"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Suppliers",
+      "to": "WideWorldImporters:table:application.cities"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.VehicleTemperatures",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures"
     },
     {
       "type": "AFFECTS",

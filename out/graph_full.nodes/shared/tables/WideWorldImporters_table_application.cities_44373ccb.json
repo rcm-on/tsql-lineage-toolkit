@@ -76,6 +76,19 @@
         }
       }
     ],
+    "WideWorldImporters::Website.Customers": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.Customers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Customers/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].Cities",
+          "via": "JOIN"
+        }
+      }
+    ],
     "WideWorldImporters::Website.SearchForCustomers": [
       {
         "type": "READS_FROM",
@@ -95,6 +108,19 @@
         "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].Cities",
+          "via": "JOIN"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.Suppliers": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.Suppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
         "props": {
           "action_type": "SELECT",
           "table": "[Application].Cities",
@@ -166,6 +192,17 @@
     },
     {
       "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Customers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Customers/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].Cities",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForCustomers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
@@ -180,6 +217,17 @@
       "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].Cities",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Suppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].Cities",

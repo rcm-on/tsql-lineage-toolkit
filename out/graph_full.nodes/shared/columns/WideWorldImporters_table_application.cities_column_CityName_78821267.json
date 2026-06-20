@@ -13,6 +13,14 @@
     "ordinal": 2
   },
   "refs": {
+    "WideWorldImporters::Website.Customers": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.Customers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      }
+    ],
     "WideWorldImporters::Website.SearchForCustomers": [
       {
         "type": "READS_COLUMN",
@@ -28,9 +36,23 @@
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
       }
+    ],
+    "WideWorldImporters::Website.Suppliers": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.Suppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+      }
     ]
   },
   "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Customers/object.json"
+    },
     {
       "type": "READS_COLUMN",
       "from": "WideWorldImporters::Website.SearchForCustomers#step0",
@@ -42,6 +64,12 @@
       "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.Suppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
     }
   ],
   "edges_out": []

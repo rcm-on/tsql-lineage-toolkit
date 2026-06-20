@@ -45,10 +45,21 @@ public static class SqlAnalyzer
         var ctx = new WalkContext { Db = db, TableColumns = tableColumns };
 
         var statementList = FindBodyStatementList(topStatements);
+
+        // CREATE/ALTER VIEW has no StatementList (its body is a single SELECT
+        // exposed via a "SelectStatement" property, not a nested statement block) -
+        // walk that SELECT directly so the view's own lineage (which table/columns
+        // it reads) gets computed exactly like any other object's SELECT step.
+        var viewSelect = statementList == null ? FindViewSelect(topStatements) : null;
+
         IList<TSqlStatement> bodyStatements;
         if (statementList != null)
         {
             bodyStatements = statementList.Statements;
+        }
+        else if (viewSelect != null)
+        {
+            bodyStatements = new List<TSqlStatement> { viewSelect };
         }
         else
         {
@@ -84,7 +95,7 @@ public static class SqlAnalyzer
         result.HasCursor = ctx.HasCursor;
         result.DynamicSqlCount = ctx.DynamicSqlCount;
         result.ComplexityScore = 1 + ctx.DecisionCount;
-        result.ObjectType = statementList != null ? DetectObjectType(topStatements) : "SCRIPT";
+        result.ObjectType = statementList != null ? DetectObjectType(topStatements) : (viewSelect != null ? "VIEW" : "SCRIPT");
 
         // Re-parse any EXEC steps whose dynamic SQL resolved to a pure literal:
         // extract INSERT/SELECT/UPDATE/DELETE/MERGE targets from the literal text
@@ -181,6 +192,24 @@ public static class SqlAnalyzer
             var prop = stmt.GetType().GetProperty("StatementList");
             if (prop?.GetValue(stmt) is StatementList sl)
                 return sl;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Finds a CREATE/ALTER VIEW's body SELECT via its "SelectStatement" property
+    /// (present on CreateViewStatement/AlterViewStatement, but - unlike procedures/
+    /// functions/triggers - never wrapped in a StatementList, so FindBodyStatementList
+    /// never finds it). Matched by type name containing "View" so both CREATE and
+    /// ALTER variants resolve without enumerating every concrete ScriptDom class.
+    /// </summary>
+    private static SelectStatement? FindViewSelect(IList<TSqlStatement> topStatements)
+    {
+        foreach (var stmt in topStatements)
+        {
+            if (stmt.GetType().Name.Contains("View") &&
+                stmt.GetType().GetProperty("SelectStatement")?.GetValue(stmt) is SelectStatement sel)
+                return sel;
         }
         return null;
     }

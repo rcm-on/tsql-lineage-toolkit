@@ -12,7 +12,23 @@
     "is_primary_key": true,
     "ordinal": 1
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Website.VehicleTemperatures": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.VehicleTemperatures#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json"
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.VehicleTemperatures#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json"
+    }
+  ],
   "edges_out": []
 }

@@ -100,6 +100,18 @@
           "table": "Purchasing.Suppliers"
         }
       }
+    ],
+    "WideWorldImporters::Website.Suppliers": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.Suppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Purchasing.Suppliers"
+        }
+      }
     ]
   },
   "edges_in": [
@@ -179,6 +191,16 @@
       "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Purchasing.Suppliers"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Suppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
       "props": {
         "action_type": "SELECT",
         "table": "Purchasing.Suppliers"

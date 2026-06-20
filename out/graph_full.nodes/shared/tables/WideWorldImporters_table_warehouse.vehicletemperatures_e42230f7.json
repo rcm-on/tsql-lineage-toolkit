@@ -19,6 +19,18 @@
           "table": "Warehouse.VehicleTemperatures"
         }
       }
+    ],
+    "WideWorldImporters::Website.VehicleTemperatures": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.VehicleTemperatures#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.VehicleTemperatures"
+        }
+      }
     ]
   },
   "edges_in": [
@@ -29,6 +41,16 @@
       "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json",
       "props": {
         "action_type": "INSERT",
+        "table": "Warehouse.VehicleTemperatures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.VehicleTemperatures#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json",
+      "props": {
+        "action_type": "SELECT",
         "table": "Warehouse.VehicleTemperatures"
       }
     }

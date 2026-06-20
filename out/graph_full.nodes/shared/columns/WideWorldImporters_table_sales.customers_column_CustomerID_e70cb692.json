@@ -43,6 +43,14 @@
         "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
       }
     ],
+    "WideWorldImporters::Website.Customers": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.Customers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      }
+    ],
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "READS_COLUMN",
@@ -92,6 +100,12 @@
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Customers/object.json"
     },
     {
       "type": "READS_COLUMN",

@@ -20,6 +20,14 @@
         "from_label": "Variable",
         "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
       }
+    ],
+    "WideWorldImporters::Website.Customers": [
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.Customers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      }
     ]
   },
   "edges_in": [
@@ -28,6 +36,12 @@
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#var:@CustomerCategoryID",
       "from_label": "Variable",
       "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.Customers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Customers/object.json"
     }
   ],
   "edges_out": [

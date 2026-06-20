@@ -75,6 +75,32 @@
           "table": "[Application].[DeliveryMethods]"
         }
       }
+    ],
+    "WideWorldImporters::Website.Customers": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.Customers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Customers/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].DeliveryMethods",
+          "via": "JOIN"
+        }
+      }
+    ],
+    "WideWorldImporters::Website.Suppliers": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.Suppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].DeliveryMethods",
+          "via": "JOIN"
+        }
+      }
     ]
   },
   "edges_in": [
@@ -136,6 +162,28 @@
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[DeliveryMethods]"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Customers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Customers/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].DeliveryMethods",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Suppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].DeliveryMethods",
+        "via": "JOIN"
       }
     }
   ],

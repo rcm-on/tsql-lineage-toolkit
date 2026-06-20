@@ -47,6 +47,9 @@ It doesn't stop at "table A feeds table B". Every column-to-column edge carries 
 | 15 | **Live SQL Server integration** | `extract` + `validate` commands; or work from `.sql` files offline |
 | 16 | **AI-cost optimised** | NodeStore: 16–60× fewer tokens vs full graph load; fits any context window |
 | 17 | **Business-rule lineage** (`CONDITIONED_BY`) | For `UPDATE T SET Col = ... WHERE Filter`, links the written column directly to the `WHERE`/`JOIN-ON` columns that decided which rows changed — answers "what condition gated this mutation?" in one hop, distinct from `DERIVES_FROM`'s "what was it computed from?" |
+| 18 | **Transitive `#temp`/`@TableVar` lineage** | `INSERT #Staging SELECT Col FROM A` then `INSERT B SELECT Col FROM #Staging` resolves straight through to `B.Col DERIVES_FROM A.Col` (tagged `via_transient`) — no phantom Table node for the temp bridge, and the chain survives any number of hops |
+| 19 | **VIEW expansion** | A view's own `SELECT` body is parsed for its real base table(s); any `SELECT ... FROM AnalyzedView` elsewhere bridges straight through to those base tables/columns (tagged `via_view`), not just the view's own node |
+| 20 | **Cross-database CALLS resolution** | `EXEC OtherDb.dbo.Proc` resolves to the real analyzed object in `OtherDb` (not just a dangling text label), tagged `is_cross_database` |
 
 ---
 
@@ -199,7 +202,7 @@ tsql-lineage-toolkit/
 │   ├── GraphMlExporter.cs      # GraphML for Gephi / yEd / Cytoscape
 │   └── GraphifyExporter.cs     # Flat {meta,stats,nodes,edges} for D3
 │
-├── tests/TSqlParser.Tests/    # xUnit test suite (42 tests)
+├── tests/TSqlParser.Tests/    # xUnit test suite (54 tests)
 │
 ├── dashboard/                 # Offline browser dashboard (vanilla JS, no build)
 │   ├── src/shape.js            # JSON → dashboard model
@@ -236,7 +239,7 @@ That's the *read* side. On the *write* side, `update-nodestore` hashes every obj
 ```bash
 dotnet build
 dotnet test
-# 42/42 tests pass (xUnit)
+# 54/54 tests pass (xUnit)
 ```
 
 End-to-end dashboard smoke test:
@@ -291,9 +294,6 @@ If you add a new T-SQL pattern, include a test case in `tests/TSqlParser.Tests/L
 
 ## Roadmap
 
-- [ ] Transitive lineage through `#temp`/`@table` variables (bridge `RealTableA -> #Temp -> RealTableB` into a direct `DERIVES_FROM`, tagged `via_transient`)
-- [ ] VIEW expansion — resolve `INSERT INTO view` to base table at lineage time
-- [ ] Cross-database EXEC lineage (follow `EXEC OtherDb.dbo.spProc`)
 - [ ] Lineage diff between two graph snapshots (what changed between releases?)
 - [ ] REST API / HTTP server mode for IDE plugins
 - [ ] VS Code extension — hover a table name → instant lineage popup

@@ -20,6 +20,14 @@
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
       }
+    ],
+    "WideWorldImporters::Website.VehicleTemperatures": [
+      {
+        "type": "READS_COLUMN",
+        "from": "WideWorldImporters::Website.VehicleTemperatures#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json"
+      }
     ]
   },
   "edges_in": [
@@ -28,6 +36,12 @@
       "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
+    },
+    {
+      "type": "READS_COLUMN",
+      "from": "WideWorldImporters::Website.VehicleTemperatures#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json"
     }
   ],
   "edges_out": []

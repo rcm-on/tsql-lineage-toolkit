@@ -151,6 +151,14 @@
         "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
       }
     ],
+    "WideWorldImporters::Website.Customers": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.Customers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      }
+    ],
     "WideWorldImporters::Website.RecordColdRoomTemperatures": [
       {
         "type": "ACTION",
@@ -197,6 +205,22 @@
         "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.Suppliers": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.Suppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.VehicleTemperatures": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.VehicleTemperatures#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json"
       }
     ]
   },
@@ -317,6 +341,12 @@
     },
     {
       "type": "ACTION",
+      "from": "WideWorldImporters::Website.Customers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Customers/object.json"
+    },
+    {
+      "type": "ACTION",
       "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
@@ -350,6 +380,18 @@
       "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.Suppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.VehicleTemperatures#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json"
     }
   ],
   "edges_out": []

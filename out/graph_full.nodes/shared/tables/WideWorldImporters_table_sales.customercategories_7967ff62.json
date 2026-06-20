@@ -75,6 +75,19 @@
           "table": "[Sales].[CustomerCategories]"
         }
       }
+    ],
+    "WideWorldImporters::Website.Customers": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.Customers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Customers/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Sales.CustomerCategories",
+          "via": "JOIN"
+        }
+      }
     ]
   },
   "edges_in": [
@@ -136,6 +149,17 @@
       "props": {
         "action_type": "ALTER",
         "table": "[Sales].[CustomerCategories]"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Customers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Customers/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.CustomerCategories",
+        "via": "JOIN"
       }
     }
   ],

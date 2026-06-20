@@ -75,6 +75,19 @@
           "table": "[Purchasing].[SupplierCategories]"
         }
       }
+    ],
+    "WideWorldImporters::Website.Suppliers": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.Suppliers#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Purchasing.SupplierCategories",
+          "via": "JOIN"
+        }
+      }
     ]
   },
   "edges_in": [
@@ -136,6 +149,17 @@
       "props": {
         "action_type": "ALTER",
         "table": "[Purchasing].[SupplierCategories]"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.Suppliers#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Purchasing.SupplierCategories",
+        "via": "JOIN"
       }
     }
   ],
