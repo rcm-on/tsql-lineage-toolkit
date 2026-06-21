@@ -65,6 +65,19 @@ public static class AstWalker
                 case DeclareCursorStatement dcs:
                     ctx.HasCursor = true;
                     AddLink(ctx, condStack, "DECLARE_CURSOR", dcs.Name?.Value ?? "", stmt);
+                    // A cursor's SELECT reads real tables (often the whole point of the
+                    // cursor: "DECLARE c CURSOR FOR SELECT ... FROM RealTable [UNION ...]").
+                    // Previously only the cursor name was recorded, so those READS_FROM
+                    // were lost entirely. Walk every QuerySpecification in the definition
+                    // (UNION/parenthesized branches included) and emit its source reads.
+                    foreach (var cursorFrom in CursorFromClauses(dcs.CursorDefinition?.Select?.QueryExpression))
+                    {
+                        var cursorRefs = CollectTableRefs(cursorFrom, cteNames, cteBaseTables);
+                        if (cursorRefs.Count == 0)
+                            continue;
+                        var cursorExtraReads = BuildExtraReads(cursorRefs, new List<TableColumnRef>(), skipFirst: true);
+                        AddLink(ctx, condStack, "SELECT", cursorRefs[0].Table, stmt, cteNames, cteBaseTables, extraReads: cursorExtraReads);
+                    }
                     break;
 
                 case SetVariableStatement svs:
@@ -713,6 +726,29 @@ public static class AstWalker
     /// simply contribute nothing, so a qualifier referencing their alias won't
     /// match any entry here and is safely dropped by SplitColumnsByTable.
     /// </summary>
+    /// <summary>
+    /// Every FROM clause reachable from a query expression, descending through UNION/
+    /// EXCEPT/INTERSECT (BinaryQueryExpression) and parentheses - so a cursor (or any
+    /// set-operation query) whose branches each read different tables contributes all
+    /// of them, not just the first QuerySpecification.
+    /// </summary>
+    private static IEnumerable<FromClause> CursorFromClauses(QueryExpression? qe)
+    {
+        switch (qe)
+        {
+            case QuerySpecification { FromClause: not null } qs:
+                yield return qs.FromClause;
+                break;
+            case BinaryQueryExpression bqe:
+                foreach (var f in CursorFromClauses(bqe.FirstQueryExpression)) yield return f;
+                foreach (var f in CursorFromClauses(bqe.SecondQueryExpression)) yield return f;
+                break;
+            case QueryParenthesisExpression qpe:
+                foreach (var f in CursorFromClauses(qpe.QueryExpression)) yield return f;
+                break;
+        }
+    }
+
     private static List<(string Alias, string Table)> CollectTableRefs(FromClause? fromClause, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
     {
         var result = new List<(string Alias, string Table)>();

@@ -390,6 +390,57 @@ public static class GraphExporter
                     EndNodeId = actionId,
                 });
 
+                // ExtraReads: "... FROM A JOIN B ..." also reads from B (and further
+                // JOIN partners) - each gets its own READS_FROM, plus READS_COLUMN for
+                // the columns referenced via "b.Col". Extracted as a local so it can
+                // fire both when the consequence target is a real table AND when it is a
+                // #temp/@table-variable (e.g. "INSERT #Staging SELECT FROM RealTable" -
+                // the temp write isn't graphed, but the read of RealTable is real).
+                void EmitExtraReads()
+                {
+                    foreach (var extra in fl.ExtraReads)
+                    {
+                        if (IsTempOrVariable(extra.Table))
+                            continue;
+
+                        var (extraTableId, extraTableName) = GetOrCreateTable(graph, tableIds, db, extra.Table);
+                        var (isExtraCrossDb, extraTargetDb) = DetectCrossDb(extra.Table, db);
+                        var extraRelProps = new Dictionary<string, object>
+                        {
+                            ["action_type"] = fl.ConsequenceType,
+                            ["table"] = extra.Table,
+                            ["via"] = "JOIN",
+                        };
+                        if (isExtraCrossDb)
+                        {
+                            extraRelProps["is_cross_database"] = true;
+                            extraRelProps["source_database"] = db;
+                            extraRelProps["target_database"] = extraTargetDb;
+                        }
+                        graph.Relationships.Add(new GraphRel
+                        {
+                            Type = "READS_FROM",
+                            StartNodeId = stepId,
+                            EndNodeId = extraTableId,
+                            Properties = extraRelProps,
+                        });
+
+                        if (includeColumns)
+                        {
+                            foreach (var colName in extra.Columns)
+                            {
+                                var colId = GetOrCreateColumn(graph, columnIds, extraTableId, extraTableName, colName);
+                                graph.Relationships.Add(new GraphRel
+                                {
+                                    Type = "READS_COLUMN",
+                                    StartNodeId = stepId,
+                                    EndNodeId = colId,
+                                });
+                            }
+                        }
+                    }
+                }
+
                 // Target resolution: either another analyzed SqlObject (proc/function/
                 // view/trigger - e.g. EXEC of a sibling proc, or INSERT...SELECT off a
                 // TVF) or, far more commonly, a plain data Table that was never itself
@@ -588,50 +639,15 @@ public static class GraphExporter
                         }
                     }
 
-                    // ExtraReads: "SELECT ... FROM A JOIN B ..." also reads from B
-                    // (and any further JOIN partners) - each gets its own READS_FROM,
-                    // plus READS_COLUMN for the columns of B referenced via "b.Col".
-                    foreach (var extra in fl.ExtraReads)
-                    {
-                        if (IsTempOrVariable(extra.Table))
-                            continue;
-
-                        var (extraTableId, extraTableName) = GetOrCreateTable(graph, tableIds, db, extra.Table);
-                        var (isExtraCrossDb, extraTargetDb) = DetectCrossDb(extra.Table, db);
-                        var extraRelProps = new Dictionary<string, object>
-                        {
-                            ["action_type"] = fl.ConsequenceType,
-                            ["table"] = extra.Table,
-                            ["via"] = "JOIN",
-                        };
-                        if (isExtraCrossDb)
-                        {
-                            extraRelProps["is_cross_database"] = true;
-                            extraRelProps["source_database"] = db;
-                            extraRelProps["target_database"] = extraTargetDb;
-                        }
-                        graph.Relationships.Add(new GraphRel
-                        {
-                            Type = "READS_FROM",
-                            StartNodeId = stepId,
-                            EndNodeId = extraTableId,
-                            Properties = extraRelProps,
-                        });
-
-                        if (includeColumns)
-                        {
-                            foreach (var colName in extra.Columns)
-                            {
-                                var colId = GetOrCreateColumn(graph, columnIds, extraTableId, extraTableName, colName);
-                                graph.Relationships.Add(new GraphRel
-                                {
-                                    Type = "READS_COLUMN",
-                                    StartNodeId = stepId,
-                                    EndNodeId = colId,
-                                });
-                            }
-                        }
-                    }
+                    EmitExtraReads();
+                }
+                else if (IsTempOrVariable(fl.ConsequenceTarget)
+                    && fl.ConsequenceType is "INSERT" or "SELECT" or "UPDATE" or "DELETE" or "MERGE")
+                {
+                    // Target is a #temp/@table-variable (never graphed as a Table), but
+                    // the statement still reads real source tables - those reads are real
+                    // and must surface even though the write target is transient.
+                    EmitExtraReads();
                 }
 
                 // FILTERS_ON: columns from this step's own WHERE/JOIN-ON predicates -

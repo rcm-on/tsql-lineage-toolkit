@@ -65,6 +65,17 @@ public static class NodeStoreExporter
         "HAS_PARAMETER", "DECLARES", "HAS_STEP",
     };
 
+    // The only edge types worth following to *navigate between objects/tables*:
+    // a call chain, a write/read target, an impact chain, a foreign key. Every
+    // other edge an object owns (ACTION, BUILDS_SQL_FROM, USES_VARIABLE, GOVERNS,
+    // TARGETS...) is intra-object plumbing that bloats object.json without helping
+    // an agent decide its next hop. nav.json keeps only these so a multi-object
+    // traversal reads a ~2-4 KB file per hop instead of the full ~60 KB object.
+    private static readonly HashSet<string> NavEdgeTypes = new(StringComparer.Ordinal)
+    {
+        "CALLS", "WRITES_TO", "READS_FROM", "AFFECTS", "FK_TO",
+    };
+
     public class Stats
     {
         public int Nodes { get; init; }
@@ -109,6 +120,9 @@ public static class NodeStoreExporter
 
         [JsonPropertyName("object_file")]
         public string ObjectFile { get; set; } = "";
+
+        [JsonPropertyName("nav_file")]
+        public string NavFile { get; set; } = "";
 
         [JsonPropertyName("shared_touched")]
         public List<string> SharedTouched { get; set; } = new();
@@ -184,6 +198,11 @@ public static class NodeStoreExporter
             var fullPath = Path.Combine(outDir, entry.ObjectFile);
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
             File.WriteAllText(fullPath, build.ObjectFiles[entry.ObjectFile], Encoding.UTF8);
+
+            // nav.json is derived from the same object, so it changes iff the
+            // object did - rewrite it in lockstep when the content_hash moves.
+            if (!string.IsNullOrEmpty(entry.NavFile) && build.ObjectFiles.TryGetValue(entry.NavFile, out var navJson))
+                File.WriteAllText(Path.Combine(outDir, entry.NavFile), navJson, Encoding.UTF8);
             objectsWritten++;
         }
 
@@ -362,6 +381,13 @@ public static class NodeStoreExporter
             return result;
         }
 
+        // Where a *navigation* hop should land: another object's tiny nav.json
+        // (only inter-object edges) instead of its full object.json, so a call/
+        // impact chain stays in ~KB-scale files per hop. Shared targets (a Table
+        // a WRITES_TO lands on) have no nav.json, so they keep their normal path.
+        string NavPathOf(string id) =>
+            objectIds.Contains(id) ? $"objects/{Slug(id)}/nav.json" : PathOf(id);
+
         var nodesByLabel = new Dictionary<string, int>();
         var unknownLabels = new HashSet<string>();
         void TallyLabel(GraphNode n)
@@ -472,10 +498,34 @@ public static class NodeStoreExporter
             var json = JsonSerializer.Serialize(doc, jsonOptions);
             objectFiles[relPath] = json;
 
+            // nav.json: the same edges_out, filtered to inter-object navigation
+            // edges only (CALLS/WRITES_TO/READS_FROM/AFFECTS/FK_TO), each with its
+            // `path` re-pointed at the neighbor's nav.json so a multi-object
+            // traversal never has to open a full object.json per hop.
+            var navEdges = edgesOut
+                .Where(e => e.TryGetValue("type", out var t) && t is string ts && NavEdgeTypes.Contains(ts))
+                .Select(e =>
+                {
+                    var copy = new Dictionary<string, object>(e);
+                    if (e.TryGetValue("to", out var toObj) && toObj is string toId)
+                        copy["path"] = NavPathOf(toId);
+                    return copy;
+                })
+                .ToList();
+
+            var navRelPath = $"objects/{Slug(objId)}/nav.json";
+            objectFiles[navRelPath] = JsonSerializer.Serialize(new Dictionary<string, object>
+            {
+                ["id"] = objId,
+                ["name"] = DisplayName(objNode),
+                ["edges_out"] = navEdges,
+            }, jsonOptions);
+
             manifest[objId] = new Dictionary<string, object>
             {
                 ["content_hash"] = StableHash(json),
                 ["object_file"] = relPath,
+                ["nav_file"] = navRelPath,
                 ["shared_touched"] = sharedTouched.ToList(),
             };
         }
@@ -568,13 +618,43 @@ public static class NodeStoreExporter
 
         var modelNodes = graph.Nodes
             .Where(n => n.Labels.Contains("SqlObject") || n.Labels.Contains("Table"))
-            .Select(n => new Dictionary<string, object>
+            .Select(n =>
             {
-                ["id"] = n.Id,
-                ["label"] = n.Labels.Count > 0 ? n.Labels[0] : "Node",
-                ["name"] = DisplayName(n),
-                ["path"] = PathOf(n.Id),
-                ["degree"] = degree.GetValueOrDefault(n.Id),
+                var entry = new Dictionary<string, object>
+                {
+                    ["id"] = n.Id,
+                    ["label"] = n.Labels.Count > 0 ? n.Labels[0] : "Node",
+                    ["name"] = DisplayName(n),
+                    ["path"] = PathOf(n.Id),
+                    ["degree"] = degree.GetValueOrDefault(n.Id),
+                };
+                // For a SqlObject, surface the cheap entry point: follow `nav` (not
+                // `path`) when chaining calls/writes/impact across objects; only
+                // open `path` (object.json) when you need step/param/variable detail.
+                //
+                // Also roll up the per-object/per-table stats that a corpus-wide
+                // report (rank by complexity, find SQL-dynamic-heavy procs, find
+                // tables with no outgoing FK) needs - without this, answering those
+                // questions means opening every object.json/shared/tables/*.json,
+                // which costs as much as the monolithic graph_full.json and defeats
+                // the NodeStore's per-file partitioning.
+                if (objectIds.Contains(n.Id))
+                {
+                    entry["nav"] = NavPathOf(n.Id);
+                    if (n.Properties.TryGetValue("cyclomatic_complexity", out var cc))
+                        entry["cyclomatic_complexity"] = cc;
+
+                    var steps = graph.Nodes.Where(s => s.Id != n.Id && OwnerOf(s.Id) == n.Id && s.Labels.Contains("Step")).ToList();
+                    entry["total_steps"] = steps.Count;
+                    entry["dynamic_sql_steps"] = steps.Count(s => s.Properties.TryGetValue("is_dynamic_sql", out var dyn) && dyn is true);
+                }
+                else if (n.Labels.Contains("Table"))
+                {
+                    entry["fk_out_count"] = sharedIntrinsicOut.TryGetValue(n.Id, out var outEdges)
+                        ? outEdges.Count(e => e.Type == "FK_TO")
+                        : 0;
+                }
+                return entry;
             })
             .ToList();
 
@@ -616,6 +696,8 @@ public static class NodeStoreExporter
                 ["start"] = "Load model.json: the initial nodes (every SqlObject and Table) with object/table-level edges.",
                 ["pick"] = "From model.json, pick a node by id and follow its `path`.",
                 ["open_object"] = "objects/<slug>/object.json holds a SqlObject's own properties, owned Parameters/Variables/Steps, and edges_out (each with `path` to the neighbor).",
+                ["call_chain"] = "To follow a chain across objects (CALLS/WRITES_TO/READS_FROM/AFFECTS/FK_TO), read objects/<slug>/nav.json - NOT object.json. nav.json is a tiny file with only those inter-object edges, and each edge's `path` already points at the next object's nav.json, so the whole traversal stays in KB-scale files. From model.json, a SqlObject node's `nav` field is this cheap entry point. Open object.json only when you need a Step/Parameter/Variable detail (condition_path, is_dynamic_sql, etc.), not just the next hop.",
+                ["corpus_report"] = "For a question about the WHOLE database (rank objects by complexity, find SQL-dynamic-heavy procs, find tables with no outgoing FK, etc.), read ONLY model.json - never loop over every object.json/shared/tables/*.json, that costs as much as graph_full.json and defeats the point of this store. Each SqlObject node already carries cyclomatic_complexity/total_steps/dynamic_sql_steps, and each Table node carries fk_out_count, precomputed so a corpus-wide report stays a single ~model.json-sized read.",
                 ["open_shared"] = "shared/<category>/<slug>.json holds a Table/Column/Action/Rule: `refs` partitions its incoming edges by the SqlObject that contributed them, `edges_in`/`edges_out` give the flattened view.",
                 ["downstream"] = "Follow edges_out (WRITES_TO, CALLS, AFFECTS) for what an object affects.",
                 ["upstream"] = "Follow edges_in / refs (WRITES_TO, READS_FROM, CALLS) for what affects a node.",
