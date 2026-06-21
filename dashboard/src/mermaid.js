@@ -4,6 +4,7 @@
 (function (SD) {
   let seq = 0;
   let initDone = false;
+  const zoomState = new Map(); // diagram id -> current scale factor
 
   function init() {
     if (initDone) return;
@@ -34,9 +35,15 @@
           <button onclick="SD.mm.saveSvg('${id}','${safeTitle}')" title="Guardar como SVG">SVG</button>
           <button onclick="SD.mm.savePng('${id}','${safeTitle}')" title="Guardar como PNG">PNG</button>
           <button onclick="SD.mm.copyDef('${id}')" title="Copiar definición Mermaid">copiar</button>
+          <span class="mm-zoom">
+            <button onclick="SD.mm.zoomOut('${id}')" title="Alejar">−</button>
+            <button onclick="SD.mm.zoomFit('${id}')" title="Ajustar a la página">ajustar</button>
+            <button onclick="SD.mm.zoomReset('${id}')" title="100%">100%</button>
+            <button onclick="SD.mm.zoomIn('${id}')" title="Acercar">+</button>
+          </span>
         </span>
       </div>
-      <div class="mermaid" id="${id}" data-src="${b64encode(def)}" data-title="${SD.charts.esc(safeTitle)}"></div>
+      <div class="mm-viewport"><div class="mermaid" id="${id}" data-src="${b64encode(def)}" data-title="${SD.charts.esc(safeTitle)}"></div></div>
     </div>`;
   }
 
@@ -53,12 +60,55 @@
         el.innerHTML = svg;
         if (bindFunctions) bindFunctions(el);
         el.dataset.rendered = '1';
+        zoomFit(el.id);
       } catch (e) {
         el.innerHTML = `<span class="muted">Error al renderizar diagrama: ${SD.charts.esc(e.message || String(e))}</span>`;
         el.dataset.rendered = '1';
       }
     }
   }
+
+  // Tamaño natural del SVG renderizado (antes de aplicar cualquier transform),
+  // vía su viewBox si lo tiene (Mermaid siempre lo pone) o su width/height.
+  function naturalSize(svg) {
+    if (svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width)
+      return { w: svg.viewBox.baseVal.width, h: svg.viewBox.baseVal.height };
+    return { w: svg.width.baseVal.value, h: svg.height.baseVal.value };
+  }
+
+  function applyZoom(id, scale) {
+    const svg = getSvgEl(id);
+    if (!svg) return;
+    scale = Math.max(0.1, Math.min(4, scale));
+    zoomState.set(id, scale);
+    svg.style.transformOrigin = '0 0';
+    svg.style.transform = `scale(${scale})`;
+    // The SVG keeps its natural layout size after scaling - shrink the
+    // viewport's reserved space to match so a zoomed-out diagram doesn't
+    // leave a big empty gap below it.
+    const { w, h } = naturalSize(svg);
+    svg.style.width = `${w}px`;
+    svg.style.height = `${h}px`;
+    const wrap = svg.closest('.mermaid');
+    if (wrap) { wrap.style.width = `${w * scale}px`; wrap.style.height = `${h * scale}px`; }
+  }
+
+  // Ajusta el diagrama para que quepa en el ancho visible de su viewport
+  // (nunca lo agranda por encima de 100%, solo lo reduce si desborda) - es lo
+  // que se aplica automáticamente justo después de renderizar.
+  function zoomFit(id) {
+    const svg = getSvgEl(id);
+    const viewport = document.getElementById(id)?.closest('.mm-viewport');
+    if (!svg || !viewport) return;
+    const { w } = naturalSize(svg);
+    const available = viewport.clientWidth - 4;
+    const scale = w > 0 ? Math.min(1, available / w) : 1;
+    applyZoom(id, scale);
+  }
+
+  function zoomReset(id) { applyZoom(id, 1); }
+  function zoomIn(id) { applyZoom(id, (zoomState.get(id) || 1) * 1.25); }
+  function zoomOut(id) { applyZoom(id, (zoomState.get(id) || 1) / 1.25); }
 
   function download(blob, filename) {
     const url = URL.createObjectURL(blob);
@@ -112,7 +162,7 @@
     navigator.clipboard.writeText(b64decode(el.dataset.src)).catch(() => {});
   }
 
-  SD.mm = { init, block, renderAll, saveMmd, saveSvg, savePng, copyDef };
+  SD.mm = { init, block, renderAll, saveMmd, saveSvg, savePng, copyDef, zoomIn, zoomOut, zoomFit, zoomReset };
 
   // Punto de entrada para los `click n call sdOpen("dbo.X")` de los diagramas Mermaid.
   window.sdOpen = name => { if (SD.app) SD.app.openObject(name); };

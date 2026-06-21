@@ -46,6 +46,14 @@
             seenThisLevel.add(nb.name);
             levelNodes.push({ name: nb.name, kind: nb.kind });
           }
+          // Deliberadamente NO usamos la convención "Objeto -> Tabla" de la acción
+          // aquí (a diferencia de la mini-tabla y DataFlowMermaid): este diagrama
+          // se lee como una línea de tiempo causal izquierda->derecha (Nivel -N
+          // = upstream, Nivel +N = downstream), y Mermaid posiciona los nodos
+          // según la dirección de las aristas. Forzar "lee" en sentido Objeto->Tabla
+          // (probado y revertido dos veces) descoloca el nodo raíz fuera de su
+          // columna y rompe el layout por completo cuando la tabla leída es
+          // upstream. Aquí gana la lectura de niveles sobre la dirección del verbo.
           const a = dir === 'down' ? fromName : nb.name;
           const b = dir === 'down' ? nb.name : fromName;
           edges.push({ from: a, to: b, label: nb.label });

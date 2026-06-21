@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SQL Dashboard · lineage &amp; flujo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="src/style.css">
 </head>
 <body>
@@ -24,10 +27,12 @@
 <!-- App (oculta hasta cargar datos) -->
 <div id="app">
   <div id="side">
-    <h1>SQL Dashboard<small id="subtitle">sin datos</small></h1>
+    <h1>SQL Dashboard<button type="button" id="theme-toggle" title="Modo claro/oscuro">🌙</button><small id="subtitle">sin datos</small></h1>
+    <div id="demo-banner" hidden>📊 Datos de ejemplo (WideWorldImporters) · <a href="#" id="demo-upload-own">subir mi archivo</a></div>
     <input id="search" placeholder="Buscar objeto…" disabled>
     <div id="filter"></div>
     <div id="list"></div>
+    <div id="watermark"><a href="https://blog.rcmon.dev" target="_blank" rel="noopener" id="rcm-mark">rcm<span id="rcm-led"></span></a> · Ramón Campos Martín · blog.rcmon.dev</div>
   </div>
   <div id="main"></div>
 </div>
