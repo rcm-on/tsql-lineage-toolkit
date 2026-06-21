@@ -76,6 +76,88 @@
         }
       }
     ],
+    "WideWorldImporters::Integration.GetCustomerUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step15",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "[Application].People",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "[Application].People",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "[Application].People",
+          "via": "JOIN"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetEmployeeUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].People"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "[Application].People",
+          "via": "JOIN"
+        }
+      }
+    ],
+    "WideWorldImporters::Integration.GetSupplierUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step15",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "[Application].People",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "[Application].People",
+          "via": "JOIN"
+        }
+      }
+    ],
     "WideWorldImporters::Website.ActivateWebsiteLogon": [
       {
         "type": "WRITES_TO",
@@ -224,6 +306,82 @@
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[People]"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step15",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].People",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].People",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].People",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].People",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step15",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].People",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].People",
+        "via": "JOIN"
       }
     },
     {

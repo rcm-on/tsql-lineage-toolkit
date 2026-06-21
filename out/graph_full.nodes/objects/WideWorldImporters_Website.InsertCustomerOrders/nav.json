@@ -1,0 +1,56 @@
+﻿{
+  "id": "WideWorldImporters::Website.InsertCustomerOrders",
+  "name": "Website.InsertCustomerOrders",
+  "edges_out": [
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/nav.json",
+      "props": {
+        "caller": "WideWorldImporters::Website.InsertCustomerOrders",
+        "callee": "WideWorldImporters::Website.CalculateCustomerPrice",
+        "kind": "FUNCTION"
+      }
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orders",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Orders"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.StockItems",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orderlines",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.OrderLines"
+      }
+    }
+  ]
+}

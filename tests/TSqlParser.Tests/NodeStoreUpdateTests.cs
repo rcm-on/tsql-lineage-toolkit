@@ -126,9 +126,12 @@ public class NodeStoreUpdateTests : IDisposable
         var afterFiles = AllFiles(store).ToList();
         var afterContent = afterFiles.ToDictionary(f => f, f => File.ReadAllText(Path.Combine(store, f)));
 
-        // ProcB's object file and its shared TableY are untouched.
-        var procBFile = beforeFiles.Single(f => f.StartsWith("objects/") && f.Contains("ProcB"));
+        // ProcB's object file and its shared TableY are untouched. (Each object now
+        // has both object.json and nav.json under objects/, so match object.json.)
+        var procBFile = beforeFiles.Single(f => f.StartsWith("objects/") && f.Contains("ProcB") && f.EndsWith("object.json"));
         Assert.Equal(beforeContent[procBFile], afterContent[procBFile]);
+        var procBNavFile = beforeFiles.Single(f => f.StartsWith("objects/") && f.Contains("ProcB") && f.EndsWith("nav.json"));
+        Assert.Equal(beforeContent[procBNavFile], afterContent[procBNavFile]);
 
         var tableYFile = beforeFiles.Single(f => f.StartsWith("shared/tables/") && f.Contains("tablex") == false && f.Contains("TableY", StringComparison.OrdinalIgnoreCase));
         Assert.Equal(beforeContent[tableYFile], afterContent[tableYFile]);
@@ -176,6 +179,109 @@ public class NodeStoreUpdateTests : IDisposable
 
         var manifest = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(File.ReadAllText(Path.Combine(store, "manifest.json")))!;
         Assert.DoesNotContain(manifest.Keys, k => k.Contains("ProcB"));
+    }
+
+    private const string ProcCSql =
+        "CREATE PROCEDURE dbo.ProcC AS BEGIN EXEC dbo.ProcA; INSERT INTO dbo.TableX (Id) VALUES (9); END";
+
+    private const string ProcDynamicSql =
+        "CREATE PROCEDURE dbo.ProcD AS BEGIN DECLARE @s NVARCHAR(MAX); SET @s = 'SELECT Id FROM dbo.TableX'; EXEC(@s); IF 1 = 1 INSERT INTO dbo.TableX (Id) VALUES (1); END";
+
+    [Fact]
+    public void Write_ModelJson_RollsUpComplexityAndDynamicSqlStatsPerObject_AndFkCountPerTable()
+    {
+        var graph = BuildGraph(("dbo.ProcD", ProcDynamicSql));
+        var store = NewTempDir();
+        NodeStoreExporter.Write(graph, store, Db, JsonOptions);
+
+        var model = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(Path.Combine(store, "model.json")));
+        var procD = model.GetProperty("nodes").EnumerateArray()
+            .Single(n => n.GetProperty("label").GetString() == "SqlObject");
+
+        // The single EXEC(@s) step is dynamic SQL; the procedure has at least 2 steps total.
+        Assert.True(procD.GetProperty("total_steps").GetInt32() >= 2);
+        Assert.Equal(1, procD.GetProperty("dynamic_sql_steps").GetInt32());
+        // The IF branch gives this procedure a cyclomatic_complexity above the trivial baseline.
+        Assert.True(procD.GetProperty("cyclomatic_complexity").GetInt32() >= 1);
+
+        var tableX = model.GetProperty("nodes").EnumerateArray()
+            .Single(n => n.GetProperty("label").GetString() == "Table");
+        // No table schema/DDL was supplied to this test graph, so no FK can be detected.
+        Assert.Equal(0, tableX.GetProperty("fk_out_count").GetInt32());
+    }
+
+    private static readonly HashSet<string> NavEdgeTypes = new()
+    {
+        "CALLS", "WRITES_TO", "READS_FROM", "AFFECTS", "FK_TO",
+    };
+
+    // A step that reads a real table must produce READS_FROM even when (a) the read
+    // lives in a cursor's SELECT body (incl. UNION branches) or (b) the row lands in
+    // a #temp/@table-variable target. Both were silently dropped before; both are real
+    // reads for impact analysis ("what reads dbo.SourceX?"). `FOR SYSTEM_TIME AS OF`
+    // is included to confirm the temporal clause itself never blocked the read.
+    [Theory]
+    [InlineData("cursor-simple", "CREATE PROCEDURE dbo.P AS BEGIN DECLARE c CURSOR FOR SELECT Id FROM dbo.SourceA; OPEN c; CLOSE c; END", "dbo.sourcea")]
+    [InlineData("cursor-union", "CREATE PROCEDURE dbo.P AS BEGIN DECLARE c CURSOR FOR SELECT Id FROM dbo.SourceA UNION SELECT Id FROM dbo.SourceB; OPEN c; END", "dbo.sourcea,dbo.sourceb")]
+    [InlineData("insert-temp", "CREATE PROCEDURE dbo.P AS BEGIN CREATE TABLE #t (Id int); INSERT INTO #t (Id) SELECT b.Id FROM dbo.SourceB AS b; END", "dbo.sourceb")]
+    [InlineData("insert-temp-systime", "CREATE PROCEDURE dbo.P AS BEGIN CREATE TABLE #t (Id int); INSERT INTO #t (Id) SELECT b.Id FROM dbo.SourceB FOR SYSTEM_TIME AS OF '2020-01-01' AS b; END", "dbo.sourceb")]
+    [InlineData("select-into-temp", "CREATE PROCEDURE dbo.P AS BEGIN SELECT b.Id INTO #t FROM dbo.SourceB AS b; END", "dbo.sourceb")]
+    public void ReadsFrom_SurvivesCursorBodyAndTempTarget(string label, string sql, string expectedCsv)
+    {
+        var graph = BuildGraph(("dbo.P", sql));
+        var reads = graph.Relationships
+            .Where(r => r.Type == "READS_FROM")
+            .Select(r => r.EndNodeId.Split(":table:")[^1])
+            .Distinct()
+            .OrderBy(x => x, StringComparer.Ordinal)
+            .ToList();
+        var expected = expectedCsv.Split(',').OrderBy(x => x, StringComparer.Ordinal).ToList();
+        Assert.Equal(expected, reads);
+    }
+
+    [Fact]
+    public void Write_EmitsNavJson_WithOnlyNavEdges_AndNavToNavPaths()
+    {
+        // ProcC EXECs ProcA (a CALLS object->object) and writes TableX. Names are
+        // schema-qualified so the EXEC target "dbo.ProcA" resolves to the registered
+        // object (a bare "ProcA" id would not match and no CALLS edge would form).
+        var graph = BuildGraph(("dbo.ProcA", ProcASql), ("dbo.ProcC", ProcCSql));
+        var store = NewTempDir();
+        NodeStoreExporter.Write(graph, store, Db, JsonOptions);
+
+        // Every object has a sibling nav.json next to its object.json.
+        var objectFiles = AllFiles(store).Where(f => f.EndsWith("/object.json")).ToList();
+        Assert.NotEmpty(objectFiles);
+        foreach (var objFile in objectFiles)
+        {
+            var navFile = objFile.Replace("/object.json", "/nav.json");
+            Assert.True(File.Exists(Path.Combine(store, navFile)), $"missing {navFile}");
+
+            var nav = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(Path.Combine(store, navFile)));
+            foreach (var edge in nav.GetProperty("edges_out").EnumerateArray())
+                Assert.Contains(edge.GetProperty("type").GetString(), NavEdgeTypes);
+        }
+
+        // manifest.json carries nav_file for each object.
+        var manifest = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(
+            File.ReadAllText(Path.Combine(store, "manifest.json")))!;
+        foreach (var entry in manifest.Values)
+            Assert.EndsWith("/nav.json", entry.GetProperty("nav_file").GetString());
+
+        // ProcC's nav.json has the CALLS edge to ProcA, and its `path` points at
+        // ProcA's nav.json (the cheap entry point), not its object.json.
+        var procCNav = AllFiles(store).Single(f => f.Contains("ProcC") && f.EndsWith("/nav.json"));
+        var procCDoc = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(Path.Combine(store, procCNav)));
+        var callsEdge = procCDoc.GetProperty("edges_out").EnumerateArray()
+            .Single(e => e.GetProperty("type").GetString() == "CALLS");
+        Assert.EndsWith("/nav.json", callsEdge.GetProperty("path").GetString());
+        Assert.Contains("ProcA", callsEdge.GetProperty("path").GetString());
+
+        // A WRITES_TO edge (target is a shared Table, no nav.json) keeps a normal
+        // shared path, not a nav.json path.
+        var writesEdge = procCDoc.GetProperty("edges_out").EnumerateArray()
+            .First(e => e.GetProperty("type").GetString() == "WRITES_TO");
+        Assert.StartsWith("shared/", writesEdge.GetProperty("path").GetString());
     }
 
     [Fact]

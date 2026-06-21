@@ -1,0 +1,70 @@
+﻿{
+  "id": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+  "name": "Application.Configuration_ConfigureForEnterpriseEdition",
+  "edges_out": [
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "via": "WideWorldImporters::Application.Configuration_EnableInMemory",
+        "hops": 1
+      }
+    },
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/nav.json",
+      "props": {
+        "caller": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+        "callee": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing",
+        "kind": "EXEC"
+      }
+    },
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/nav.json",
+      "props": {
+        "caller": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+        "callee": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
+        "kind": "EXEC"
+      }
+    },
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/nav.json",
+      "props": {
+        "caller": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+        "callee": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
+        "kind": "EXEC"
+      }
+    },
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/nav.json",
+      "props": {
+        "caller": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+        "callee": "WideWorldImporters::Application.Configuration_EnableInMemory",
+        "kind": "EXEC"
+      }
+    }
+  ]
+}

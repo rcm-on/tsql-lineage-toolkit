@@ -102,6 +102,29 @@
         }
       }
     ],
+    "WideWorldImporters::Integration.GetStockItemUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItems"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Warehouse.StockItems",
+          "via": "JOIN"
+        }
+      }
+    ],
     "WideWorldImporters::Website.CalculateCustomerPrice": [
       {
         "type": "READS_FROM",
@@ -244,6 +267,27 @@
       "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
       "props": {
         "action_type": "SELECT",
+        "table": "Warehouse.StockItems",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
         "table": "Warehouse.StockItems",
         "via": "JOIN"
       }

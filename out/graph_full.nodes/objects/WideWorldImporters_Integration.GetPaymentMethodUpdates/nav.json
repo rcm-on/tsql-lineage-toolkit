@@ -1,0 +1,43 @@
+﻿{
+  "id": "WideWorldImporters::Integration.GetPaymentMethodUpdates",
+  "name": "Integration.GetPaymentMethodUpdates",
+  "edges_out": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.paymentmethods_archive",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_archive_81624014.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].PaymentMethods_Archive"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.paymentmethods",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].PaymentMethods"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.paymentmethods",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].PaymentMethods",
+        "via": "JOIN"
+      }
+    }
+  ]
+}

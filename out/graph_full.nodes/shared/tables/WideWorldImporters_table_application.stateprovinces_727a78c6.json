@@ -75,6 +75,51 @@
           "table": "[Application].[StateProvinces]"
         }
       }
+    ],
+    "WideWorldImporters::Integration.GetCityUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step12",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].StateProvinces"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step15",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "[Application].StateProvinces",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "[Application].StateProvinces",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "[Application].StateProvinces",
+          "via": "JOIN"
+        }
+      }
     ]
   },
   "edges_in": [
@@ -136,6 +181,49 @@
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[StateProvinces]"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step12",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].StateProvinces"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step15",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].StateProvinces",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step24",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].StateProvinces",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].StateProvinces",
+        "via": "JOIN"
       }
     }
   ],

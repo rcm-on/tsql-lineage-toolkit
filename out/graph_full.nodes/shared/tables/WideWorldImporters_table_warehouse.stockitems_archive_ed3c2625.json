@@ -7,8 +7,32 @@
     "database": "WideWorldImporters",
     "name": "Warehouse.StockItems_Archive"
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Integration.GetStockItemUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Warehouse.StockItems_Archive"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems_Archive"
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "HAS_COLUMN",

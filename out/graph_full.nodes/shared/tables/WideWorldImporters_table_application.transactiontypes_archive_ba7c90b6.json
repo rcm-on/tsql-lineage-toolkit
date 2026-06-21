@@ -7,8 +7,32 @@
     "database": "WideWorldImporters",
     "name": "Application.TransactionTypes_Archive"
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Integration.GetTransactionTypeUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].TransactionTypes_Archive"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].TransactionTypes_Archive"
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "HAS_COLUMN",

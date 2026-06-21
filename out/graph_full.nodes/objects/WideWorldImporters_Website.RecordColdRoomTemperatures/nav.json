@@ -1,0 +1,30 @@
+﻿{
+  "id": "WideWorldImporters::Website.RecordColdRoomTemperatures",
+  "name": "Website.RecordColdRoomTemperatures",
+  "edges_out": [
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "action_type": "UPDATE",
+        "table": "Warehouse.ColdRoomTemperatures"
+      }
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.ColdRoomTemperatures"
+      }
+    }
+  ]
+}

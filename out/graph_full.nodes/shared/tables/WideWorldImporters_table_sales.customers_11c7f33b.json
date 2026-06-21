@@ -76,6 +76,51 @@
         }
       }
     ],
+    "WideWorldImporters::Integration.GetCustomerUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step15",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Sales.Customers",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step21",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Sales.Customers"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Sales.Customers",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Sales.Customers",
+          "via": "JOIN"
+        }
+      }
+    ],
     "WideWorldImporters::Integration.GetOrderUpdates": [
       {
         "type": "READS_FROM",
@@ -224,6 +269,49 @@
       "props": {
         "action_type": "ALTER",
         "table": "[Sales].[Customers]"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step15",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Customers",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step21",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.Customers"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step24",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Customers",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Customers",
+        "via": "JOIN"
       }
     },
     {

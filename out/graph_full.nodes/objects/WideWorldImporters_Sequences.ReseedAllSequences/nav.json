@@ -1,0 +1,19 @@
+﻿{
+  "id": "WideWorldImporters::Sequences.ReseedAllSequences",
+  "name": "Sequences.ReseedAllSequences",
+  "edges_out": [
+    {
+      "type": "CALLS",
+      "from": "WideWorldImporters::Sequences.ReseedAllSequences",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/nav.json",
+      "props": {
+        "caller": "WideWorldImporters::Sequences.ReseedAllSequences",
+        "callee": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues",
+        "kind": "EXEC"
+      }
+    }
+  ]
+}

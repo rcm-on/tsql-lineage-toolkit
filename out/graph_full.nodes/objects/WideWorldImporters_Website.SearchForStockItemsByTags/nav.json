@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters::Website.SearchForStockItemsByTags",
+  "name": "Website.SearchForStockItemsByTags",
+  "edges_out": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems"
+      }
+    }
+  ]
+}

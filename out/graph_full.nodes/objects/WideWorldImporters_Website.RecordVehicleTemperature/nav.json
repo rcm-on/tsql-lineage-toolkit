@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters::Website.RecordVehicleTemperature",
+  "name": "Website.RecordVehicleTemperature",
+  "edges_out": [
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.VehicleTemperatures"
+      }
+    }
+  ]
+}

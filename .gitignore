@@ -10,6 +10,11 @@ graph_*.json
 workflows_*.json
 output/
 
+## Demo dataset bundled with the dashboard for GitHub Pages (public sample
+## data, WideWorldImporters) - deliberately tracked despite the graph_*.json
+## rule above, which is meant for ad-hoc generated output, not this one.
+!dashboard/demo/graph_full.json
+
 ## Local database backups (too large for git, used for manual testing)
 database/
 

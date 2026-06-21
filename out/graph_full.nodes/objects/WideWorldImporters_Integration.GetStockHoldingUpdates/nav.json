@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters::Integration.GetStockHoldingUpdates",
+  "name": "Integration.GetStockHoldingUpdates",
+  "edges_out": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetStockHoldingUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemholdings",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemholdings_7baae308.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemHoldings"
+      }
+    }
+  ]
+}

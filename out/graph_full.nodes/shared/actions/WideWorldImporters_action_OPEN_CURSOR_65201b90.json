@@ -10,19 +10,19 @@
     "WideWorldImporters::Integration.GetCityUpdates": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetCityUpdates#step16",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step13",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
       },
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetCityUpdates#step2",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step22",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
       },
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetCityUpdates#step9",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
       }
@@ -30,19 +30,19 @@
     "WideWorldImporters::Integration.GetCustomerUpdates": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step16",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step13",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
       },
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step2",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step22",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
       },
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step9",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
       }
@@ -50,7 +50,7 @@
     "WideWorldImporters::Integration.GetEmployeeUpdates": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step2",
+        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
       }
@@ -58,7 +58,7 @@
     "WideWorldImporters::Integration.GetPaymentMethodUpdates": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step2",
+        "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
       }
@@ -66,7 +66,7 @@
     "WideWorldImporters::Integration.GetStockItemUpdates": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step2",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
       }
@@ -74,13 +74,13 @@
     "WideWorldImporters::Integration.GetSupplierUpdates": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step2",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step13",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
       },
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step9",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
       }
@@ -88,7 +88,7 @@
     "WideWorldImporters::Integration.GetTransactionTypeUpdates": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step2",
+        "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
       }
@@ -97,73 +97,73 @@
   "edges_in": [
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step16",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step13",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step2",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step22",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step9",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step16",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step13",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step2",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step22",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step9",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step2",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step2",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step2",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step2",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step13",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step9",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step2",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
     }

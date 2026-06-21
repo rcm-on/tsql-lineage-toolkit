@@ -382,6 +382,19 @@
       "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
     },
     {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orders",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Orders",
+        "via": "JOIN"
+      }
+    },
+    {
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step0",
       "from_label": "Step",

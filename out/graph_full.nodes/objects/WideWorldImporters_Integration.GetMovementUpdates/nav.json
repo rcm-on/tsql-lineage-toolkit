@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters::Integration.GetMovementUpdates",
+  "name": "Integration.GetMovementUpdates",
+  "edges_out": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetMovementUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemtransactions",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemtransactions_3348b64c.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemTransactions"
+      }
+    }
+  ]
+}

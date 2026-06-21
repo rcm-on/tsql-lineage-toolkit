@@ -131,6 +131,48 @@
         "properties": {
           "order": 2,
           "sequence": 3,
+          "line_no": 26,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "[Application].TransactionTypes_Archive",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> [Application].TransactionTypes_Archive"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "sequence": 4,
+          "line_no": 26,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "[Application].TransactionTypes",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> [Application].TransactionTypes"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step4",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 4,
+          "sequence": 5,
           "line_no": 41,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
@@ -145,13 +187,13 @@
         }
       },
       {
-        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step5",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 3,
-          "sequence": 4,
+          "order": 5,
+          "sequence": 6,
           "line_no": 42,
           "nesting_level": 0,
           "action": "FETCH",
@@ -166,13 +208,13 @@
         }
       },
       {
-        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step4",
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step6",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 4,
-          "sequence": 5,
+          "order": 6,
+          "sequence": 7,
           "line_no": 46,
           "nesting_level": 1,
           "action": "INSERT",
@@ -191,13 +233,13 @@
         }
       },
       {
-        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step5",
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step7",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 5,
-          "sequence": 6,
+          "order": 7,
+          "sequence": 8,
           "line_no": 52,
           "nesting_level": 1,
           "action": "FETCH",
@@ -216,13 +258,13 @@
         }
       },
       {
-        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step6",
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step8",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 6,
-          "sequence": 7,
+          "order": 8,
+          "sequence": 9,
           "line_no": 55,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
@@ -237,13 +279,13 @@
         }
       },
       {
-        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step7",
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step9",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 7,
-          "sequence": 8,
+          "order": 9,
+          "sequence": 10,
           "line_no": 56,
           "nesting_level": 0,
           "action": "DEALLOCATE",
@@ -258,13 +300,13 @@
         }
       },
       {
-        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step8",
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step10",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 8,
-          "sequence": 9,
+          "order": 10,
+          "sequence": 11,
           "line_no": 60,
           "nesting_level": 0,
           "action": "CREATE_INDEX",
@@ -279,13 +321,13 @@
         }
       },
       {
-        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step9",
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step11",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 9,
-          "sequence": 10,
+          "order": 11,
+          "sequence": 12,
           "line_no": 65,
           "nesting_level": 0,
           "action": "UPDATE",
@@ -300,13 +342,13 @@
         }
       },
       {
-        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step10",
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step12",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 10,
-          "sequence": 11,
+          "order": 12,
+          "sequence": 13,
           "line_no": 71,
           "nesting_level": 0,
           "action": "SELECT",
@@ -321,13 +363,13 @@
         }
       },
       {
-        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step11",
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step13",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 11,
-          "sequence": 12,
+          "order": 13,
+          "sequence": 14,
           "line_no": 75,
           "nesting_level": 0,
           "action": "DROP_TABLE",
@@ -342,13 +384,13 @@
         }
       },
       {
-        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step12",
+        "id": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step14",
         "labels": [
           "Step"
         ],
         "properties": {
-          "order": 12,
-          "sequence": 13,
+          "order": 14,
+          "sequence": 15,
           "line_no": 77,
           "nesting_level": 0,
           "action": "RETURN",
@@ -412,13 +454,37 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step10",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:CREATE_INDEX",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_CREATE_INDEX_068c9001.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:UPDATE",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_UPDATE_605dec54.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#var:@EndOfTime",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step12",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step11",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step13",
       "from_label": "Step",
       "to": "WideWorldImporters:action:DROP_TABLE",
       "to_label": "Action",
@@ -426,7 +492,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step12",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step14",
       "from_label": "Step",
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
@@ -436,57 +502,81 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step2",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.transactiontypes_archive",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_archive_ba7c90b6.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].TransactionTypes_Archive"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#param:@LastCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#param:@NewCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.transactiontypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].TransactionTypes"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#param:@LastCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#param:@NewCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step4",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:OPEN_CURSOR",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_OPEN_CURSOR_65201b90.json"
-    },
-    {
-      "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:FETCH",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_FETCH_03e55c63.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#var:@TransactionTypeID",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#var:@ValidFrom",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
-    },
-    {
-      "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:INSERT",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#var:@TransactionTypeID",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#var:@ValidFrom",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
     },
     {
       "type": "ACTION",
@@ -516,47 +606,84 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step6",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:INSERT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.transactiontypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].TransactionTypes",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#var:@TransactionTypeID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:FETCH",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_FETCH_03e55c63.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#var:@TransactionTypeID",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#var:@ValidFrom",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step8",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:CLOSE_CURSOR",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_CLOSE_CURSOR_44141708.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step7",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:action:DEALLOCATE",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_DEALLOCATE_967d1beb.json"
     },
     {
-      "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step8",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:CREATE_INDEX",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_CREATE_INDEX_068c9001.json"
-    },
-    {
-      "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step9",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:UPDATE",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_UPDATE_605dec54.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step9",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#var:@EndOfTime",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
-    },
-    {
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step4",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step6",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
     },
@@ -564,7 +691,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:WHILE:4bbf752d",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step5",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step7",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
     }

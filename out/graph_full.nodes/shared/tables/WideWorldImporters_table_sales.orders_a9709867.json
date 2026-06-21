@@ -35,6 +35,17 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Sales.Orders",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
         "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
@@ -65,6 +76,17 @@
       "props": {
         "action_type": "INSERT",
         "table": "Sales.Orders"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Sales.Orders",
+        "via": "JOIN"
       }
     },
     {

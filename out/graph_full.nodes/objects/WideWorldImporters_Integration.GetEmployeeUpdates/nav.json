@@ -1,0 +1,43 @@
+﻿{
+  "id": "WideWorldImporters::Integration.GetEmployeeUpdates",
+  "name": "Integration.GetEmployeeUpdates",
+  "edges_out": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people_archive",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_archive_0cbd9841.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People_Archive"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].People",
+        "via": "JOIN"
+      }
+    }
+  ]
+}

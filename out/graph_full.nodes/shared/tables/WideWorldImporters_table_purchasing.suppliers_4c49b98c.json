@@ -76,6 +76,40 @@
         }
       }
     ],
+    "WideWorldImporters::Integration.GetSupplierUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step12",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Purchasing.Suppliers"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step15",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Purchasing.Suppliers",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "Purchasing.Suppliers",
+          "via": "JOIN"
+        }
+      }
+    ],
     "WideWorldImporters::Website.SearchForPeople": [
       {
         "type": "READS_FROM",
@@ -173,6 +207,38 @@
       "props": {
         "action_type": "ALTER",
         "table": "[Purchasing].[Suppliers]"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step12",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Purchasing.Suppliers"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step15",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Purchasing.Suppliers",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Purchasing.Suppliers",
+        "via": "JOIN"
       }
     },
     {

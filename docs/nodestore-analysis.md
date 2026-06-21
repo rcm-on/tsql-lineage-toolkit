@@ -412,3 +412,53 @@ cuerpo del procedimiento.
 3. **Las mediciones "a ojo" o contaminadas por contexto previo no son fiables.** La primera vuelta del Caso 2 (este mismo asistente repitiendo la búsqueda) dio un resultado artificialmente bueno porque ya conocía los IDs de la cadena de este mismo chat. Solo al aislar la prueba en subagentes sin memoria de la conversación los números se volvieron creíbles — y en el Caso 4 esa misma disciplina reveló que la ventaja no se sostiene, algo que las cifras estimadas originales (16-60x, sacadas de `docs/ai-agents.md`) no contemplaban.
 
 **Implicación de diseño:** si el objetivo es que un agente resuelva preguntas de cadena de llamadas con el mismo ahorro de turnos que ya tiene la condición de un step, el NodeStore necesitaría un campo precomputado de "cadena de llamadas hasta N niveles" embebido en cada `object.json` (igual que ya existe `condition_path`), en vez de obligar al consumidor a seguir punteros `path` y abrir un objeto completo por cada salto.
+
+## Caso 6 — Cerrando el Caso 4: `nav.json` por objeto (implementado)
+
+El Caso 4 quedó con una implicación de diseño sin resolver: cada salto de la cadena
+de `CALLS` obligaba a abrir un `object.json` completo (hasta 145 KB en
+`DeactivateTemporalTablesBeforeDataLoad`), aunque de ese fichero solo hicieran
+falta las aristas de navegación (`CALLS`/`WRITES_TO`/`READS_FROM`/`AFFECTS`/
+`FK_TO`, ~19-35 de las ~70-100 que tiene un objeto grande).
+
+`NodeStoreExporter.cs` ya declaraba esta solución sin cablearla
+(`NavEdgeTypes`, un campo `nav_file` en el manifest, nunca rellenado). Se
+implementó: cada objeto ahora escribe, junto a `object.json`, un
+`objects/<slug>/nav.json` con solo esas aristas de navegación, cada una con su
+`path` re-apuntado al `nav.json` del vecino (no a su `object.json`) — así una
+cadena de varios saltos se queda en ficheros de pocos KB en vez de reabrir el
+objeto completo en cada hop. `model.json` expone el atajo (`nav` junto a
+`path` en cada nodo `SqlObject`) y `index.json.howto.call_chain` documenta
+cuándo usarlo.
+
+### Medición: mismo experimento que el Caso 4, con `nav.json` ya cableado
+
+Mismo procedimiento (`Configuration_ApplyDataLoadSimulationProcedures`), misma
+pregunta ("cadena de llamadas a profundidad 4"), misma metodología (dos
+subagentes aislados, sin memoria de esta conversación, una única instrucción
+cada uno) — pero esta vez a un agente se le prohibió explícitamente abrir
+`nav.json` (solo `object.json`) y al otro se le prohibió explícitamente abrir
+`object.json` (solo `nav.json`):
+
+| | Tool calls | Líneas leídas | Tokens del subagente | Duración |
+|---|---|---|---|---|
+| A) solo `object.json` | **11** | **~3290** | 94 521 | 65.4 s |
+| B) solo `nav.json` | **8** | **~1256** | 47 826 | 35.5 s |
+| Mejora | 1.4x menos | **2.6x menos** | **2.0x menos** | 1.8x más rápido |
+
+Ambos reconstruyeron la misma cadena correcta (profundidad real 2, sin más
+niveles bajo `Configuration_RemoveRowLevelSecurity` /
+`Configuration_ApplyRowLevelSecurity`). El agente A llegó a truncar la lectura
+del `object.json` de 145 KB de `DeactivateTemporalTablesBeforeDataLoad`; el
+agente B, siguiendo `nav.json → nav.json`, leyó ~427 líneas por hop en vez de
+miles.
+
+**Esto revierte la conclusión del Caso 4.** Donde antes "el nodestore incluso
+leyó más líneas, sin ventaja en loops", ahora gana en las tres métricas que
+importan a un agente real: turnos, líneas/tokens de contexto y tiempo —
+exactamente la implicación de diseño con la que cerraba el Caso 4, verificada
+con la misma disciplina de medición (subagentes ciegos, no estimación).
+
+| Caso | Pregunta | Métrica que de verdad cambia | Resultado |
+|---|---|---|---|
+| 6 | Cadena de llamadas EXEC (4 niveles) — repetido con `nav.json` | Loops + líneas + tokens de agente | **8 vs 11 turnos, 2.6x menos líneas, 2.0x menos tokens** — el agujero del Caso 4 se cierra sin tocar los Casos 2/3/5, que ya ganaban |

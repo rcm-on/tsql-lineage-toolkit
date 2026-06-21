@@ -7,8 +7,32 @@
     "database": "WideWorldImporters",
     "name": "Application.People_Archive"
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Integration.GetEmployeeUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].People_Archive"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People_Archive"
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "HAS_COLUMN",

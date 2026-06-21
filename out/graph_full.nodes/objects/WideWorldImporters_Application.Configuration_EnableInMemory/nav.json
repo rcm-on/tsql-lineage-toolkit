@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters::Application.Configuration_EnableInMemory",
+  "name": "Application.Configuration_EnableInMemory",
+  "edges_out": [
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.ColdRoomTemperatures"
+      }
+    }
+  ]
+}

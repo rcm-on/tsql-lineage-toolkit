@@ -7,8 +7,32 @@
     "database": "WideWorldImporters",
     "name": "Application.StateProvinces_Archive"
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Integration.GetCityUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].StateProvinces_Archive"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step11",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].StateProvinces_Archive"
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "HAS_COLUMN",

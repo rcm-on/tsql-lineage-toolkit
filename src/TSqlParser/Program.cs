@@ -6,7 +6,7 @@
 // Rule -> GOVERNS -> Step, SqlObject -CALLS-> SqlObject, plus Variable nodes.
 //
 // Usage:
-//   dotnet run -- input.json output_graph.json [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore]
+//   dotnet run -- input.json output_graph.json [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore] [--sqlite]
 //
 // --columns: also emit :Column nodes (HAS_COLUMN / READS_COLUMN / WRITES_COLUMN).
 // --graphify: also write "<output_graph>.graphify.json" in the flat
@@ -32,6 +32,7 @@ var includeColumns = args.Contains("--columns");
 var emitGraphify = args.Contains("--graphify");
 var emitGraphml = args.Contains("--graphml");
 var emitNodeStore = args.Contains("--nodestore");
+var emitSqlite = args.Contains("--sqlite");
 
 // "validate <graph.json> [--server <server>]": cross-checks FK_TO/CALLS edges
 // in an already-built graph against the live database (sys.foreign_keys,
@@ -238,7 +239,7 @@ if (positional.Count >= 1 && positional[0] == "update-nodestore")
 
 if (positional.Count < 2)
 {
-    Console.Error.WriteLine("Usage: TSqlParser <input.json> <output_graph.json> [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore]");
+    Console.Error.WriteLine("Usage: TSqlParser <input.json> <output_graph.json> [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore] [--sqlite]");
     Console.Error.WriteLine("       TSqlParser report <input.json> [nombre-objeto]");
     Console.Error.WriteLine("       TSqlParser from-sql <database> <input.json> <file1.sql> [file2.sql ...|dir|glob]");
     Console.Error.WriteLine("       TSqlParser extract <database> <input.json> [--server <server>] [--tables] [--object schema.name]... [--like pattern]");
@@ -304,6 +305,22 @@ if (emitNodeStore)
         : graphOutputPath + ".nodes";
     var nodeStoreStats = NodeStoreExporter.Write(graph, nodeStorePath, db, jsonOptions);
     Console.WriteLine($"NodeStore: {nodeStoreStats.Objects} objects, {nodeStoreStats.SharedNodes} shared nodes, {nodeStoreStats.Edges} edges -> {nodeStorePath}");
+}
+
+// --sqlite: also write "<graphOutputPath without .json>.db" - a single queryable
+// SQLite database (nodes + edges, with per-object scalars rolled up) for agents/
+// LLMs that answer with one SQL query instead of scanning JSON. See SqliteExporter
+// and scripts/lineage-queries.sql.
+if (emitSqlite)
+{
+    var dbPath = graphOutputPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
+        ? graphOutputPath[..^5] + ".db"
+        : graphOutputPath + ".db";
+    var sqliteDb = results.Select(o => o.ObjectName.Split("::", 2)).FirstOrDefault(p => p.Length == 2)?[0] ?? "";
+    // --project=<name> identifies the analysis project; defaults to the database name.
+    var project = args.FirstOrDefault(a => a.StartsWith("--project="))?["--project=".Length..] ?? sqliteDb;
+    SqliteExporter.Write(graph, dbPath, sqliteDb, project);
+    Console.WriteLine($"SQLite: {graph.Nodes.Count} nodes, {graph.Relationships.Count} edges (db={sqliteDb}, project={project}) -> {dbPath}");
 }
 
 var ok = results.Count(r => r.Error == null);

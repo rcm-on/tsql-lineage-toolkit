@@ -7,8 +7,32 @@
     "database": "WideWorldImporters",
     "name": "Application.Cities_Archive"
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Integration.GetCityUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step20",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].Cities_Archive"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step20",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].Cities_Archive"
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "HAS_COLUMN",

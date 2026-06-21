@@ -7,8 +7,32 @@
     "database": "WideWorldImporters",
     "name": "Application.PaymentMethods_Archive"
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Integration.GetPaymentMethodUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].PaymentMethods_Archive"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].PaymentMethods_Archive"
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "HAS_COLUMN",

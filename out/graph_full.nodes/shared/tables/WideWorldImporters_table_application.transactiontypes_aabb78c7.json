@@ -75,6 +75,29 @@
           "table": "[Application].[TransactionTypes]"
         }
       }
+    ],
+    "WideWorldImporters::Integration.GetTransactionTypeUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].TransactionTypes"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
+        "props": {
+          "action_type": "INSERT",
+          "table": "[Application].TransactionTypes",
+          "via": "JOIN"
+        }
+      }
     ]
   },
   "edges_in": [
@@ -136,6 +159,27 @@
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[TransactionTypes]"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].TransactionTypes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "[Application].TransactionTypes",
+        "via": "JOIN"
       }
     }
   ],

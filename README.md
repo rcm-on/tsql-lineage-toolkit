@@ -16,6 +16,33 @@
 
 ---
 
+## In one screen — for Microsoft SQL Server (T-SQL)
+
+Point it at your stored procedures — from a **live SQL Server** or from **`.sql` files** — and get a deterministic, queryable map of every dependency.
+
+- **What it solves** — *"What breaks if I change this table, column, or procedure?"* Answered **down to the column**, through **dynamic SQL** and **cursors**, before you touch anything.
+- **Why you can trust it** — it parses the real **T-SQL AST** (`ScriptDom`), so it is **deterministic** and **grammar-aware**: an `IF`/`EXEC` *inside* a dynamic-SQL string is never mistaken for control flow. Same input → same answer, every run — **diffable, auditable, CI-gateable**. Where grep or an LLM reading the source guess (and get it wrong), the parser is right.
+- **The core** — every procedure / function / trigger / view becomes a **lineage graph**: nodes (objects, steps, tables, columns) and edges (`READS_FROM`/`WRITES_TO`, `CALLS`, `DERIVES_FROM`, `FK_TO`…), optionally fused with **execution-plan XML** to surface runtime-only tables.
+- **How you use it** — two artifacts from one pass: **`graph_full.json`** (canonical, version-controlled) and **`graph.db` (SQLite)** — ask any impact or audit question as **one SQL query** (transitive impact via a recursive CTE, in milliseconds), or explore the **zero-install browser dashboard**.
+- **What for** — pre-migration **impact analysis** · CI **deployment gates** · security & code **audits** (dynamic-SQL surface, missing `TRY/CATCH`, destructive ops) · **LLM decision support** over a fact base it can query instead of guessing.
+
+```bash
+# from a live SQL Server (or use `from-sql` for offline .sql files), then:
+dotnet run -- input.json graph_full.json --columns --sqlite --project=MyProject
+# → graph_full.json  +  graph_full.db  (query it with SQL)
+```
+
+```sql
+-- "What breaks if I change Sales.OrderLines.UnitPrice?" — transitive, column-level, in one query
+WITH RECURSIVE affected(col) AS (
+  SELECT 'WideWorldImporters:table:sales.orderlines:column:UnitPrice'
+  UNION SELECT e.src FROM edges e JOIN affected ON e.dst=affected.col WHERE e.type='DERIVES_FROM')
+SELECT DISTINCT substr(e.src,1,instr(e.src,'#')-1) AS impacted_proc
+FROM edges e JOIN affected ON e.dst=affected.col WHERE e.type IN ('READS_COLUMN','WRITES_COLUMN');
+```
+
+---
+
 ## Why this tool exists
 
 Before touching a stored procedure or renaming a column in a large SQL Server database, the question is always the same: **what breaks if I change this?** Answering it manually means reading hundreds of procedures. Commercial tools (Purview, DataHub) cost a fortune and still miss runtime-only table access.
@@ -50,6 +77,7 @@ It doesn't stop at "table A feeds table B". Every column-to-column edge carries 
 | 18 | **Transitive `#temp`/`@TableVar` lineage** | `INSERT #Staging SELECT Col FROM A` then `INSERT B SELECT Col FROM #Staging` resolves straight through to `B.Col DERIVES_FROM A.Col` (tagged `via_transient`) — no phantom Table node for the temp bridge, and the chain survives any number of hops |
 | 19 | **VIEW expansion** | A view's own `SELECT` body is parsed for its real base table(s); any `SELECT ... FROM AnalyzedView` elsewhere bridges straight through to those base tables/columns (tagged `via_view`), not just the view's own node |
 | 20 | **Cross-database CALLS resolution** | `EXEC OtherDb.dbo.Proc` resolves to the real analyzed object in `OtherDb` (not just a dangling text label), tagged `is_cross_database` |
+| 21 | **SQL-queryable database** (`--sqlite`) | One `graph.db` (SQLite): impact, audit and aggregation as a single SQL query — transitive impact via recursive CTE in ms, audit dimensions promoted to indexed columns, full detail in JSON (`json_extract`), self-identifying `meta` (database + project) |
 
 ---
 

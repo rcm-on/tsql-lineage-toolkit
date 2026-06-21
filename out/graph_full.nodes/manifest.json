@@ -2,6 +2,7 @@
   "WideWorldImporters::Application.AddRoleMemberIfNonexistent": {
     "content_hash": "029c9235ebe223a45305983e6ca19f2f384c15be",
     "object_file": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "WideWorldImporters:action:THROW",
@@ -11,6 +12,7 @@
   "WideWorldImporters::Application.Configuration_ApplyAuditing": {
     "content_hash": "d3f35e9e51ab749679bb6724f0748316a3d482f9",
     "object_file": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "WideWorldImporters:action:THROW",
@@ -20,6 +22,7 @@
   "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": {
     "content_hash": "77dad8667afa9d4ec7cb342f6935be04833ba732",
     "object_file": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:BEGIN_TRAN",
       "WideWorldImporters:action:COMMIT_TRAN",
@@ -40,6 +43,7 @@
   "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing": {
     "content_hash": "6ff9f970d221bcaab837d35326bf763bea0ea666",
     "object_file": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "wf:WideWorldImporters:application"
@@ -48,6 +52,7 @@
   "WideWorldImporters::Application.Configuration_ApplyPartitioning": {
     "content_hash": "777ef3d5f046c9ab52d38a937859efed275fb339",
     "object_file": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:BEGIN_TRAN",
       "WideWorldImporters:action:COMMIT_TRAN",
@@ -58,6 +63,7 @@
   "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity": {
     "content_hash": "8ca0c656146bf66787b8fdbb3cf09d7cf1956fcf",
     "object_file": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "WideWorldImporters:action:THROW",
@@ -67,6 +73,7 @@
   "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition": {
     "content_hash": "d0f946b2b1f807b8a408a5e89ae015ebce8deaf8",
     "object_file": "objects/WideWorldImporters_Application.Configuration_ConfigureForEnterpriseEdition/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.Configuration_ConfigureForEnterpriseEdition/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "WideWorldImporters:table:warehouse.coldroomtemperatures",
@@ -76,6 +83,7 @@
   "WideWorldImporters::Application.Configuration_EnableInMemory": {
     "content_hash": "02df77bb0840d7e81d97ab2eb137d54c13505125",
     "object_file": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "WideWorldImporters:action:INSERT",
@@ -93,6 +101,7 @@
   "WideWorldImporters::Application.Configuration_RemoveAuditing": {
     "content_hash": "469ef3712e784d6bac5248c7f6836f0e71031672",
     "object_file": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "WideWorldImporters:action:THROW",
@@ -102,6 +111,7 @@
   "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity": {
     "content_hash": "675f0fbf7122ec4d07506c26432c5d920cb4dad6",
     "object_file": "objects/WideWorldImporters_Application.Configuration_RemoveRowLevelSecurity/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.Configuration_RemoveRowLevelSecurity/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "WideWorldImporters:action:THROW",
@@ -111,6 +121,7 @@
   "WideWorldImporters::Application.CreateRoleIfNonexistent": {
     "content_hash": "a179f0117cf030a23a4c214821fe07eed1e7363a",
     "object_file": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "WideWorldImporters:action:THROW",
@@ -120,6 +131,7 @@
   "WideWorldImporters::Application.DetermineCustomerAccess": {
     "content_hash": "08cd5254ffc2940e5c889b93ce0665071ccdf39d",
     "object_file": "objects/WideWorldImporters_Application.DetermineCustomerAccess/object.json",
+    "nav_file": "objects/WideWorldImporters_Application.DetermineCustomerAccess/nav.json",
     "shared_touched": [
       "wf:WideWorldImporters:application"
     ]
@@ -127,6 +139,7 @@
   "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures": {
     "content_hash": "9bfd712579788993309f7b1e35ce40a59865afa0",
     "object_file": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json",
+    "nav_file": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "WideWorldImporters:table:application.cities",
@@ -152,6 +165,7 @@
   "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures": {
     "content_hash": "124502fe41936665234b238e8d4bae3d2a279e29",
     "object_file": "objects/WideWorldImporters_DataLoadSimulation.Configuration_RemoveDataLoadSimulationProc/object.json",
+    "nav_file": "objects/WideWorldImporters_DataLoadSimulation.Configuration_RemoveDataLoadSimulationProc/nav.json",
     "shared_touched": [
       "wf:WideWorldImporters:dataloadsimulation"
     ]
@@ -159,6 +173,7 @@
   "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad": {
     "content_hash": "b164df13a6b08a36f329618a7430b80af9e4ffbc",
     "object_file": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+    "nav_file": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:ALTER",
       "WideWorldImporters:action:EXEC",
@@ -185,6 +200,7 @@
   "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": {
     "content_hash": "20ae6c74032e62ea785925d598f0f12862497c0a",
     "object_file": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json",
+    "nav_file": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "WideWorldImporters:table:application.cities",
@@ -210,6 +226,7 @@
   "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad": {
     "content_hash": "0b30d57a7b521d887fea36b5ab382125e1ee4487",
     "object_file": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
+    "nav_file": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:ALTER",
       "WideWorldImporters:action:EXEC",
@@ -234,8 +251,9 @@
     ]
   },
   "WideWorldImporters::Integration.GetCityUpdates": {
-    "content_hash": "2a2c3ec2fa6e1da3982fcdf123af231a759fd929",
+    "content_hash": "abb184a4b723448ffd9c76b3e972b9ef2363445c",
     "object_file": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetCityUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:CLOSE_CURSOR",
       "WideWorldImporters:action:CREATE_INDEX",
@@ -249,12 +267,25 @@
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:application.cities",
+      "WideWorldImporters:table:application.cities_archive",
+      "WideWorldImporters:table:application.countries",
+      "WideWorldImporters:table:application.countries:column:Continent",
+      "WideWorldImporters:table:application.countries:column:CountryName",
+      "WideWorldImporters:table:application.countries:column:Region",
+      "WideWorldImporters:table:application.countries:column:Subregion",
+      "WideWorldImporters:table:application.countries_archive",
+      "WideWorldImporters:table:application.stateprovinces",
+      "WideWorldImporters:table:application.stateprovinces:column:SalesTerritory",
+      "WideWorldImporters:table:application.stateprovinces:column:StateProvinceName",
+      "WideWorldImporters:table:application.stateprovinces_archive",
       "wf:WideWorldImporters:integration"
     ]
   },
   "WideWorldImporters::Integration.GetCustomerUpdates": {
-    "content_hash": "66cd8ca6e5e46561c9bf6b43e9a7bf4489f399b5",
+    "content_hash": "a3c0386d8da175eb4ab737b815c7cfb87ab85ba5",
     "object_file": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetCustomerUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:CLOSE_CURSOR",
       "WideWorldImporters:action:CREATE_INDEX",
@@ -268,12 +299,24 @@
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.people:column:FullName",
+      "WideWorldImporters:table:sales.buyinggroups",
+      "WideWorldImporters:table:sales.buyinggroups:column:BuyingGroupName",
+      "WideWorldImporters:table:sales.buyinggroups_archive",
+      "WideWorldImporters:table:sales.customercategories",
+      "WideWorldImporters:table:sales.customercategories:column:CustomerCategoryName",
+      "WideWorldImporters:table:sales.customercategories_archive",
+      "WideWorldImporters:table:sales.customers",
+      "WideWorldImporters:table:sales.customers:column:CustomerName",
+      "WideWorldImporters:table:sales.customers_archive",
       "wf:WideWorldImporters:integration"
     ]
   },
   "WideWorldImporters::Integration.GetEmployeeUpdates": {
-    "content_hash": "2a12ef86563953d9d2fec18b6edd48f32f655299",
+    "content_hash": "d2dfcefd2ac5a9e0bc05d7f012b913aea018fca2",
     "object_file": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:CLOSE_CURSOR",
       "WideWorldImporters:action:CREATE_INDEX",
@@ -287,12 +330,15 @@
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.people_archive",
       "wf:WideWorldImporters:integration"
     ]
   },
   "WideWorldImporters::Integration.GetMovementUpdates": {
     "content_hash": "2729912c50fa13c4574ce0ddc33a3e03867af6f8",
     "object_file": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetMovementUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
@@ -313,6 +359,7 @@
   "WideWorldImporters::Integration.GetOrderUpdates": {
     "content_hash": "b67206b4d678da1849f289b06d30df1ba9933051",
     "object_file": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetOrderUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
@@ -344,8 +391,9 @@
     ]
   },
   "WideWorldImporters::Integration.GetPaymentMethodUpdates": {
-    "content_hash": "d6b3a531e4a5e3a6819b4a86600406ff70a5ca19",
+    "content_hash": "fcc9f04cf5296253d8d0718829ff781f5e483904",
     "object_file": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:CLOSE_CURSOR",
       "WideWorldImporters:action:CREATE_INDEX",
@@ -359,12 +407,15 @@
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:application.paymentmethods",
+      "WideWorldImporters:table:application.paymentmethods_archive",
       "wf:WideWorldImporters:integration"
     ]
   },
   "WideWorldImporters::Integration.GetPurchaseUpdates": {
     "content_hash": "c6b9652468541c5ba3b3ef245bd75f80ea3655aa",
     "object_file": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
@@ -393,6 +444,7 @@
   "WideWorldImporters::Integration.GetSaleUpdates": {
     "content_hash": "160e529ed02bd5d20e567b1985b9ac342fdce2f0",
     "object_file": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetSaleUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
@@ -431,6 +483,7 @@
   "WideWorldImporters::Integration.GetStockHoldingUpdates": {
     "content_hash": "f62f92bf73ee4236ebcf402d048fecb85d21b0bf",
     "object_file": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
@@ -446,8 +499,9 @@
     ]
   },
   "WideWorldImporters::Integration.GetStockItemUpdates": {
-    "content_hash": "67980d72ecfa01c2c32b6445927fe5b27f390ea4",
+    "content_hash": "3af2ad76372214b0457902cce8b159957af89bb8",
     "object_file": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetStockItemUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:CLOSE_CURSOR",
       "WideWorldImporters:action:CREATE_INDEX",
@@ -461,12 +515,19 @@
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:warehouse.colors",
+      "WideWorldImporters:table:warehouse.colors:column:ColorName",
+      "WideWorldImporters:table:warehouse.packagetypes",
+      "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeName",
+      "WideWorldImporters:table:warehouse.stockitems",
+      "WideWorldImporters:table:warehouse.stockitems_archive",
       "wf:WideWorldImporters:integration"
     ]
   },
   "WideWorldImporters::Integration.GetSupplierUpdates": {
-    "content_hash": "120fe0d795a9b76c4ac582a5e45a5eed1b50df7d",
+    "content_hash": "890a34f3955911beec3a92c79fa1afc580fc46b1",
     "object_file": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetSupplierUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:CLOSE_CURSOR",
       "WideWorldImporters:action:CREATE_INDEX",
@@ -480,12 +541,20 @@
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:application.people",
+      "WideWorldImporters:table:application.people:column:FullName",
+      "WideWorldImporters:table:purchasing.suppliercategories",
+      "WideWorldImporters:table:purchasing.suppliercategories:column:SupplierCategoryName",
+      "WideWorldImporters:table:purchasing.suppliercategories_archive",
+      "WideWorldImporters:table:purchasing.suppliers",
+      "WideWorldImporters:table:purchasing.suppliers_archive",
       "wf:WideWorldImporters:integration"
     ]
   },
   "WideWorldImporters::Integration.GetTransactionTypeUpdates": {
-    "content_hash": "fa644f92a3aff9f15303d0e3434d33675f5b8a25",
+    "content_hash": "2461d115879fa71e52e5caf55c03a30139ba0aad",
     "object_file": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:CLOSE_CURSOR",
       "WideWorldImporters:action:CREATE_INDEX",
@@ -499,12 +568,15 @@
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:action:UPDATE",
+      "WideWorldImporters:table:application.transactiontypes",
+      "WideWorldImporters:table:application.transactiontypes_archive",
       "wf:WideWorldImporters:integration"
     ]
   },
   "WideWorldImporters::Integration.GetTransactionUpdates": {
     "content_hash": "55c5f500f4f37b15fd4c54619344c8ac3b29911c",
     "object_file": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json",
+    "nav_file": "objects/WideWorldImporters_Integration.GetTransactionUpdates/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:RETURN",
       "wf:WideWorldImporters:integration"
@@ -513,6 +585,7 @@
   "WideWorldImporters::Sequences.ReseedAllSequences": {
     "content_hash": "7ccd6754a04310a20529297882c9759b2429fbac",
     "object_file": "objects/WideWorldImporters_Sequences.ReseedAllSequences/object.json",
+    "nav_file": "objects/WideWorldImporters_Sequences.ReseedAllSequences/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:EXEC",
       "wf:WideWorldImporters:sequences"
@@ -521,6 +594,7 @@
   "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues": {
     "content_hash": "f0c5100e68432e660c18f60e336653e4ae9d2cc4",
     "object_file": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json",
+    "nav_file": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:CREATE_TABLE",
       "WideWorldImporters:action:DROP_TABLE",
@@ -533,6 +607,7 @@
   "WideWorldImporters::Website.ActivateWebsiteLogon": {
     "content_hash": "68199f9c305022d5bbf5705f9bbae9901279ae77",
     "object_file": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:THROW",
@@ -549,6 +624,7 @@
   "WideWorldImporters::Website.CalculateCustomerPrice": {
     "content_hash": "94cfd438d945064e176bda8f9159b7457c2eca97",
     "object_file": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.CalculateCustomerPrice/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:SELECT",
@@ -579,6 +655,7 @@
   "WideWorldImporters::Website.ChangePassword": {
     "content_hash": "eb58c9b47915e7b3ac73cb3c366245ee24bf8f53",
     "object_file": "objects/WideWorldImporters_Website.ChangePassword/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.ChangePassword/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:RETURN",
       "WideWorldImporters:action:THROW",
@@ -594,6 +671,7 @@
   "WideWorldImporters::Website.Customers": {
     "content_hash": "c23c4ea26e4cd48007166bdeb925673f811f0256",
     "object_file": "objects/WideWorldImporters_Website.Customers/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.Customers/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:table:application.cities",
@@ -632,6 +710,7 @@
   "WideWorldImporters::Website.InsertCustomerOrders": {
     "content_hash": "25b56da9ce933a6630c385bf03cd07dbcbaaeafc",
     "object_file": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.InsertCustomerOrders/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:BEGIN_TRAN",
       "WideWorldImporters:action:COMMIT_TRAN",
@@ -673,8 +752,9 @@
     ]
   },
   "WideWorldImporters::Website.InvoiceCustomerOrders": {
-    "content_hash": "704e969bfbd16c9389c75af8e6479193a6f72b78",
+    "content_hash": "75ce3893519fe6a9b6c86d9bcd3ef79be08b9225",
     "object_file": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:BEGIN_TRAN",
       "WideWorldImporters:action:COMMIT_TRAN",
@@ -768,6 +848,7 @@
   "WideWorldImporters::Website.RecordColdRoomTemperatures": {
     "content_hash": "a0c201afc18acddcfafa6283d2de4f77141cbf42",
     "object_file": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:INSERT",
       "WideWorldImporters:action:RETURN",
@@ -784,6 +865,7 @@
   "WideWorldImporters::Website.RecordVehicleTemperature": {
     "content_hash": "479b2dc683c0f95ee041c2b4ade838fc6227a25e",
     "object_file": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.RecordVehicleTemperature/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:BEGIN_TRAN",
       "WideWorldImporters:action:COMMIT_TRAN",
@@ -805,6 +887,7 @@
   "WideWorldImporters::Website.SearchForCustomers": {
     "content_hash": "dea6397e5f7cf025f7ffe51fc3d2be190d181ce2",
     "object_file": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.SearchForCustomers/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:table:application.cities",
@@ -827,6 +910,7 @@
   "WideWorldImporters::Website.SearchForPeople": {
     "content_hash": "004d1ce880c3d1ea2963785adea903eefa33b163",
     "object_file": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.SearchForPeople/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:table:application.people",
@@ -851,6 +935,7 @@
   "WideWorldImporters::Website.SearchForStockItems": {
     "content_hash": "2514c0ce4aa9f00a35bbc759271dbebe9861ffdc",
     "object_file": "objects/WideWorldImporters_Website.SearchForStockItems/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.SearchForStockItems/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:table:warehouse.stockitems",
@@ -863,6 +948,7 @@
   "WideWorldImporters::Website.SearchForStockItemsByTags": {
     "content_hash": "f5d1b8807d3c9dc003d978f13c3f089bc46d5b3f",
     "object_file": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:table:warehouse.stockitems",
@@ -875,6 +961,7 @@
   "WideWorldImporters::Website.SearchForSuppliers": {
     "content_hash": "2f54910efe3d12a45fac4e8fbbae80f34b568a6a",
     "object_file": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.SearchForSuppliers/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:table:application.cities",
@@ -897,6 +984,7 @@
   "WideWorldImporters::Website.Suppliers": {
     "content_hash": "d942c75efe9fbd427eb7ba58ddccdaf494385987",
     "object_file": "objects/WideWorldImporters_Website.Suppliers/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.Suppliers/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:table:application.cities",
@@ -930,6 +1018,7 @@
   "WideWorldImporters::Website.VehicleTemperatures": {
     "content_hash": "34afd4786a0de02d10aaae4afd5530ebfa60fc3a",
     "object_file": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json",
+    "nav_file": "objects/WideWorldImporters_Website.VehicleTemperatures/nav.json",
     "shared_touched": [
       "WideWorldImporters:action:SELECT",
       "WideWorldImporters:table:warehouse.vehicletemperatures",

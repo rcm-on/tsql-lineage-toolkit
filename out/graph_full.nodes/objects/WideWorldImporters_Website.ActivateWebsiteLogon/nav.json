@@ -1,0 +1,18 @@
+﻿{
+  "id": "WideWorldImporters::Website.ActivateWebsiteLogon",
+  "name": "Website.ActivateWebsiteLogon",
+  "edges_out": [
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "action_type": "UPDATE",
+        "table": "[Application].People"
+      }
+    }
+  ]
+}
