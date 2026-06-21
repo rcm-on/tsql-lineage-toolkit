@@ -179,13 +179,53 @@
     r.readAsText(file);
   }
 
+  // Demo auto-load: on a real server (GitHub Pages, any http(s) host) fetches
+  // the bundled demo/graph_full.json (WideWorldImporters, public sample data)
+  // so a first-time visitor sees the dashboard working immediately instead of
+  // an empty upload screen. Silently does nothing if it fails - in particular,
+  // opening index.html directly as file:// (the documented local workflow)
+  // hits a CORS error on fetch() for local files in most browsers, which is
+  // caught and ignored, leaving the normal upload/drop screen untouched.
+  function tryLoadDemo() {
+    fetch('demo/graph_full.json')
+      .then(r => r.ok ? r.text() : Promise.reject())
+      .then(text => {
+        load(text, 'demo/graph_full.json');
+        const banner = $('#demo-banner');
+        if (banner) banner.hidden = false;
+      })
+      .catch(() => {});
+  }
+
+  // Modo claro/oscuro: preferencia persistida en localStorage, aplicada antes
+  // de pintar nada (evita el "flash" del tema por defecto al recargar).
+  function applyTheme(light) {
+    document.body.classList.toggle('light', light);
+    const btn = $('#theme-toggle');
+    if (btn) btn.textContent = light ? '☀️' : '🌙';
+  }
+  function toggleTheme() {
+    const light = !document.body.classList.contains('light');
+    localStorage.setItem('sd-theme', light ? 'light' : 'dark');
+    applyTheme(light);
+  }
+
   function init() {
+    applyTheme(localStorage.getItem('sd-theme') === 'light');
+    $('#theme-toggle').addEventListener('click', toggleTheme);
     $('#file').addEventListener('change', e => readFile(e.target.files[0]));
     $('#search').addEventListener('input', e => renderSidebar(e.target.value));
     const dz = $('#drop');
     ['dragover', 'dragenter'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); dz && dz.classList.add('hot'); }));
     ['dragleave'].forEach(ev => document.addEventListener(ev, e => { if (e.target === dz) dz.classList.remove('hot'); }));
     document.addEventListener('drop', e => { e.preventDefault(); dz && dz.classList.remove('hot'); readFile(e.dataTransfer.files[0]); });
+    const uploadOwn = $('#demo-upload-own');
+    if (uploadOwn) uploadOwn.addEventListener('click', e => {
+      e.preventDefault();
+      document.body.classList.remove('loaded');
+      $('#demo-banner').hidden = true;
+    });
+    tryLoadDemo();
   }
 
   SD.app = { init, load, openObject, openOverview, openRisks, openSchema, setFilter,

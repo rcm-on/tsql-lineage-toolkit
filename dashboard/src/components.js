@@ -250,8 +250,12 @@
   function DataFlowMermaid(o, DATA) {
     const inputs = [];
     for (const p of o.params.filter(p => !p.out)) inputs.push({ label: `${p.name}: ${p.type}` });
-    for (const t of o.reads) inputs.push({ label: t, link: t });
     const outputs = [];
+    // Acción siempre Objeto -> Tabla (igual que una escritura): el objeto "lee"
+    // la tabla, no al revés - por eso va en "Salidas" junto a INSERT/UPDATE/...,
+    // no en "Entradas" (que queda solo para parámetros, el único caso donde el
+    // dato realmente fluye HACIA el objeto sin que el objeto actúe sobre nada).
+    for (const t of o.reads) outputs.push({ label: `lee ${t}`, link: t, op: 'lee' });
     for (const w of o.writes) outputs.push({ label: `${w.op} ${w.table}`, link: w.table, op: w.op });
     for (const c of o.callsOut) outputs.push({ label: `EXEC ${c}`, link: c, op: 'EXEC' });
     for (const p of o.params.filter(p => p.out)) outputs.push({ label: `${p.name} (OUTPUT)` });

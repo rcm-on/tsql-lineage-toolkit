@@ -1,11 +1,39 @@
+/* Paleta y tipografía tomadas del dark mode de blog.rcmon.dev (quartz.config.ts)
+   para que el dashboard se sienta parte del mismo "ecosistema" de marca - solo
+   el "chrome" (fondo/panel/borde/texto/acento) adopta la marca; los colores
+   semánticos de datos (ok/warn/severidades de riesgo/paleta de chips) se
+   mantienen aparte porque codifican significado, no identidad visual. */
 :root{
-  --bg:#1e1e1e;--pan:#252526;--bd:#3c3c3c;--fg:#ddd;--mut:#888;
-  --ac:#3b82f6;--ok:#4caf50;--warn:#ff9800;--dyn:#7dd3fc;--lnk:#4ea1ff;
+  --bg:#0d1424;--pan:#1b2336;--bd:#29314a;--fg:#eef2f8;--mut:#8294b3;
+  --ac:#ff6b6b;--ac2:#ff897a;--ok:#4caf50;--warn:#ff9800;--dyn:#7dd3fc;--lnk:#ff6b6b;
+  /* Superficies "neutras" (inputs, badges por defecto, chips, cabeceras de
+     tabla, botones de toolbar) - antes literales sueltos (#2d2d2d, #333, ...)
+     repetidos por todo el archivo sin variable, por lo que no se adaptaban al
+     modo claro. --surface-sel es el resalte de "seleccionado" (.item.sel). */
+  --surface:#2d2d2d;--surface-sel:#37373d;--fg-soft:#ccc;--tint-bg:#1e2a3a;--tint-bd:#2d4259;
+  --tbl-fg:#9be7b4;--tmp-fg:#ffcf8f;--chip-w:#ff8a80;--chip-r:#9cdcfe;
+  --font-head:"Space Grotesk",system-ui,sans-serif;
+  --font-body:"Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --font-mono:"JetBrains Mono",Consolas,monospace;
+}
+/* Modo claro (toggle en la barra lateral, SD.app.toggleTheme) - mismo mapeo de
+   tokens que el lightMode de blog.rcmon.dev. Las cajas con su propio fondo e
+   icono oscuro "de marca" (.summary, .mini-graph, .flowchart, code.ctor, los
+   badges de severidad/categoría) se dejan tal cual a propósito en ambos modos
+   - son tarjetas autocontenidas (fondo+texto a juego) que siguen siendo
+   legibles sobre cualquier fondo de página, no widgets temáticos. */
+body.light{
+  --bg:#f7f8fb;--pan:#e3e7f0;--bd:#cdd3e0;--fg:#131826;--mut:#5b6678;
+  --ac:#dc4f47;--ac2:#ef6a5f;--lnk:#dc4f47;
+  --surface:#eef0f5;--surface-sel:#dde3f0;--fg-soft:#3a4254;--tint-bg:#eef2f7;--tint-bd:#d6dee8;
+  --tbl-fg:#1f7a4d;--tmp-fg:#9a5d10;--chip-w:#b3261e;--chip-r:#0969a2;
 }
 *{box-sizing:border-box}
-html,body{margin:0;height:100%;font-family:"Segoe UI",system-ui,-apple-system,Inter,Arial,sans-serif;background:var(--bg);color:var(--fg);font-size:14px;-webkit-font-smoothing:antialiased}
+html,body{margin:0;height:100%;font-family:var(--font-body);background:var(--bg);color:var(--fg);font-size:14px;-webkit-font-smoothing:antialiased}
 a{color:var(--lnk);text-decoration:none}
-a:hover{color:var(--ac);text-decoration:underline}
+a:hover{color:var(--ac2);text-decoration:underline}
+h1,h2,h3,h4{font-family:var(--font-head)}
+code,pre,.mono{font-family:var(--font-mono)}
 #app{display:flex;height:100vh}
 
 /* Pantalla de carga (upload) */
@@ -20,27 +48,42 @@ body.loaded #drop{display:none}
 input[type=file]{color:var(--fg)}
 
 #side{width:340px;flex:0 0 340px;border-right:1px solid var(--bd);background:var(--pan);display:flex;flex-direction:column}
-#side h1{font-size:15px;margin:0;padding:12px 14px;border-bottom:1px solid var(--bd)}
+#side h1{font-size:15px;margin:0;padding:12px 14px;border-bottom:1px solid var(--bd);position:relative}
 #side h1 small{color:var(--mut);font-weight:normal;font-size:11px;display:block;margin-top:2px}
-#search{margin:8px;padding:7px;background:#2d2d2d;border:1px solid var(--bd);color:var(--fg);border-radius:5px}
+#theme-toggle{position:absolute;right:10px;top:10px;background:none;border:1px solid var(--bd);border-radius:6px;cursor:pointer;font-size:13px;padding:3px 6px;line-height:1}
+#theme-toggle:hover{border-color:var(--ac)}
+#watermark{font-size:12px;color:var(--mut);text-align:center;padding:10px 6px;border-top:1px solid var(--bd)}
+#watermark a{color:var(--mut)}
+#watermark a:hover{color:var(--ac)}
+/* "rcm●" - el punto se ilumina (acento + resplandor) en modo oscuro = "on",
+   se apaga (gris, sin resplandor) en modo claro = "off" - el juego de
+   palabras rcm-on/off ligado al propio toggle de tema. Marca personal, por
+   eso destaca más que el resto del watermark (tamaño/peso/color de acento)
+   en vez de ir todo en el mismo gris apagado. */
+#rcm-mark{font-family:var(--font-head);font-weight:700;font-size:14px;letter-spacing:.5px;color:var(--ac) !important}
+#rcm-led{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:4px;vertical-align:middle;background:var(--mut);transition:background .2s,box-shadow .2s}
+body:not(.light) #rcm-led{background:var(--ac);box-shadow:0 0 5px var(--ac)}
+#demo-banner{font-size:11px;color:var(--mut);background:var(--surface);padding:6px 14px;border-bottom:1px solid var(--bd)}
+#demo-banner a{color:var(--ac)}
+#search{margin:8px;padding:7px;background:var(--surface);border:1px solid var(--bd);color:var(--fg);border-radius:5px}
 #filter{display:flex;flex-wrap:wrap;gap:4px;padding:0 8px 8px}
-.fchip{font-size:11px;padding:3px 9px;border-radius:12px;background:#2d2d2d;border:1px solid var(--bd);cursor:pointer;color:#ccc}
+.fchip{font-size:11px;padding:3px 9px;border-radius:12px;background:var(--surface);border:1px solid var(--bd);cursor:pointer;color:var(--fg-soft)}
 .fchip:hover{border-color:var(--ac)}
 .fchip.on{background:var(--ac);border-color:var(--ac);color:#fff}
 .fchip b{font-weight:bold}
 .card.clk{cursor:pointer}.card.clk:hover{border-color:var(--ac)}
 #list{overflow:auto;flex:1}
 .item{padding:7px 12px;border-bottom:1px solid #2a2a2a;cursor:pointer;display:flex;justify-content:space-between;gap:6px}
-.item:hover{background:#2d2d2d}
-.item.sel{background:#37373d;border-left:3px solid var(--ac)}
+.item:hover{background:var(--surface)}
+.item.sel{background:var(--surface-sel);border-left:3px solid var(--ac)}
 .item .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .badges{flex:0 0 auto;display:flex;gap:3px}
 .b{font-size:10px;padding:1px 5px;border-radius:8px;background:#3a3a3a;color:#ccc}
 .b.cc{background:#5a3a3a}.b.dyn{background:#4a3a5a;color:var(--dyn)}.b.err{background:#5a2a2a;color:#ff8a80}
 .b.tbl{background:#2f4a3a;color:#9be7b4}
 .b.tmp{background:#4a3f2a;color:#ffcf8f}
-.item.table .nm{color:#9be7b4}
-.item.table.temp .nm{color:#ffcf8f;font-style:italic}
+.item.table .nm{color:var(--tbl-fg)}
+.item.table.temp .nm{color:var(--tmp-fg);font-style:italic}
 
 /* mini-grafo */
 .mini-graph{background:#1b1b1b;border:1px solid var(--bd);border-radius:8px;padding:4px;overflow:auto}
@@ -52,17 +95,17 @@ input[type=file]{color:var(--fg)}
 
 #main{flex:1;overflow:auto;padding:18px 24px}
 .nav{margin-bottom:14px}
-.nav button{background:#2d2d2d;border:1px solid var(--bd);color:var(--fg);padding:6px 12px;border-radius:5px;cursor:pointer;margin-right:6px}
+.nav button{background:var(--surface);border:1px solid var(--bd);color:var(--fg);padding:6px 12px;border-radius:5px;cursor:pointer;margin-right:6px}
 .nav button:hover,.nav button.on{border-color:var(--ac)}
 h2{font-size:19px;margin:0 0 4px}
 h3{font-size:12px;color:var(--ac);text-transform:uppercase;letter-spacing:.5px;margin:18px 0 8px;border-bottom:1px solid var(--bd);padding-bottom:4px}
 .flags{color:var(--mut);font-size:12px;margin-bottom:10px}
 
 /* Mini-resumen automático */
-.summary{display:flex;gap:10px;background:#1e2a3a;border:1px solid #2d4259;border-left:3px solid var(--ac);
+.summary{display:flex;gap:10px;background:var(--tint-bg);border:1px solid var(--tint-bd);border-left:3px solid var(--ac);
   border-radius:8px;padding:11px 14px;margin:6px 0 4px;line-height:1.5}
 .summary .sumicon{color:var(--ac)}
-.summary b{color:#fff}
+.summary b{color:var(--fg)}
 
 .cards{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
 .card{background:var(--pan);border:1px solid var(--bd);border-radius:8px;padding:12px 16px;min-width:118px}
@@ -74,21 +117,21 @@ h3{font-size:12px;color:var(--ac);text-transform:uppercase;letter-spacing:.5px;m
 .chart-bars .bar{display:flex;align-items:center;gap:8px;margin:3px 0}
 .chart-bars .lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .chart-bars .lbl[onclick]{cursor:pointer}.chart-bars .lbl[onclick]:hover{color:var(--ac)}
-.chart-bars .track{flex:0 0 150px;background:#2d2d2d;border-radius:4px;height:14px}
+.chart-bars .track{flex:0 0 150px;background:var(--surface);border-radius:4px;height:14px}
 .chart-bars .fill{height:100%;border-radius:4px;display:block}
 .chart-bars .v{flex:0 0 38px;text-align:right;color:var(--mut);font-size:12px}
 
 /* charts: donut */
 .chart-donut{display:flex;align-items:center;gap:18px}
 .donut-c{fill:var(--fg);font-size:22px;font-weight:bold}
-.legend .lg{font-size:12px;margin:3px 0;color:#ccc}
+.legend .lg{font-size:12px;margin:3px 0;color:var(--fg)}
 .legend .dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
 
 /* charts: tally (columnas) */
 .chart-tally{display:flex;gap:14px;align-items:flex-end;padding:8px 0;flex-wrap:wrap}
 .chart-tally .col{display:flex;flex-direction:column;align-items:center;gap:3px}
 .chart-tally .colbar{width:26px;border-radius:3px 3px 0 0}
-.chart-tally .colv{font-size:12px;color:#fff}
+.chart-tally .colv{font-size:12px;color:var(--fg)}
 .chart-tally .colk{font-size:10px;color:var(--mut)}
 
 /* flujograma vertical (SVG) */
@@ -101,7 +144,7 @@ h3{font-size:12px;color:var(--ac);text-transform:uppercase;letter-spacing:.5px;m
 .tree-fold>summary{cursor:pointer;color:var(--mut);font-size:12px;padding:4px 0}
 
 /* árbol de flujo */
-.tree{font-family:Consolas,monospace;font-size:13px;line-height:1.55}
+.tree{font-family:var(--font-mono);font-size:13px;line-height:1.55}
 .tree .cond{color:var(--warn)}
 .tree .act{font-weight:bold;padding:0 5px;border-radius:4px;font-size:12px}
 .tree .a-read{background:#1e3a5a;color:#9cdcfe}      /* SELECT */
@@ -117,27 +160,33 @@ h3{font-size:12px;color:var(--ac);text-transform:uppercase;letter-spacing:.5px;m
 
 /* Bloques Mermaid (flujogramas de control y de datos) */
 .mm-wrap{margin:8px 0 4px;border:1px solid var(--bd);border-radius:8px;background:var(--pan);overflow:hidden}
-.mm-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:#2d2d2d;border-bottom:1px solid var(--bd)}
+.mm-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;background:var(--surface);border-bottom:1px solid var(--bd)}
 .mm-title{font-size:12px;color:var(--mut);font-weight:600}
-.mm-tools{display:flex;gap:4px}
-.mm-tools button{font-size:11px;padding:3px 9px;border-radius:6px;cursor:pointer;background:#333;border:1px solid var(--bd);color:#ccc}
+.mm-tools{display:flex;gap:4px;align-items:center}
+.mm-tools button{font-size:11px;padding:3px 9px;border-radius:6px;cursor:pointer;background:var(--surface);border:1px solid var(--bd);color:var(--fg-soft)}
 .mm-tools button:hover{border-color:var(--ac);color:#fff}
-.mermaid{padding:12px;overflow:auto;text-align:center}
-.mermaid svg{max-width:none}
-.mermaid .muted{color:var(--mut);font-family:Consolas,monospace;font-size:12px}
+.mm-zoom{display:flex;gap:4px;margin-left:6px;padding-left:6px;border-left:1px solid var(--bd)}
+/* .mm-viewport scrolls/clips; .mermaid is sized in JS (zoomFit/zoomIn/zoomOut in
+   mermaid.js) to match the SVG's post-scale footprint, so the diagram defaults
+   to fitting the visible width on render instead of overflowing at full size. */
+.mm-viewport{overflow:auto;max-width:100%}
+.mermaid{padding:12px;text-align:left}
+.mermaid svg{max-width:none;display:block}
+.mermaid .muted{color:var(--mut);font-family:var(--font-mono);font-size:12px}
 
 table.t{border-collapse:collapse;width:100%;margin-top:4px}
 table.t td,table.t th{border:1px solid var(--bd);padding:4px 8px;text-align:left;font-size:13px}
-table.t th{background:#2d2d2d;color:var(--mut)}
-.chip{display:inline-block;background:#2d2d2d;border:1px solid var(--bd);border-radius:10px;padding:2px 8px;margin:2px;font-size:12px;cursor:pointer}
-.chip:hover{border-color:var(--ac)}.chip.w{color:#ff8a80}.chip.r{color:#9cdcfe}
+table.t th{background:var(--surface);color:var(--mut)}
+.chip{display:inline-block;background:var(--surface);border:1px solid var(--bd);border-radius:10px;padding:2px 8px;margin:2px;font-size:12px;cursor:pointer}
+.chip:hover{border-color:var(--ac)}.chip.w{color:var(--chip-w)}.chip.r{color:var(--chip-r)}
 .muted{color:var(--mut)}.risk{color:var(--dyn)}
-code.ctor{display:inline-block;font-family:Consolas,monospace;font-size:12px;color:#7dd3fc;background:#1e2a3a;border:1px solid #2d4259;border-radius:4px;padding:4px 8px;max-width:560px;white-space:pre-wrap;word-break:break-word}
+code.ctor{display:block;font-family:var(--font-mono);font-size:12px;color:var(--dyn);background:var(--tint-bg);border:1px solid var(--tint-bd);border-radius:4px;padding:4px 8px;max-width:680px;max-height:240px;overflow-y:auto;white-space:pre-wrap;word-break:break-word}
+body.light code.ctor{color:#0a6e94}
 .ctor-block{margin:6px 0}
 
 /* schema explorer / ORM diagram */
 .schema-toolbar{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:10px 12px;background:var(--pan);border:1px solid var(--bd);border-radius:8px;margin-bottom:14px}
-.schema-toolbar select{padding:5px 10px;background:#2d2d2d;color:var(--fg);border:1px solid var(--bd);border-radius:6px;min-width:220px;font-size:13px}
+.schema-toolbar select{padding:5px 10px;background:var(--surface);color:var(--fg);border:1px solid var(--bd);border-radius:6px;min-width:220px;font-size:13px}
 .schema-chip{display:inline-flex;align-items:center;gap:3px;background:#2a2a2a;border:1px solid var(--bd);border-radius:14px;padding:3px 4px 3px 10px;font-size:12px;white-space:nowrap}
 .schema-chip-name{max-width:180px;overflow:hidden;text-overflow:ellipsis}
 .s-btn-exp{background:#1a3a2a;color:#66bb6a;border:1px solid #2a5a3a;border-radius:8px;padding:1px 6px;font-size:10px;cursor:pointer;line-height:1.5}

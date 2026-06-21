@@ -44,8 +44,11 @@
   // Mini-grafo de flujo izquierda → derecha: entradas a la izquierda entrando al
   // objetivo central, salidas a la derecha saliendo de él, agrupadas por tipo y nombre.
   // neighbors = [{label, dir:'in'|'out', color?, role?, onClick?}]
-  // dir 'in'  = el vecino apunta al centro (le llama / le escribe / le lee) → columna izquierda.
-  // dir 'out' = el centro apunta al vecino (llama a / FK →)               → columna derecha.
+  // Dirección = flujo de datos/control, no "quién actúa sobre quién":
+  // dir 'in'  = el vecino apunta al centro (le llama / le escribe)  → columna izquierda.
+  // dir 'out' = el centro apunta al vecino (lo lee / llama a / FK →) → columna derecha.
+  // Un lector ("lee") va en 'out': los datos fluyen DE la tabla HACIA quien la lee,
+  // al revés que un escritor ("ALTER"/"INSERT"), cuyos datos fluyen hacia la tabla.
   function miniGraph(center, neighbors, opts = {}) {
     const ins = neighbors.filter(n => n.dir === 'in');
     const outs = neighbors.filter(n => n.dir !== 'in');
