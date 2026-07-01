@@ -13,6 +13,31 @@
     "ordinal": 1
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.stateprovinces:DEFAULT:b7f7c035",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.stateprovinces_DEFAULT_b7f7c035_c2b53514.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.stateprovinces",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.cities:column:StateProvinceID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_column_StateProvinceID_5fe6cee9.json",
+      "props": {
+        "constraint": "FK_Application_Cities_StateProvinceID_Application_StateProvinces"
+      }
+    }
+  ],
   "edges_out": []
 }

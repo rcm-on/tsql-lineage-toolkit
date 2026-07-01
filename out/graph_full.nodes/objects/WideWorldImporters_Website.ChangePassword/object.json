@@ -63,7 +63,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 12,
+          "line_no": 11,
           "nesting_level": 0,
           "action": "UPDATE",
           "step_type": "Transformation",
@@ -71,6 +71,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "UPDATE -> [Application].People"
@@ -84,7 +85,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 23,
+          "line_no": 22,
           "nesting_level": 1,
           "action": "THROW",
           "step_type": "Notification",
@@ -92,11 +93,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "IF: @@ROWCOUNT = 0"
           ],
           "condition_keys": [
-            "IF#19"
+            "IF#18"
           ],
           "label": "THROW"
         }
@@ -109,7 +111,7 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 24,
+          "line_no": 23,
           "nesting_level": 1,
           "action": "RETURN",
           "step_type": "Control",
@@ -117,11 +119,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "IF: @@ROWCOUNT = 0"
           ],
           "condition_keys": [
-            "IF#19"
+            "IF#18"
           ],
           "label": "RETURN"
         }
@@ -154,7 +157,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people:column:FullName",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.people_column_FullName_af371d2e.json"
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_FullName_af371d2e.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:<>",
+          "compare:=",
+          "func:HASHBYTES",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -162,7 +174,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people:column:HashedPassword",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.people_column_HashedPassword_d5d384d5.json"
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_HashedPassword_d5d384d5.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:<>",
+          "compare:=",
+          "func:HASHBYTES",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -170,7 +191,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people:column:PersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json"
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:<>",
+          "compare:=",
+          "func:HASHBYTES",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -254,6 +284,14 @@
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.ChangePassword#step2",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.ChangePassword",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
     }
   ]

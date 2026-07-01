@@ -18,7 +18,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Customers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Customers/object.json"
+        "path": "objects/WideWorldImporters_Website.Customers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ]
   },
@@ -27,7 +32,45 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Customers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      "path": "objects/WideWorldImporters_Website.Customers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:sales.buyinggroups:DEFAULT:0015c47f",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.buyinggroups_DEFAULT_0015c47f_6cc89b72.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.buyinggroups",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customers:column:BuyingGroupID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_BuyingGroupID_c9a569e5.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_BuyingGroupID_Sales_BuyingGroups"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.specialdeals:column:BuyingGroupID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_BuyingGroupID_428fe438.json",
+      "props": {
+        "constraint": "FK_Sales_SpecialDeals_BuyingGroupID_Sales_BuyingGroups"
+      }
     }
   ],
   "edges_out": []

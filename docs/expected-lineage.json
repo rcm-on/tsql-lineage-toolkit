@@ -1,0 +1,44 @@
+{
+    "description": "Validates that a dynamically created trigger is parsed as a first-class object and its lineage is correctly traced.",
+    "nodes": [
+        { "id": "sql_object:dbo.usp_SetupTriggers", "type": "SqlObject" },
+        { "id": "sql_object:dbo.TR_Audit_Customers", "type": "SqlObject", "is_dynamic": true },
+        { "id": "table:dbo.Customers", "type": "Table" },
+        { "id": "table:dbo.Customers_Audit", "type": "Table" }
+    ],
+    "edges": [
+        {
+            "source": "sql_object:dbo.usp_SetupTriggers",
+            "target": "sql_object:dbo.TR_Audit_Customers",
+            "type": "CREATES"
+        },
+        {
+            "source": "sql_object:dbo.TR_Audit_Customers",
+            "target": "table:dbo.Customers",
+            "type": "ON"
+        },
+        {
+            "source": "sql_object:dbo.TR_Audit_Customers",
+            "target": "table:dbo.Customers_Audit",
+            "type": "WRITES_TO"
+        },
+        {
+            "source": "column:dbo.Customers_Audit.CustomerID",
+            "target": "column:dbo.Customers.CustomerID",
+            "type": "DERIVES_FROM",
+            "comment": "via deleted.CustomerID"
+        },
+        {
+            "source": "column:dbo.Customers_Audit.OldCustomerName",
+            "target": "column:dbo.Customers.CustomerName",
+            "type": "DERIVES_FROM",
+            "comment": "via deleted.CustomerName"
+        },
+        {
+            "source": "column:dbo.Customers_Audit.ModifiedBy",
+            "target": "column:dbo.Customers.LastEditedBy",
+            "type": "DERIVES_FROM",
+            "comment": "via inserted.LastEditedBy"
+        }
+    ]
+}

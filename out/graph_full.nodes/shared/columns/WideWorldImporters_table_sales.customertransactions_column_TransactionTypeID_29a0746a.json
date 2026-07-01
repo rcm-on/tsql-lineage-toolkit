@@ -16,7 +16,7 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -25,9 +25,18 @@
   "edges_in": [
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.customertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customertransactions_39c8f4a7.json",
+      "props": {
+        "ordinal": 3
+      }
     }
   ],
   "edges_out": [
@@ -38,8 +47,11 @@
       "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_TransactionTypeID_dce88c36.json",
       "props": {
         "logic": "(SELECT TransactionTypeID  FROM   [Application].TransactionTypes  WHERE  TransactionTypeName = N'Customer Invoice')",
-        "line_no": 124,
-        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step7"
+        "line_no": 123,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
+        "op_kinds": [
+          "compare:="
+        ]
       }
     },
     {
@@ -49,8 +61,11 @@
       "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_TransactionTypeName_3417d534.json",
       "props": {
         "logic": "(SELECT TransactionTypeID  FROM   [Application].TransactionTypes  WHERE  TransactionTypeName = N'Customer Invoice')",
-        "line_no": 124,
-        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step7"
+        "line_no": 123,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
+        "op_kinds": [
+          "compare:="
+        ]
       }
     },
     {

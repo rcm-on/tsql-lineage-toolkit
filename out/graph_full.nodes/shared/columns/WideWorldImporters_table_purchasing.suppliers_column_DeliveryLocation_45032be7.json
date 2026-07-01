@@ -28,6 +28,25 @@
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.suppliers:column:DeliveryLocation",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.suppliers_column_DeliveryLocation_bfed6468.json",
+      "props": {
+        "logic": "s.DeliveryLocation",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "ordinal": 23
+      }
     }
   ],
   "edges_out": []

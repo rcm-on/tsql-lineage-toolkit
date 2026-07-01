@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.stateprovinces_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_archive_32bc93eb.json",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_archive_32bc93eb.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].StateProvinces_Archive"
@@ -20,7 +20,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.stateprovinces",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].StateProvinces"
@@ -32,7 +32,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].Cities",
@@ -45,7 +45,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.countries",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].Countries",
@@ -58,7 +58,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.stateprovinces",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].StateProvinces",
@@ -71,7 +71,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.countries_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_archive_01bdea95.json",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_archive_01bdea95.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].Countries_Archive"
@@ -83,7 +83,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_archive_47638bf7.json",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_archive_47638bf7.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].Cities_Archive"
@@ -95,7 +95,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].Cities"
@@ -107,7 +107,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].Cities",
@@ -120,7 +120,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.countries",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].Countries",
@@ -133,7 +133,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.stateprovinces",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].StateProvinces",
@@ -146,7 +146,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.countries",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].Countries"
@@ -158,7 +158,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].Cities",
@@ -171,7 +171,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.countries",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].Countries",
@@ -184,12 +184,20 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.stateprovinces",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].StateProvinces",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetCityUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/nav.json"
     }
   ]
 }

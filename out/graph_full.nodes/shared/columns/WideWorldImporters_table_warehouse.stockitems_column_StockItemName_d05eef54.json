@@ -42,6 +42,34 @@
       "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:warehouse.stockitems:UNIQUE:ad473ddb",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_warehouse.stockitems_UNIQUE_ad473ddb_a52ee468.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:warehouse.stockitems:column:SearchDetails",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_SearchDetails_8e62eaed.json",
+      "props": {
+        "logic": "(concat([StockItemName], N' ', [MarketingComments]))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:CONCAT"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "ordinal": 2
+      }
     }
   ],
   "edges_out": []

@@ -13,6 +13,16 @@
     "ordinal": 8
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.purchaseorders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorders_a4740742.json",
+      "props": {
+        "ordinal": 8
+      }
+    }
+  ],
   "edges_out": []
 }

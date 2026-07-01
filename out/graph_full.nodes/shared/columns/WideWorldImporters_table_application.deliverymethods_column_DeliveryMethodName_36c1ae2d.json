@@ -42,6 +42,41 @@
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.deliverymethods:UNIQUE:217ef0f8",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.deliverymethods_UNIQUE_217ef0f8_e2318c13.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.customers:column:DeliveryMethod",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_DeliveryMethod_ff29410b.json",
+      "props": {
+        "logic": "dm.DeliveryMethodName",
+        "via_view": true
+      }
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.suppliers:column:DeliveryMethod",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.suppliers_column_DeliveryMethod_8d206979.json",
+      "props": {
+        "logic": "dm.DeliveryMethodName",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.deliverymethods",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "props": {
+        "ordinal": 2
+      }
     }
   ],
   "edges_out": []

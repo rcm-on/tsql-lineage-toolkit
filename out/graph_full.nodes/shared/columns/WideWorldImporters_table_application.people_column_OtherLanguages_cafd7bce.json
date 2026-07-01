@@ -6,13 +6,37 @@
   "properties": {
     "name": "OtherLanguages",
     "table": "application.people",
-    "data_type": "NVARCHAR (MAX)",
+    "data_type": "",
     "is_nullable": true,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 18
   },
   "refs": {},
-  "edges_in": [],
-  "edges_out": []
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.people",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "ordinal": 18
+      }
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.people:column:CustomFields",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_CustomFields_56b4276f.json",
+      "props": {
+        "logic": "(json_query([CustomFields], N'$.OtherLanguages'))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:JSON_QUERY"
+        ]
+      }
+    }
+  ]
 }

@@ -18,7 +18,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Suppliers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ]
   },
@@ -27,7 +32,36 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:purchasing.suppliercategories:DEFAULT:e98e3947",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.suppliercategories_DEFAULT_e98e3947_ca454e0f.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliercategories",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliers:column:SupplierCategoryID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_SupplierCategoryID_bdb0ed48.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_SupplierCategoryID_Purchasing_SupplierCategories"
+      }
     }
   ],
   "edges_out": []

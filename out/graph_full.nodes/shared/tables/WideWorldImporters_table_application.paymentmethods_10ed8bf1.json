@@ -8,6 +8,21 @@
     "name": "Application.PaymentMethods"
   },
   "refs": {
+    "WideWorldImporters::Application.TR_Application_PaymentMethods_DataLoad_Modify": [
+      {
+        "type": "ON",
+        "from": "WideWorldImporters::Application.TR_Application_PaymentMethods_DataLoad_Modify",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.TR_Application_PaymentMethods_DataLoad_Modify/object.json",
+        "props": {
+          "events": [
+            "INSERT",
+            "UPDATE"
+          ],
+          "timing": "After"
+        }
+      }
+    ],
     "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures": [
       {
         "type": "AFFECTS",
@@ -23,7 +38,7 @@
     "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad": [
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step7",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step8",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
         "props": {
@@ -33,7 +48,7 @@
       },
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step8",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step9",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
         "props": {
@@ -57,7 +72,7 @@
     "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad": [
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step7",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step8",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
         "props": {
@@ -67,7 +82,7 @@
       },
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step8",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step9",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
         "props": {
@@ -102,6 +117,19 @@
   },
   "edges_in": [
     {
+      "type": "ON",
+      "from": "WideWorldImporters::Application.TR_Application_PaymentMethods_DataLoad_Modify",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.TR_Application_PaymentMethods_DataLoad_Modify/object.json",
+      "props": {
+        "events": [
+          "INSERT",
+          "UPDATE"
+        ],
+        "timing": "After"
+      }
+    },
+    {
       "type": "AFFECTS",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
       "from_label": "SqlObject",
@@ -113,7 +141,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step7",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step8",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
       "props": {
@@ -123,7 +151,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step8",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step9",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
       "props": {
@@ -143,7 +171,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step7",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step8",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
       "props": {
@@ -153,7 +181,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step8",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step9",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
       "props": {
@@ -181,6 +209,36 @@
         "table": "[Application].PaymentMethods",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_application_be37960c.json"
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliertransactions_96862ed5.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierTransactions_PaymentMethodID_Application_PaymentMethods"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.customertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customertransactions_39c8f4a7.json",
+      "props": {
+        "constraint": "FK_Sales_CustomerTransactions_PaymentMethodID_Application_PaymentMethods"
+      }
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "from": "wf:WideWorldImporters:dataloadsimulation",
+      "from_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_dataloadsimulation_0b2c978e.json"
     }
   ],
   "edges_out": [
@@ -237,6 +295,18 @@
       "props": {
         "ordinal": 5
       }
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:application.paymentmethods:DEFAULT:aca9ee28",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.paymentmethods_DEFAULT_aca9ee28_03c51e30.json"
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:application.paymentmethods:UNIQUE:9df9a940",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.paymentmethods_UNIQUE_9df9a940_08a12469.json"
     }
   ]
 }

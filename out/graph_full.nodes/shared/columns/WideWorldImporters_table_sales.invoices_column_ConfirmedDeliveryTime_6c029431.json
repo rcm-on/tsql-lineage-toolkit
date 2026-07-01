@@ -6,7 +6,7 @@
   "properties": {
     "name": "ConfirmedDeliveryTime",
     "table": "sales.invoices",
-    "data_type": "DATETIME2",
+    "data_type": "",
     "is_nullable": true,
     "is_identity": false,
     "is_primary_key": false,
@@ -28,7 +28,31 @@
       "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "ordinal": 22
+      }
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:sales.invoices:column:ReturnedDeliveryData",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_ReturnedDeliveryData_250e2089.json",
+      "props": {
+        "logic": "(TRY_CONVERT (DATETIME2 (7), json_value([ReturnedDeliveryData], N'$.DeliveredWhen'), (126)))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "cast:TRY_CONVERT",
+          "func:JSON_VALUE"
+        ]
+      }
+    }
+  ]
 }

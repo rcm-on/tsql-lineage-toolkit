@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.Customers",
@@ -21,7 +21,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orderlines",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.OrderLines",
@@ -34,7 +34,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orders",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.Orders"
@@ -46,12 +46,20 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.PackageTypes",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetOrderUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/nav.json"
     }
   ]
 }

@@ -8,6 +8,21 @@
     "name": "Application.Countries"
   },
   "refs": {
+    "WideWorldImporters::Application.TR_Application_Countries_DataLoad_Modify": [
+      {
+        "type": "ON",
+        "from": "WideWorldImporters::Application.TR_Application_Countries_DataLoad_Modify",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.TR_Application_Countries_DataLoad_Modify/object.json",
+        "props": {
+          "events": [
+            "INSERT",
+            "UPDATE"
+          ],
+          "timing": "After"
+        }
+      }
+    ],
     "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures": [
       {
         "type": "AFFECTS",
@@ -23,7 +38,7 @@
     "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad": [
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step3",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
         "props": {
@@ -33,7 +48,7 @@
       },
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step4",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step5",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
         "props": {
@@ -57,7 +72,7 @@
     "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad": [
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step3",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
         "props": {
@@ -67,7 +82,7 @@
       },
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step4",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step5",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
         "props": {
@@ -124,6 +139,19 @@
   },
   "edges_in": [
     {
+      "type": "ON",
+      "from": "WideWorldImporters::Application.TR_Application_Countries_DataLoad_Modify",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.TR_Application_Countries_DataLoad_Modify/object.json",
+      "props": {
+        "events": [
+          "INSERT",
+          "UPDATE"
+        ],
+        "timing": "After"
+      }
+    },
+    {
       "type": "AFFECTS",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
       "from_label": "SqlObject",
@@ -135,7 +163,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step3",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
       "props": {
@@ -145,7 +173,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step4",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step5",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
       "props": {
@@ -165,7 +193,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step3",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
       "props": {
@@ -175,7 +203,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step4",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step5",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
       "props": {
@@ -225,6 +253,27 @@
         "table": "[Application].Countries",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_application_be37960c.json"
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:application.stateprovinces",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "constraint": "FK_Application_StateProvinces_CountryID_Application_Countries"
+      }
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "from": "wf:WideWorldImporters:dataloadsimulation",
+      "from_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_dataloadsimulation_0b2c978e.json"
     }
   ],
   "edges_out": [
@@ -362,6 +411,24 @@
       "props": {
         "ordinal": 14
       }
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:application.countries:DEFAULT:f40a83f4",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.countries_DEFAULT_f40a83f4_d9ffd69d.json"
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:application.countries:UNIQUE:76874e0c",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.countries_UNIQUE_76874e0c_975cdddf.json"
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:application.countries:UNIQUE:9c668c1a",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.countries_UNIQUE_9c668c1a_ba933f1a.json"
     }
   ]
 }

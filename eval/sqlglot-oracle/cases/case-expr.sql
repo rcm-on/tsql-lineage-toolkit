@@ -1,0 +1,1 @@
+SELECT CASE WHEN a > 10 THEN b ELSE c END AS x FROM dbo.t

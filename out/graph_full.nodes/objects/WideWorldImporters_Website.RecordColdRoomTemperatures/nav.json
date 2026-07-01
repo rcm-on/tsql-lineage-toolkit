@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.nav.json",
       "props": {
         "action_type": "UPDATE",
         "table": "Warehouse.ColdRoomTemperatures"
@@ -20,11 +20,19 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Warehouse.ColdRoomTemperatures"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/nav.json"
     }
   ]
 }

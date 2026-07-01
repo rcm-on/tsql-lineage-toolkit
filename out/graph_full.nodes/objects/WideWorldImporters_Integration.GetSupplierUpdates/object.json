@@ -52,7 +52,8 @@
           "name": "@EndOfTime",
           "data_type": "DATETIME2 (7)",
           "default": "'99991231 23:59:59.9999999'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -64,7 +65,8 @@
           "name": "@InitialLoadDate",
           "data_type": "DATE",
           "default": "'20130101'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -76,7 +78,8 @@
           "name": "@SupplierCategoryID",
           "data_type": "INT",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -88,7 +91,8 @@
           "name": "@SupplierID",
           "data_type": "INT",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -100,7 +104,8 @@
           "name": "@ValidFrom",
           "data_type": "DATETIME2 (7)",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       }
     ],
@@ -113,7 +118,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 14,
+          "line_no": 13,
           "nesting_level": 0,
           "action": "CREATE_TABLE",
           "step_type": "Maintenance",
@@ -121,6 +126,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CREATE_TABLE -> #SupplierChanges"
@@ -134,7 +140,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 33,
+          "line_no": 32,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
           "step_type": "Cursor",
@@ -142,6 +148,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DECLARE_CURSOR -> SupplierCategoryChangeList"
@@ -155,7 +162,7 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 33,
+          "line_no": 32,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -163,6 +170,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Purchasing.SupplierCategories_Archive"
@@ -176,7 +184,7 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 33,
+          "line_no": 32,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -184,6 +192,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Purchasing.SupplierCategories"
@@ -197,7 +206,7 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 50,
+          "line_no": 49,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
           "step_type": "Cursor",
@@ -205,6 +214,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "OPEN_CURSOR -> SupplierCategoryChangeList"
@@ -218,7 +228,7 @@
         "properties": {
           "order": 5,
           "sequence": 6,
-          "line_no": 51,
+          "line_no": 50,
           "nesting_level": 0,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -226,6 +236,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "FETCH -> SupplierCategoryChangeList"
@@ -239,7 +250,7 @@
         "properties": {
           "order": 6,
           "sequence": 7,
-          "line_no": 55,
+          "line_no": 54,
           "nesting_level": 1,
           "action": "INSERT",
           "step_type": "Staging",
@@ -247,11 +258,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#53"
+            "WHILE#52"
           ],
           "label": "INSERT -> #SupplierChanges"
         }
@@ -264,7 +276,7 @@
         "properties": {
           "order": 7,
           "sequence": 8,
-          "line_no": 67,
+          "line_no": 66,
           "nesting_level": 1,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -272,11 +284,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#53"
+            "WHILE#52"
           ],
           "label": "FETCH -> SupplierCategoryChangeList"
         }
@@ -289,7 +302,7 @@
         "properties": {
           "order": 8,
           "sequence": 9,
-          "line_no": 70,
+          "line_no": 69,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
           "step_type": "Cursor",
@@ -297,6 +310,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CLOSE_CURSOR -> SupplierCategoryChangeList"
@@ -310,7 +324,7 @@
         "properties": {
           "order": 9,
           "sequence": 10,
-          "line_no": 71,
+          "line_no": 70,
           "nesting_level": 0,
           "action": "DEALLOCATE",
           "step_type": "Cursor",
@@ -318,6 +332,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DEALLOCATE -> SupplierCategoryChangeList"
@@ -331,7 +346,7 @@
         "properties": {
           "order": 10,
           "sequence": 11,
-          "line_no": 75,
+          "line_no": 74,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
           "step_type": "Cursor",
@@ -339,6 +354,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DECLARE_CURSOR -> SupplierChangeList"
@@ -352,7 +368,7 @@
         "properties": {
           "order": 11,
           "sequence": 12,
-          "line_no": 75,
+          "line_no": 74,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -360,6 +376,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Purchasing.Suppliers_Archive"
@@ -373,7 +390,7 @@
         "properties": {
           "order": 12,
           "sequence": 13,
-          "line_no": 75,
+          "line_no": 74,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -381,6 +398,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Purchasing.Suppliers"
@@ -394,7 +412,7 @@
         "properties": {
           "order": 13,
           "sequence": 14,
-          "line_no": 90,
+          "line_no": 89,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
           "step_type": "Cursor",
@@ -402,6 +420,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "OPEN_CURSOR -> SupplierChangeList"
@@ -415,7 +434,7 @@
         "properties": {
           "order": 14,
           "sequence": 15,
-          "line_no": 91,
+          "line_no": 90,
           "nesting_level": 0,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -423,6 +442,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "FETCH -> SupplierChangeList"
@@ -436,7 +456,7 @@
         "properties": {
           "order": 15,
           "sequence": 16,
-          "line_no": 95,
+          "line_no": 94,
           "nesting_level": 1,
           "action": "INSERT",
           "step_type": "Staging",
@@ -444,11 +464,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#93"
+            "WHILE#92"
           ],
           "label": "INSERT -> #SupplierChanges"
         }
@@ -461,7 +482,7 @@
         "properties": {
           "order": 16,
           "sequence": 17,
-          "line_no": 107,
+          "line_no": 106,
           "nesting_level": 1,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -469,11 +490,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#93"
+            "WHILE#92"
           ],
           "label": "FETCH -> SupplierChangeList"
         }
@@ -486,7 +508,7 @@
         "properties": {
           "order": 17,
           "sequence": 18,
-          "line_no": 110,
+          "line_no": 109,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
           "step_type": "Cursor",
@@ -494,6 +516,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CLOSE_CURSOR -> SupplierChangeList"
@@ -507,7 +530,7 @@
         "properties": {
           "order": 18,
           "sequence": 19,
-          "line_no": 111,
+          "line_no": 110,
           "nesting_level": 0,
           "action": "DEALLOCATE",
           "step_type": "Cursor",
@@ -515,6 +538,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DEALLOCATE -> SupplierChangeList"
@@ -528,7 +552,7 @@
         "properties": {
           "order": 19,
           "sequence": 20,
-          "line_no": 115,
+          "line_no": 114,
           "nesting_level": 0,
           "action": "CREATE_INDEX",
           "step_type": "Maintenance",
@@ -536,6 +560,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CREATE_INDEX -> #SupplierChanges"
@@ -549,7 +574,7 @@
         "properties": {
           "order": 20,
           "sequence": 21,
-          "line_no": 120,
+          "line_no": 119,
           "nesting_level": 0,
           "action": "UPDATE",
           "step_type": "Transformation",
@@ -557,6 +582,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "UPDATE -> #SupplierChanges"
@@ -570,7 +596,7 @@
         "properties": {
           "order": 21,
           "sequence": 22,
-          "line_no": 126,
+          "line_no": 119,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Staging",
@@ -578,6 +604,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> #SupplierChanges"
@@ -591,17 +618,18 @@
         "properties": {
           "order": 22,
           "sequence": 23,
-          "line_no": 132,
+          "line_no": 125,
           "nesting_level": 0,
-          "action": "DROP_TABLE",
-          "step_type": "Maintenance",
+          "action": "SELECT",
+          "step_type": "Staging",
           "target_name": "#SupplierChanges",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "DROP_TABLE -> #SupplierChanges"
+          "label": "SELECT -> #SupplierChanges"
         }
       },
       {
@@ -612,7 +640,29 @@
         "properties": {
           "order": 23,
           "sequence": 24,
-          "line_no": 134,
+          "line_no": 131,
+          "nesting_level": 0,
+          "action": "DROP_TABLE",
+          "step_type": "Maintenance",
+          "target_name": "#SupplierChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DROP_TABLE -> #SupplierChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetSupplierUpdates#step24",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 24,
+          "sequence": 25,
+          "line_no": 133,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -620,6 +670,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -1003,8 +1054,24 @@
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetSupplierUpdates#var:@EndOfTime",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetSupplierUpdates#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step23",
       "from_label": "Step",
       "to": "WideWorldImporters:action:DROP_TABLE",
       "to_label": "Action",
@@ -1012,7 +1079,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step23",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step24",
       "from_label": "Step",
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
@@ -1243,6 +1310,14 @@
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetSupplierUpdates#step7",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetSupplierUpdates",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
     }
   ]

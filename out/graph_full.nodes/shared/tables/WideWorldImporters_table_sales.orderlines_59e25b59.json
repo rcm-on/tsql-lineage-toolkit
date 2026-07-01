@@ -36,7 +36,28 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "READS_FROM",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Sales.OrderLines"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Sales.OrderLines",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
         "props": {
@@ -71,7 +92,28 @@
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.OrderLines"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.OrderLines",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
       "props": {
@@ -79,6 +121,18 @@
         "table": "Sales.OrderLines",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:sales",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_sales_75776514.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "from": "wf:WideWorldImporters:website",
+      "from_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json"
     }
   ],
   "edges_out": [
@@ -225,6 +279,18 @@
       "props": {
         "ordinal": 7
       }
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:sales.orderlines:DEFAULT:b227dd68",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.orderlines_DEFAULT_b227dd68_03634a5a.json"
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:sales.orderlines:DEFAULT:cada16db",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.orderlines_DEFAULT_cada16db_795026a5.json"
     }
   ]
 }

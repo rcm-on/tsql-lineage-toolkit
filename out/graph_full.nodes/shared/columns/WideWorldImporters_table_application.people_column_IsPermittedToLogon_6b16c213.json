@@ -18,7 +18,27 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:<>",
+            "compare:=",
+            "logical:AND"
+          ]
+        }
+      },
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:<>",
+            "compare:=",
+            "logical:AND"
+          ]
+        }
       },
       {
         "type": "WRITES_COLUMN",
@@ -41,7 +61,27 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "WRITES_COLUMN",
@@ -54,6 +94,75 @@
       "from": "WideWorldImporters::Website.ChangePassword#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:application.people:column:HashedPassword",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_HashedPassword_d5d384d5.json",
+      "props": {
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:application.people:column:IsPermittedToLogon",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_IsPermittedToLogon_6b16c213.json",
+      "props": {
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:application.people:column:LogonName",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_LogonName_f8954751.json",
+      "props": {
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:application.people:column:UserPreferences",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_UserPreferences_bbd7d2e5.json",
+      "props": {
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.people",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "ordinal": 5
+      }
     }
   ],
   "edges_out": [
@@ -63,8 +172,15 @@
       "to_label": "Column",
       "path": "shared/columns/WideWorldImporters_table_application.people_column_FullName_af371d2e.json",
       "props": {
-        "line_no": 12,
-        "caused_by_step": "WideWorldImporters::Website.ChangePassword#step0"
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ChangePassword#step0",
+        "op_kinds": [
+          "arith:+",
+          "compare:<>",
+          "compare:=",
+          "func:HASHBYTES",
+          "logical:AND"
+        ]
       }
     },
     {
@@ -73,8 +189,15 @@
       "to_label": "Column",
       "path": "shared/columns/WideWorldImporters_table_application.people_column_HashedPassword_d5d384d5.json",
       "props": {
-        "line_no": 12,
-        "caused_by_step": "WideWorldImporters::Website.ChangePassword#step0"
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ChangePassword#step0",
+        "op_kinds": [
+          "arith:+",
+          "compare:<>",
+          "compare:=",
+          "func:HASHBYTES",
+          "logical:AND"
+        ]
       }
     },
     {
@@ -83,8 +206,13 @@
       "to_label": "Column",
       "path": "shared/columns/WideWorldImporters_table_application.people_column_IsPermittedToLogon_6b16c213.json",
       "props": {
-        "line_no": 12,
-        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0"
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
       }
     },
     {
@@ -93,8 +221,13 @@
       "to_label": "Column",
       "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
       "props": {
-        "line_no": 12,
-        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0"
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
       }
     },
     {
@@ -103,8 +236,15 @@
       "to_label": "Column",
       "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
       "props": {
-        "line_no": 12,
-        "caused_by_step": "WideWorldImporters::Website.ChangePassword#step0"
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ChangePassword#step0",
+        "op_kinds": [
+          "arith:+",
+          "compare:<>",
+          "compare:=",
+          "func:HASHBYTES",
+          "logical:AND"
+        ]
       }
     }
   ]

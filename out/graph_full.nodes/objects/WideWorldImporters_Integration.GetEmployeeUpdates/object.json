@@ -52,7 +52,8 @@
           "name": "@EndOfTime",
           "data_type": "DATETIME2 (7)",
           "default": "'99991231 23:59:59.9999999'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -64,7 +65,8 @@
           "name": "@PersonID",
           "data_type": "INT",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -76,7 +78,8 @@
           "name": "@ValidFrom",
           "data_type": "DATETIME2 (7)",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       }
     ],
@@ -89,7 +92,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 13,
+          "line_no": 12,
           "nesting_level": 0,
           "action": "CREATE_TABLE",
           "step_type": "Maintenance",
@@ -97,6 +100,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CREATE_TABLE -> #EmployeeChanges"
@@ -110,7 +114,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 29,
+          "line_no": 28,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
           "step_type": "Cursor",
@@ -118,6 +122,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DECLARE_CURSOR -> EmployeeChangeList"
@@ -131,7 +136,7 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 29,
+          "line_no": 28,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -139,6 +144,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> [Application].People_Archive"
@@ -152,7 +158,7 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 29,
+          "line_no": 28,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -160,6 +166,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> [Application].People"
@@ -173,7 +180,7 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 46,
+          "line_no": 45,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
           "step_type": "Cursor",
@@ -181,6 +188,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "OPEN_CURSOR -> EmployeeChangeList"
@@ -194,7 +202,7 @@
         "properties": {
           "order": 5,
           "sequence": 6,
-          "line_no": 47,
+          "line_no": 46,
           "nesting_level": 0,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -202,6 +210,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "FETCH -> EmployeeChangeList"
@@ -215,7 +224,7 @@
         "properties": {
           "order": 6,
           "sequence": 7,
-          "line_no": 51,
+          "line_no": 50,
           "nesting_level": 1,
           "action": "INSERT",
           "step_type": "Staging",
@@ -223,11 +232,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#49"
+            "WHILE#48"
           ],
           "label": "INSERT -> #EmployeeChanges"
         }
@@ -240,7 +250,7 @@
         "properties": {
           "order": 7,
           "sequence": 8,
-          "line_no": 59,
+          "line_no": 58,
           "nesting_level": 1,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -248,11 +258,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#49"
+            "WHILE#48"
           ],
           "label": "FETCH -> EmployeeChangeList"
         }
@@ -265,7 +276,7 @@
         "properties": {
           "order": 8,
           "sequence": 9,
-          "line_no": 62,
+          "line_no": 61,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
           "step_type": "Cursor",
@@ -273,6 +284,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CLOSE_CURSOR -> EmployeeChangeList"
@@ -286,7 +298,7 @@
         "properties": {
           "order": 9,
           "sequence": 10,
-          "line_no": 63,
+          "line_no": 62,
           "nesting_level": 0,
           "action": "DEALLOCATE",
           "step_type": "Cursor",
@@ -294,6 +306,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DEALLOCATE -> EmployeeChangeList"
@@ -307,7 +320,7 @@
         "properties": {
           "order": 10,
           "sequence": 11,
-          "line_no": 67,
+          "line_no": 66,
           "nesting_level": 0,
           "action": "CREATE_INDEX",
           "step_type": "Maintenance",
@@ -315,6 +328,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CREATE_INDEX -> #EmployeeChanges"
@@ -328,7 +342,7 @@
         "properties": {
           "order": 11,
           "sequence": 12,
-          "line_no": 72,
+          "line_no": 71,
           "nesting_level": 0,
           "action": "UPDATE",
           "step_type": "Transformation",
@@ -336,6 +350,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "UPDATE -> #EmployeeChanges"
@@ -349,7 +364,7 @@
         "properties": {
           "order": 12,
           "sequence": 13,
-          "line_no": 78,
+          "line_no": 71,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Staging",
@@ -357,6 +372,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> #EmployeeChanges"
@@ -370,17 +386,18 @@
         "properties": {
           "order": 13,
           "sequence": 14,
-          "line_no": 83,
+          "line_no": 77,
           "nesting_level": 0,
-          "action": "DROP_TABLE",
-          "step_type": "Maintenance",
+          "action": "SELECT",
+          "step_type": "Staging",
           "target_name": "#EmployeeChanges",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "DROP_TABLE -> #EmployeeChanges"
+          "label": "SELECT -> #EmployeeChanges"
         }
       },
       {
@@ -391,7 +408,29 @@
         "properties": {
           "order": 14,
           "sequence": 15,
-          "line_no": 85,
+          "line_no": 82,
+          "nesting_level": 0,
+          "action": "DROP_TABLE",
+          "step_type": "Maintenance",
+          "target_name": "#EmployeeChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DROP_TABLE -> #EmployeeChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetEmployeeUpdates#step15",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 15,
+          "sequence": 16,
+          "line_no": 84,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -399,6 +438,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -483,8 +523,24 @@
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step12",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetEmployeeUpdates#var:@EndOfTime",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step13",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step14",
       "from_label": "Step",
       "to": "WideWorldImporters:action:DROP_TABLE",
       "to_label": "Action",
@@ -492,7 +548,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step14",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step15",
       "from_label": "Step",
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
@@ -693,6 +749,14 @@
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetEmployeeUpdates#step7",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetEmployeeUpdates",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
     }
   ]

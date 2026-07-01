@@ -9,6 +9,32 @@
     "expression": "@AreDatabaseAuditSpecificationsSupported <> 0"
   },
   "refs": {},
-  "edges_in": [],
-  "edges_out": []
+  "edges_in": [
+    {
+      "type": "NESTED_IN",
+      "from": "WideWorldImporters:rule:IF:0a5c32e0",
+      "from_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_0a5c32e0_c78ab468.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "from": "WideWorldImporters:rule:IF:0b79b786",
+      "from_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_0b79b786_18e4702f.json"
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    }
+  ]
 }

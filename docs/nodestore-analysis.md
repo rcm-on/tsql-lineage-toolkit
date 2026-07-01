@@ -462,3 +462,76 @@ con la misma disciplina de medición (subagentes ciegos, no estimación).
 | Caso | Pregunta | Métrica que de verdad cambia | Resultado |
 |---|---|---|---|
 | 6 | Cadena de llamadas EXEC (4 niveles) — repetido con `nav.json` | Loops + líneas + tokens de agente | **8 vs 11 turnos, 2.6x menos líneas, 2.0x menos tokens** — el agujero del Caso 4 se cierra sin tocar los Casos 2/3/5, que ya ganaban |
+
+## Caso 7 — Cadena de lineage de columna (`DERIVES_FROM`, 3 niveles): ¿el `nav.json` ya extendido a `DERIVES_FROM` repite la victoria del Caso 6?
+
+Pregunta previa a implementar `lineage_path.json` (Opción 2 Refinada, ver
+`docs/agent-collab.md` y `docs/lineage-path-spec.md`, Tarea I propuesta por
+Gemini): la extensión de `nav.json` a nodos compartidos con aristas
+`DERIVES_FROM` ya está implementada y desplegada (ver entrada `[Claude]`
+sobre `NavEdgeTypes += "DERIVES_FROM"`). Antes de construir el precálculo de
+`roots`, había que medir si esa extensión barata ya basta para una cadena de
+lineage de columna encadenada entre varias vistas — exactamente el mismo
+patrón de pregunta que el Caso 4/6, pero con `DERIVES_FROM` en vez de `CALLS`.
+
+**Caso real no disponible:** ni WideWorldImporters ni AdventureWorks (el
+corpus de 23 vistas ya procesado) tienen ninguna vista que lea de otra vista
+— las 23 derivan directo de tablas base (profundidad 1). Se construyó un
+caso sintético análogo al de MERGE/CTE/UNION, materializado en
+`eval/community-edge-cases/lineage-chain/` (4 ficheros, 1 tabla + 3 vistas
+apiladas: `vOrdersReport` ← `vOrdersSummary` ← `vOrdersEnriched` ← `Orders`)
+y añadido al runner reproducible (`run.mjs`): `DERIVES_FROM=9` total, con la
+cadena de 3 saltos para `ReportedAmount` verificada.
+
+Pregunta a los dos subagentes ciegos (sin memoria de esta conversación, una
+única instrucción cada uno, mismo patrón que el Caso 6): "reconstruye la
+cadena completa de `DERIVES_FROM` de `dbo.vOrdersReport.ReportedAmount` hasta
+la(s) columna(s) raíz de tabla base". A uno se le prohibió explícitamente
+abrir cualquier `*.nav.json` (solo `object.json`/`shared/*.json` completos);
+al otro se le prohibió abrir cualquier fichero que NO fuera `*.nav.json`.
+
+| | Tool calls | Tokens del subagente | Duración |
+|---|---|---|---|
+| A) solo `object.json`/`shared/*.json` completos | **7** | 34 307 | 29.1 s |
+| B) solo `nav.json` | **10** | 37 975 | 42.7 s |
+
+Ambos reconstruyeron la misma cadena correcta (`ReportedAmount` ←
+`TotalAmount` ← `NetAmount` ← `Orders.Amount`, profundidad 3, raíz
+confirmada por `edges_out: []`/ausencia de aristas salientes en `Orders`).
+
+**Esto NO repite la victoria del Caso 6 — al revés, se invierte.** El agente
+A llegó más barato porque `model.json` ya apunta con `path` directo al nodo
+`Table` compartido (sin pasar por `object.json`) y de ahí saltó
+columna→columna por los ficheros completos sin rodeos. El agente B, en
+cambio, dio un rodeo de 2 saltos de más antes de llegar a la primera columna
+(`objects/.../nav.json` → `shared/tables/.../nav.json`) y cerró con una
+comprobación de cordura adicional sobre la tabla raíz — exactamente el mismo
+patrón de "verificación doble" ya documentado como comportamiento de agente
+en el Caso 4, no un defecto de los datos.
+
+**Motivo estructural (no solo comportamiento del agente):** a diferencia de
+la cadena `CALLS` (donde cada salto cruza un objeto completo de hasta 145 KB,
+así que evitar `object.json` ahorra mucho), aquí cada salto ya vive en un
+fichero de columna pequeño (16-53 líneas) tanto en su versión completa como
+en su versión `.nav.json` — la diferencia de tamaño por fichero es real (2-3x
+menos líneas) pero el numerador (nº de ficheros) es el mismo en ambos lados;
+no hay objetos grandes de por medio que evitar.
+
+**Conclusión honesta del Caso 7:** la extensión de `nav.json` a
+`DERIVES_FROM` no reduce los turnos para una cadena de lineage de columna
+encadenada — en esta medición real, ligeramente los aumenta. La pregunta de
+diseño que motivó el Caso 7 (¿hace falta `lineage_path.json` con `roots`
+precalculados, o basta lo ya construido?) se responde: **no basta** — el gate
+puesto en `docs/agent-collab.md` ("solo si esa medición se queda corta")
+queda cumplido. Una cadena de 3 saltos cuesta 7-10 turnos por cualquiera de
+las dos vías; con `roots` precalculados en un único fichero
+`lineage_path.json` por objeto, el coste baja a ~1-2 turnos (una lectura
+directa), igual que `condition_path` cerró el Caso 2.
+
+**Hallazgo colateral (documentación, no código):** `index.json.howto.call_chain`
+solo menciona `CALLS/WRITES_TO/READS_FROM/AFFECTS/FK_TO` como aristas
+navegables vía `nav.json` — no menciona `DERIVES_FROM`, aunque ya está
+cableado en `NavEdgeTypes`. Un agente que confíe solo en el `howto` (sin que
+se le fuerce artificialmente a usar `nav.json`, como aquí) no descubriría el
+atajo de columna por sí mismo. Vale la pena añadir una línea a ese `howto`
+con o sin la Tarea I, es una corrección barata e independiente.

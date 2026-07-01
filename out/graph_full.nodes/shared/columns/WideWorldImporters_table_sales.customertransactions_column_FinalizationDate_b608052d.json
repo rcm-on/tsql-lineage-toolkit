@@ -16,7 +16,7 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -25,9 +25,33 @@
   "edges_in": [
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.customertransactions:column:IsFinalized",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customertransactions_column_IsFinalized_4e1730e6.json",
+      "props": {
+        "logic": "(CASE WHEN [FinalizationDate] IS NULL THEN CONVERT (BIT, (0)) ELSE CONVERT (BIT, (1)) END)",
+        "via_computed_column": true,
+        "op_kinds": [
+          "case:CASE",
+          "cast:CONVERT",
+          "null:IS NULL"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.customertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customertransactions_39c8f4a7.json",
+      "props": {
+        "ordinal": 11
+      }
     }
   ],
   "edges_out": []

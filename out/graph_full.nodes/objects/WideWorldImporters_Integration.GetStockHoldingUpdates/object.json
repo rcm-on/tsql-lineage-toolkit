@@ -29,7 +29,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 9,
+          "line_no": 8,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -37,6 +37,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Warehouse.StockItemHoldings"
@@ -50,7 +51,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 19,
+          "line_no": 18,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -58,6 +59,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -160,6 +162,14 @@
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetStockHoldingUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetStockHoldingUpdates/object.json"
     }
   ]
 }

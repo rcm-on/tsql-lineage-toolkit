@@ -13,7 +13,17 @@
     "ordinal": 3
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.colors",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "props": {
+        "ordinal": 3
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

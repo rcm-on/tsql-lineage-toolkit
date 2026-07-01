@@ -8,10 +8,22 @@
     "name": "Sales.CustomerTransactions"
   },
   "refs": {
+    "WideWorldImporters::Integration.GetTransactionUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetTransactionUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Sales.CustomerTransactions"
+        }
+      }
+    ],
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
         "props": {
@@ -23,14 +35,36 @@
   },
   "edges_in": [
     {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.CustomerTransactions"
+      }
+    },
+    {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.CustomerTransactions"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:sales",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_sales_75776514.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "from": "wf:WideWorldImporters:website",
+      "from_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json"
     }
   ],
   "edges_out": [
@@ -204,6 +238,18 @@
       "props": {
         "ordinal": 3
       }
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:sales.customertransactions:DEFAULT:b227dd68",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.customertransactions_DEFAULT_b227dd68_8b8444d1.json"
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:sales.customertransactions:DEFAULT:bbf96b12",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.customertransactions_DEFAULT_bbf96b12_730485fa.json"
     }
   ]
 }

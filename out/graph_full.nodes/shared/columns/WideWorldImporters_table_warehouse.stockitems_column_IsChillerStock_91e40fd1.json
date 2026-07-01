@@ -28,6 +28,15 @@
       "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "ordinal": 11
+      }
     }
   ],
   "edges_out": []

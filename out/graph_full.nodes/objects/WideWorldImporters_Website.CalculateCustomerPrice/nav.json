@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.Customers"
@@ -20,7 +20,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.StockItems"
@@ -32,7 +32,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.specialdeals",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.SpecialDeals"
@@ -44,7 +44,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemstockgroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.StockItemStockGroups",
@@ -57,7 +57,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.specialdeals",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.SpecialDeals"
@@ -69,7 +69,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemstockgroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.StockItemStockGroups",
@@ -82,7 +82,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.specialdeals",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.SpecialDeals"
@@ -94,12 +94,95 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemstockgroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.StockItemStockGroups",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.SpecialDeals"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemStockGroups",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.SpecialDeals"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemStockGroups",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.specialdeals",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.SpecialDeals"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitemstockgroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItemStockGroups",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.CalculateCustomerPrice",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/nav.json"
     }
   ]
 }

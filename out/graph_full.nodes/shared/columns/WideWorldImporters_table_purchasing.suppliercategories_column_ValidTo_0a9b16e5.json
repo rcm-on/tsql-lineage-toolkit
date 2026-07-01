@@ -6,13 +6,23 @@
   "properties": {
     "name": "ValidTo",
     "table": "purchasing.suppliercategories",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": false,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 5
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliercategories",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "props": {
+        "ordinal": 5
+      }
+    }
+  ],
   "edges_out": []
 }

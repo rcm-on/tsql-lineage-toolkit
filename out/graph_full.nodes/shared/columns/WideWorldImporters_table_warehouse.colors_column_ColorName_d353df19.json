@@ -28,6 +28,21 @@
       "from": "WideWorldImporters::Integration.GetStockItemUpdates#step6",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:warehouse.colors:UNIQUE:7193dced",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_warehouse.colors_UNIQUE_7193dced_b3d5ed2d.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.colors",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "props": {
+        "ordinal": 2
+      }
     }
   ],
   "edges_out": []

@@ -37,6 +37,11 @@ namespace TSqlParser;
 ///                            contributed to - the bookkeeping <see cref="Update"/>
 ///                            uses to limit rewrites to what actually changed.
 ///     objects/&lt;slug&gt;/object.json   one SqlObject + its owned nodes + edges_out
+///     objects/&lt;slug&gt;/lineage_path.json  per output column: precomputed root
+///                            base-table column(s)/immediate precursor(s)/depth for
+///                            its DERIVES_FROM chain (Tarea I) - only for SqlObjects
+///                            with output columns; denormalized, always rebuilt in
+///                            full, see its build site in <see cref="Build"/>.
 ///     shared/&lt;category&gt;/&lt;slug&gt;.json  one shared node + edges_in (by owner) + edges_out
 /// </summary>
 public static class NodeStoreExporter
@@ -47,6 +52,7 @@ public static class NodeStoreExporter
     public static readonly IReadOnlyList<string> KnownNodeLabels = new[]
     {
         "SqlObject", "Process", "Workflow", "Parameter", "Variable", "Step", "Action", "Table", "Column", "Rule",
+        "Database", "Schema", "BusinessRule",
     };
 
     public static readonly IReadOnlyList<string> KnownEdgeTypes = new[]
@@ -54,7 +60,7 @@ public static class NodeStoreExporter
         "HAS_PARAMETER", "DECLARES", "ASSIGNED_FROM", "HAS_STEP", "ACTION", "BUILDS_SQL_FROM",
         "USES_VARIABLE", "TARGETS", "WRITES_TO", "READS_FROM", "READS_COLUMN", "WRITES_COLUMN",
         "FILTERS_ON", "DERIVES_FROM", "CONDITIONED_BY", "NESTED_IN", "GOVERNS", "CALLS", "AFFECTS", "HAS_COLUMN", "FK_TO", "REFERENCES",
-        "BELONGS_TO", "WORKFLOW_WRITES_TO",
+        "BELONGS_TO", "WORKFLOW_WRITES_TO", "CONTAINS", "HAS_RULE", "CONSTRAINS",
     };
 
     // Structural edges fully represented by an object's "owned" lists already
@@ -71,9 +77,18 @@ public static class NodeStoreExporter
     // TARGETS...) is intra-object plumbing that bloats object.json without helping
     // an agent decide its next hop. nav.json keeps only these so a multi-object
     // traversal reads a ~2-4 KB file per hop instead of the full ~60 KB object.
+    // "Navigation-worthy" edge types: the only ones worth following to move between
+    // objects/tables/columns. DERIVES_FROM (column-to-column lineage) joined this set
+    // for the same reason CALLS did - see the Caso 4/6 precedent in
+    // docs/nodestore-analysis.md: a multi-hop lineage chain (view -> CTE -> table) is
+    // structurally the cross-object call-chain problem, not the single-object
+    // condition_path problem. Hopping through full shared/columns/*.json (each with its
+    // `refs` partitioned by every contributing object) reproduces the Caso 4 regression
+    // (more bytes read per hop, no fewer agent turns); a thin per-node nav.json (below)
+    // is the fix that measurably worked there.
     private static readonly HashSet<string> NavEdgeTypes = new(StringComparer.Ordinal)
     {
-        "CALLS", "WRITES_TO", "READS_FROM", "AFFECTS", "FK_TO",
+        "CALLS", "WRITES_TO", "READS_FROM", "AFFECTS", "FK_TO", "CONTAINS", "DERIVES_FROM",
     };
 
     public class Stats
@@ -216,6 +231,27 @@ public static class NodeStoreExporter
             if (Directory.Exists(dir))
                 Directory.Delete(dir, recursive: true);
             objectsRemoved++;
+        }
+
+        // lineage_path.json (Tarea I): denormalized cache recomputed in full on
+        // every Build, never gated by content_hash (see comment at its build site) -
+        // an object's own object.json may be unchanged while an upstream object it
+        // chains through changed its DERIVES_FROM, so content_hash equality doesn't
+        // imply the lineage paths are still correct. Write/delete unconditionally
+        // for every currently-existing object.
+        foreach (var objId in newManifest.Keys)
+        {
+            var lpRelPath = $"objects/{Slug(objId)}/lineage_path.json";
+            var lpFullPath = Path.Combine(outDir, lpRelPath);
+            if (build.ObjectFiles.TryGetValue(lpRelPath, out var lpJson))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(lpFullPath)!);
+                File.WriteAllText(lpFullPath, lpJson, Encoding.UTF8);
+            }
+            else if (File.Exists(lpFullPath))
+            {
+                File.Delete(lpFullPath);
+            }
         }
 
         // ── shared/<category>/<slug>.json: write only if content changed ────
@@ -381,12 +417,16 @@ public static class NodeStoreExporter
             return result;
         }
 
-        // Where a *navigation* hop should land: another object's tiny nav.json
-        // (only inter-object edges) instead of its full object.json, so a call/
-        // impact chain stays in ~KB-scale files per hop. Shared targets (a Table
-        // a WRITES_TO lands on) have no nav.json, so they keep their normal path.
+        // Where a *navigation* hop should land: a tiny nav.json (only NavEdgeTypes
+        // edges) instead of the full object.json/shared file, so a call/impact/lineage
+        // chain stays in ~KB-scale files per hop. Every object AND every shared node
+        // (Table/Column/...) gets one - a DERIVES_FROM chain across several view/table
+        // columns hops nav.json -> nav.json, never opening a full shared/columns/*.json
+        // (which carries `refs` partitioned by every contributing object and can be large
+        // for a popular column).
+        string SharedNavPathOf(string id) => $"shared/{SharedCategory(nodeById[id])}/{Slug(id)}_{ShortHash(id)}.nav.json";
         string NavPathOf(string id) =>
-            objectIds.Contains(id) ? $"objects/{Slug(id)}/nav.json" : PathOf(id);
+            objectIds.Contains(id) ? $"objects/{Slug(id)}/nav.json" : SharedNavPathOf(id);
 
         var nodesByLabel = new Dictionary<string, int>();
         var unknownLabels = new HashSet<string>();
@@ -409,6 +449,16 @@ public static class NodeStoreExporter
         var edgesByObject = new Dictionary<string, List<GraphRel>>(StringComparer.Ordinal);
         var sharedRefsByNode = new Dictionary<string, Dictionary<string, List<GraphRel>>>(StringComparer.Ordinal);
         var sharedIntrinsicOut = new Dictionary<string, List<GraphRel>>(StringComparer.Ordinal);
+        // edges_in counterpart of sharedIntrinsicOut: when BOTH ends of an edge are
+        // shared nodes owned by no object (scope == null below - e.g. a DERIVES_FROM
+        // from one table-scheme Column straight to another, neither owned by a
+        // SqlObject), sharedRefsByNode never sees it (it's only populated when
+        // scope != null) so the target's edges_in/refs would silently miss it. The
+        // forward direction (provenance: column -> what it derives FROM) already works
+        // via sharedIntrinsicOut; this fixes the reverse (impact: column -> what
+        // consumes it) for the same scope-less case. See docs/agent-collab.md and
+        // docs/lineage-perfect-discussion.md SS1.2.
+        var sharedIntrinsicIn = new Dictionary<string, List<GraphRel>>(StringComparer.Ordinal);
         var edgesByType = new Dictionary<string, int>();
         var unknownEdgeTypes = new HashSet<string>();
         var orphanEdges = 0;
@@ -450,6 +500,16 @@ public static class NodeStoreExporter
                 (sharedIntrinsicOut.TryGetValue(rel.StartNodeId, out var outList)
                     ? outList
                     : sharedIntrinsicOut[rel.StartNodeId] = new()).Add(rel);
+            }
+
+            // Complement of the block above: scope == null means neither end is
+            // owned by an object, so the existing `if (scope != null)` branch never
+            // ran for this edge - the end node's incoming side needs its own path.
+            if (scope == null && endOwner == null && !objectIds.Contains(rel.EndNodeId))
+            {
+                (sharedIntrinsicIn.TryGetValue(rel.EndNodeId, out var inList)
+                    ? inList
+                    : sharedIntrinsicIn[rel.EndNodeId] = new()).Add(rel);
             }
         }
 
@@ -556,6 +616,17 @@ public static class NodeStoreExporter
                     edgesIn.AddRange(entries);
                 }
             }
+            // Scope-less incoming edges (both ends are unowned shared nodes, e.g. a
+            // DERIVES_FROM from one table-scheme Column to another) have no
+            // contributing object to partition `refs` by, so they go straight into
+            // the flattened edges_in instead - see sharedIntrinsicIn above.
+            if (sharedIntrinsicIn.TryGetValue(id, out var intrinsicInRels))
+            {
+                edgesIn.AddRange(intrinsicInRels
+                    .OrderBy(r => r.Type, StringComparer.Ordinal)
+                    .ThenBy(r => r.StartNodeId, StringComparer.Ordinal)
+                    .Select(rel => EdgeEntry(rel, "from", "to", rel.StartNodeId, rel.EndNodeId, nodeById, PathOf, dropTo: true)));
+            }
 
             var edgesOut = sharedIntrinsicOut.TryGetValue(id, out var outRels)
                 ? outRels
@@ -580,6 +651,133 @@ public static class NodeStoreExporter
 
             var relPath = PathOf(id);
             sharedFiles[relPath] = JsonSerializer.Serialize(doc, jsonOptions);
+
+            // nav.json: edges_in/edges_out filtered to NavEdgeTypes, each `path`
+            // re-pointed at the neighbor's own nav.json - see NavPathOf above. Always
+            // emitted (even if empty) so a consumer never has to special-case "does this
+            // node have a nav file" - mirrors the unconditional object nav.json.
+            Dictionary<string, object> ToNavEdge(Dictionary<string, object> e)
+            {
+                var copy = new Dictionary<string, object>(e);
+                if (e.TryGetValue("to", out var toObj) && toObj is string toId)
+                    copy["path"] = NavPathOf(toId);
+                if (e.TryGetValue("from", out var fromObj) && fromObj is string fromId)
+                    copy["path"] = NavPathOf(fromId);
+                return copy;
+            }
+            var navIn = edgesIn.Where(e => e.TryGetValue("type", out var t) && t is string ts && NavEdgeTypes.Contains(ts)).Select(ToNavEdge).ToList();
+            var navOut = edgesOut.Where(e => e.TryGetValue("type", out var t) && t is string ts && NavEdgeTypes.Contains(ts)).Select(ToNavEdge).ToList();
+            sharedFiles[SharedNavPathOf(id)] = JsonSerializer.Serialize(new Dictionary<string, object>
+            {
+                ["id"] = id,
+                ["name"] = DisplayName(node),
+                ["edges_in"] = navIn,
+                ["edges_out"] = navOut,
+            }, jsonOptions);
+        }
+
+        // ── Capa 4: objects/<slug>/lineage_path.json (Tarea I) ──────────────
+        // For every SqlObject with output columns (HAS_COLUMN edges it owns - views,
+        // TVFs, procedures with OUTPUT; a plain base table has no SqlObject and is
+        // skipped), precompute per output column the ultimate root base-table
+        // column(s) it DERIVES_FROM, its immediate precursor(s), and the longest
+        // path depth - format per docs/lineage-path-spec.md. Walking this chain by
+        // hand (even via nav.json) measurably costs 7-10 agent turns for a 3-hop
+        // chain with zero advantage from nav.json over full files (unlike CALLS
+        // chains, where nav.json does help) - see docs/nodestore-analysis.md Caso 7.
+        // This collapses that to one file read. Memoized across ALL objects (a
+        // column shared by several chains, e.g. an intermediate view column, is
+        // traced once). Emitted unconditionally on every Build (both Write and
+        // Update - see callers): it's a denormalized cache purely derived from
+        // already-computed DERIVES_FROM edges, cheap to recompute in full, not
+        // worth incremental content-hash diffing.
+        var derivesFromOut = new Dictionary<string, List<GraphRel>>(StringComparer.Ordinal);
+        foreach (var rel in graph.Relationships)
+        {
+            if (rel.Type != "DERIVES_FROM" || !nodeById.ContainsKey(rel.StartNodeId) || !nodeById.ContainsKey(rel.EndNodeId))
+                continue;
+            (derivesFromOut.TryGetValue(rel.StartNodeId, out var list) ? list : derivesFromOut[rel.StartNodeId] = new()).Add(rel);
+        }
+
+        string ColumnDisplayName(string columnId)
+        {
+            var props = nodeById[columnId].Properties;
+            var table = props.TryGetValue("table", out var t) && t is string ts ? ts : "";
+            var name = props.TryGetValue("name", out var nm) && nm is string ns ? ns : columnId;
+            return table.Length > 0 ? $"{table}.{name}" : name;
+        }
+
+        var lineageCache = new Dictionary<string, (List<string> Roots, int Depth)>(StringComparer.Ordinal);
+        (List<string> Roots, int Depth) TraceLineage(string columnId, HashSet<string> recursionStack)
+        {
+            if (lineageCache.TryGetValue(columnId, out var cached))
+                return cached;
+            // Cycle guard: currentNode is already being traced higher up this same
+            // call stack (e.g. a recursive CTE). Stop this branch with an empty
+            // result WITHOUT caching it - a different top-level call may reach this
+            // node outside any cycle and must be free to resolve it properly.
+            if (!recursionStack.Add(columnId))
+                return (new List<string>(), 0);
+
+            (List<string> Roots, int Depth) result;
+            if (!derivesFromOut.TryGetValue(columnId, out var precursors) || precursors.Count == 0)
+            {
+                // Base case: no outgoing DERIVES_FROM - this column is itself a root.
+                result = (new List<string> { columnId }, 0);
+            }
+            else
+            {
+                var rootIds = new List<string>();
+                var rootSeen = new HashSet<string>(StringComparer.Ordinal);
+                var maxDepth = -1;
+                foreach (var rel in precursors)
+                {
+                    var (subRoots, subDepth) = TraceLineage(rel.EndNodeId, recursionStack);
+                    foreach (var r in subRoots)
+                        if (rootSeen.Add(r))
+                            rootIds.Add(r);
+                    maxDepth = Math.Max(maxDepth, subDepth);
+                }
+                result = (rootIds, maxDepth + 1);
+            }
+
+            recursionStack.Remove(columnId);
+            lineageCache[columnId] = result;
+            return result;
+        }
+
+        foreach (var objId in objectIds)
+        {
+            if (!edgesByObject.TryGetValue(objId, out var ownedRels))
+                continue;
+
+            var outputColumns = ownedRels
+                .Where(r => r.Type == "HAS_COLUMN" && r.StartNodeId == objId && nodeById.ContainsKey(r.EndNodeId))
+                .Select(r => r.EndNodeId)
+                .Distinct()
+                .ToList();
+            if (outputColumns.Count == 0)
+                continue; // not a view/TVF/proc-with-OUTPUT - no lineage_path.json for it
+
+            var perColumn = new SortedDictionary<string, object>(StringComparer.Ordinal);
+            foreach (var colId in outputColumns)
+            {
+                var colName = nodeById[colId].Properties.TryGetValue("name", out var nm) && nm is string ns ? ns : colId;
+                var (roots, depth) = TraceLineage(colId, new HashSet<string>(StringComparer.Ordinal));
+                var immediate = derivesFromOut.TryGetValue(colId, out var direct)
+                    ? direct.Select(r => ColumnDisplayName(r.EndNodeId)).Distinct().ToList()
+                    : new List<string>();
+
+                perColumn[colName] = new Dictionary<string, object?>
+                {
+                    ["roots"] = roots.Select(ColumnDisplayName).Distinct().ToList(),
+                    ["immediate"] = immediate,
+                    ["depth"] = depth,
+                    ["transformation_summary"] = null, // stretch goal, fase 3.2b - ver docs/lineage-perfect-discussion.md SS1.1
+                };
+            }
+
+            objectFiles[$"objects/{Slug(objId)}/lineage_path.json"] = JsonSerializer.Serialize(perColumn, jsonOptions);
         }
 
         // ── Capa 1: model.json (the "initial nodes") ────────────────────────
@@ -616,6 +814,14 @@ public static class NodeStoreExporter
             }
         }
 
+        // Base table name -> degree, used below to recognize system-versioned temporal
+        // history tables (<Table>_Archive, auto-populated by the engine on UPDATE/DELETE
+        // of <Table>, never referenced by name in application T-SQL) so they're labeled
+        // "historial temporal, esperado" instead of looking like an orphaned/unused table.
+        var tableDegreeByName = graph.Nodes
+            .Where(n => n.Labels.Contains("Table"))
+            .ToDictionary(DisplayName, n => degree.GetValueOrDefault(n.Id), StringComparer.OrdinalIgnoreCase);
+
         var modelNodes = graph.Nodes
             .Where(n => n.Labels.Contains("SqlObject") || n.Labels.Contains("Table"))
             .Select(n =>
@@ -647,12 +853,29 @@ public static class NodeStoreExporter
                     var steps = graph.Nodes.Where(s => s.Id != n.Id && OwnerOf(s.Id) == n.Id && s.Labels.Contains("Step")).ToList();
                     entry["total_steps"] = steps.Count;
                     entry["dynamic_sql_steps"] = steps.Count(s => s.Properties.TryGetValue("is_dynamic_sql", out var dyn) && dyn is true);
+                    // Of those, how many never resolved to a literal (dynamic_sql == ""):
+                    // these run real SQL at execution time (often a real table read/write)
+                    // that READS_FROM/WRITES_TO can't see - the parser fails closed (emits
+                    // nothing) rather than guessing, so without this count an agent reading
+                    // edges_out/model.json would wrongly read "no more reads/writes" as
+                    // "this object provably doesn't touch anything else".
+                    entry["unresolved_dynamic_sql_steps"] = steps.Count(s =>
+                        s.Properties.TryGetValue("is_dynamic_sql", out var dyn) && dyn is true
+                        && (!s.Properties.TryGetValue("dynamic_sql", out var dsql) || dsql is not string { Length: > 0 }));
                 }
                 else if (n.Labels.Contains("Table"))
                 {
                     entry["fk_out_count"] = sharedIntrinsicOut.TryGetValue(n.Id, out var outEdges)
                         ? outEdges.Count(e => e.Type == "FK_TO")
                         : 0;
+
+                    var name = DisplayName(n);
+                    if (degree.GetValueOrDefault(n.Id) == 0
+                        && name.EndsWith("_Archive", StringComparison.OrdinalIgnoreCase)
+                        && tableDegreeByName.GetValueOrDefault(name[..^"_Archive".Length], 0) > 0)
+                    {
+                        entry["classification"] = "historial temporal, esperado";
+                    }
                 }
                 return entry;
             })
@@ -701,8 +924,10 @@ public static class NodeStoreExporter
                 ["open_shared"] = "shared/<category>/<slug>.json holds a Table/Column/Action/Rule: `refs` partitions its incoming edges by the SqlObject that contributed them, `edges_in`/`edges_out` give the flattened view.",
                 ["downstream"] = "Follow edges_out (WRITES_TO, CALLS, AFFECTS) for what an object affects.",
                 ["upstream"] = "Follow edges_in / refs (WRITES_TO, READS_FROM, CALLS) for what affects a node.",
-                ["completeness"] = "model.json is EXHAUSTIVE for CALLS/AFFECTS/FK_TO and for WRITES_TO/READS_FROM rolled up to object/table scale (deduplicated from every Step that touches that table, including ones built from dynamic SQL). Cross-check counts against index.json's stats.edges_by_type if you need certainty. You never need to open an object's object.json just to discover more object-level edges of these types — they are already all in model.json.",
-                ["exec_resolution"] = "An EXEC step resolves one of two ways, and model.json already has both rolled up: (1) a named-procedure call -> a CALLS edge object->object; (2) EXEC of a dynamically-built @variable (is_dynamic_sql=true on the Step, target_name='(dynamic SQL)') -> its inferred targets appear as WRITES_TO/READS_FROM edges with action_type in their `props`, not as CALLS. To see a Step's own is_dynamic_sql/dynamic_sql/target_name detail you do need objects/<slug>/object.json, but the object-level write/read targets themselves are already in model.json.",
+                ["completeness"] = "model.json is EXHAUSTIVE for CALLS/AFFECTS/FK_TO and for WRITES_TO/READS_FROM rolled up to object/table scale (deduplicated from every Step that touches that table, including ones built from dynamic SQL) - WITH ONE EXCEPTION: dynamic SQL that never resolved to a literal at analysis time (see unresolved_dynamic_sql_steps below) touches real tables at runtime that genuinely have no edge anywhere in this store - the parser fails closed (emits nothing) rather than guessing a wrong table. For every other case, cross-check counts against index.json's stats.edges_by_type if you need certainty; you never need to open an object's object.json just to discover more object-level edges of these types.",
+                ["exec_resolution"] = "An EXEC step resolves one of three ways: (1) a named-procedure call -> a CALLS edge object->object, already in model.json; (2) EXEC of a dynamically-built @variable that fully resolved to a literal (is_dynamic_sql=true, target_name='(dynamic SQL)', but the Step's own dynamic_sql text is non-empty) -> its real targets appear as WRITES_TO/READS_FROM edges with action_type in their `props`, also already in model.json; (3) EXEC of a dynamically-built @variable that could NOT be resolved to a literal (is_dynamic_sql=true AND dynamic_sql=='') -> no edge exists anywhere for what it touches - this is the one real gap in this store's lineage, counted per object in unresolved_dynamic_sql_steps so you know when an object's WRITES_TO/READS_FROM set is provably incomplete rather than provably empty. To see a Step's own is_dynamic_sql/dynamic_sql/target_name detail you do need objects/<slug>/object.json.",
+                ["unresolved_dynamic_sql_steps"] = "Each SqlObject node in model.json carries unresolved_dynamic_sql_steps: count of its EXEC steps where is_dynamic_sql=true and the dynamic SQL text never resolved to a literal (dynamic_sql==''). A value >0 means this object's WRITES_TO/READS_FROM edges are an undercount, not the full picture - treat it like a missing-data flag, not a 0/total-steps style metric.",
+                ["column_lineage"] = "To find where an output column's data ultimately comes from (its root base-table column(s)), read objects/<slug>/lineage_path.json - NOT nav.json hopping. It's keyed by output column name; each entry precomputes `roots` (root base-table column(s), as table.column strings), `immediate` (direct precursor column(s), same format), `depth` (longest path to a root), and `transformation_summary` (reserved, currently always null). This is a single O(1) read - measured (docs/nodestore-analysis.md Caso 7) that walking DERIVES_FROM hop by hop costs 7-10 agent turns for just a 3-hop chain, with NO advantage from nav.json over full files (unlike CALLS chains, where nav.json does help - see call_chain above). lineage_path.json only exists for SqlObjects with output columns (views, TVFs, procedures with OUTPUT); a plain base table has none.",
             },
             ["schema"] = new Dictionary<string, object>
             {
@@ -794,6 +1019,9 @@ public static class NodeStoreExporter
         "Column" => "columns",
         "Action" => "actions",
         "Rule" => "rules",
+        "Database" => "databases",
+        "Schema" => "schemas",
+        "BusinessRule" => "businessrules",
         _ => "other",
     };
 

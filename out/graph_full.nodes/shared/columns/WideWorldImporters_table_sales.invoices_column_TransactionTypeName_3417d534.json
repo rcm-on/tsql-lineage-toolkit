@@ -8,6 +8,27 @@
     "table": "sales.invoices"
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.customertransactions:column:TransactionTypeID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customertransactions_column_TransactionTypeID_29a0746a.json",
+      "props": {
+        "logic": "(SELECT TransactionTypeID  FROM   [Application].TransactionTypes  WHERE  TransactionTypeName = N'Customer Invoice')",
+        "line_no": 123,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json"
+    }
+  ],
   "edges_out": []
 }

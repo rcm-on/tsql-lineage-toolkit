@@ -29,7 +29,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 6,
+          "line_no": 5,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
@@ -37,6 +37,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> [Application].[Configuration_ApplyColumnstoreIndexing]"
@@ -50,7 +51,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 8,
+          "line_no": 7,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
@@ -58,6 +59,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> [Application].[Configuration_ApplyFullTextIndexing]"
@@ -71,7 +73,7 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 10,
+          "line_no": 9,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
@@ -79,6 +81,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> [Application].[Configuration_EnableInMemory]"
@@ -92,7 +95,7 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 12,
+          "line_no": 11,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
@@ -100,6 +103,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> [Application].[Configuration_ApplyPartitioning]"
@@ -115,6 +119,18 @@
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
       "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "via": "WideWorldImporters::Application.Configuration_EnableInMemory",
+        "hops": 1
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json",
       "props": {
         "via": "WideWorldImporters::Application.Configuration_EnableInMemory",
         "hops": 1
@@ -246,6 +262,14 @@
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
       "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ConfigureForEnterpriseEdition/object.json"
     }
   ]
 }

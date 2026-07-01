@@ -13,6 +13,27 @@
     "ordinal": 13
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.orderlines:column:TaxRate",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_TaxRate_c3c42b15.json",
+      "props": {
+        "logic": "si.TaxRate",
+        "line_no": 39,
+        "caused_by_step": "WideWorldImporters::Website.InsertCustomerOrders#step3"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "ordinal": 13
+      }
+    }
+  ],
   "edges_out": []
 }

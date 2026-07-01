@@ -8,7 +8,14 @@
     "name": "Application.SystemParameters"
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_application_be37960c.json"
+    }
+  ],
   "edges_out": [
     {
       "type": "FK_TO",
@@ -153,6 +160,18 @@
       "props": {
         "ordinal": 1
       }
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:application.systemparameters:DEFAULT:b227dd68",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.systemparameters_DEFAULT_b227dd68_d32be0a3.json"
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:application.systemparameters:DEFAULT:eaa32929",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.systemparameters_DEFAULT_eaa32929_8f44deb6.json"
     }
   ]
 }

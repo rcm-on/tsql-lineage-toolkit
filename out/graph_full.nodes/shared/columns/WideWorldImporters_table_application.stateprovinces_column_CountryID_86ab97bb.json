@@ -13,7 +13,17 @@
     "ordinal": 4
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.stateprovinces",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "ordinal": 4
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

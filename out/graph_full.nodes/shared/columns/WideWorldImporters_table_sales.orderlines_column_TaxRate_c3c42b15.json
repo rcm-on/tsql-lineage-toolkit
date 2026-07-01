@@ -42,6 +42,59 @@
       "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.invoicelines:column:ExtendedPrice",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_ExtendedPrice_0471671b.json",
+      "props": {
+        "logic": "ROUND(ol.PickedQuantity * ol.UnitPrice, 2) + ROUND(ol.PickedQuantity * ol.UnitPrice * ol.TaxRate / 100.0, 2)",
+        "line_no": 74,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+        "op_kinds": [
+          "arith:*",
+          "arith:+",
+          "arith:/",
+          "func:ROUND"
+        ]
+      }
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.invoicelines:column:TaxAmount",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_TaxAmount_702e3101.json",
+      "props": {
+        "logic": "ROUND(ol.PickedQuantity * ol.UnitPrice * ol.TaxRate / 100.0, 2)",
+        "line_no": 74,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+        "op_kinds": [
+          "arith:*",
+          "arith:/",
+          "func:ROUND"
+        ]
+      }
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.invoicelines:column:TaxRate",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_TaxRate_84015493.json",
+      "props": {
+        "logic": "ol.TaxRate",
+        "line_no": 74,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step5"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.orderlines",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "props": {
+        "ordinal": 8
+      }
     }
   ],
   "edges_out": [
@@ -52,7 +105,7 @@
       "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_TaxRate_6bb70bda.json",
       "props": {
         "logic": "si.TaxRate",
-        "line_no": 40,
+        "line_no": 39,
         "caused_by_step": "WideWorldImporters::Website.InsertCustomerOrders#step3"
       }
     }

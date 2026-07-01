@@ -6,7 +6,7 @@
   "properties": {
     "name": "LastEditedWhen",
     "table": "sales.invoices",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": false,
     "is_identity": false,
     "is_primary_key": false,
@@ -18,7 +18,16 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+        "props": {
+          "op_kinds": [
+            "case:CASE",
+            "compare:<=",
+            "compare:=",
+            "compare:>",
+            "logical:AND"
+          ]
+        }
       },
       {
         "type": "READS_COLUMN",
@@ -30,7 +39,7 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -41,7 +50,16 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -51,9 +69,24 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:sales.invoices:DEFAULT:b227dd68",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.invoices_DEFAULT_b227dd68_a97a1889.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "ordinal": 25
+      }
     }
   ],
   "edges_out": []

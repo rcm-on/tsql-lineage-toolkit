@@ -33,6 +33,12 @@
         "table": "Purchasing.PurchaseOrderLines",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:purchasing",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_purchasing_cdda06b8.json"
     }
   ],
   "edges_out": [
@@ -179,6 +185,18 @@
       "props": {
         "ordinal": 3
       }
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:purchasing.purchaseorderlines:DEFAULT:af4f546e",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.purchaseorderlines_DEFAULT_af4f546e_062fd7f0.json"
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:purchasing.purchaseorderlines:DEFAULT:b227dd68",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.purchaseorderlines_DEFAULT_b227dd68_4a7a7e85.json"
     }
   ]
 }

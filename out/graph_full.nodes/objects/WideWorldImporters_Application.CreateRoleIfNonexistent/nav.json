@@ -1,5 +1,26 @@
 ﻿{
   "id": "WideWorldImporters::Application.CreateRoleIfNonexistent",
   "name": "Application.CreateRoleIfNonexistent",
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.database_principals",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.database_principals_2a499795.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.database_principals"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/nav.json"
+    }
+  ]
 }

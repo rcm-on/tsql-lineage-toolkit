@@ -40,6 +40,7 @@
       const badges = e.kind === 'table'
         ? `<span class="b tbl">▦ ${e.cols}</span>`
         : [
+            e.isTrigger ? `<span class="b trg">⚡TRG</span>` : '',
             e.complexity > 1 ? `<span class="b cc">cc${e.complexity}</span>` : '',
             e.dyn > 0 ? `<span class="b dyn">dyn${e.dyn}</span>` : '',
             e.parseError ? `<span class="b err">err</span>` : '',
@@ -374,9 +375,21 @@
     const dynVars = o.vars.filter(v => v.buildsSql > 0 && v.construction.length);
     const fm = flowMetrics(o.flow);
     const findings = SD.risks.forComponent(DATA, o.name);
+    // Trigger creado dinámicamente: no tiene cuerpo/metricas propios (Fase A), pero sí
+    // su tabla ON, evento/timing y el/los proc(s) que lo CREATES.
+    const triggerBlock = o.isTrigger ? `
+      <div class="flags">⚡ TRIGGER${o.triggerTiming ? ` · ${esc(o.triggerTiming)}` : ''}${o.triggerEvents && o.triggerEvents.length ? ` ${esc(o.triggerEvents.join(', '))}` : ''}</div>
+      <h3>Trigger</h3>
+      <table class="grid">
+        <tr><td>Se dispara sobre (ON)</td><td>${o.triggerOn && o.triggerOn.length ? o.triggerOn.map(t => `<b>${esc(t)}</b>`).join(', ') : '—'}</td></tr>
+        <tr><td>Eventos</td><td>${o.triggerEvents && o.triggerEvents.length ? esc(o.triggerEvents.join(', ')) : '—'}</td></tr>
+        <tr><td>Timing</td><td>${esc(o.triggerTiming || '—')}</td></tr>
+        <tr><td>Creado por</td><td>${o.createdBy && o.createdBy.length ? o.createdBy.map(c => `<b>${esc(c)}</b>`).join(', ') : '—'}</td></tr>
+      </table>` : '';
     return `
-      <h2>${esc(o.name)}</h2>
+      <h2>${esc(o.name)}${o.isTrigger ? ' <span class="b trg">⚡TRG</span>' : ''}</h2>
       <div class="flags">tx=${o.hasTx} · errores=${o.hasErr} · cursor=${o.hasCursor}</div>
+      ${triggerBlock}
       ${Summary(SD.summary.object(o))}
 
       <h3>Métricas</h3>
@@ -397,6 +410,7 @@
           <div><b>A quién llama:</b> ${o.callsOut.length ? o.callsOut.map(chip).join('') : '<span class="muted">nadie</span>'}</div>
           <div style="margin-top:6px"><b>Quién le llama:</b> ${o.callsIn.length ? o.callsIn.map(chip).join('') : '<span class="muted">nadie</span>'}</div>
           <div style="margin-top:6px"><b>Tablas:</b><br>${o.reads.map(t => `<span class="chip r">leída · ${esc(t)}</span>`).join('')} ${o.writes.map(w => `<span class="chip w">${esc(w.op)} · ${esc(w.table)}</span>`).join('') || '<span class="muted">ninguna</span>'}</div>
+          ${o.createsTriggers && o.createsTriggers.length ? `<div style="margin-top:6px"><b>⚡ Crea triggers:</b> ${o.createsTriggers.map(chip).join('')}</div>` : ''}
         </div>
         <div><h3>Acciones por tipo</h3>${actionTally()}</div>
       </div>
@@ -461,11 +475,48 @@
     `;
   }
 
+  // Linaje transitivo de columnas (profundidad): para cada columna de la tabla con
+  // cadena DERIVES_FROM, muestra en ambos sentidos hasta qué columnas raíz/consumidoras
+  // llega y a cuántos saltos (hops), con la cadena ordenada y el op_kind de cada paso.
+  // Es la versión navegable de @col_provenance / @col_impact - ver collineage.js.
+  function columnLineageSection(t, DATA) {
+    if (!DATA.colAdj) return '';
+    const opk = ops => !ops || !ops.length ? '' :
+      ` ${ops.map(o => `<span class="opk opk-${esc(o.split(':')[0])}" title="${esc(o)}">${esc(o.split(':')[1] || o)}</span>`).join('')}`;
+    const arrow = (dir, e) => {
+      const sep = dir === 'up' ? ' ← ' : ' → ';
+      const path = e.chain.map(c => `${c.table}.${c.column}`).join(sep);
+      const link = DATA.byName[e.table] ? `onclick="SD.app.openObject('${esc(e.table)}')"` : '';
+      return `<span class="chip" title="${esc(path)}" ${link}>${esc(e.table)}.${esc(e.column)}<span class="hops">·n${e.hops}</span></span>${opk(e.ops)}`;
+    };
+    const rows = [];
+    for (const c of t.columns) {
+      const prov = SD.collineage.provenance(t.name, c.name, DATA, 20);
+      const imp = SD.collineage.impact(t.name, c.name, DATA, 20);
+      if (!prov.length && !imp.length) continue;
+      rows.push(`<tr>
+        <td>${esc(c.name)}</td>
+        <td>${prov.length ? prov.slice(0, 30).map(e => arrow('up', e)).join('') : '<span class="muted">—</span>'}</td>
+        <td>${imp.length ? imp.slice(0, 30).map(e => arrow('down', e)).join('') : '<span class="muted">—</span>'}</td>
+      </tr>`);
+    }
+    if (!rows.length) return '';
+    return `<h3>Linaje transitivo de columnas (profundidad)</h3>
+      <p class="muted" style="margin:2px 0 8px">Por columna: de qué columnas deriva (provenance) y qué columnas se ven afectadas si cambia (impacto), con el nº de saltos <code>·nN</code> y el operador de cada paso. Pasa el ratón para ver la cadena completa.</p>
+      <table class="t"><tr><th>Columna</th><th>Deriva de (↑ provenance)</th><th>Impacta a (↓ impacto)</th></tr>${rows.join('')}</table>`;
+  }
+
   function TableView(t, DATA, impactDepth) {
     const chip = n => DATA.byName[n] ? `<span class="chip" onclick="SD.app.openObject('${esc(n)}')">${esc(n)}</span>` : `<span class="chip muted">${esc(n)}</span>`;
-    const deriv = d => `<span class="chip" title="${esc(d.logic)}${d.line != null ? ' (línea ' + d.line + ')' : ''}" ${DATA.byName[d.table] ? `onclick="SD.app.openObject('${esc(d.table)}')"` : ''}>${esc(d.table)}.${esc(d.column)}</span>`;
-    const cond = d => `<span class="chip" title="WHERE/JOIN${d.line != null ? ' (línea ' + d.line + ')' : ''}" ${DATA.byName[d.table] ? `onclick="SD.app.openObject('${esc(d.table)}')"` : ''}>${esc(d.table)}.${esc(d.column)}</span>`;
-    const colRow = c => `<tr><td>${c.pk ? '🔑 ' : ''}${esc(c.name)}</td><td>${esc(c.type)}</td><td>${c.nullable ? '' : 'NOT NULL'}</td><td>${c.identity ? 'IDENTITY' : ''}</td><td>${c.derivesFrom && c.derivesFrom.length ? c.derivesFrom.map(deriv).join('') : ''}</td><td>${c.conditionedBy && c.conditionedBy.length ? c.conditionedBy.map(cond).join('') : ''}</td></tr>`;
+    // op_kinds badge: the structured operators behind the dependency (arith:*, func:SUM,
+    // logical:AND, cast:...). The category (text before ':') drives a color so the kind of
+    // transformation reads at a glance - arithmetic/cast = type-change risk, logical = row
+    // selection. Empty for a plain column copy.
+    const opBadges = ops => !ops || !ops.length ? '' :
+      ` ${ops.map(o => `<span class="opk opk-${esc(o.split(':')[0])}" title="${esc(o)}">${esc(o.split(':')[1] || o)}</span>`).join('')}`;
+    const deriv = d => `<span class="chip" title="${esc(d.logic)}${d.line != null ? ' (línea ' + d.line + ')' : ''}" ${DATA.byName[d.table] ? `onclick="SD.app.openObject('${esc(d.table)}')"` : ''}>${esc(d.table)}.${esc(d.column)}</span>${opBadges(d.ops)}`;
+    const cond = d => `<span class="chip" title="WHERE/JOIN${d.line != null ? ' (línea ' + d.line + ')' : ''}" ${DATA.byName[d.table] ? `onclick="SD.app.openObject('${esc(d.table)}')"` : ''}>${esc(d.table)}.${esc(d.column)}</span>${opBadges(d.ops)}`;
+    const colRow = c => `<tr><td>${c.pk ? '🔑 ' : ''}${esc(c.name)}${c.computed ? ' <span class="tag-calc" title="Columna calculada (CREATE TABLE ... AS (expresión))">🧮 calculada</span>' : ''}</td><td>${esc(c.type)}</td><td>${c.nullable ? '' : 'NOT NULL'}</td><td>${c.identity ? 'IDENTITY' : ''}</td><td>${c.derivesFrom && c.derivesFrom.length ? c.derivesFrom.map(deriv).join('') : ''}</td><td>${c.conditionedBy && c.conditionedBy.length ? c.conditionedBy.map(cond).join('') : ''}</td></tr>`;
     const neighbors = t.writers.map(w => ({ label: w.object, dir: 'in', color: '#ff8a80', role: w.op, onClick: DATA.byName[w.object] ? `SD.app.openObject('${esc(w.object)}')` : '' }))
       .concat(t.readers.map(r => ({ label: r, dir: 'in', color: '#9cdcfe', role: 'lee', onClick: DATA.byName[r] ? `SD.app.openObject('${esc(r)}')` : '' })))
       .concat(t.fkOut.map(f => ({ label: f.table, dir: 'out', color: '#cddc39', role: 'FK→', onClick: DATA.byName[f.table] ? `SD.app.openObject('${esc(f.table)}')` : '' })));
@@ -485,6 +536,7 @@
           <div style="margin-top:6px"><b>Leída por:</b> ${t.readers.length ? t.readers.map(chip).join('') : '<span class="muted">nadie</span>'}</div>
           <div style="margin-top:6px"><b>FK → (referencia a):</b> ${t.fkOut.length ? t.fkOut.map(f => chip(f.table)).join('') : '<span class="muted">ninguna</span>'}</div>
           <div style="margin-top:6px"><b>← FK (referenciada por):</b> ${t.fkIn.length ? t.fkIn.map(f => chip(f.table)).join('') : '<span class="muted">ninguna</span>'}</div>
+          ${t.triggers && t.triggers.length ? `<div style="margin-top:6px"><b>⚡ Triggers que dispara:</b> ${t.triggers.map(tr => `<span class="chip" onclick="SD.app.openObject('${esc(tr.name)}')">${esc(tr.name)}${tr.events && tr.events.length ? ` · ${esc(tr.events.join('/'))}` : ''}</span>`).join('')}</div>` : ''}
         </div>
         <div><h3>Grafo rápido</h3>${SD.charts.miniGraph(t.name, neighbors)}</div>
       </div>
@@ -493,6 +545,8 @@
 
       <h3>Columnas (${t.columns.length})</h3>
       ${t.columns.length ? `<table class="t"><tr><th>Columna</th><th>Tipo</th><th>Null</th><th></th><th>Deriva de</th><th>Condicionado por</th></tr>${t.columns.map(colRow).join('')}</table>` : '<span class="muted">sin esquema (no se analizó su CREATE TABLE)</span>'}
+
+      ${columnLineageSection(t, DATA)}
 
       ${(() => { const f = SD.risks.forComponent(DATA, t.name); return f.length ? `<h3>Riesgos de la tabla (${f.length})</h3>${FindingsTable(f, false)}` : ''; })()}
     `;
@@ -520,6 +574,46 @@
         <div><h3>Por categoría</h3>${catBars}</div>
       </div>
       ${groups || '<span class="muted">Sin hallazgos.</span>'}
+    `;
+  }
+
+  // ── INVENTARIO DE DERIVADOS (columnas calculadas + variables) ────────────────
+  // Todo lo que se *calcula* en un solo sitio: columnas computed de DDL (fórmula +
+  // op_kinds + de qué dependen) y variables de procedimientos (construcción +
+  // op_kinds, marcando las que arman SQL dinámico por concatenación). Reúne lo que
+  // antes había que buscar tabla por tabla / objeto por objeto.
+  function InventoryView(DATA) {
+    const opk = ops => !ops || !ops.length ? '' :
+      ops.map(o => `<span class="opk opk-${esc(o.split(':')[0])}" title="${esc(o)}">${esc(o.split(':')[1] || o)}</span>`).join('');
+    const d = DATA.derived || { computedColumns: [], variables: [] };
+
+    const ccRows = d.computedColumns
+      .sort((a, b) => a.table.localeCompare(b.table) || a.column.localeCompare(b.column))
+      .map(c => `<tr>
+        <td>${DATA.byName[c.table] ? `<a href="#" onclick="SD.app.openObject('${esc(c.table)}');return false">${esc(c.table)}</a>` : esc(c.table)}.<b>${esc(c.column)}</b></td>
+        <td><code class="mono">${esc(c.logic)}</code></td>
+        <td>${opk(c.ops)}</td>
+        <td>${c.sources.map(s => `<span class="chip muted">${esc(s.column)}</span>`).join('')}</td>
+      </tr>`).join('');
+
+    const vRows = d.variables
+      .sort((a, b) => Number(b.dynamic) - Number(a.dynamic) || a.object.localeCompare(b.object))
+      .map(v => `<tr>
+        <td>${v.dynamic ? '⚠️ ' : ''}<b>${esc(v.name)}</b> <span class="muted">${esc(v.type || '')}</span></td>
+        <td>${DATA.byName[v.object] ? `<a href="#" onclick="SD.app.openObject('${esc(v.object)}');return false">${esc(v.object)}</a>` : esc(v.object)}</td>
+        <td>${opk(v.ops)}</td>
+        <td>${(v.construction || []).slice(0, 3).map(s => `<code class="mono">${esc(s)}</code>`).join(' ')}</td>
+      </tr>`).join('');
+
+    return `
+      <h2>🧮 Inventario de derivados</h2>
+      <p class="muted">Todo lo que se <b>calcula</b> (no se almacena tal cual), con su fórmula, los <b>operadores</b> que usa (material para el motor de reglas) y de qué depende. Las variables con ⚠️ arman su valor por concatenación (típico de SQL dinámico).</p>
+
+      <h3>Columnas calculadas (${d.computedColumns.length})</h3>
+      ${d.computedColumns.length ? `<table class="t"><tr><th>Columna</th><th>Fórmula</th><th>Operadores</th><th>Depende de</th></tr>${ccRows}</table>` : '<span class="muted">Ninguna detectada (requiere DDL con columnas <code>AS (…)</code>).</span>'}
+
+      <h3 style="margin-top:18px">Variables con cálculo / construcción (${d.variables.length})</h3>
+      ${d.variables.length ? `<table class="t"><tr><th>Variable</th><th>En objeto</th><th>Operadores</th><th>Construcción (RHS)</th></tr>${vRows}</table>` : '<span class="muted">Ninguna variable con operadores o construcción registrada.</span>'}
     `;
   }
 
@@ -627,5 +721,5 @@
     `;
   }
 
-  SD.components = { Sidebar, Overview, ObjectView, TableView, FlowTree, FlowChartMermaid, DataFlowMermaid, Summary, RisksView, SchemaView, buildErDiagram };
+  SD.components = { Sidebar, Overview, ObjectView, TableView, FlowTree, FlowChartMermaid, DataFlowMermaid, Summary, RisksView, SchemaView, InventoryView, buildErDiagram };
 })(window.SD = window.SD || {});

@@ -18,6 +18,58 @@
           "action_type": "SELECT",
           "table": "sys.indexes"
         }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.indexes"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.indexes"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.indexes"
+        }
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyPartitioning": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step18",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.indexes"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.indexes"
+        }
       }
     ]
   },
@@ -31,6 +83,62 @@
         "action_type": "SELECT",
         "table": "sys.indexes"
       }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step18",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:sys",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_sys_59c6865e.json"
     }
   ],
   "edges_out": [

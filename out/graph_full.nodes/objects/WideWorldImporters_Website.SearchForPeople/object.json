@@ -52,7 +52,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 7,
+          "line_no": 6,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -60,6 +60,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> [Application].People"
@@ -93,7 +94,14 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people:column:PersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json"
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -101,7 +109,14 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people:column:SearchName",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.people_column_SearchName_2733137e.json"
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_SearchName_2733137e.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -109,7 +124,14 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers:column:AlternateContactPersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_AlternateContactPersonID_7650a9b0.json"
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_AlternateContactPersonID_7650a9b0.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -117,7 +139,14 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers:column:PrimaryContactPersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_PrimaryContactPersonID_381848e6.json"
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_PrimaryContactPersonID_381848e6.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -125,7 +154,14 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:PrimaryContactPersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_PrimaryContactPersonID_61c9deed.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_PrimaryContactPersonID_61c9deed.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -251,6 +287,14 @@
       "from_label": "Step",
       "to": "WideWorldImporters::Website.SearchForPeople#param:@SearchText",
       "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.SearchForPeople",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
     }
   ]

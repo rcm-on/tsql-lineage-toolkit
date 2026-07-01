@@ -24,11 +24,11 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "READS_FROM",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
         "props": {
-          "action_type": "INSERT",
+          "action_type": "SELECT",
           "table": "Sales.InvoiceLines",
           "via": "JOIN"
         }
@@ -39,6 +39,17 @@
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
         "props": {
+          "action_type": "INSERT",
+          "table": "Sales.InvoiceLines",
+          "via": "JOIN"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
           "action_type": "UPDATE",
           "table": "Sales.InvoiceLines",
           "via": "JOIN"
@@ -46,7 +57,7 @@
       },
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
         "props": {
@@ -70,11 +81,11 @@
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
       "props": {
-        "action_type": "INSERT",
+        "action_type": "SELECT",
         "table": "Sales.InvoiceLines",
         "via": "JOIN"
       }
@@ -85,6 +96,17 @@
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
       "props": {
+        "action_type": "INSERT",
+        "table": "Sales.InvoiceLines",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
         "action_type": "UPDATE",
         "table": "Sales.InvoiceLines",
         "via": "JOIN"
@@ -92,13 +114,25 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.InvoiceLines"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:sales",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_sales_75776514.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "from": "wf:WideWorldImporters:website",
+      "from_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json"
     }
   ],
   "edges_out": [
@@ -254,6 +288,18 @@
       "props": {
         "ordinal": 7
       }
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:sales.invoicelines:DEFAULT:b227dd68",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.invoicelines_DEFAULT_b227dd68_6398c865.json"
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:sales.invoicelines:DEFAULT:d27b1b2e",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.invoicelines_DEFAULT_d27b1b2e_ec06e2b5.json"
     }
   ]
 }

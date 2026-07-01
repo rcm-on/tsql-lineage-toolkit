@@ -18,7 +18,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Suppliers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ]
   },
@@ -27,7 +32,21 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "ordinal": 3
+      }
     }
   ],
   "edges_out": [

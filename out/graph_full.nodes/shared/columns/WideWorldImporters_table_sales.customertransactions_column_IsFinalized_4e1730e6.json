@@ -6,13 +6,39 @@
   "properties": {
     "name": "IsFinalized",
     "table": "sales.customertransactions",
-    "data_type": "BIT",
+    "data_type": "",
     "is_nullable": true,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 12
   },
   "refs": {},
-  "edges_in": [],
-  "edges_out": []
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.customertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customertransactions_39c8f4a7.json",
+      "props": {
+        "ordinal": 12
+      }
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:sales.customertransactions:column:FinalizationDate",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customertransactions_column_FinalizationDate_b608052d.json",
+      "props": {
+        "logic": "(CASE WHEN [FinalizationDate] IS NULL THEN CONVERT (BIT, (0)) ELSE CONVERT (BIT, (1)) END)",
+        "via_computed_column": true,
+        "op_kinds": [
+          "case:CASE",
+          "cast:CONVERT",
+          "null:IS NULL"
+        ]
+      }
+    }
+  ]
 }

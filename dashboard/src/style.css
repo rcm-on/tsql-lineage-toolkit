@@ -81,6 +81,7 @@ body:not(.light) #rcm-led{background:var(--ac);box-shadow:0 0 5px var(--ac)}
 .b{font-size:10px;padding:1px 5px;border-radius:8px;background:#3a3a3a;color:#ccc}
 .b.cc{background:#5a3a3a}.b.dyn{background:#4a3a5a;color:var(--dyn)}.b.err{background:#5a2a2a;color:#ff8a80}
 .b.tbl{background:#2f4a3a;color:#9be7b4}
+.b.trg{background:#4a4020;color:#f0d878}
 .b.tmp{background:#4a3f2a;color:#ffcf8f}
 .item.table .nm{color:var(--tbl-fg)}
 .item.table.temp .nm{color:var(--tmp-fg);font-style:italic}
@@ -179,6 +180,19 @@ table.t td,table.t th{border:1px solid var(--bd);padding:4px 8px;text-align:left
 table.t th{background:var(--surface);color:var(--mut)}
 .chip{display:inline-block;background:var(--surface);border:1px solid var(--bd);border-radius:10px;padding:2px 8px;margin:2px;font-size:12px;cursor:pointer}
 .chip:hover{border-color:var(--ac)}.chip.w{color:var(--chip-w)}.chip.r{color:var(--chip-r)}
+/* op_kinds badges: tiny monospace tags coloured by operator category, so the kind of
+   transformation behind a lineage/filter edge reads at a glance. */
+.opk{display:inline-block;font-family:var(--font-mono);font-size:10px;line-height:1.4;padding:0 4px;margin:0 1px;border-radius:4px;border:1px solid var(--bd);background:var(--surface);color:var(--mut);vertical-align:middle}
+.opk-arith,.opk-bitwise{color:#e0c46c;border-color:#e0c46c66}
+.opk-cast{color:#ff8a80;border-color:#ff8a8066}
+.opk-logical,.opk-compare,.opk-range,.opk-set,.opk-pattern,.opk-null{color:#9cdcfe;border-color:#9cdcfe66}
+.opk-func,.opk-case,.opk-concat{color:#c5a3ff;border-color:#c5a3ff66}
+/* hops counter on a transitive-lineage chip (·n2 = two DERIVES_FROM jumps away) */
+.hops{font-family:var(--font-mono);font-size:10px;color:var(--mut);margin-left:3px}
+/* "🧮 calculada" tag marking a computed column in the column table */
+.tag-calc{display:inline-block;font-size:10px;padding:0 5px;margin-left:6px;border-radius:8px;border:1px solid #e0c46c66;color:#e0c46c;background:#e0c46c14;vertical-align:middle}
+/* inline monospace snippet for formulas / RHS in the derived inventory */
+code.mono{font-family:var(--font-mono);font-size:11px;color:var(--dyn);background:var(--tint-bg);border:1px solid var(--tint-bd);border-radius:4px;padding:1px 5px;white-space:pre-wrap;word-break:break-word}
 .muted{color:var(--mut)}.risk{color:var(--dyn)}
 code.ctor{display:block;font-family:var(--font-mono);font-size:12px;color:var(--dyn);background:var(--tint-bg);border:1px solid var(--tint-bd);border-radius:4px;padding:4px 8px;max-width:680px;max-height:240px;overflow-y:auto;white-space:pre-wrap;word-break:break-word}
 body.light code.ctor{color:#0a6e94}

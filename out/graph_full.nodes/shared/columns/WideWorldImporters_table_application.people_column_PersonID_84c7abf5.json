@@ -18,7 +18,27 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:<>",
+            "compare:=",
+            "logical:AND"
+          ]
+        }
+      },
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:<>",
+            "compare:=",
+            "logical:AND"
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.ChangePassword": [
@@ -26,7 +46,16 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.ChangePassword#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+        "path": "objects/WideWorldImporters_Website.ChangePassword/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "compare:<>",
+            "compare:=",
+            "func:HASHBYTES",
+            "logical:AND"
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.Customers": [
@@ -34,7 +63,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Customers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Customers/object.json"
+        "path": "objects/WideWorldImporters_Website.Customers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForCustomers": [
@@ -42,7 +76,15 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.SearchForCustomers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "compare:=",
+            "func:CONCAT",
+            "pattern:LIKE"
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForPeople": [
@@ -50,7 +92,14 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.SearchForPeople#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "compare:=",
+            "pattern:LIKE"
+          ]
+        }
       },
       {
         "type": "READS_COLUMN",
@@ -64,7 +113,15 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "compare:=",
+            "func:CONCAT",
+            "pattern:LIKE"
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.Suppliers": [
@@ -72,7 +129,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Suppliers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ]
   },
@@ -81,31 +143,80 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.ChangePassword#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json"
+      "path": "objects/WideWorldImporters_Website.ChangePassword/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:<>",
+          "compare:=",
+          "func:HASHBYTES",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Customers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      "path": "objects/WideWorldImporters_Website.Customers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.SearchForCustomers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "func:CONCAT",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.SearchForPeople#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -117,13 +228,518 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "func:CONCAT",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:application.people:column:HashedPassword",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_HashedPassword_d5d384d5.json",
+      "props": {
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:application.people:column:HashedPassword",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_HashedPassword_d5d384d5.json",
+      "props": {
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ChangePassword#step0",
+        "op_kinds": [
+          "arith:+",
+          "compare:<>",
+          "compare:=",
+          "func:HASHBYTES",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:application.people:column:IsPermittedToLogon",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_IsPermittedToLogon_6b16c213.json",
+      "props": {
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:application.people:column:IsPermittedToLogon",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_IsPermittedToLogon_6b16c213.json",
+      "props": {
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ChangePassword#step0",
+        "op_kinds": [
+          "arith:+",
+          "compare:<>",
+          "compare:=",
+          "func:HASHBYTES",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:application.people:column:LogonName",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_LogonName_f8954751.json",
+      "props": {
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:application.people:column:UserPreferences",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_UserPreferences_bbd7d2e5.json",
+      "props": {
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.people:DEFAULT:28ede70d",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.people_DEFAULT_28ede70d_d0be0a13.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:application.people:column:UserPreferences",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_UserPreferences_bbd7d2e5.json",
+      "props": {
+        "logic": "(SELECT UserPreferences  FROM   [Application].People  WHERE  PersonID = 1)",
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.people",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.cities:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.cities_column_LastEditedBy_b5165139.json",
+      "props": {
+        "constraint": "FK_Application_Cities_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.countries:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.countries_column_LastEditedBy_b03d8fcb.json",
+      "props": {
+        "constraint": "FK_Application_Countries_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.deliverymethods:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.deliverymethods_column_LastEditedBy_cb9a9c2c.json",
+      "props": {
+        "constraint": "FK_Application_DeliveryMethods_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.paymentmethods:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.paymentmethods_column_LastEditedBy_498c2f31.json",
+      "props": {
+        "constraint": "FK_Application_PaymentMethods_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.people:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_LastEditedBy_7ef6c06b.json",
+      "props": {
+        "constraint": "FK_Application_People_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.stateprovinces:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.stateprovinces_column_LastEditedBy_312fdd94.json",
+      "props": {
+        "constraint": "FK_Application_StateProvinces_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.systemparameters:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_LastEditedBy_aea1389e.json",
+      "props": {
+        "constraint": "FK_Application_SystemParameters_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.transactiontypes:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.transactiontypes_column_LastEditedBy_90ebc9f5.json",
+      "props": {
+        "constraint": "FK_Application_TransactionTypes_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.purchaseorderlines:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_LastEditedBy_002f65e7.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrderLines_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.purchaseorders:column:ContactPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorders_column_ContactPersonID_d035bc14.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrders_ContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.purchaseorders:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorders_column_LastEditedBy_988f3c98.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrders_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliercategories:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliercategories_column_LastEditedBy_aee8971a.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierCategories_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliers:column:AlternateContactPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_AlternateContactPersonID_7650a9b0.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_AlternateContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliers:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_LastEditedBy_25959da3.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliers:column:PrimaryContactPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_PrimaryContactPersonID_381848e6.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_PrimaryContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliertransactions_column_LastEditedBy_a94921e0.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierTransactions_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.buyinggroups:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_column_LastEditedBy_6564c111.json",
+      "props": {
+        "constraint": "FK_Sales_BuyingGroups_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customercategories:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_column_LastEditedBy_6b2a0943.json",
+      "props": {
+        "constraint": "FK_Sales_CustomerCategories_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customers:column:AlternateContactPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_AlternateContactPersonID_04bec3c0.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_AlternateContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customers:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_LastEditedBy_7ee841bd.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customers:column:PrimaryContactPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_PrimaryContactPersonID_61c9deed.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_PrimaryContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customertransactions:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customertransactions_column_LastEditedBy_60e01019.json",
+      "props": {
+        "constraint": "FK_Sales_CustomerTransactions_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.invoicelines:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_LastEditedBy_b4130aa2.json",
+      "props": {
+        "constraint": "FK_Sales_InvoiceLines_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.invoices:column:AccountsPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_AccountsPersonID_456c9e8c.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_AccountsPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.invoices:column:ContactPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_ContactPersonID_4ad38488.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_ContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.invoices:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_LastEditedBy_e4924156.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.invoices:column:PackedByPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_PackedByPersonID_5ec2d05c.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_PackedByPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.invoices:column:SalespersonPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_SalespersonPersonID_f36f003f.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_SalespersonPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.orderlines:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_LastEditedBy_57a6055b.json",
+      "props": {
+        "constraint": "FK_Sales_OrderLines_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.orders:column:ContactPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_ContactPersonID_ec9da63f.json",
+      "props": {
+        "constraint": "FK_Sales_Orders_ContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.orders:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_LastEditedBy_478344dc.json",
+      "props": {
+        "constraint": "FK_Sales_Orders_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.orders:column:PickedByPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_PickedByPersonID_4c370e05.json",
+      "props": {
+        "constraint": "FK_Sales_Orders_PickedByPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.orders:column:SalespersonPersonID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_SalespersonPersonID_3eada378.json",
+      "props": {
+        "constraint": "FK_Sales_Orders_SalespersonPersonID_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.specialdeals:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_LastEditedBy_a039dfb5.json",
+      "props": {
+        "constraint": "FK_Sales_SpecialDeals_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.colors:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.colors_column_LastEditedBy_6c604ea2.json",
+      "props": {
+        "constraint": "FK_Warehouse_Colors_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.packagetypes:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_LastEditedBy_2a31d74c.json",
+      "props": {
+        "constraint": "FK_Warehouse_PackageTypes_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockgroups:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockgroups_column_LastEditedBy_ba611083.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockGroups_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitemholdings:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_LastEditedBy_fa4c1f94.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemHoldings_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitems:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_LastEditedBy_ad102174.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItems_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_LastEditedBy_9b2de6c8.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemStockGroups_Application_People"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitemtransactions:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_LastEditedBy_eb85360e.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_Application_People"
+      }
     }
   ],
   "edges_out": []

@@ -42,6 +42,26 @@
       "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.invoicelines:column:Description",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_Description_a6c3cf0b.json",
+      "props": {
+        "logic": "ol.[Description]",
+        "line_no": 74,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step5"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.orderlines",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "props": {
+        "ordinal": 4
+      }
     }
   ],
   "edges_out": []

@@ -13,6 +13,22 @@
     "ordinal": 1
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:warehouse.stockitemstockgroups:DEFAULT:5f0865d6",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_warehouse.stockitemstockgroups_DEFAULT_5f0865d6_970b7580.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitemstockgroups",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.json",
+      "props": {
+        "ordinal": 1
+      }
+    }
+  ],
   "edges_out": []
 }

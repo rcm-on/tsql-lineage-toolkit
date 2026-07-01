@@ -41,7 +41,8 @@
           "name": "@SQL",
           "data_type": "NVARCHAR (MAX)",
           "default": "N'CREATE ROLE ' + QUOTENAME(@RoleName) + N';'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       }
     ],
@@ -54,21 +55,18 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 15,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 9,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.database_principals",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.database_principals             WHERE  name = @RoleName                    AND type = N'R')"
-          ],
-          "condition_keys": [
-            "IF#10"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.database_principals"
         }
       },
       {
@@ -79,7 +77,33 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 22,
+          "line_no": 14,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.database_principals             WHERE  name = @RoleName                    AND type = N'R')"
+          ],
+          "condition_keys": [
+            "IF#9"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.CreateRoleIfNonexistent#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "sequence": 3,
+          "line_no": 21,
           "nesting_level": 1,
           "action": "THROW",
           "step_type": "Notification",
@@ -87,11 +111,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "CATCH: ON ERROR"
           ],
           "condition_keys": [
-            "CATCH#12"
+            "CATCH#11"
           ],
           "label": "THROW"
         }
@@ -114,16 +139,28 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#var:@SQL",
-      "to_label": "Variable",
+      "to": "WideWorldImporters:table:sys.database_principals",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.database_principals_2a499795.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.database_principals"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#param:@RoleName",
+      "to_label": "Parameter",
       "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
     },
     {
@@ -138,6 +175,30 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step2",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:THROW",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
@@ -146,7 +207,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
     },
@@ -154,8 +215,16 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:7d8bb7a0",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
     }
   ]

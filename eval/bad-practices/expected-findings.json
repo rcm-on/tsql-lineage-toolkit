@@ -1,0 +1,168 @@
+{
+  "$comment": "Ground-truth del corpus de malas prácticas. Cada entrada es el conjunto de hallazgos (rule) que el rule engine (dashboard/src/risks.js) DEBE producir para ese componente. El comparador (evaluate.mjs) verifica detección esperada vs. real: reporta FALTAN (esperado no detectado), SOBRAN (detectado no esperado) y desajustes de severidad/categoría. 'expected: []' significa 'no debe haber ningún hallazgo' (control anti-falsos-positivos).",
+  "database": "BadPracticesDB",
+  "components": [
+    {
+      "component": "dbo.Customers",
+      "note": "Tabla control: PK + leída. Sin hallazgos.",
+      "expected": []
+    },
+    {
+      "component": "dbo.SearchConfig",
+      "note": "Tabla control: PK + solo lectura. Sin hallazgos.",
+      "expected": []
+    },
+    {
+      "component": "dbo.Orders",
+      "expected": [
+        { "rule": "Acoplamiento alto (tabla)", "sev": "med", "cat": "Diseño" }
+      ]
+    },
+    {
+      "component": "dbo.OrderAudit",
+      "note": "Sin PK, solo-escritura y TODAS las columnas anulables: acumula tres smells de tabla.",
+      "expected": [
+        { "rule": "Tabla sin clave primaria", "sev": "med", "cat": "Integridad" },
+        { "rule": "Tabla escrita pero nunca leída", "sev": "low", "cat": "Diseño" },
+        { "rule": "Tabla totalmente anulable", "sev": "low", "cat": "Integridad" }
+      ]
+    },
+    {
+      "component": "dbo.usp_SearchCustomers_Injection",
+      "expected": [
+        { "rule": "Inyección SQL", "sev": "crit", "cat": "Seguridad" }
+      ]
+    },
+    {
+      "component": "dbo.usp_DynamicReport",
+      "expected": [
+        { "rule": "SQL dinámico", "sev": "high", "cat": "Seguridad" }
+      ]
+    },
+    {
+      "component": "dbo.usp_ProcessQueue_CursorTx",
+      "expected": [
+        { "rule": "Cursor en transacción sin TRY/CATCH", "sev": "high", "cat": "Robustez" },
+        { "rule": "Uso de cursor", "sev": "med", "cat": "Rendimiento" }
+      ]
+    },
+    {
+      "component": "dbo.usp_TransferFunds_TxNoCatch",
+      "expected": [
+        { "rule": "Transacción sin TRY/CATCH", "sev": "high", "cat": "Robustez" }
+      ]
+    },
+    {
+      "component": "dbo.usp_QuickUpdate_NoProtection",
+      "expected": [
+        { "rule": "Escritura sin protección", "sev": "med", "cat": "Robustez" }
+      ]
+    },
+    {
+      "component": "dbo.sp_GetActiveCustomers",
+      "expected": [
+        { "rule": "Prefijo sp_", "sev": "med", "cat": "Rendimiento" }
+      ]
+    },
+    {
+      "component": "dbo.usp_LogEverything_RepeatWrites",
+      "expected": [
+        { "rule": "Escrituras repetidas a la misma tabla", "sev": "med", "cat": "Rendimiento" },
+        { "rule": "Escritura sin protección", "sev": "med", "cat": "Robustez" }
+      ]
+    },
+    {
+      "component": "dbo.usp_MegaWorkflow_Complex",
+      "expected": [
+        { "rule": "Complejidad alta", "sev": "med", "cat": "Mantenibilidad" },
+        { "rule": "Anidación profunda", "sev": "med", "cat": "Mantenibilidad" },
+        { "rule": "Objeto hace demasiado", "sev": "med", "cat": "Diseño" },
+        { "rule": "Escritura sin protección", "sev": "med", "cat": "Robustez" }
+      ]
+    },
+    {
+      "component": "dbo.usp_ArchiveOldOrders_UnusedVars",
+      "expected": [
+        { "rule": "Variable sin uso", "sev": "low", "cat": "Mantenibilidad" },
+        { "rule": "Escritura sin protección", "sev": "med", "cat": "Robustez" }
+      ]
+    },
+    {
+      "component": "dbo.ufn_CalcDiscount",
+      "expected": [
+        { "rule": "Posible código muerto", "sev": "low", "cat": "Mantenibilidad" }
+      ]
+    },
+    {
+      "component": "dbo.usp_CreateOrder",
+      "expected": [
+        { "rule": "Escritura sin protección", "sev": "med", "cat": "Robustez" }
+      ]
+    },
+    {
+      "component": "dbo.usp_CancelOrder",
+      "expected": [
+        { "rule": "Escritura sin protección", "sev": "med", "cat": "Robustez" }
+      ]
+    },
+    {
+      "component": "dbo.usp_PurgeAll_NoWhere",
+      "expected": [
+        { "rule": "UPDATE/DELETE sin WHERE", "sev": "high", "cat": "Integridad" },
+        { "rule": "Escritura sin protección", "sev": "med", "cat": "Robustez" }
+      ]
+    },
+    {
+      "component": "dbo.usp_TruncateAudit",
+      "expected": [
+        { "rule": "TRUNCATE de tabla", "sev": "med", "cat": "Integridad" },
+        { "rule": "Escritura sin protección", "sev": "med", "cat": "Robustez" }
+      ]
+    },
+    {
+      "component": "dbo.usp_DumpCustomers_SelectStar",
+      "expected": [
+        { "rule": "SELECT *", "sev": "low", "cat": "Rendimiento" }
+      ]
+    },
+    {
+      "component": "dbo.WideProductCatalog",
+      "expected": [
+        { "rule": "Tabla ancha", "sev": "low", "cat": "Diseño" }
+      ]
+    },
+    {
+      "component": "dbo.usp_Broken_ParseError",
+      "expected": [
+        { "rule": "Error de parseo", "sev": "info", "cat": "Mantenibilidad" }
+      ]
+    },
+    {
+      "component": "dbo.Inventory",
+      "note": "Tabla referenciada por usp_MegaWorkflow_Complex pero NUNCA declarada (sin CREATE TABLE). El analizador la materializa desde la lista de columnas del INSERT: smell legítimo (DDL ausente del análisis). Sin info de nulabilidad → cuenta como totalmente anulable.",
+      "expected": [
+        { "rule": "Tabla sin clave primaria", "sev": "med", "cat": "Integridad" },
+        { "rule": "Tabla escrita pero nunca leída", "sev": "low", "cat": "Diseño" },
+        { "rule": "Tabla totalmente anulable", "sev": "low", "cat": "Integridad" }
+      ]
+    },
+    {
+      "component": "dbo.Notifications",
+      "note": "Tabla referenciada pero nunca declarada (igual que dbo.Inventory).",
+      "expected": [
+        { "rule": "Tabla sin clave primaria", "sev": "med", "cat": "Integridad" },
+        { "rule": "Tabla escrita pero nunca leída", "sev": "low", "cat": "Diseño" },
+        { "rule": "Tabla totalmente anulable", "sev": "low", "cat": "Integridad" }
+      ]
+    },
+    {
+      "component": "dbo.Shipments",
+      "note": "Tabla referenciada pero nunca declarada (igual que dbo.Inventory).",
+      "expected": [
+        { "rule": "Tabla sin clave primaria", "sev": "med", "cat": "Integridad" },
+        { "rule": "Tabla escrita pero nunca leída", "sev": "low", "cat": "Diseño" },
+        { "rule": "Tabla totalmente anulable", "sev": "low", "cat": "Integridad" }
+      ]
+    }
+  ]
+}

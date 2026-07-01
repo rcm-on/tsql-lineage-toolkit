@@ -16,7 +16,7 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -25,9 +25,18 @@
   "edges_in": [
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "ordinal": 11
+      }
     }
   ],
   "edges_out": [
@@ -38,8 +47,8 @@
       "path": "shared/columns/WideWorldImporters_table_sales.orders_column_CustomerPurchaseOrderNumber_344a0f2e.json",
       "props": {
         "logic": "o.CustomerPurchaseOrderNumber",
-        "line_no": 51,
-        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step3"
+        "line_no": 50,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
       }
     }
   ]

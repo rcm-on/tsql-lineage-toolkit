@@ -20,6 +20,200 @@
           "via": "JOIN"
         }
       }
+    ],
+    "WideWorldImporters::Application.Configuration_EnableInMemory": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step37",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step40",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step43",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step46",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step49",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step52",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step55",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step58",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step61",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step64",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step67",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step70",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step73",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step76",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step79",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step82",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      },
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step85",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "sys.tables"
+        }
+      }
     ]
   },
   "edges_in": [
@@ -33,6 +227,202 @@
         "table": "sys.tables",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step37",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step40",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step43",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step46",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step49",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step52",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step55",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step58",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step61",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step64",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step67",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step70",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step73",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step76",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step79",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step82",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step85",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:sys",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_sys_59c6865e.json"
     }
   ],
   "edges_out": [

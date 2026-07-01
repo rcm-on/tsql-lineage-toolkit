@@ -14,6 +14,14 @@
         "callee": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues",
         "kind": "EXEC"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:sequences",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Sequences.ReseedAllSequences",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Sequences.ReseedAllSequences/nav.json"
     }
   ]
 }

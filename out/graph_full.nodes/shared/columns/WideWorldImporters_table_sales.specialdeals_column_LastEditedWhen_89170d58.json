@@ -6,13 +6,29 @@
   "properties": {
     "name": "LastEditedWhen",
     "table": "sales.specialdeals",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": false,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 14
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:sales.specialdeals:DEFAULT:b227dd68",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.specialdeals_DEFAULT_b227dd68_bb51e48c.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.specialdeals",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "props": {
+        "ordinal": 14
+      }
+    }
+  ],
   "edges_out": []
 }

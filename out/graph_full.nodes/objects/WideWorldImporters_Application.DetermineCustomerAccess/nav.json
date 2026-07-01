@@ -1,5 +1,52 @@
 ﻿{
   "id": "WideWorldImporters::Application.DetermineCustomerAccess",
   "name": "Application.DetermineCustomerAccess",
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.cities",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].Cities"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.cities",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].Cities",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.stateprovinces",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].StateProvinces",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.DetermineCustomerAccess",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.DetermineCustomerAccess/nav.json"
+    }
+  ]
 }

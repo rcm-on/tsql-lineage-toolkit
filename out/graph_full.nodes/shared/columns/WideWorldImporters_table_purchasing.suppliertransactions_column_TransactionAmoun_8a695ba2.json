@@ -13,6 +13,16 @@
     "ordinal": 10
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliertransactions_96862ed5.json",
+      "props": {
+        "ordinal": 10
+      }
+    }
+  ],
   "edges_out": []
 }

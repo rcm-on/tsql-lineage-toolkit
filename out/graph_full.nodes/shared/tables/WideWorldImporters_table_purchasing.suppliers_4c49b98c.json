@@ -23,7 +23,7 @@
     "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad": [
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step17",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step18",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
         "props": {
@@ -33,7 +33,7 @@
       },
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step18",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step19",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
         "props": {
@@ -57,7 +57,7 @@
     "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad": [
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step17",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step18",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
         "props": {
@@ -67,7 +67,7 @@
       },
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step18",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step19",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
         "props": {
@@ -107,6 +107,21 @@
           "action_type": "INSERT",
           "table": "Purchasing.Suppliers",
           "via": "JOIN"
+        }
+      }
+    ],
+    "WideWorldImporters::Purchasing.TR_Purchasing_Suppliers_DataLoad_Modify": [
+      {
+        "type": "ON",
+        "from": "WideWorldImporters::Purchasing.TR_Purchasing_Suppliers_DataLoad_Modify",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Purchasing.TR_Purchasing_Suppliers_DataLoad_Modify/object.json",
+        "props": {
+          "events": [
+            "INSERT",
+            "UPDATE"
+          ],
+          "timing": "After"
         }
       }
     ],
@@ -161,7 +176,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step17",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step18",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
       "props": {
@@ -171,7 +186,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step18",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step19",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
       "props": {
@@ -191,7 +206,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step17",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step18",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
       "props": {
@@ -201,7 +216,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step18",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step19",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
       "props": {
@@ -242,6 +257,19 @@
       }
     },
     {
+      "type": "ON",
+      "from": "WideWorldImporters::Purchasing.TR_Purchasing_Suppliers_DataLoad_Modify",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Purchasing.TR_Purchasing_Suppliers_DataLoad_Modify/object.json",
+      "props": {
+        "events": [
+          "INSERT",
+          "UPDATE"
+        ],
+        "timing": "After"
+      }
+    },
+    {
       "type": "READS_FROM",
       "from": "WideWorldImporters::Website.SearchForPeople#step0",
       "from_label": "Step",
@@ -271,6 +299,54 @@
         "action_type": "SELECT",
         "table": "Purchasing.Suppliers"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:purchasing",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_purchasing_cdda06b8.json"
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.purchaseorders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorders_a4740742.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrders_SupplierID_Purchasing_Suppliers"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliertransactions_96862ed5.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierTransactions_SupplierID_Purchasing_Suppliers"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItems_SupplierID_Purchasing_Suppliers"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:warehouse.stockitemtransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemtransactions_3348b64c.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_SupplierID_Purchasing_Suppliers"
+      }
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "from": "wf:WideWorldImporters:dataloadsimulation",
+      "from_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_dataloadsimulation_0b2c978e.json"
     }
   ],
   "edges_out": [
@@ -307,6 +383,15 @@
       "to_label": "Table",
       "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
       "props": {
+        "constraint": "FK_Purchasing_Suppliers_PrimaryContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
         "constraint": "FK_Purchasing_Suppliers_AlternateContactPersonID_Application_People"
       }
     },
@@ -317,15 +402,6 @@
       "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
       "props": {
         "constraint": "FK_Purchasing_Suppliers_Application_People"
-      }
-    },
-    {
-      "type": "FK_TO",
-      "to": "WideWorldImporters:table:application.people",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
-      "props": {
-        "constraint": "FK_Purchasing_Suppliers_PrimaryContactPersonID_Application_People"
       }
     },
     {
@@ -597,6 +673,18 @@
       "props": {
         "ordinal": 19
       }
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:purchasing.suppliers:DEFAULT:751f39b2",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.suppliers_DEFAULT_751f39b2_f3b6263e.json"
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:purchasing.suppliers:UNIQUE:c08dc390",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.suppliers_UNIQUE_c08dc390_e3ad3d15.json"
     }
   ]
 }

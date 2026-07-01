@@ -138,7 +138,7 @@
         "from_label": "SqlObject",
         "path": "objects/WideWorldImporters_Application.DetermineCustomerAccess/object.json",
         "props": {
-          "object_type": "UNKNOWN"
+          "object_type": "INLINE_TABLE_FUNCTION"
         }
       }
     ]
@@ -249,7 +249,7 @@
       "from_label": "SqlObject",
       "path": "objects/WideWorldImporters_Application.DetermineCustomerAccess/object.json",
       "props": {
-        "object_type": "UNKNOWN"
+        "object_type": "INLINE_TABLE_FUNCTION"
       }
     }
   ],
@@ -259,6 +259,12 @@
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
       "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json"
     }
   ]
 }

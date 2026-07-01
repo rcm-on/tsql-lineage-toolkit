@@ -8,7 +8,14 @@
     "name": "#CurrentValue"
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:dbo",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_dbo_2ae76abd.json"
+    }
+  ],
   "edges_out": [
     {
       "type": "HAS_COLUMN",

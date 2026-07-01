@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_archive_0cbd9841.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_archive_0cbd9841.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].People_Archive"
@@ -20,7 +20,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].People"
@@ -32,12 +32,20 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].People",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetEmployeeUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/nav.json"
     }
   ]
 }

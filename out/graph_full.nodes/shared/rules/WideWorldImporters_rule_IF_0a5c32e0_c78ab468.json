@@ -13,7 +13,7 @@
   "edges_out": [
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step0",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step1",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
     },

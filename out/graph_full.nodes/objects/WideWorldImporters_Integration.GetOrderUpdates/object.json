@@ -52,7 +52,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 12,
+          "line_no": 11,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -60,6 +60,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Sales.Orders"
@@ -73,7 +74,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 41,
+          "line_no": 40,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -81,6 +82,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -114,7 +116,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:CustomerID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerID_e70cb692.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerID_e70cb692.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -122,7 +133,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orderlines:column:LastEditedWhen",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_LastEditedWhen_98150a9c.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_LastEditedWhen_98150a9c.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -130,7 +150,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orderlines:column:OrderID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_OrderID_440b3777.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_OrderID_440b3777.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -138,7 +167,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orderlines:column:PackageTypeID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PackageTypeID_2894e8ca.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PackageTypeID_2894e8ca.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -146,7 +184,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orders:column:CustomerID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_CustomerID_22c4cfad.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_CustomerID_22c4cfad.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -154,7 +201,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orders:column:LastEditedWhen",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_LastEditedWhen_69d368ae.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_LastEditedWhen_69d368ae.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -162,7 +218,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orders:column:OrderID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_OrderID_b755fb13.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_OrderID_b755fb13.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -170,7 +235,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_PackageTypeID_bf4218cb.json"
+      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_PackageTypeID_bf4218cb.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -374,6 +448,14 @@
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetOrderUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
     }
   ]
 }

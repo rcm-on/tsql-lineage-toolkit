@@ -6,7 +6,7 @@
   "properties": {
     "name": "LastEditedWhen",
     "table": "warehouse.stockitemholdings",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": false,
     "is_identity": false,
     "is_primary_key": false,
@@ -16,7 +16,7 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -25,9 +25,24 @@
   "edges_in": [
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:warehouse.stockitemholdings:DEFAULT:b227dd68",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_warehouse.stockitemholdings_DEFAULT_b227dd68_1b269e62.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitemholdings",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemholdings_7baae308.json",
+      "props": {
+        "ordinal": 9
+      }
     }
   ],
   "edges_out": [
@@ -37,8 +52,11 @@
       "to_label": "Column",
       "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_StockItemID_09ba3f31.json",
       "props": {
-        "line_no": 108,
-        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step6"
+        "line_no": 107,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
+        "op_kinds": [
+          "compare:="
+        ]
       }
     }
   ]

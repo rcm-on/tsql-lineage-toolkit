@@ -18,7 +18,16 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json",
+        "props": {
+          "op_kinds": [
+            "case:CASE",
+            "compare:<=",
+            "compare:=",
+            "compare:>",
+            "logical:AND"
+          ]
+        }
       },
       {
         "type": "READS_COLUMN",
@@ -41,7 +50,16 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -54,6 +72,48 @@
       "from": "WideWorldImporters::Website.InsertCustomerOrders#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:sales.orders:DEFAULT:5916d658",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.orders_DEFAULT_5916d658_662d1520.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.orders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.invoices:column:OrderID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_OrderID_4c233d50.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_OrderID_Sales_Orders"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.orderlines:column:OrderID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_OrderID_440b3777.json",
+      "props": {
+        "constraint": "FK_Sales_OrderLines_OrderID_Sales_Orders"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.orders:column:BackorderOrderID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orders_column_BackorderOrderID_20c0c48a.json",
+      "props": {
+        "constraint": "FK_Sales_Orders_BackorderOrderID_Sales_Orders"
+      }
     }
   ],
   "edges_out": []

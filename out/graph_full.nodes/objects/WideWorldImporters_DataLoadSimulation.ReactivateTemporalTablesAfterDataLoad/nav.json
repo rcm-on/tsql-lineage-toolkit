@@ -16,15 +16,15 @@
       }
     },
     {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step1",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step0",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.cities",
+      "to": "WideWorldImporters:table:sys.procedures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
       "props": {
-        "action_type": "ALTER",
-        "table": "[Application].[Cities]"
+        "action_type": "SELECT",
+        "table": "sys.procedures"
       }
     },
     {
@@ -33,7 +33,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[People]"
@@ -43,12 +43,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step11",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces",
+      "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[StateProvinces]"
+        "table": "[Application].[People]"
       }
     },
     {
@@ -57,7 +57,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.stateprovinces",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[StateProvinces]"
@@ -67,12 +67,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step13",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.transactiontypes",
+      "to": "WideWorldImporters:table:application.stateprovinces",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[TransactionTypes]"
+        "table": "[Application].[StateProvinces]"
       }
     },
     {
@@ -81,7 +81,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.transactiontypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[TransactionTypes]"
@@ -91,12 +91,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step15",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:purchasing.suppliercategories",
+      "to": "WideWorldImporters:table:application.transactiontypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Purchasing].[SupplierCategories]"
+        "table": "[Application].[TransactionTypes]"
       }
     },
     {
@@ -105,7 +105,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Purchasing].[SupplierCategories]"
@@ -115,12 +115,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step17",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:purchasing.suppliers",
+      "to": "WideWorldImporters:table:purchasing.suppliercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Purchasing].[Suppliers]"
+        "table": "[Purchasing].[SupplierCategories]"
       }
     },
     {
@@ -129,7 +129,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Purchasing].[Suppliers]"
@@ -139,12 +139,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step19",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:sales.buyinggroups",
+      "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Sales].[BuyingGroups]"
+        "table": "[Purchasing].[Suppliers]"
       }
     },
     {
@@ -153,7 +153,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[Cities]"
@@ -165,7 +165,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Sales].[BuyingGroups]"
@@ -175,12 +175,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step21",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:sales.customercategories",
+      "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Sales].[CustomerCategories]"
+        "table": "[Sales].[BuyingGroups]"
       }
     },
     {
@@ -189,7 +189,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Sales].[CustomerCategories]"
@@ -199,12 +199,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step23",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:sales.customers",
+      "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Sales].[Customers]"
+        "table": "[Sales].[CustomerCategories]"
       }
     },
     {
@@ -213,7 +213,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Sales].[Customers]"
@@ -223,12 +223,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step25",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Warehouse].[ColdRoomTemperatures]"
+        "table": "[Sales].[Customers]"
       }
     },
     {
@@ -237,7 +237,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Warehouse].[ColdRoomTemperatures]"
@@ -247,12 +247,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step27",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:warehouse.colors",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Warehouse].[Colors]"
+        "table": "[Warehouse].[ColdRoomTemperatures]"
       }
     },
     {
@@ -261,7 +261,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.colors",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Warehouse].[Colors]"
@@ -271,24 +271,24 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step29",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:warehouse.packagetypes",
+      "to": "WideWorldImporters:table:warehouse.colors",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Warehouse].[PackageTypes]"
+        "table": "[Warehouse].[Colors]"
       }
     },
     {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step3",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries",
+      "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[Countries]"
+        "table": "[Application].[Cities]"
       }
     },
     {
@@ -297,7 +297,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Warehouse].[PackageTypes]"
@@ -307,12 +307,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step31",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:warehouse.stockgroups",
+      "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Warehouse].[StockGroups]"
+        "table": "[Warehouse].[PackageTypes]"
       }
     },
     {
@@ -321,7 +321,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockgroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Warehouse].[StockGroups]"
@@ -331,12 +331,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step33",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to": "WideWorldImporters:table:warehouse.stockgroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Warehouse].[StockItems]"
+        "table": "[Warehouse].[StockGroups]"
       }
     },
     {
@@ -345,7 +345,19 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.nav.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[StockItems]"
+      }
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step35",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Warehouse].[StockItems]"
@@ -357,7 +369,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.countries",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[Countries]"
@@ -367,12 +379,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step5",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.deliverymethods",
+      "to": "WideWorldImporters:table:application.countries",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[DeliveryMethods]"
+        "table": "[Application].[Countries]"
       }
     },
     {
@@ -381,7 +393,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.deliverymethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[DeliveryMethods]"
@@ -391,12 +403,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step7",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.paymentmethods",
+      "to": "WideWorldImporters:table:application.deliverymethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[PaymentMethods]"
+        "table": "[Application].[DeliveryMethods]"
       }
     },
     {
@@ -405,7 +417,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.paymentmethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.nav.json",
       "props": {
         "action_type": "ALTER",
         "table": "[Application].[PaymentMethods]"
@@ -415,13 +427,21 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step9",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.people",
+      "to": "WideWorldImporters:table:application.paymentmethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.nav.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[People]"
+        "table": "[Application].[PaymentMethods]"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:dataloadsimulation",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/nav.json"
     }
   ]
 }

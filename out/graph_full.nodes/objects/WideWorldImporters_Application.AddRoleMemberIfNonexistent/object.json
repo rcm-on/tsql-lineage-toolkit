@@ -52,7 +52,8 @@
           "name": "@SQL",
           "data_type": "NVARCHAR (MAX)",
           "default": "N'ALTER ROLE ' + QUOTENAME(@RoleName) + N' ADD MEMBER ' + QUOTENAME(@UserName) + N';'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       }
     ],
@@ -65,21 +66,18 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 25,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 10,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.database_role_members",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.database_role_members AS drm                    INNER JOIN                    sys.database_princ"
-          ],
-          "condition_keys": [
-            "IF#11"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.database_role_members"
         }
       },
       {
@@ -90,7 +88,33 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 32,
+          "line_no": 24,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.database_role_members AS drm                    INNER JOIN                    sys.database_princ"
+          ],
+          "condition_keys": [
+            "IF#10"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "sequence": 3,
+          "line_no": 31,
           "nesting_level": 1,
           "action": "THROW",
           "step_type": "Notification",
@@ -98,11 +122,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "CATCH: ON ERROR"
           ],
           "condition_keys": [
-            "CATCH#21"
+            "CATCH#20"
           ],
           "label": "THROW"
         }
@@ -125,16 +150,49 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#var:@SQL",
-      "to_label": "Variable",
+      "to": "WideWorldImporters:table:sys.database_principals",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.database_principals_2a499795.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.database_principals",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.database_role_members",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.database_role_members_cf72cddf.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.database_role_members"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#param:@RoleName",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#param:@UserName",
+      "to_label": "Parameter",
       "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
     },
     {
@@ -149,6 +207,30 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step2",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:THROW",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
@@ -157,7 +239,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
     },
@@ -165,8 +247,16 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:7f34f1b2",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
     }
   ]

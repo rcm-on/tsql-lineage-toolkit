@@ -8,7 +8,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -20,7 +20,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:application.countries",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -32,7 +32,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:application.deliverymethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -44,7 +44,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:application.paymentmethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -56,7 +56,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -68,7 +68,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:application.stateprovinces",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -80,7 +80,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:application.transactiontypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -92,7 +92,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:purchasing.suppliercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -104,7 +104,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -116,7 +116,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -128,7 +128,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -140,7 +140,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -152,7 +152,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -164,7 +164,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:warehouse.colors",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -176,7 +176,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -188,7 +188,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:warehouse.stockgroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -200,7 +200,7 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.nav.json",
       "props": {
         "via": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
         "hops": 1
@@ -231,6 +231,254 @@
         "callee": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
         "kind": "EXEC"
       }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.objects",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.objects_24b18807.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.objects"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step13",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step15",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step17",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step19",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step27",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step29",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step31",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step33",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step35",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step37",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step39",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:dataloadsimulation",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/nav.json"
     }
   ]
 }

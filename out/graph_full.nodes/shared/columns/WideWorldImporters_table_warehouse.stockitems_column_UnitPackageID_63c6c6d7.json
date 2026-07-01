@@ -13,7 +13,28 @@
     "ordinal": 5
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.orderlines:column:PackageTypeID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_PackageTypeID_2894e8ca.json",
+      "props": {
+        "logic": "si.UnitPackageID",
+        "line_no": 39,
+        "caused_by_step": "WideWorldImporters::Website.InsertCustomerOrders#step3"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "ordinal": 5
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

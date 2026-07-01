@@ -18,13 +18,22 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+        "props": {
+          "op_kinds": [
+            "case:CASE",
+            "compare:<=",
+            "compare:=",
+            "compare:>",
+            "logical:AND"
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -35,13 +44,31 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.invoicelines",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json",
+      "props": {
+        "ordinal": 2
+      }
     }
   ],
   "edges_out": [

@@ -6,7 +6,7 @@
   "properties": {
     "name": "LastEditedWhen",
     "table": "sales.orders",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": false,
     "is_identity": false,
     "is_primary_key": false,
@@ -18,7 +18,16 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json",
+        "props": {
+          "op_kinds": [
+            "case:CASE",
+            "compare:<=",
+            "compare:=",
+            "compare:>",
+            "logical:AND"
+          ]
+        }
       },
       {
         "type": "READS_COLUMN",
@@ -41,7 +50,16 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Integration.GetOrderUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetOrderUpdates/object.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -54,6 +72,21 @@
       "from": "WideWorldImporters::Website.InsertCustomerOrders#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:sales.orders:DEFAULT:b227dd68",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.orders_DEFAULT_b227dd68_5c9d4076.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.orders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "ordinal": 16
+      }
     }
   ],
   "edges_out": []

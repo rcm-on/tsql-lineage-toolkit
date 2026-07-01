@@ -18,19 +18,49 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
-      },
-      {
-        "type": "FILTERS_ON",
-        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
-        "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:=",
+            "logical:AND",
+            "logical:OR",
+            "null:IS NOT NULL",
+            "null:IS NULL",
+            "range:BETWEEN"
+          ]
+        }
       },
       {
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:=",
+            "logical:AND",
+            "logical:OR",
+            "null:IS NOT NULL",
+            "null:IS NULL",
+            "range:BETWEEN"
+          ]
+        }
+      },
+      {
+        "type": "FILTERS_ON",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:=",
+            "logical:AND",
+            "logical:OR",
+            "null:IS NOT NULL",
+            "null:IS NULL",
+            "range:BETWEEN"
+          ]
+        }
       }
     ]
   },
@@ -39,19 +69,58 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
-    },
-    {
-      "type": "FILTERS_ON",
-      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step3",
-      "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:=",
+          "logical:AND",
+          "logical:OR",
+          "null:IS NOT NULL",
+          "null:IS NULL",
+          "range:BETWEEN"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:=",
+          "logical:AND",
+          "logical:OR",
+          "null:IS NOT NULL",
+          "null:IS NULL",
+          "range:BETWEEN"
+        ]
+      }
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:=",
+          "logical:AND",
+          "logical:OR",
+          "null:IS NOT NULL",
+          "null:IS NULL",
+          "range:BETWEEN"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.specialdeals",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "props": {
+        "ordinal": 5
+      }
     }
   ],
   "edges_out": [

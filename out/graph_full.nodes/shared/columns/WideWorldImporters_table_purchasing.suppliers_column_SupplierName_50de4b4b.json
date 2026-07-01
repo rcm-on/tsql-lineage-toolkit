@@ -26,7 +26,15 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "compare:=",
+            "func:CONCAT",
+            "pattern:LIKE"
+          ]
+        }
       },
       {
         "type": "READS_COLUMN",
@@ -55,7 +63,15 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "func:CONCAT",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -68,6 +84,31 @@
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:purchasing.suppliers:UNIQUE:c08dc390",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.suppliers_UNIQUE_c08dc390_e3ad3d15.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.suppliers:column:SupplierName",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.suppliers_column_SupplierName_cfbdf211.json",
+      "props": {
+        "logic": "s.SupplierName",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "ordinal": 2
+      }
     }
   ],
   "edges_out": []

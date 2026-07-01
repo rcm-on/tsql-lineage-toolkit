@@ -19,7 +19,7 @@
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step12",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },

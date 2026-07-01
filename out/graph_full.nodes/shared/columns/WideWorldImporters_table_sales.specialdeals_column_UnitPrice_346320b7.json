@@ -24,7 +24,17 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:=",
+            "logical:AND",
+            "logical:OR",
+            "null:IS NOT NULL",
+            "null:IS NULL",
+            "range:BETWEEN"
+          ]
+        }
       },
       {
         "type": "READS_COLUMN",
@@ -45,13 +55,44 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:=",
+          "logical:AND",
+          "logical:OR",
+          "null:IS NOT NULL",
+          "null:IS NULL",
+          "range:BETWEEN"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:sales.specialdeals:CHECK:2b662e84",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.specialdeals_CHECK_2b662e84_4d7ba9b4.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:sales.specialdeals:CHECK:b914d286",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.specialdeals_CHECK_b914d286_ea17564a.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.specialdeals",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "props": {
+        "ordinal": 12
+      }
     }
   ],
   "edges_out": []

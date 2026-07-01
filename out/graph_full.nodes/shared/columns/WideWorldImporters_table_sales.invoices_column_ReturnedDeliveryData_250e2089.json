@@ -16,7 +16,7 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -25,9 +25,51 @@
   "edges_in": [
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:sales.invoices:CHECK:462d03a6",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.invoices_CHECK_462d03a6_ff63b947.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.invoices:column:ConfirmedDeliveryTime",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_ConfirmedDeliveryTime_6c029431.json",
+      "props": {
+        "logic": "(TRY_CONVERT (DATETIME2 (7), json_value([ReturnedDeliveryData], N'$.DeliveredWhen'), (126)))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "cast:TRY_CONVERT",
+          "func:JSON_VALUE"
+        ]
+      }
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.invoices:column:ConfirmedReceivedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_ConfirmedReceivedBy_f8173f4d.json",
+      "props": {
+        "logic": "(json_value([ReturnedDeliveryData], N'$.ReceivedBy'))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:JSON_VALUE"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "ordinal": 21
+      }
     }
   ],
   "edges_out": []

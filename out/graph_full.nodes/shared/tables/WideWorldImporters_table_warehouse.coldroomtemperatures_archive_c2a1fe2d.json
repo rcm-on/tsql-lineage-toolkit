@@ -8,7 +8,14 @@
     "name": "Warehouse.ColdRoomTemperatures_Archive"
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:warehouse",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_warehouse_a75143de.json"
+    }
+  ],
   "edges_out": [
     {
       "type": "HAS_COLUMN",

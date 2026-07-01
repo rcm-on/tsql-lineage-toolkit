@@ -1,5 +1,74 @@
 ﻿{
   "id": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
   "name": "Application.Configuration_ApplyFullTextIndexing",
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.fulltext_catalogs",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.fulltext_catalogs_70ac0eaf.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.fulltext_catalogs"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step2",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.fulltext_indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.fulltext_indexes_426a0891.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.fulltext_indexes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.fulltext_indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.fulltext_indexes_426a0891.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.fulltext_indexes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step6",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.fulltext_indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.fulltext_indexes_426a0891.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.fulltext_indexes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.fulltext_indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.fulltext_indexes_426a0891.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.fulltext_indexes"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/nav.json"
+    }
+  ]
 }

@@ -13,7 +13,17 @@
     "ordinal": 3
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.paymentmethods",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "props": {
+        "ordinal": 3
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

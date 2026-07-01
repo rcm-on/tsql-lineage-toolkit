@@ -16,7 +16,7 @@
     "WideWorldImporters::Application.Configuration_EnableInMemory": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
       }
@@ -25,10 +25,31 @@
   "edges_in": [
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "ordinal": 1
+      }
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures_backup:column:ColdRoomTemperatureID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_backup_column_ColdRoomTe_e4a8697e.json",
+      "props": {
+        "logic": "ColdRoomTemperatureID",
+        "line_no": 1,
+        "caused_by_step": "WideWorldImporters::Application.Configuration_EnableInMemory#step9"
+      }
+    }
+  ]
 }

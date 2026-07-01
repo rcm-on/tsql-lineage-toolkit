@@ -24,7 +24,7 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -39,9 +39,39 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.invoices:column:DeliveryRun",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_DeliveryRun_c85eb102.json",
+      "props": {
+        "logic": "c.DeliveryRun",
+        "line_no": 50,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.customers:column:DeliveryRun",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_DeliveryRun_206e3dd3.json",
+      "props": {
+        "logic": "s.DeliveryRun",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.customers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "ordinal": 19
+      }
     }
   ],
   "edges_out": []

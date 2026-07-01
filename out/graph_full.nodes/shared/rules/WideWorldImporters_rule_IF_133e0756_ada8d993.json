@@ -13,7 +13,7 @@
   "edges_out": [
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step0",
+      "to": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step1",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
     }

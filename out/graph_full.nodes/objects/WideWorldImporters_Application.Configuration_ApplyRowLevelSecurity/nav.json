@@ -1,5 +1,14 @@
 ﻿{
   "id": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity",
   "name": "Application.Configuration_ApplyRowLevelSecurity",
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyRowLevelSecurity/nav.json"
+    }
+  ]
 }

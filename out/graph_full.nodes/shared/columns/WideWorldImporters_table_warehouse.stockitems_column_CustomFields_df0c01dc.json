@@ -13,6 +13,29 @@
     "ordinal": 20
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:warehouse.stockitems:column:Tags",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_Tags_92a05791.json",
+      "props": {
+        "logic": "(json_query([CustomFields], N'$.Tags'))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:JSON_QUERY"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "ordinal": 20
+      }
+    }
+  ],
   "edges_out": []
 }

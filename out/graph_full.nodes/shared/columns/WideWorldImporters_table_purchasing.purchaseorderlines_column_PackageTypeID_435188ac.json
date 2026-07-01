@@ -18,7 +18,16 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+        "props": {
+          "op_kinds": [
+            "case:CASE",
+            "compare:<=",
+            "compare:=",
+            "compare:>",
+            "logical:AND"
+          ]
+        }
       }
     ]
   },
@@ -27,7 +36,25 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.purchaseorderlines",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorderlines_45de4778.json",
+      "props": {
+        "ordinal": 7
+      }
     }
   ],
   "edges_out": [

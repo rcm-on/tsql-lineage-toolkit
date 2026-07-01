@@ -29,7 +29,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 4,
+          "line_no": 3,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -37,6 +37,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Warehouse.VehicleTemperatures"
@@ -55,6 +56,54 @@
       "props": {
         "object_type": "VIEW"
       }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.VehicleTemperatures",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.vehicletemperatures:column:ChillerSensorNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.vehicletemperatures_column_ChillerSensorNumber_98942a20.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.VehicleTemperatures",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.vehicletemperatures:column:FullSensorData",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.vehicletemperatures_column_FullSensorData_bce10b48.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.VehicleTemperatures",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.vehicletemperatures:column:RecordedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.vehicletemperatures_column_RecordedWhen_cd6e1327.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.VehicleTemperatures",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.vehicletemperatures:column:Temperature",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.vehicletemperatures_column_Temperature_a67ed43d.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.VehicleTemperatures",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.vehicletemperatures:column:VehicleRegistration",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.vehicletemperatures_column_VehicleRegistration_eca63583.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.VehicleTemperatures",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.vehicletemperatures:column:VehicleTemperatureID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.vehicletemperatures_column_VehicleTemperatureID_8dc40d38.json"
     },
     {
       "type": "ACTION",
@@ -139,6 +188,14 @@
         "action_type": "SELECT",
         "table": "Warehouse.VehicleTemperatures"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.VehicleTemperatures",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json"
     }
   ]
 }

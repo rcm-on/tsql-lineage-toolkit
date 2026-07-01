@@ -46,7 +46,15 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.SearchForCustomers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "compare:=",
+            "func:CONCAT",
+            "pattern:LIKE"
+          ]
+        }
       },
       {
         "type": "READS_COLUMN",
@@ -93,7 +101,15 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.SearchForCustomers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "func:CONCAT",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -106,6 +122,31 @@
       "from": "WideWorldImporters::Website.SearchForPeople#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:sales.customers:UNIQUE:adfa4e06",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.customers_UNIQUE_adfa4e06_e08c8e88.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.customers:column:CustomerName",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_CustomerName_859dccc4.json",
+      "props": {
+        "logic": "s.CustomerName",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.customers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "ordinal": 2
+      }
     }
   ],
   "edges_out": []

@@ -52,7 +52,8 @@
           "name": "@EndOfTime",
           "data_type": "DATETIME2 (7)",
           "default": "'99991231 23:59:59.9999999'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -64,7 +65,8 @@
           "name": "@InitialLoadDate",
           "data_type": "DATE",
           "default": "'20130101'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -76,7 +78,8 @@
           "name": "@BuyingGroupID",
           "data_type": "INT",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -88,7 +91,8 @@
           "name": "@CustomerCategoryID",
           "data_type": "INT",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -100,7 +104,8 @@
           "name": "@CustomerID",
           "data_type": "INT",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -112,7 +117,8 @@
           "name": "@ValidFrom",
           "data_type": "DATETIME2 (7)",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       }
     ],
@@ -125,7 +131,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 14,
+          "line_no": 13,
           "nesting_level": 0,
           "action": "CREATE_TABLE",
           "step_type": "Maintenance",
@@ -133,6 +139,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CREATE_TABLE -> #CustomerChanges"
@@ -146,7 +153,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 34,
+          "line_no": 33,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
           "step_type": "Cursor",
@@ -154,6 +161,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DECLARE_CURSOR -> BuyingGroupChangeList"
@@ -167,7 +175,7 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 34,
+          "line_no": 33,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -175,6 +183,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Sales.BuyingGroups_Archive"
@@ -188,7 +197,7 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 34,
+          "line_no": 33,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -196,6 +205,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Sales.BuyingGroups"
@@ -209,7 +219,7 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 51,
+          "line_no": 50,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
           "step_type": "Cursor",
@@ -217,6 +227,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "OPEN_CURSOR -> BuyingGroupChangeList"
@@ -230,7 +241,7 @@
         "properties": {
           "order": 5,
           "sequence": 6,
-          "line_no": 52,
+          "line_no": 51,
           "nesting_level": 0,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -238,6 +249,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "FETCH -> BuyingGroupChangeList"
@@ -251,7 +263,7 @@
         "properties": {
           "order": 6,
           "sequence": 7,
-          "line_no": 56,
+          "line_no": 55,
           "nesting_level": 1,
           "action": "INSERT",
           "step_type": "Staging",
@@ -259,11 +271,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#54"
+            "WHILE#53"
           ],
           "label": "INSERT -> #CustomerChanges"
         }
@@ -276,7 +289,7 @@
         "properties": {
           "order": 7,
           "sequence": 8,
-          "line_no": 74,
+          "line_no": 73,
           "nesting_level": 1,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -284,11 +297,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#54"
+            "WHILE#53"
           ],
           "label": "FETCH -> BuyingGroupChangeList"
         }
@@ -301,7 +315,7 @@
         "properties": {
           "order": 8,
           "sequence": 9,
-          "line_no": 77,
+          "line_no": 76,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
           "step_type": "Cursor",
@@ -309,6 +323,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CLOSE_CURSOR -> BuyingGroupChangeList"
@@ -322,7 +337,7 @@
         "properties": {
           "order": 9,
           "sequence": 10,
-          "line_no": 78,
+          "line_no": 77,
           "nesting_level": 0,
           "action": "DEALLOCATE",
           "step_type": "Cursor",
@@ -330,6 +345,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DEALLOCATE -> BuyingGroupChangeList"
@@ -343,7 +359,7 @@
         "properties": {
           "order": 10,
           "sequence": 11,
-          "line_no": 82,
+          "line_no": 81,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
           "step_type": "Cursor",
@@ -351,6 +367,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DECLARE_CURSOR -> CustomerCategoryChangeList"
@@ -364,7 +381,7 @@
         "properties": {
           "order": 11,
           "sequence": 12,
-          "line_no": 82,
+          "line_no": 81,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -372,6 +389,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Sales.CustomerCategories_Archive"
@@ -385,7 +403,7 @@
         "properties": {
           "order": 12,
           "sequence": 13,
-          "line_no": 82,
+          "line_no": 81,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -393,6 +411,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Sales.CustomerCategories"
@@ -406,7 +425,7 @@
         "properties": {
           "order": 13,
           "sequence": 14,
-          "line_no": 99,
+          "line_no": 98,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
           "step_type": "Cursor",
@@ -414,6 +433,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "OPEN_CURSOR -> CustomerCategoryChangeList"
@@ -427,7 +447,7 @@
         "properties": {
           "order": 14,
           "sequence": 15,
-          "line_no": 100,
+          "line_no": 99,
           "nesting_level": 0,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -435,6 +455,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "FETCH -> CustomerCategoryChangeList"
@@ -448,7 +469,7 @@
         "properties": {
           "order": 15,
           "sequence": 16,
-          "line_no": 104,
+          "line_no": 103,
           "nesting_level": 1,
           "action": "INSERT",
           "step_type": "Staging",
@@ -456,11 +477,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#102"
+            "WHILE#101"
           ],
           "label": "INSERT -> #CustomerChanges"
         }
@@ -473,7 +495,7 @@
         "properties": {
           "order": 16,
           "sequence": 17,
-          "line_no": 122,
+          "line_no": 121,
           "nesting_level": 1,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -481,11 +503,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#102"
+            "WHILE#101"
           ],
           "label": "FETCH -> CustomerCategoryChangeList"
         }
@@ -498,7 +521,7 @@
         "properties": {
           "order": 17,
           "sequence": 18,
-          "line_no": 125,
+          "line_no": 124,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
           "step_type": "Cursor",
@@ -506,6 +529,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CLOSE_CURSOR -> CustomerCategoryChangeList"
@@ -519,7 +543,7 @@
         "properties": {
           "order": 18,
           "sequence": 19,
-          "line_no": 126,
+          "line_no": 125,
           "nesting_level": 0,
           "action": "DEALLOCATE",
           "step_type": "Cursor",
@@ -527,6 +551,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DEALLOCATE -> CustomerCategoryChangeList"
@@ -540,7 +565,7 @@
         "properties": {
           "order": 19,
           "sequence": 20,
-          "line_no": 130,
+          "line_no": 129,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
           "step_type": "Cursor",
@@ -548,6 +573,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DECLARE_CURSOR -> CustomerChangeList"
@@ -561,7 +587,7 @@
         "properties": {
           "order": 20,
           "sequence": 21,
-          "line_no": 130,
+          "line_no": 129,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -569,6 +595,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Sales.Customers_Archive"
@@ -582,7 +609,7 @@
         "properties": {
           "order": 21,
           "sequence": 22,
-          "line_no": 130,
+          "line_no": 129,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -590,6 +617,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Sales.Customers"
@@ -603,7 +631,7 @@
         "properties": {
           "order": 22,
           "sequence": 23,
-          "line_no": 145,
+          "line_no": 144,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
           "step_type": "Cursor",
@@ -611,6 +639,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "OPEN_CURSOR -> CustomerChangeList"
@@ -624,7 +653,7 @@
         "properties": {
           "order": 23,
           "sequence": 24,
-          "line_no": 146,
+          "line_no": 145,
           "nesting_level": 0,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -632,6 +661,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "FETCH -> CustomerChangeList"
@@ -645,7 +675,7 @@
         "properties": {
           "order": 24,
           "sequence": 25,
-          "line_no": 150,
+          "line_no": 149,
           "nesting_level": 1,
           "action": "INSERT",
           "step_type": "Staging",
@@ -653,11 +683,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#148"
+            "WHILE#147"
           ],
           "label": "INSERT -> #CustomerChanges"
         }
@@ -670,7 +701,7 @@
         "properties": {
           "order": 25,
           "sequence": 26,
-          "line_no": 168,
+          "line_no": 167,
           "nesting_level": 1,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -678,11 +709,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#148"
+            "WHILE#147"
           ],
           "label": "FETCH -> CustomerChangeList"
         }
@@ -695,7 +727,7 @@
         "properties": {
           "order": 26,
           "sequence": 27,
-          "line_no": 171,
+          "line_no": 170,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
           "step_type": "Cursor",
@@ -703,6 +735,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CLOSE_CURSOR -> CustomerChangeList"
@@ -716,7 +749,7 @@
         "properties": {
           "order": 27,
           "sequence": 28,
-          "line_no": 172,
+          "line_no": 171,
           "nesting_level": 0,
           "action": "DEALLOCATE",
           "step_type": "Cursor",
@@ -724,6 +757,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DEALLOCATE -> CustomerChangeList"
@@ -737,7 +771,7 @@
         "properties": {
           "order": 28,
           "sequence": 29,
-          "line_no": 176,
+          "line_no": 175,
           "nesting_level": 0,
           "action": "CREATE_INDEX",
           "step_type": "Maintenance",
@@ -745,6 +779,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CREATE_INDEX -> #CustomerChanges"
@@ -758,7 +793,7 @@
         "properties": {
           "order": 29,
           "sequence": 30,
-          "line_no": 181,
+          "line_no": 180,
           "nesting_level": 0,
           "action": "UPDATE",
           "step_type": "Transformation",
@@ -766,6 +801,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "UPDATE -> #CustomerChanges"
@@ -779,7 +815,7 @@
         "properties": {
           "order": 30,
           "sequence": 31,
-          "line_no": 187,
+          "line_no": 180,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Staging",
@@ -787,6 +823,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> #CustomerChanges"
@@ -800,17 +837,18 @@
         "properties": {
           "order": 31,
           "sequence": 32,
-          "line_no": 193,
+          "line_no": 186,
           "nesting_level": 0,
-          "action": "DROP_TABLE",
-          "step_type": "Maintenance",
+          "action": "SELECT",
+          "step_type": "Staging",
           "target_name": "#CustomerChanges",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "DROP_TABLE -> #CustomerChanges"
+          "label": "SELECT -> #CustomerChanges"
         }
       },
       {
@@ -821,7 +859,29 @@
         "properties": {
           "order": 32,
           "sequence": 33,
-          "line_no": 195,
+          "line_no": 192,
+          "nesting_level": 0,
+          "action": "DROP_TABLE",
+          "step_type": "Maintenance",
+          "target_name": "#CustomerChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DROP_TABLE -> #CustomerChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCustomerUpdates#step33",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 33,
+          "sequence": 34,
+          "line_no": 194,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -829,6 +889,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -1585,8 +1646,24 @@
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step30",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates#var:@EndOfTime",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetCustomerUpdates#step31",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step32",
       "from_label": "Step",
       "to": "WideWorldImporters:action:DROP_TABLE",
       "to_label": "Action",
@@ -1594,7 +1671,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step32",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step33",
       "from_label": "Step",
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
@@ -1826,6 +1903,14 @@
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetCustomerUpdates#step7",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
     }
   ]

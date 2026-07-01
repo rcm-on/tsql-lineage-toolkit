@@ -28,6 +28,15 @@
       "from": "WideWorldImporters::Website.InsertCustomerOrders#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.orders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "ordinal": 12
+      }
     }
   ],
   "edges_out": []

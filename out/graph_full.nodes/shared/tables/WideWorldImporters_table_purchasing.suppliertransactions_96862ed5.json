@@ -7,8 +7,38 @@
     "database": "WideWorldImporters",
     "name": "Purchasing.SupplierTransactions"
   },
-  "refs": {},
-  "edges_in": [],
+  "refs": {
+    "WideWorldImporters::Integration.GetTransactionUpdates": [
+      {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Integration.GetTransactionUpdates#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "Purchasing.SupplierTransactions"
+        }
+      }
+    ]
+  },
+  "edges_in": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Purchasing.SupplierTransactions"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:purchasing",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_purchasing_cdda06b8.json"
+    }
+  ],
   "edges_out": [
     {
       "type": "FK_TO",
@@ -189,6 +219,18 @@
       "props": {
         "ordinal": 3
       }
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:purchasing.suppliertransactions:DEFAULT:9a74aafd",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.suppliertransactions_DEFAULT_9a74aafd_497f315e.json"
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:purchasing.suppliertransactions:DEFAULT:b227dd68",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.suppliertransactions_DEFAULT_b227dd68_ba6c6ba6.json"
     }
   ]
 }

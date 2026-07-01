@@ -6,7 +6,7 @@
   "properties": {
     "name": "RecordedWhen",
     "table": "warehouse.coldroomtemperatures",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": false,
     "is_identity": false,
     "is_primary_key": false,
@@ -16,7 +16,7 @@
     "WideWorldImporters::Application.Configuration_EnableInMemory": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
       }
@@ -39,7 +39,7 @@
   "edges_in": [
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
@@ -54,6 +54,15 @@
       "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "ordinal": 3
+      }
     }
   ],
   "edges_out": [
@@ -63,8 +72,22 @@
       "to_label": "Column",
       "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_ColdRoomSensorNum_8f23eeb1.json",
       "props": {
-        "line_no": 30,
-        "caused_by_step": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1"
+        "line_no": 29,
+        "caused_by_step": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures_backup:column:RecordedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_backup_column_RecordedWh_8085b2ea.json",
+      "props": {
+        "logic": "RecordedWhen",
+        "line_no": 1,
+        "caused_by_step": "WideWorldImporters::Application.Configuration_EnableInMemory#step9"
       }
     }
   ]

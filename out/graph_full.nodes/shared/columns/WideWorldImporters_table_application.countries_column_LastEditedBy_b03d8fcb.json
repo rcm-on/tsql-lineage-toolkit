@@ -13,7 +13,17 @@
     "ordinal": 12
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.countries",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "props": {
+        "ordinal": 12
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

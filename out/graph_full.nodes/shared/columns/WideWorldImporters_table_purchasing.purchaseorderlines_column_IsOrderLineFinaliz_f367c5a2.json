@@ -28,6 +28,15 @@
       "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.purchaseorderlines",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorderlines_45de4778.json",
+      "props": {
+        "ordinal": 10
+      }
     }
   ],
   "edges_out": []

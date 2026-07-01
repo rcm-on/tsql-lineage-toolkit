@@ -13,7 +13,17 @@
     "ordinal": 3
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliercategories",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "props": {
+        "ordinal": 3
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

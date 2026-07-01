@@ -13,7 +13,17 @@
     "ordinal": 4
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitemstockgroups",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.json",
+      "props": {
+        "ordinal": 4
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

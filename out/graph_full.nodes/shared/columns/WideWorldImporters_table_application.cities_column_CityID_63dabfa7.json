@@ -18,7 +18,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Customers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Customers/object.json"
+        "path": "objects/WideWorldImporters_Website.Customers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForCustomers": [
@@ -26,7 +31,15 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.SearchForCustomers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "compare:=",
+            "func:CONCAT",
+            "pattern:LIKE"
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForSuppliers": [
@@ -34,7 +47,15 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "compare:=",
+            "func:CONCAT",
+            "pattern:LIKE"
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.Suppliers": [
@@ -42,7 +63,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Suppliers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ]
   },
@@ -51,25 +77,120 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Customers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      "path": "objects/WideWorldImporters_Website.Customers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.SearchForCustomers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForCustomers/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "func:CONCAT",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.SearchForSuppliers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForSuppliers/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "func:CONCAT",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.cities:DEFAULT:6721b5fa",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.cities_DEFAULT_6721b5fa_ab70c509.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.cities",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.systemparameters:column:DeliveryCityID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_DeliveryCityID_63bd8689.json",
+      "props": {
+        "constraint": "FK_Application_SystemParameters_DeliveryCityID_Application_Cities"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:application.systemparameters:column:PostalCityID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.systemparameters_column_PostalCityID_3b4df477.json",
+      "props": {
+        "constraint": "FK_Application_SystemParameters_PostalCityID_Application_Cities"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliers:column:DeliveryCityID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_DeliveryCityID_11f7abf1.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_DeliveryCityID_Application_Cities"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliers:column:PostalCityID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_PostalCityID_fd707fd9.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_PostalCityID_Application_Cities"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customers:column:DeliveryCityID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryCityID_824c2cf8.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_DeliveryCityID_Application_Cities"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customers:column:PostalCityID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_PostalCityID_23694507.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_PostalCityID_Application_Cities"
+      }
     }
   ],
   "edges_out": []

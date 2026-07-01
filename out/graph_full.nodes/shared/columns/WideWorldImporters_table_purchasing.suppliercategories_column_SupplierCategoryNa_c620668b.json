@@ -54,6 +54,31 @@
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:purchasing.suppliercategories:UNIQUE:adc955f9",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.suppliercategories_UNIQUE_adc955f9_918e5aee.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.suppliers:column:SupplierCategoryName",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.suppliers_column_SupplierCategoryName_006ab833.json",
+      "props": {
+        "logic": "sc.SupplierCategoryName",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliercategories",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "props": {
+        "ordinal": 2
+      }
     }
   ],
   "edges_out": []

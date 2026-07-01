@@ -23,6 +23,12 @@
       "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#var:@SQL",
       "from_label": "Variable",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sys.indexes",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.json"
     }
   ],
   "edges_out": []

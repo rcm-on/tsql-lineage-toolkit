@@ -66,7 +66,7 @@
     "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step0",
+        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step1",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
       }
@@ -117,7 +117,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step0",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step1",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
     }

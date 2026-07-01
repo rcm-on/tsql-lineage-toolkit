@@ -1,7 +1,7 @@
 ﻿{
   "meta": {
     "database": "WideWorldImporters",
-    "generated_at": "2026-06-20T19:51:44.5651330+02:00",
+    "generated_at": "2026-07-01T13:13:04.3667452+02:00",
     "tool": "sql-analyzer/tsql-parser",
     "format": "nodestore-v1"
   },
@@ -14,8 +14,10 @@
     "open_shared": "shared/<category>/<slug>.json holds a Table/Column/Action/Rule: `refs` partitions its incoming edges by the SqlObject that contributed them, `edges_in`/`edges_out` give the flattened view.",
     "downstream": "Follow edges_out (WRITES_TO, CALLS, AFFECTS) for what an object affects.",
     "upstream": "Follow edges_in / refs (WRITES_TO, READS_FROM, CALLS) for what affects a node.",
-    "completeness": "model.json is EXHAUSTIVE for CALLS/AFFECTS/FK_TO and for WRITES_TO/READS_FROM rolled up to object/table scale (deduplicated from every Step that touches that table, including ones built from dynamic SQL). Cross-check counts against index.json's stats.edges_by_type if you need certainty. You never need to open an object's object.json just to discover more object-level edges of these types — they are already all in model.json.",
-    "exec_resolution": "An EXEC step resolves one of two ways, and model.json already has both rolled up: (1) a named-procedure call -> a CALLS edge object->object; (2) EXEC of a dynamically-built @variable (is_dynamic_sql=true on the Step, target_name='(dynamic SQL)') -> its inferred targets appear as WRITES_TO/READS_FROM edges with action_type in their `props`, not as CALLS. To see a Step's own is_dynamic_sql/dynamic_sql/target_name detail you do need objects/<slug>/object.json, but the object-level write/read targets themselves are already in model.json."
+    "completeness": "model.json is EXHAUSTIVE for CALLS/AFFECTS/FK_TO and for WRITES_TO/READS_FROM rolled up to object/table scale (deduplicated from every Step that touches that table, including ones built from dynamic SQL) - WITH ONE EXCEPTION: dynamic SQL that never resolved to a literal at analysis time (see unresolved_dynamic_sql_steps below) touches real tables at runtime that genuinely have no edge anywhere in this store - the parser fails closed (emits nothing) rather than guessing a wrong table. For every other case, cross-check counts against index.json's stats.edges_by_type if you need certainty; you never need to open an object's object.json just to discover more object-level edges of these types.",
+    "exec_resolution": "An EXEC step resolves one of three ways: (1) a named-procedure call -> a CALLS edge object->object, already in model.json; (2) EXEC of a dynamically-built @variable that fully resolved to a literal (is_dynamic_sql=true, target_name='(dynamic SQL)', but the Step's own dynamic_sql text is non-empty) -> its real targets appear as WRITES_TO/READS_FROM edges with action_type in their `props`, also already in model.json; (3) EXEC of a dynamically-built @variable that could NOT be resolved to a literal (is_dynamic_sql=true AND dynamic_sql=='') -> no edge exists anywhere for what it touches - this is the one real gap in this store's lineage, counted per object in unresolved_dynamic_sql_steps so you know when an object's WRITES_TO/READS_FROM set is provably incomplete rather than provably empty. To see a Step's own is_dynamic_sql/dynamic_sql/target_name detail you do need objects/<slug>/object.json.",
+    "unresolved_dynamic_sql_steps": "Each SqlObject node in model.json carries unresolved_dynamic_sql_steps: count of its EXEC steps where is_dynamic_sql=true and the dynamic SQL text never resolved to a literal (dynamic_sql==''). A value >0 means this object's WRITES_TO/READS_FROM edges are an undercount, not the full picture - treat it like a missing-data flag, not a 0/total-steps style metric.",
+    "column_lineage": "To find where an output column's data ultimately comes from (its root base-table column(s)), read objects/<slug>/lineage_path.json - NOT nav.json hopping. It's keyed by output column name; each entry precomputes `roots` (root base-table column(s), as table.column strings), `immediate` (direct precursor column(s), same format), `depth` (longest path to a root), and `transformation_summary` (reserved, currently always null). This is a single O(1) read - measured (docs/nodestore-analysis.md Caso 7) that walking DERIVES_FROM hop by hop costs 7-10 agent turns for just a 3-hop chain, with NO advantage from nav.json over full files (unlike CALLS chains, where nav.json does help - see call_chain above). lineage_path.json only exists for SqlObjects with output columns (views, TVFs, procedures with OUTPUT); a plain base table has none."
   },
   "schema": {
     "node_labels": [
@@ -28,7 +30,10 @@
       "Action",
       "Table",
       "Column",
-      "Rule"
+      "Rule",
+      "Database",
+      "Schema",
+      "BusinessRule"
     ],
     "edge_types": [
       "HAS_PARAMETER",
@@ -54,54 +59,68 @@
       "FK_TO",
       "REFERENCES",
       "BELONGS_TO",
-      "WORKFLOW_WRITES_TO"
+      "WORKFLOW_WRITES_TO",
+      "CONTAINS",
+      "HAS_RULE",
+      "CONSTRAINS"
     ]
   },
   "stats": {
-    "total_nodes": 1355,
-    "total_edges": 3423,
-    "objects": 47,
-    "shared_nodes": 682,
+    "total_nodes": 1593,
+    "total_edges": 4282,
+    "objects": 64,
+    "shared_nodes": 818,
     "orphan_edges": 0,
     "nodes_by_label": {
-      "SqlObject": 47,
+      "SqlObject": 64,
       "Parameter": 65,
       "Variable": 80,
-      "Step": 481,
-      "Table": 51,
-      "Column": 566,
+      "Step": 566,
+      "Table": 69,
+      "Column": 612,
+      "BusinessRule": 61,
       "Action": 18,
       "Rule": 42,
-      "Workflow": 5
+      "Workflow": 5,
+      "Schema": 10,
+      "Database": 1
     },
     "edges_by_type": {
-      "HAS_COLUMN": 566,
+      "HAS_COLUMN": 644,
+      "HAS_RULE": 61,
+      "CONSTRAINS": 66,
       "FK_TO": 98,
       "REFERENCES": 98,
+      "DERIVES_FROM": 96,
       "HAS_PARAMETER": 65,
       "DECLARES": 80,
-      "HAS_STEP": 481,
+      "HAS_STEP": 566,
+      "USES_VARIABLE": 523,
+      "ACTION": 566,
+      "READS_FROM": 205,
       "BUILDS_SQL_FROM": 141,
-      "USES_VARIABLE": 399,
-      "ACTION": 481,
-      "GOVERNS": 178,
+      "GOVERNS": 198,
       "NESTED_IN": 22,
       "ASSIGNED_FROM": 9,
-      "READS_FROM": 116,
-      "FILTERS_ON": 112,
+      "FILTERS_ON": 114,
       "TARGETS": 38,
       "CALLS": 12,
-      "WRITES_TO": 81,
-      "WRITES_COLUMN": 111,
+      "WRITES_TO": 82,
+      "WRITES_COLUMN": 119,
       "READS_COLUMN": 171,
       "CONDITIONED_BY": 19,
-      "DERIVES_FROM": 35,
-      "AFFECTS": 35,
+      "AFFECTS": 36,
       "BELONGS_TO": 47,
-      "WORKFLOW_WRITES_TO": 28
+      "WORKFLOW_WRITES_TO": 29,
+      "ON": 17,
+      "CREATES": 17,
+      "CONTAINS": 143
     },
     "unknown_labels": [],
-    "unknown_edge_types": []
+    "unknown_edge_types": [
+      "CREATES",
+      "ON"
+    ]
   },
   "entry": {
     "model": "model.json",

@@ -63,7 +63,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 12,
+          "line_no": 11,
           "nesting_level": 0,
           "action": "UPDATE",
           "step_type": "Transformation",
@@ -71,6 +71,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "UPDATE -> [Application].People"
@@ -84,21 +85,18 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 24,
-          "nesting_level": 1,
-          "action": "THROW",
-          "step_type": "Notification",
-          "target_name": "",
+          "line_no": 11,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "[Application].People",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
-          "condition_path": [
-            "IF: @@ROWCOUNT = 0"
-          ],
-          "condition_keys": [
-            "IF#21"
-          ],
-          "label": "THROW"
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> [Application].People"
         }
       },
       {
@@ -109,7 +107,33 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 25,
+          "line_no": 23,
+          "nesting_level": 1,
+          "action": "THROW",
+          "step_type": "Notification",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [
+            "IF: @@ROWCOUNT = 0"
+          ],
+          "condition_keys": [
+            "IF#20"
+          ],
+          "label": "THROW"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.ActivateWebsiteLogon#step3",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 3,
+          "sequence": 4,
+          "line_no": 24,
           "nesting_level": 1,
           "action": "RETURN",
           "step_type": "Control",
@@ -117,11 +141,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "IF: @@ROWCOUNT = 0"
           ],
           "condition_keys": [
-            "IF#21"
+            "IF#20"
           ],
           "label": "RETURN"
         }
@@ -154,7 +179,14 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people:column:IsPermittedToLogon",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.people_column_IsPermittedToLogon_6b16c213.json"
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_IsPermittedToLogon_6b16c213.json",
+      "props": {
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -162,7 +194,14 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people:column:PersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json"
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
+      "props": {
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -236,13 +275,87 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:IsPermittedToLogon",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_IsPermittedToLogon_6b16c213.json",
+      "props": {
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "FILTERS_ON",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people:column:PersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
+      "props": {
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.people",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#param:@InitialPassword",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#param:@LogonName",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#param:@PersonID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step2",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:THROW",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step2",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step3",
       "from_label": "Step",
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
@@ -252,7 +365,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:a43915ca",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
     },
@@ -260,8 +373,16 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:a43915ca",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#step2",
+      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#step3",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.ActivateWebsiteLogon",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
     }
   ]

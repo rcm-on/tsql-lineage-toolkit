@@ -13,13 +13,13 @@
   "edges_out": [
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step1",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step1",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },

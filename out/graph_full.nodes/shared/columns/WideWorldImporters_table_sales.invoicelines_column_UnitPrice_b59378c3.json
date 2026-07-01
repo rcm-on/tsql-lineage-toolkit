@@ -24,7 +24,7 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -39,9 +39,18 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.invoicelines",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json",
+      "props": {
+        "ordinal": 7
+      }
     }
   ],
   "edges_out": [
@@ -52,8 +61,8 @@
       "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_UnitPrice_52388afa.json",
       "props": {
         "logic": "ol.UnitPrice",
-        "line_no": 75,
-        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+        "line_no": 74,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step5"
       }
     }
   ]

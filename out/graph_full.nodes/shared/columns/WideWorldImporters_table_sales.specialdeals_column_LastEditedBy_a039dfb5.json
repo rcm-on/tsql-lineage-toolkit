@@ -13,7 +13,17 @@
     "ordinal": 13
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.specialdeals",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "props": {
+        "ordinal": 13
+      }
+    }
+  ],
   "edges_out": [
     {
       "type": "REFERENCES",

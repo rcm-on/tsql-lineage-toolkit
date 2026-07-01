@@ -52,7 +52,8 @@
             "N' CREATE INDEX FK_Purchasing_SupplierTransactions_SupplierID ON Purchasing.SupplierTransactions ( \tSupplierID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);'",
             "N' CREATE INDEX FK_Purchasing_SupplierTransactions_TransactionTypeID ON Purchasing.SupplierTransactions ( \tTransactionTypeID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);'",
             "N' CREATE INDEX IX_Purchasing_SupplierTransactions_IsFinalized ON Purchasing.SupplierTransactions ( \tIsFinalized ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);'"
-          ]
+          ],
+          "op_kinds": []
         }
       }
     ],
@@ -65,7 +66,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 14,
+          "line_no": 13,
           "nesting_level": 1,
           "action": "BEGIN_TRAN",
           "step_type": "Transaction",
@@ -73,11 +74,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#9"
+            "IF_ELSE#8"
           ],
           "label": "BEGIN_TRAN"
         }
@@ -90,23 +92,22 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 24,
-          "nesting_level": 2,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 17,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.partition_functions",
           "detail": "",
-          "dynamic_sql": "CREATE PARTITION FUNCTION PF_TransactionDateTime(datetime) AS RANGE RIGHT FOR VALUES (N'20140101', N'20150101', N'20160101', N'20170101');",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.partition_functions             WHERE  name = N'PF_TransactionDateTime')"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#18"
+            "IF_ELSE#8"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.partition_functions"
         }
       },
       {
@@ -117,21 +118,22 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 33,
+          "line_no": 23,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PARTITION FUNCTION PF_TransactionDate(date) AS RANGE RIGHT FOR VALUES (N'20140101', N'20150101', N'20160101', N'20170101');",
+          "dynamic_sql": "CREATE PARTITION FUNCTION PF_TransactionDateTime(datetime) AS RANGE RIGHT FOR VALUES (N'20140101', N'20150101', N'20160101', N'20170101');",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.partition_functions             WHERE  name = N'PF_TransactionDate')"
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.partition_functions             WHERE  name = N'PF_TransactionDateTime')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#27"
+            "IF_ELSE#8",
+            "IF#17"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -144,23 +146,22 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 52,
-          "nesting_level": 2,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 26,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.partition_functions",
           "detail": "",
-          "dynamic_sql": "CREATE PARTITION SCHEME PS_TransactionDateTime AS PARTITION PF_TransactionDateTime ALL TO ([USERDATA]);",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT *             FROM   sys.partition_schemes             WHERE  name = N'PS_TransactionDateTime')"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#36"
+            "IF_ELSE#8"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.partition_functions"
         }
       },
       {
@@ -171,21 +172,22 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 70,
+          "line_no": 32,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PARTITION SCHEME PS_TransactionDate AS PARTITION PF_TransactionDate ALL TO ([USERDATA]);",
+          "dynamic_sql": "CREATE PARTITION FUNCTION PF_TransactionDate(date) AS RANGE RIGHT FOR VALUES (N'20140101', N'20150101', N'20160101', N'20170101');",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.partition_schemes             WHERE  name = N'PS_TransactionDate')"
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.partition_functions             WHERE  name = N'PF_TransactionDate')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#55"
+            "IF_ELSE#8",
+            "IF#26"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -198,23 +200,22 @@
         "properties": {
           "order": 5,
           "sequence": 6,
-          "line_no": 78,
-          "nesting_level": 2,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 35,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.partition_schemes",
           "detail": "",
-          "dynamic_sql": "ALTER TABLE Sales.CustomerTransactions DROP CONSTRAINT PK_Sales_CustomerTransactions;",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#73"
+            "IF_ELSE#8"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.partition_schemes"
         }
       },
       {
@@ -225,21 +226,22 @@
         "properties": {
           "order": 6,
           "sequence": 7,
-          "line_no": 86,
+          "line_no": 51,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "ALTER TABLE Sales.CustomerTransactions ADD CONSTRAINT PK_Sales_CustomerTransactions PRIMARY KEY NONCLUSTERED ( CustomerTransactionID );",
+          "dynamic_sql": "CREATE PARTITION SCHEME PS_TransactionDateTime AS PARTITION PF_TransactionDateTime ALL TO ([USERDATA]);",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
+            "IF: NOT EXISTS (SELECT *             FROM   sys.partition_schemes             WHERE  name = N'PS_TransactionDateTime')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#73"
+            "IF_ELSE#8",
+            "IF#35"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -252,23 +254,22 @@
         "properties": {
           "order": 7,
           "sequence": 8,
-          "line_no": 95,
-          "nesting_level": 2,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 54,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.partition_schemes",
           "detail": "",
-          "dynamic_sql": "CREATE CLUSTERED INDEX CX_Sales_CustomerTransactions ON Sales.CustomerTransactions ( TransactionDate ) ON PS_TransactionDate(TransactionDate);",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#73"
+            "IF_ELSE#8"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.partition_schemes"
         }
       },
       {
@@ -279,21 +280,22 @@
         "properties": {
           "order": 8,
           "sequence": 9,
-          "line_no": 105,
+          "line_no": 69,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_CustomerID ON Sales.CustomerTransactions ( CustomerID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "dynamic_sql": "CREATE PARTITION SCHEME PS_TransactionDate AS PARTITION PF_TransactionDate ALL TO ([USERDATA]);",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.partition_schemes             WHERE  name = N'PS_TransactionDate')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#73"
+            "IF_ELSE#8",
+            "IF#54"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -306,23 +308,22 @@
         "properties": {
           "order": 9,
           "sequence": 10,
-          "line_no": 115,
-          "nesting_level": 2,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 72,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.indexes",
           "detail": "",
-          "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_InvoiceID ON Sales.CustomerTransactions ( InvoiceID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#73"
+            "IF_ELSE#8"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.indexes"
         }
       },
       {
@@ -333,21 +334,22 @@
         "properties": {
           "order": 10,
           "sequence": 11,
-          "line_no": 125,
+          "line_no": 77,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_PaymentMethodID ON Sales.CustomerTransactions ( PaymentMethodID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "dynamic_sql": "ALTER TABLE Sales.CustomerTransactions DROP CONSTRAINT PK_Sales_CustomerTransactions;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#73"
+            "IF_ELSE#8",
+            "IF#72"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -360,21 +362,22 @@
         "properties": {
           "order": 11,
           "sequence": 12,
-          "line_no": 135,
+          "line_no": 85,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_TransactionTypeID ON Sales.CustomerTransactions ( TransactionTypeID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "dynamic_sql": "ALTER TABLE Sales.CustomerTransactions ADD CONSTRAINT PK_Sales_CustomerTransactions PRIMARY KEY NONCLUSTERED ( CustomerTransactionID );",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#73"
+            "IF_ELSE#8",
+            "IF#72"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -387,21 +390,22 @@
         "properties": {
           "order": 12,
           "sequence": 13,
-          "line_no": 145,
+          "line_no": 94,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE INDEX IX_Sales_CustomerTransactions_IsFinalized ON Sales.CustomerTransactions ( IsFinalized ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "dynamic_sql": "CREATE CLUSTERED INDEX CX_Sales_CustomerTransactions ON Sales.CustomerTransactions ( TransactionDate ) ON PS_TransactionDate(TransactionDate);",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#73"
+            "IF_ELSE#8",
+            "IF#72"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -414,21 +418,22 @@
         "properties": {
           "order": 13,
           "sequence": 14,
-          "line_no": 153,
+          "line_no": 104,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "ALTER TABLE Purchasing.SupplierTransactions DROP CONSTRAINT PK_Purchasing_SupplierTransactions;",
+          "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_CustomerID ON Sales.CustomerTransactions ( CustomerID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#148"
+            "IF_ELSE#8",
+            "IF#72"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -441,21 +446,22 @@
         "properties": {
           "order": 14,
           "sequence": 15,
-          "line_no": 161,
+          "line_no": 114,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "ALTER TABLE Purchasing.SupplierTransactions ADD CONSTRAINT PK_Purchasing_SupplierTransactions PRIMARY KEY NONCLUSTERED ( SupplierTransactionID );",
+          "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_InvoiceID ON Sales.CustomerTransactions ( InvoiceID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#148"
+            "IF_ELSE#8",
+            "IF#72"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -468,21 +474,22 @@
         "properties": {
           "order": 15,
           "sequence": 16,
-          "line_no": 170,
+          "line_no": 124,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE CLUSTERED INDEX CX_Purchasing_SupplierTransactions ON Purchasing.SupplierTransactions ( TransactionDate ) ON PS_TransactionDate(TransactionDate);",
+          "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_PaymentMethodID ON Sales.CustomerTransactions ( PaymentMethodID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#148"
+            "IF_ELSE#8",
+            "IF#72"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -495,21 +502,22 @@
         "properties": {
           "order": 16,
           "sequence": 17,
-          "line_no": 180,
+          "line_no": 134,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_PaymentMethodID ON Purchasing.SupplierTransactions ( PaymentMethodID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "dynamic_sql": "CREATE INDEX FK_Sales_CustomerTransactions_TransactionTypeID ON Sales.CustomerTransactions ( TransactionTypeID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#148"
+            "IF_ELSE#8",
+            "IF#72"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -522,21 +530,22 @@
         "properties": {
           "order": 17,
           "sequence": 18,
-          "line_no": 190,
+          "line_no": 144,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_PurchaseOrderID ON Purchasing.SupplierTransactions ( PurchaseOrderID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "dynamic_sql": "CREATE INDEX IX_Sales_CustomerTransactions_IsFinalized ON Sales.CustomerTransactions ( IsFinalized ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Sales_CustomerTransactions')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#148"
+            "IF_ELSE#8",
+            "IF#72"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -549,23 +558,22 @@
         "properties": {
           "order": 18,
           "sequence": 19,
-          "line_no": 200,
-          "nesting_level": 2,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 147,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.indexes",
           "detail": "",
-          "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_SupplierID ON Purchasing.SupplierTransactions ( SupplierID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#148"
+            "IF_ELSE#8"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.indexes"
         }
       },
       {
@@ -576,21 +584,22 @@
         "properties": {
           "order": 19,
           "sequence": 20,
-          "line_no": 210,
+          "line_no": 152,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_TransactionTypeID ON Purchasing.SupplierTransactions ( TransactionTypeID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "dynamic_sql": "ALTER TABLE Purchasing.SupplierTransactions DROP CONSTRAINT PK_Purchasing_SupplierTransactions;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#148"
+            "IF_ELSE#8",
+            "IF#147"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -603,21 +612,22 @@
         "properties": {
           "order": 20,
           "sequence": 21,
-          "line_no": 220,
+          "line_no": 160,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE INDEX IX_Purchasing_SupplierTransactions_IsFinalized ON Purchasing.SupplierTransactions ( IsFinalized ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "dynamic_sql": "ALTER TABLE Purchasing.SupplierTransactions ADD CONSTRAINT PK_Purchasing_SupplierTransactions PRIMARY KEY NONCLUSTERED ( SupplierTransactionID );",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
           ],
           "condition_keys": [
-            "IF_ELSE#9",
-            "IF#148"
+            "IF_ELSE#8",
+            "IF#147"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -630,7 +640,175 @@
         "properties": {
           "order": 21,
           "sequence": 22,
-          "line_no": 223,
+          "line_no": 169,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE CLUSTERED INDEX CX_Purchasing_SupplierTransactions ON Purchasing.SupplierTransactions ( TransactionDate ) ON PS_TransactionDate(TransactionDate);",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#147"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step22",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 22,
+          "sequence": 23,
+          "line_no": 179,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_PaymentMethodID ON Purchasing.SupplierTransactions ( PaymentMethodID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#147"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step23",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 23,
+          "sequence": 24,
+          "line_no": 189,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_PurchaseOrderID ON Purchasing.SupplierTransactions ( PurchaseOrderID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#147"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step24",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 24,
+          "sequence": 25,
+          "line_no": 199,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_SupplierID ON Purchasing.SupplierTransactions ( SupplierID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#147"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step25",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 25,
+          "sequence": 26,
+          "line_no": 209,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE INDEX FK_Purchasing_SupplierTransactions_TransactionTypeID ON Purchasing.SupplierTransactions ( TransactionTypeID ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#147"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step26",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 26,
+          "sequence": 27,
+          "line_no": 219,
+          "nesting_level": 2,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE INDEX IX_Purchasing_SupplierTransactions_IsFinalized ON Purchasing.SupplierTransactions ( IsFinalized ) WITH (DROP_EXISTING = ON) ON PS_TransactionDate(TransactionDate);",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.indexes             WHERE  name = N'CX_Purchasing_SupplierTransactions')"
+          ],
+          "condition_keys": [
+            "IF_ELSE#8",
+            "IF#147"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step27",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 27,
+          "sequence": 28,
+          "line_no": 222,
           "nesting_level": 1,
           "action": "COMMIT_TRAN",
           "step_type": "Transaction",
@@ -638,11 +816,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#9"
+            "IF_ELSE#8"
           ],
           "label": "COMMIT_TRAN"
         }
@@ -673,17 +852,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step1",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step1",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      "to": "WideWorldImporters:table:sys.partition_functions",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.partition_functions_6460966a.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.partition_functions"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -889,17 +1072,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step18",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step18",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      "to": "WideWorldImporters:table:sys.indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -985,6 +1172,150 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step21",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step26",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step26",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step26",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step27",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:COMMIT_TRAN",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_COMMIT_TRAN_e48041a5.json"
@@ -993,12 +1324,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.partition_functions",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.partition_functions_6460966a.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.partition_functions"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
       "from_label": "Step",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
@@ -1006,14 +1349,6 @@
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
     {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step4",
       "from_label": "Step",
@@ -1041,17 +1376,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step5",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step5",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      "to": "WideWorldImporters:table:sys.partition_schemes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.partition_schemes_56b55043.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.partition_schemes"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1089,17 +1428,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step7",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step7",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      "to": "WideWorldImporters:table:sys.partition_schemes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.partition_schemes_56b55043.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.partition_schemes"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1137,17 +1480,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      "to": "WideWorldImporters:table:sys.indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1155,54 +1502,6 @@
       "from_label": "Step",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#var:@SQL",
       "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1a5601e4",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step13",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1a5601e4",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step14",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1a5601e4",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step15",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1a5601e4",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step16",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1a5601e4",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step17",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1a5601e4",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step18",
-      "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
     {
@@ -1218,6 +1517,54 @@
       "from": "WideWorldImporters:rule:IF:1a5601e4",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step20",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step21",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step22",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step23",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step24",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step25",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1a5601e4",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step26",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -1249,7 +1596,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:28d00036",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step5",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step13",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -1257,7 +1604,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:28d00036",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step6",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step14",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -1265,7 +1612,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:28d00036",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step7",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step15",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -1273,7 +1620,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:28d00036",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step8",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step16",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -1281,7 +1628,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:28d00036",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step17",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -1289,7 +1636,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:28ed5103",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step2",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step4",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -1297,7 +1644,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:b1c9dbba",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step4",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step8",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -1305,7 +1652,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:d85b3adb",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step1",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -1313,7 +1660,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:e0a079b1",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step6",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -1329,8 +1676,64 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step21",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step1",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step18",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step27",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step5",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step7",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     }
   ]

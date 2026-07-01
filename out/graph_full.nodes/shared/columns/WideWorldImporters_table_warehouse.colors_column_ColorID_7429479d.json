@@ -13,6 +13,31 @@
     "ordinal": 1
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:warehouse.colors:DEFAULT:7fd28ba5",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_warehouse.colors_DEFAULT_7fd28ba5_04d1ddc9.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.colors",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitems:column:ColorID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_ColorID_cdf26cef.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItems_ColorID_Warehouse_Colors"
+      }
+    }
+  ],
   "edges_out": []
 }

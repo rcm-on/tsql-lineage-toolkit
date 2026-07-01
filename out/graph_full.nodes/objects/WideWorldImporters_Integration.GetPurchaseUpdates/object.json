@@ -52,7 +52,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 12,
+          "line_no": 11,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -60,6 +60,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Purchasing.PurchaseOrders"
@@ -73,7 +74,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 33,
+          "line_no": 32,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -81,6 +82,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -114,7 +116,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:LastEditedWhen",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_LastEditedWhen_0f8c9e4e.json"
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_LastEditedWhen_0f8c9e4e.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -122,7 +133,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:PackageTypeID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_PackageTypeID_435188ac.json"
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_PackageTypeID_435188ac.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -130,7 +150,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:PurchaseOrderID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_PurchaseOrderID_a8aeb62f.json"
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_PurchaseOrderID_a8aeb62f.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -138,7 +167,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.purchaseorderlines:column:StockItemID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_StockItemID_3991d097.json"
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_StockItemID_3991d097.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -146,7 +184,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.purchaseorders:column:LastEditedWhen",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorders_column_LastEditedWhen_e1cc3cf6.json"
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorders_column_LastEditedWhen_e1cc3cf6.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -154,7 +201,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.purchaseorders:column:PurchaseOrderID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorders_column_PurchaseOrderID_9a3b7b15.json"
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorders_column_PurchaseOrderID_9a3b7b15.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -162,7 +218,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.packagetypes:column:PackageTypeID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_PackageTypeID_bf4218cb.json"
+      "path": "shared/columns/WideWorldImporters_table_warehouse.packagetypes_column_PackageTypeID_bf4218cb.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -170,7 +235,16 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems:column:StockItemID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_StockItemID_46c2e34c.json"
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_StockItemID_46c2e34c.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -334,6 +408,14 @@
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetPurchaseUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
     }
   ]
 }

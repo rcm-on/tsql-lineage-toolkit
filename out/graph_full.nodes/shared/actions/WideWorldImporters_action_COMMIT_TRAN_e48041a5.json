@@ -10,7 +10,7 @@
     "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step9",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step12",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
       }
@@ -18,7 +18,7 @@
     "WideWorldImporters::Application.Configuration_ApplyPartitioning": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step21",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step27",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
       }
@@ -34,7 +34,7 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step11",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -51,13 +51,13 @@
   "edges_in": [
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step9",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step12",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step21",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step27",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
@@ -69,7 +69,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step11",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },

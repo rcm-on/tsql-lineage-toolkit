@@ -28,6 +28,15 @@
       "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.people",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "ordinal": 12
+      }
     }
   ],
   "edges_out": [
@@ -37,8 +46,13 @@
       "to_label": "Column",
       "path": "shared/columns/WideWorldImporters_table_application.people_column_IsPermittedToLogon_6b16c213.json",
       "props": {
-        "line_no": 12,
-        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0"
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
       }
     },
     {
@@ -47,8 +61,27 @@
       "to_label": "Column",
       "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
       "props": {
-        "line_no": 12,
-        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0"
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:<>",
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.people:column:PersonID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
+      "props": {
+        "logic": "(SELECT UserPreferences  FROM   [Application].People  WHERE  PersonID = 1)",
+        "line_no": 11,
+        "caused_by_step": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
+        "op_kinds": [
+          "compare:="
+        ]
       }
     }
   ]

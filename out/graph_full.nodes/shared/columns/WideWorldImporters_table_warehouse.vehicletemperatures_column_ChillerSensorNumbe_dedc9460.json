@@ -13,6 +13,14 @@
     "ordinal": 3
   },
   "refs": {
+    "WideWorldImporters::Application.Configuration_EnableInMemory": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      }
+    ],
     "WideWorldImporters::Website.RecordVehicleTemperature": [
       {
         "type": "WRITES_COLUMN",
@@ -33,6 +41,12 @@
   "edges_in": [
     {
       "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
       "from": "WideWorldImporters::Website.RecordVehicleTemperature#step3",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.RecordVehicleTemperature/object.json"
@@ -42,7 +56,38 @@
       "from": "WideWorldImporters::Website.VehicleTemperatures#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.vehicletemperatures:column:ChillerSensorNumber",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.vehicletemperatures_column_ChillerSensorNumber_98942a20.json",
+      "props": {
+        "logic": "vt.ChillerSensorNumber",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json",
+      "props": {
+        "ordinal": 3
+      }
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures_backup:column:ChillerSensorNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_backup_column_ChillerSens_d7fb314f.json",
+      "props": {
+        "logic": "ChillerSensorNumber",
+        "line_no": 1,
+        "caused_by_step": "WideWorldImporters::Application.Configuration_EnableInMemory#step18"
+      }
+    }
+  ]
 }

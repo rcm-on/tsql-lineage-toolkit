@@ -6,13 +6,23 @@
   "properties": {
     "name": "ValidTo",
     "table": "application.cities_archive",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": false,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 8
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.cities_archive",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_archive_47638bf7.json",
+      "props": {
+        "ordinal": 8
+      }
+    }
+  ],
   "edges_out": []
 }

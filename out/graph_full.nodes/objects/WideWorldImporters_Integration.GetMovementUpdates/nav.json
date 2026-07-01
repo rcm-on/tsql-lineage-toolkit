@@ -8,11 +8,19 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemtransactions_3348b64c.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemtransactions_3348b64c.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.StockItemTransactions"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetMovementUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/nav.json"
     }
   ]
 }

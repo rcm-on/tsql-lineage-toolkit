@@ -13,7 +13,7 @@
   "edges_out": [
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step3",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step7",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
     },

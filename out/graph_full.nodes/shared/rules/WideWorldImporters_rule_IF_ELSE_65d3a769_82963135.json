@@ -9,8 +9,45 @@
     "expression": "NOT (SERVERPROPERTY(N'IsFullTextInstalled') = 0)"
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "NESTED_IN",
+      "from": "WideWorldImporters:rule:IF:04760a6d",
+      "from_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_04760a6d_2a460d76.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "from": "WideWorldImporters:rule:IF:36ea1163",
+      "from_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_36ea1163_aae03c2a.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "from": "WideWorldImporters:rule:IF:83976488",
+      "from_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_83976488_087dfa34.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "from": "WideWorldImporters:rule:IF:af98b638",
+      "from_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_af98b638_dd9adb4c.json"
+    },
+    {
+      "type": "NESTED_IN",
+      "from": "WideWorldImporters:rule:IF:f8f7177e",
+      "from_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_f8f7177e_81c2304f.json"
+    }
+  ],
   "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
     {
       "type": "GOVERNS",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step10",
@@ -43,7 +80,43 @@
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step5",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step15",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step16",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step17",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step18",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step19",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step2",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step4",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
     },
@@ -55,19 +128,7 @@
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step7",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
-    },
-    {
-      "type": "GOVERNS",
       "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step8",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step9",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
     }

@@ -9,23 +9,30 @@
     "expression": "ON ERROR"
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "NESTED_IN",
+      "from": "WideWorldImporters:rule:IF:96cd9fce",
+      "from_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_96cd9fce_894de43c.json"
+    }
+  ],
   "edges_out": [
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step3",
+      "to": "WideWorldImporters::Application.Configuration_ApplyAuditing#step6",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step10",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step13",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
     },
@@ -37,13 +44,13 @@
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step30",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step34",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step6",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
     },
@@ -55,7 +62,7 @@
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+      "to": "WideWorldImporters::Application.CreateRoleIfNonexistent#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
     },
@@ -73,13 +80,13 @@
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step13",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step11",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step14",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },

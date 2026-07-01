@@ -52,6 +52,15 @@
       "from": "WideWorldImporters::Integration.GetCityUpdates#step6",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.stateprovinces",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "ordinal": 5
+      }
     }
   ],
   "edges_out": []

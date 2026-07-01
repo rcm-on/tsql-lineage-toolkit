@@ -18,7 +18,16 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+        "props": {
+          "op_kinds": [
+            "case:CASE",
+            "compare:<=",
+            "compare:=",
+            "compare:>",
+            "logical:AND"
+          ]
+        }
       }
     ],
     "WideWorldImporters::Integration.GetSaleUpdates": [
@@ -26,7 +35,16 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+        "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+        "props": {
+          "op_kinds": [
+            "case:CASE",
+            "compare:<=",
+            "compare:=",
+            "compare:>",
+            "logical:AND"
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.CalculateCustomerPrice": [
@@ -34,7 +52,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.CalculateCustomerPrice#step1",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.SearchForStockItems": [
@@ -59,19 +82,42 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Integration.GetPurchaseUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/object.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Integration.GetSaleUpdates#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json"
+      "path": "objects/WideWorldImporters_Integration.GetSaleUpdates/object.json",
+      "props": {
+        "op_kinds": [
+          "case:CASE",
+          "compare:<=",
+          "compare:=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#step1",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -84,6 +130,84 @@
       "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:warehouse.stockitems:DEFAULT:a300032d",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_warehouse.stockitems_DEFAULT_a300032d_deb976a1.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.purchaseorderlines:column:StockItemID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorderlines_column_StockItemID_3991d097.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrderLines_StockItemID_Warehouse_StockItems"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.invoicelines:column:StockItemID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoicelines_column_StockItemID_f273d53f.json",
+      "props": {
+        "constraint": "FK_Sales_InvoiceLines_StockItemID_Warehouse_StockItems"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.orderlines:column:StockItemID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.orderlines_column_StockItemID_0d786950.json",
+      "props": {
+        "constraint": "FK_Sales_OrderLines_StockItemID_Warehouse_StockItems"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.specialdeals:column:StockItemID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StockItemID_e985c135.json",
+      "props": {
+        "constraint": "FK_Sales_SpecialDeals_StockItemID_Warehouse_StockItems"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitemholdings:column:StockItemID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_StockItemID_09ba3f31.json",
+      "props": {
+        "constraint": "PKFK_Warehouse_StockItemHoldings_StockItemID_Warehouse_StockItems"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockItemID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockItemID_7202250e.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemStockGroups_StockItemID_Warehouse_StockItems"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitemtransactions:column:StockItemID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_StockItemID_098d95c4.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_StockItemID_Warehouse_StockItems"
+      }
     }
   ],
   "edges_out": []

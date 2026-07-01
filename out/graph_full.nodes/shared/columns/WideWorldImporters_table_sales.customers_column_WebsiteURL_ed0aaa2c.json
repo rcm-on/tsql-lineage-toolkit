@@ -28,6 +28,25 @@
       "from": "WideWorldImporters::Website.Customers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.Customers/object.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.customers:column:WebsiteURL",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_WebsiteURL_949f0404.json",
+      "props": {
+        "logic": "s.WebsiteURL",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.customers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "ordinal": 21
+      }
     }
   ],
   "edges_out": []

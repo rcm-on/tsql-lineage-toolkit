@@ -24,9 +24,14 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "FILTERS_ON",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ]
   },
@@ -39,9 +44,62 @@
     },
     {
       "type": "FILTERS_ON",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:warehouse.stockitemholdings:column:LastEditedBy",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_LastEditedBy_fa4c1f94.json",
+      "props": {
+        "line_no": 107,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:warehouse.stockitemholdings:column:LastEditedWhen",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_LastEditedWhen_52f4bed6.json",
+      "props": {
+        "line_no": 107,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:warehouse.stockitemholdings:column:QuantityOnHand",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_QuantityOnHand_f6fd5627.json",
+      "props": {
+        "line_no": 107,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitemholdings",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemholdings_7baae308.json",
+      "props": {
+        "ordinal": 1
+      }
     }
   ],
   "edges_out": [

@@ -13,13 +13,13 @@
   "edges_out": [
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#step2",
+      "to": "WideWorldImporters::Website.ActivateWebsiteLogon#step3",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
     },

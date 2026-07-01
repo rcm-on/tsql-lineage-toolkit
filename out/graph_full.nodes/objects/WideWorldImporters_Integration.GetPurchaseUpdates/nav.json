@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.purchaseorderlines",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorderlines_45de4778.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorderlines_45de4778.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Purchasing.PurchaseOrderLines",
@@ -21,7 +21,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.purchaseorders",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorders_a4740742.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorders_a4740742.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Purchasing.PurchaseOrders"
@@ -33,7 +33,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.PackageTypes",
@@ -46,12 +46,20 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.StockItems",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetPurchaseUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetPurchaseUpdates/nav.json"
     }
   ]
 }

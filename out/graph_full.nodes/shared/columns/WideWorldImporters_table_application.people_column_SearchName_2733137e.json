@@ -6,8 +6,8 @@
   "properties": {
     "name": "SearchName",
     "table": "application.people",
-    "data_type": "NVARCHAR (101)",
-    "is_nullable": false,
+    "data_type": "",
+    "is_nullable": true,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 4
@@ -18,7 +18,14 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.SearchForPeople#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "compare:=",
+            "pattern:LIKE"
+          ]
+        }
       }
     ]
   },
@@ -27,8 +34,51 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.SearchForPeople#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForPeople/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "compare:=",
+          "pattern:LIKE"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.people",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "ordinal": 4
+      }
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.people:column:FullName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_FullName_af371d2e.json",
+      "props": {
+        "logic": "(concat([PreferredName], N' ', [FullName]))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:CONCAT"
+        ]
+      }
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:application.people:column:PreferredName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PreferredName_442d05e2.json",
+      "props": {
+        "logic": "(concat([PreferredName], N' ', [FullName]))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:CONCAT"
+        ]
+      }
+    }
+  ]
 }

@@ -59,7 +59,7 @@
         // cuando exista para que el enlace y la expansión recursiva de EXEC funcionen.
         const targetsEdge = outOf(s.Id, 'TARGETS')[0];
         const target = targetsEdge ? nameOf(targetsEdge.EndNodeId) : (p.target_name || '');
-        level.push({ kind: 'step', action: p.action, detail: p.detail || '', target, dynamic: !!p.is_dynamic_sql, dynSql: p.dynamic_sql || '', line: p.line_no, sqlFrom, filters });
+        level.push({ kind: 'step', action: p.action, detail: p.detail || '', target, dynamic: !!p.is_dynamic_sql, dynSql: p.dynamic_sql || '', line: p.line_no, sqlFrom, filters, selectStar: !!p.select_star });
       }
       return root;
     }
@@ -90,6 +90,7 @@
         buildsSql: incOf(v.Id, 'BUILDS_SQL_FROM').length,
         assignedFrom: outOf(v.Id, 'ASSIGNED_FROM').map(r => { const c = byId[r.EndNodeId]; return `${c.Properties.table}(${c.Properties.name})`; }),
         construction: v.Properties.construction || [],   // RHS de cada asignación (arma SQL dinámico / valor de retorno)
+        opKinds: v.Properties.op_kinds || [],            // operadores unidos de todas sus asignaciones (concat:+ = arma string)
       }));
       const params = outOf(id, 'HAS_PARAMETER').map(r => byId[r.EndNodeId]).map(p => ({ name: p.Properties.name, type: p.Properties.data_type, out: !!p.Properties.is_output }));
 
@@ -127,12 +128,30 @@
         stats: planStats,
       } : null;
 
+      // ── TRIGGERS (creados dinámicamente por un proc) ──────────────
+      // Nodo :SqlObject con label Trigger: no tiene cuerpo propio modelado (Fase A),
+      // pero sí su tabla ON, evento/timing y quién lo CREATES. Ver
+      // docs/dynamic-trigger-modeling-spec.md.
+      const isTrigger = has(n, 'Trigger') || P.object_type === 'TRIGGER';
+      const triggerOn = isTrigger
+        ? [...new Set(outOf(id, 'ON').map(r => byId[r.EndNodeId] && byId[r.EndNodeId].Properties.name).filter(Boolean))]
+        : [];
+      const createdBy = isTrigger
+        ? [...new Set(incOf(id, 'CREATES').map(r => nameOf(r.StartNodeId)))]
+        : [];
+      // Para un proc (no-trigger): los triggers que ESTE objeto crea (arista CREATES saliente).
+      const createsTriggers = !isTrigger
+        ? outOf(id, 'CREATES').map(r => nameOf(r.EndNodeId)).filter(Boolean)
+        : [];
+
       return {
         kind: 'object', name: P.full_name,
         complexity: P.cyclomatic_complexity || 1, hasTx: !!P.has_transaction, hasErr: !!P.has_error_handling,
         hasCursor: !!P.has_cursor, dyn: P.dynamic_sql_calls || 0, parseError: P.parse_error || '',
         params, vars, callsOut, callsIn, reads: [...reads], writes: [...writes.values()], writesByTable,
         steps: steps.length, flow: buildFlowTree(steps), runtime,
+        isTrigger, triggerOn, createdBy, createsTriggers,
+        triggerEvents: P.trigger_events || [], triggerTiming: P.trigger_timing || '',
       };
     });
 
@@ -147,15 +166,21 @@
           // outgoing edges off this column are "what it's computed from".
           derivesFrom: outOf(c.Id, 'DERIVES_FROM').map(r2 => {
             const src = byId[r2.EndNodeId];
-            return { table: src.Properties.table || '', column: src.Properties.name || '', logic: r2.Properties.logic || '', line: r2.Properties.line_no, step: r2.Properties.caused_by_step || '' };
+            // op_kinds: structured operators of the formula (arith:*, func:SUM, cast:...),
+            // the queryable complement to the raw `logic` text - see OperatorClassifier.
+            // via_computed_column marks a DDL computed column (CREATE TABLE ... AS (expr))
+            // vs. a procedure's INSERT...SELECT lineage.
+            return { table: src.Properties.table || '', column: src.Properties.name || '', logic: r2.Properties.logic || '', ops: r2.Properties.op_kinds || [], computed: !!r2.Properties.via_computed_column, line: r2.Properties.line_no, step: r2.Properties.caused_by_step || '' };
           }),
           // CONDITIONED_BY points WRITTEN column -> WHERE/JOIN-ON filter column
           // (business-rule lineage, not a calculation - no "logic" expression).
           conditionedBy: outOf(c.Id, 'CONDITIONED_BY').map(r2 => {
             const flt = byId[r2.EndNodeId];
-            return { table: flt.Properties.table || '', column: flt.Properties.name || '', line: r2.Properties.line_no, step: r2.Properties.caused_by_step || '' };
+            return { table: flt.Properties.table || '', column: flt.Properties.name || '', ops: r2.Properties.op_kinds || [], line: r2.Properties.line_no, step: r2.Properties.caused_by_step || '' };
           }),
-        }));
+        }))
+        // A column is computed when any of its DERIVES_FROM edges is a DDL computed column.
+        .map(c => ({ ...c, computed: c.derivesFrom.some(d => d.computed) }));
 
       const writers = [], readers = [], seenW = new Set(), seenR = new Set();
       const opCounts = {};
@@ -173,14 +198,75 @@
       const fkIn = incOf(id, 'FK_TO').map(r => ({ table: byId[r.StartNodeId].Properties.name, constraint: r.Properties.constraint || '' }));
 
       const ops = Object.entries(opCounts).sort((a, b) => b[1] - a[1]);
+      // Triggers que se disparan cuando ESTA tabla cambia (arista ON entrante). Ángulo de
+      // impacto: "si toco esta tabla, qué triggers saltan y ante qué evento".
+      const triggers = incOf(id, 'ON').map(r => {
+        const trg = byId[r.StartNodeId];
+        return {
+          name: nameOf(r.StartNodeId),
+          events: (r.Properties && r.Properties.events) || (trg && trg.Properties.trigger_events) || [],
+          timing: (r.Properties && r.Properties.timing) || (trg && trg.Properties.trigger_timing) || '',
+        };
+      });
+
       const totalCalls = ops.reduce((s, e) => s + e[1], 0);
-      const relations = writers.length + readers.length + fkOut.length + fkIn.length;
+      const relations = writers.length + readers.length + fkOut.length + fkIn.length + triggers.length;
 
       // Tabla temporal de SQL Server (#local / ##global): staging en tempdb, no es
       // esquema persistente. Se marca para distinguirla de las tablas reales.
       const temp = /^#/.test((P.name || '').split('.').pop());
-      return { kind: 'table', name: P.name, temp, columns, writers, readers, fkOut, fkIn, ops, totalCalls, relations };
+      return { kind: 'table', name: P.name, temp, columns, writers, readers, fkOut, fkIn, ops, totalCalls, relations, triggers };
     });
+
+    // ── Column-level DERIVES_FROM adjacency (for transitive depth/chain) ──────
+    // DERIVES_FROM points TARGET column -> SOURCE column. We index both directions
+    // off the raw edges so a walker (collineage.js) can answer, from any column:
+    //   up   = provenance ("what is this ultimately computed from", target->sources)
+    //   down = impact     ("what breaks if this changes",          source->targets)
+    // Keyed by "table.column" (lowercased) so source/target columns resolve across
+    // tables. Each edge carries logic + op_kinds so the chain shows *how* at each hop.
+    const colAdj = { up: {}, down: {}, info: {} };
+    const colKeyOf = n => `${(n.Properties.table || '').toLowerCase()}.${(n.Properties.name || '').toLowerCase()}`;
+    for (const r of R) {
+      if (r.Type !== 'DERIVES_FROM') continue;
+      const tgt = byId[r.StartNodeId], src = byId[r.EndNodeId];
+      if (!tgt || !src) continue;
+      const tk = colKeyOf(tgt), sk = colKeyOf(src);
+      colAdj.info[tk] = { table: tgt.Properties.table || '', column: tgt.Properties.name || '' };
+      colAdj.info[sk] = { table: src.Properties.table || '', column: src.Properties.name || '' };
+      const edge = { logic: r.Properties.logic || '', ops: r.Properties.op_kinds || [], computed: !!r.Properties.via_computed_column };
+      (colAdj.up[tk] || (colAdj.up[tk] = [])).push({ key: sk, ...colAdj.info[sk], ...edge });
+      (colAdj.down[sk] || (colAdj.down[sk] = [])).push({ key: tk, ...colAdj.info[tk], ...edge });
+    }
+
+    // ── Inventario de "derivados": columnas calculadas + variables ───────────
+    // Un único sitio que recopila todo lo que se *calcula* (no se almacena tal
+    // cual): columnas computed de DDL (con su fórmula, op_kinds y de qué dependen)
+    // y variables de procedimientos (con su construcción + op_kinds, marcando las
+    // que concatenan SQL dinámico). Material directo para el rule engine.
+    const computedColumns = [];
+    for (const t of tables)
+      for (const c of t.columns)
+        if (c.computed)
+          computedColumns.push({
+            table: t.name, column: c.name, type: c.type,
+            logic: (c.derivesFrom[0] || {}).logic || '',
+            ops: [...new Set([].concat(...c.derivesFrom.map(d => d.ops || [])))],
+            sources: c.derivesFrom.map(d => ({ table: d.table, column: d.column })),
+          });
+
+    const variablesInv = [];
+    for (const o of objects)
+      for (const v of (o.vars || [])) {
+        const ops = v.opKinds || [];
+        const construction = v.construction || [];
+        if (!ops.length && !construction.length) continue;   // declaración trivial: omitir
+        variablesInv.push({
+          object: o.name, name: v.name, type: v.type, ops, construction,
+          dynamic: ops.includes('concat:+') || ops.includes('arith:+'),
+        });
+      }
+    const derived = { computedColumns, variables: variablesInv };
 
     const byName = {};
     for (const o of objects) byName[o.name] = o;
@@ -200,11 +286,11 @@
       hotspotWrites: Object.entries(writeCounts).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([table, count]) => ({ table, count })),
     };
 
-    const entities = objects.map(o => ({ name: o.name, kind: 'object', complexity: o.complexity, dyn: o.dyn, parseError: o.parseError }))
+    const entities = objects.map(o => ({ name: o.name, kind: 'object', complexity: o.complexity, dyn: o.dyn, parseError: o.parseError, isTrigger: o.isTrigger }))
       .concat(tables.map(t => ({ name: t.name, kind: 'table', cols: t.columns.length, temp: t.temp })))
       .sort((a, b) => a.name.localeCompare(b.name));
 
-    return { database, objects, tables, byName, entities, general };
+    return { database, objects, tables, byName, entities, general, colAdj, derived };
   }
 
   SD.shape = function (raw, dbHint) {

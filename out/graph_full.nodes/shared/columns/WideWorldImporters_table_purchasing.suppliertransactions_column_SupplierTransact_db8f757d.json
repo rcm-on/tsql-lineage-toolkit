@@ -13,6 +13,22 @@
     "ordinal": 1
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:purchasing.suppliertransactions:DEFAULT:9a74aafd",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.suppliertransactions_DEFAULT_9a74aafd_497f315e.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliertransactions_96862ed5.json",
+      "props": {
+        "ordinal": 1
+      }
+    }
+  ],
   "edges_out": []
 }

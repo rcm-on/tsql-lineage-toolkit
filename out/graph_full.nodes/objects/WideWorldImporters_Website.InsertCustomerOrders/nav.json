@@ -21,7 +21,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orders",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.Orders"
@@ -33,7 +33,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Warehouse.StockItems",
@@ -46,11 +46,19 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orderlines",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.OrderLines"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.InsertCustomerOrders",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/nav.json"
     }
   ]
 }

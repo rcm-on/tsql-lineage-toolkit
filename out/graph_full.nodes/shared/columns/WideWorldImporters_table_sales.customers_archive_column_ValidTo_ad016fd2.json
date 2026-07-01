@@ -6,13 +6,23 @@
   "properties": {
     "name": "ValidTo",
     "table": "sales.customers_archive",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": false,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 31
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.customers_archive",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_archive_34abf379.json",
+      "props": {
+        "ordinal": 31
+      }
+    }
+  ],
   "edges_out": []
 }

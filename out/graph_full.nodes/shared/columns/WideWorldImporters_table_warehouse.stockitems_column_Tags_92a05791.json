@@ -6,7 +6,7 @@
   "properties": {
     "name": "Tags",
     "table": "warehouse.stockitems",
-    "data_type": "NVARCHAR (MAX)",
+    "data_type": "",
     "is_nullable": true,
     "is_identity": false,
     "is_primary_key": false,
@@ -18,7 +18,13 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "pattern:LIKE"
+          ]
+        }
       }
     ]
   },
@@ -27,8 +33,37 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.SearchForStockItemsByTags#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForStockItemsByTags/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "pattern:LIKE"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "ordinal": 21
+      }
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:CustomFields",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_CustomFields_df0c01dc.json",
+      "props": {
+        "logic": "(json_query([CustomFields], N'$.Tags'))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:JSON_QUERY"
+        ]
+      }
+    }
+  ]
 }

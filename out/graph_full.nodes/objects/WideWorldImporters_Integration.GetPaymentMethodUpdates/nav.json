@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.paymentmethods_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_archive_81624014.json",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_archive_81624014.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].PaymentMethods_Archive"
@@ -20,7 +20,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.paymentmethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].PaymentMethods"
@@ -32,12 +32,20 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.paymentmethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].PaymentMethods",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetPaymentMethodUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/nav.json"
     }
   ]
 }

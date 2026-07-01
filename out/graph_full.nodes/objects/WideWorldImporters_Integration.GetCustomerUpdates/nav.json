@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customercategories_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_archive_0ed7865f.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_archive_0ed7865f.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.CustomerCategories_Archive"
@@ -20,7 +20,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.CustomerCategories"
@@ -32,7 +32,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].People",
@@ -45,7 +45,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.BuyingGroups",
@@ -58,7 +58,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.CustomerCategories",
@@ -71,7 +71,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.Customers",
@@ -84,7 +84,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.buyinggroups_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_archive_2815d8e7.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_archive_2815d8e7.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.BuyingGroups_Archive"
@@ -96,7 +96,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_archive_34abf379.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_archive_34abf379.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.Customers_Archive"
@@ -108,7 +108,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.Customers"
@@ -120,7 +120,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].People",
@@ -133,7 +133,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.BuyingGroups",
@@ -146,7 +146,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.CustomerCategories",
@@ -159,7 +159,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.Customers",
@@ -172,7 +172,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.BuyingGroups"
@@ -184,7 +184,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].People",
@@ -197,7 +197,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.BuyingGroups",
@@ -210,7 +210,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.CustomerCategories",
@@ -223,12 +223,20 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Sales.Customers",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetCustomerUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/nav.json"
     }
   ]
 }

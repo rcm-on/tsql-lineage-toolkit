@@ -6,13 +6,23 @@
   "properties": {
     "name": "ValidTo",
     "table": "application.stateprovinces",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": false,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 10
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.stateprovinces",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "ordinal": 10
+      }
+    }
+  ],
   "edges_out": []
 }

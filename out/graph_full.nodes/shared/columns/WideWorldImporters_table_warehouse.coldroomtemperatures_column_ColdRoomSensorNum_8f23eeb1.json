@@ -16,7 +16,7 @@
     "WideWorldImporters::Application.Configuration_EnableInMemory": [
       {
         "type": "WRITES_COLUMN",
-        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
       }
@@ -26,7 +26,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+        "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       },
       {
         "type": "WRITES_COLUMN",
@@ -39,7 +44,7 @@
   "edges_in": [
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
@@ -47,14 +52,66 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "WRITES_COLUMN",
       "from": "WideWorldImporters::Website.RecordColdRoomTemperatures#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:RecordedWhen",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_RecordedWhen_2822c656.json",
+      "props": {
+        "line_no": 29,
+        "caused_by_step": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "CONDITIONED_BY",
+      "from": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:Temperature",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_Temperature_c7ddbf93.json",
+      "props": {
+        "line_no": 29,
+        "caused_by_step": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "props": {
+        "ordinal": 2
+      }
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures_backup:column:ColdRoomSensorNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_backup_column_ColdRoomSe_1ac3df65.json",
+      "props": {
+        "logic": "ColdRoomSensorNumber",
+        "line_no": 1,
+        "caused_by_step": "WideWorldImporters::Application.Configuration_EnableInMemory#step9"
+      }
+    }
+  ]
 }

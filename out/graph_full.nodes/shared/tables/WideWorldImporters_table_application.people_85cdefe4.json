@@ -8,6 +8,21 @@
     "name": "Application.People"
   },
   "refs": {
+    "WideWorldImporters::Application.TR_Application_People_DataLoad_Modify": [
+      {
+        "type": "ON",
+        "from": "WideWorldImporters::Application.TR_Application_People_DataLoad_Modify",
+        "from_label": "SqlObject",
+        "path": "objects/WideWorldImporters_Application.TR_Application_People_DataLoad_Modify/object.json",
+        "props": {
+          "events": [
+            "INSERT",
+            "UPDATE"
+          ],
+          "timing": "After"
+        }
+      }
+    ],
     "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures": [
       {
         "type": "AFFECTS",
@@ -33,7 +48,7 @@
       },
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step9",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step11",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
         "props": {
@@ -67,7 +82,7 @@
       },
       {
         "type": "WRITES_TO",
-        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step9",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step11",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
         "props": {
@@ -160,6 +175,16 @@
     ],
     "WideWorldImporters::Website.ActivateWebsiteLogon": [
       {
+        "type": "READS_FROM",
+        "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+        "props": {
+          "action_type": "SELECT",
+          "table": "[Application].People"
+        }
+      },
+      {
         "type": "WRITES_TO",
         "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
         "from_label": "Step",
@@ -249,6 +274,19 @@
   },
   "edges_in": [
     {
+      "type": "ON",
+      "from": "WideWorldImporters::Application.TR_Application_People_DataLoad_Modify",
+      "from_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.TR_Application_People_DataLoad_Modify/object.json",
+      "props": {
+        "events": [
+          "INSERT",
+          "UPDATE"
+        ],
+        "timing": "After"
+      }
+    },
+    {
       "type": "AFFECTS",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
       "from_label": "SqlObject",
@@ -270,7 +308,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step9",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step11",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json",
       "props": {
@@ -300,7 +338,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step9",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step11",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json",
       "props": {
@@ -385,6 +423,16 @@
       }
     },
     {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].People"
+      }
+    },
+    {
       "type": "WRITES_TO",
       "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step0",
       "from_label": "Step",
@@ -457,6 +505,393 @@
         "table": "[Application].People",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_application_be37960c.json"
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:application.cities",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "constraint": "FK_Application_Cities_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:application.countries",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "props": {
+        "constraint": "FK_Application_Countries_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:application.deliverymethods",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "props": {
+        "constraint": "FK_Application_DeliveryMethods_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:application.paymentmethods",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "props": {
+        "constraint": "FK_Application_PaymentMethods_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:application.people",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "constraint": "FK_Application_People_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:application.stateprovinces",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "constraint": "FK_Application_StateProvinces_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:application.systemparameters",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.systemparameters_c1b9684b.json",
+      "props": {
+        "constraint": "FK_Application_SystemParameters_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:application.transactiontypes",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "props": {
+        "constraint": "FK_Application_TransactionTypes_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.purchaseorderlines",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorderlines_45de4778.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrderLines_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.purchaseorders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorders_a4740742.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrders_ContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.purchaseorders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.purchaseorders_a4740742.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrders_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.suppliercategories",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierCategories_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.suppliers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_PrimaryContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.suppliers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_AlternateContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.suppliers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliertransactions_96862ed5.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierTransactions_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.buyinggroups",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "props": {
+        "constraint": "FK_Sales_BuyingGroups_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.customercategories",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "props": {
+        "constraint": "FK_Sales_CustomerCategories_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.customers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_PrimaryContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.customers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_AlternateContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.customers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.customertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customertransactions_39c8f4a7.json",
+      "props": {
+        "constraint": "FK_Sales_CustomerTransactions_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.invoicelines",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json",
+      "props": {
+        "constraint": "FK_Sales_InvoiceLines_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_SalespersonPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_PackedByPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_ContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_AccountsPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.orderlines",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "props": {
+        "constraint": "FK_Sales_OrderLines_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.orders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "constraint": "FK_Sales_Orders_SalespersonPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.orders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "constraint": "FK_Sales_Orders_PickedByPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.orders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "constraint": "FK_Sales_Orders_ContactPersonID_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.orders",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orders_a9709867.json",
+      "props": {
+        "constraint": "FK_Sales_Orders_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:sales.specialdeals",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.specialdeals_4d51a22a.json",
+      "props": {
+        "constraint": "FK_Sales_SpecialDeals_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:warehouse.colors",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "props": {
+        "constraint": "FK_Warehouse_Colors_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:warehouse.packagetypes",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "props": {
+        "constraint": "FK_Warehouse_PackageTypes_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:warehouse.stockgroups",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockGroups_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:warehouse.stockitemholdings",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemholdings_7baae308.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemHoldings_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItems_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:warehouse.stockitemstockgroups",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemstockgroups_86785893.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemStockGroups_Application_People"
+      }
+    },
+    {
+      "type": "FK_TO",
+      "from": "WideWorldImporters:table:warehouse.stockitemtransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemtransactions_3348b64c.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_Application_People"
+      }
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "from": "wf:WideWorldImporters:dataloadsimulation",
+      "from_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_dataloadsimulation_0b2c978e.json"
+    },
+    {
+      "type": "WORKFLOW_WRITES_TO",
+      "from": "wf:WideWorldImporters:website",
+      "from_label": "Workflow",
+      "path": "shared/other/wf_WideWorldImporters_website_f2cd2e0c.json"
     }
   ],
   "edges_out": [
@@ -657,6 +1092,12 @@
       "props": {
         "ordinal": 21
       }
+    },
+    {
+      "type": "HAS_RULE",
+      "to": "WideWorldImporters:bizrule:application.people:DEFAULT:28ede70d",
+      "to_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.people_DEFAULT_28ede70d_d0be0a13.json"
     }
   ]
 }

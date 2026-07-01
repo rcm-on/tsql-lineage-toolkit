@@ -32,7 +32,8 @@
           "construction": [
             "N'DROP SECURITY POLICY IF EXISTS [Application].FilterCustomersBySalesTerritoryRole;'",
             "N'DROP FUNCTION IF EXISTS [Application].DetermineCustomerAccess;'"
-          ]
+          ],
+          "op_kinds": []
         }
       }
     ],
@@ -45,7 +46,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 14,
+          "line_no": 13,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
@@ -53,6 +54,7 @@
           "detail": "",
           "dynamic_sql": "DROP SECURITY POLICY IF EXISTS [Application].FilterCustomersBySalesTerritoryRole;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
@@ -66,7 +68,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 17,
+          "line_no": 16,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
@@ -74,6 +76,7 @@
           "detail": "",
           "dynamic_sql": "DROP FUNCTION IF EXISTS [Application].DetermineCustomerAccess;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
@@ -87,7 +90,7 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 23,
+          "line_no": 22,
           "nesting_level": 1,
           "action": "THROW",
           "step_type": "Notification",
@@ -95,11 +98,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "CATCH: ON ERROR"
           ],
           "condition_keys": [
-            "CATCH#11"
+            "CATCH#10"
           ],
           "label": "THROW"
         }
@@ -180,6 +184,14 @@
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity#step2",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveRowLevelSecurity/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Application.Configuration_RemoveRowLevelSecurity/object.json"
     }
   ]

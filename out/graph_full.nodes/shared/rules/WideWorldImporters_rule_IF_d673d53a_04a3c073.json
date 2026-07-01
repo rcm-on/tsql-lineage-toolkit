@@ -13,24 +13,6 @@
   "edges_out": [
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step11",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step12",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "GOVERNS",
       "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step14",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
@@ -38,6 +20,30 @@
     {
       "type": "GOVERNS",
       "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step15",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step16",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step17",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step19",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },

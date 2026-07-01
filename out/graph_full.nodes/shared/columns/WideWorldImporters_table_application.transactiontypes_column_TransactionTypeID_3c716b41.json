@@ -13,6 +13,49 @@
     "ordinal": 1
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.transactiontypes:DEFAULT:1e65e75c",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.transactiontypes_DEFAULT_1e65e75c_41964e45.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.transactiontypes",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions:column:TransactionTypeID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliertransactions_column_TransactionTypeI_15ed1405.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierTransactions_TransactionTypeID_Application_TransactionTypes"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customertransactions:column:TransactionTypeID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customertransactions_column_TransactionTypeID_29a0746a.json",
+      "props": {
+        "constraint": "FK_Sales_CustomerTransactions_TransactionTypeID_Application_TransactionTypes"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitemtransactions:column:TransactionTypeID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_TransactionTypeI_1270bc13.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_TransactionTypeID_Application_TransactionTypes"
+      }
+    }
+  ],
   "edges_out": []
 }

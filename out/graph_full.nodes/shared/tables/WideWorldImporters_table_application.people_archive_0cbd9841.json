@@ -31,6 +31,12 @@
         "action_type": "SELECT",
         "table": "[Application].People_Archive"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_application_be37960c.json"
     }
   ],
   "edges_out": [

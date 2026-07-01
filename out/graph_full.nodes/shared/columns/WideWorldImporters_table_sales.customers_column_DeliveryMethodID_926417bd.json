@@ -18,13 +18,18 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Customers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Customers/object.json"
+        "path": "objects/WideWorldImporters_Website.Customers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "READS_COLUMN",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -35,13 +40,38 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Customers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      "path": "objects/WideWorldImporters_Website.Customers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:sales.invoices:column:DeliveryMethodID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_DeliveryMethodID_e3aced76.json",
+      "props": {
+        "logic": "c.DeliveryMethodID",
+        "line_no": 50,
+        "caused_by_step": "WideWorldImporters::Website.InvoiceCustomerOrders#step4"
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.customers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "props": {
+        "ordinal": 8
+      }
     }
   ],
   "edges_out": [

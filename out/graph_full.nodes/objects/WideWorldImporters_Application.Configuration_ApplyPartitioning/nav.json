@@ -1,5 +1,86 @@
 ﻿{
   "id": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
   "name": "Application.Configuration_ApplyPartitioning",
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.partition_functions",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.partition_functions_6460966a.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.partition_functions"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.partition_functions",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.partition_functions_6460966a.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.partition_functions"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.partition_schemes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.partition_schemes_56b55043.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.partition_schemes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.partition_schemes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.partition_schemes_56b55043.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.partition_schemes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/nav.json"
+    }
+  ]
 }

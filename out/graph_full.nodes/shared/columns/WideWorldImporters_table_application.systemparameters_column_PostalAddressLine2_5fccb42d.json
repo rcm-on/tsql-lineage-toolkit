@@ -13,6 +13,16 @@
     "ordinal": 8
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.systemparameters",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.systemparameters_c1b9684b.json",
+      "props": {
+        "ordinal": 8
+      }
+    }
+  ],
   "edges_out": []
 }

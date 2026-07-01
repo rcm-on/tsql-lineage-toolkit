@@ -8,7 +8,19 @@
       "from_label": "SqlObject",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.nav.json",
+      "props": {
+        "via": "WideWorldImporters::Application.Configuration_EnableInMemory",
+        "hops": 1
+      }
+    },
+    {
+      "type": "AFFECTS",
+      "from": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.nav.json",
       "props": {
         "via": "WideWorldImporters::Application.Configuration_EnableInMemory",
         "hops": 1
@@ -65,6 +77,14 @@
         "callee": "WideWorldImporters::Application.Configuration_EnableInMemory",
         "kind": "EXEC"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ConfigureForEnterpriseEdition/nav.json"
     }
   ]
 }

@@ -52,7 +52,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 8,
+          "line_no": 7,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -60,6 +60,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Warehouse.StockItems"
@@ -93,7 +94,13 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems:column:SearchDetails",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_SearchDetails_8e62eaed.json"
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_SearchDetails_8e62eaed.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "pattern:LIKE"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -137,6 +144,14 @@
       "from_label": "Step",
       "to": "WideWorldImporters::Website.SearchForStockItems#param:@SearchText",
       "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.SearchForStockItems",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json"
     }
   ]

@@ -6,8 +6,8 @@
   "properties": {
     "name": "SearchDetails",
     "table": "warehouse.stockitems",
-    "data_type": "NVARCHAR (MAX)",
-    "is_nullable": false,
+    "data_type": "",
+    "is_nullable": true,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 22
@@ -18,7 +18,13 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.SearchForStockItems#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json"
+        "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json",
+        "props": {
+          "op_kinds": [
+            "arith:+",
+            "pattern:LIKE"
+          ]
+        }
       }
     ]
   },
@@ -27,8 +33,50 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.SearchForStockItems#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json"
+      "path": "objects/WideWorldImporters_Website.SearchForStockItems/object.json",
+      "props": {
+        "op_kinds": [
+          "arith:+",
+          "pattern:LIKE"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "ordinal": 22
+      }
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:MarketingComments",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_MarketingComments_5759bf0e.json",
+      "props": {
+        "logic": "(concat([StockItemName], N' ', [MarketingComments]))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:CONCAT"
+        ]
+      }
+    },
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.stockitems:column:StockItemName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_StockItemName_d05eef54.json",
+      "props": {
+        "logic": "(concat([StockItemName], N' ', [MarketingComments]))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:CONCAT"
+        ]
+      }
+    }
+  ]
 }

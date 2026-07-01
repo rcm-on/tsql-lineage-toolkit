@@ -13,6 +13,22 @@
     "ordinal": 2
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.paymentmethods:UNIQUE:9df9a940",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.paymentmethods_UNIQUE_9df9a940_08a12469.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.paymentmethods",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "props": {
+        "ordinal": 2
+      }
+    }
+  ],
   "edges_out": []
 }

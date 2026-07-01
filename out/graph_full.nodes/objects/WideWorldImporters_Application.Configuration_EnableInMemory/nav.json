@@ -3,16 +3,98 @@
   "name": "Application.Configuration_EnableInMemory",
   "edges_out": [
     {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.filegroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.filegroups_378fd67b.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.filegroups"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures_backup",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_backup_7369095b.nav.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.VehicleTemperatures_Backup",
+        "via": "JOIN"
+      }
+    },
+    {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.nav.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.VehicleTemperatures"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures_backup",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_backup_d7c1aa62.nav.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.ColdRoomTemperatures_Backup",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Warehouse.ColdRoomTemperatures"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/nav.json"
     }
   ]
 }

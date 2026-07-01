@@ -6,7 +6,7 @@
   "properties": {
     "name": "PickingCompletedWhen",
     "table": "sales.orderlines",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": true,
     "is_identity": false,
     "is_primary_key": false,
@@ -42,6 +42,15 @@
       "from": "WideWorldImporters::Website.InsertCustomerOrders#step3",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.orderlines",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "props": {
+        "ordinal": 10
+      }
     }
   ],
   "edges_out": []

@@ -33,6 +33,14 @@
       "props": {
         "object_type": "PROCEDURE"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:dataloadsimulation",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_RemoveDataLoadSimulationProc/object.json"
     }
   ]
 }

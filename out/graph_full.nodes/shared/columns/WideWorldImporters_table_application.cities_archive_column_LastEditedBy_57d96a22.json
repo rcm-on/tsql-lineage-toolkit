@@ -13,6 +13,16 @@
     "ordinal": 6
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.cities_archive",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_archive_47638bf7.json",
+      "props": {
+        "ordinal": 6
+      }
+    }
+  ],
   "edges_out": []
 }

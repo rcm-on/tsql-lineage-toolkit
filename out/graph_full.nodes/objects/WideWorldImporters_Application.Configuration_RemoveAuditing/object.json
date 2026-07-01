@@ -31,7 +31,8 @@
           "default": "0",
           "construction": [
             "1"
-          ]
+          ],
+          "op_kinds": []
         }
       },
       {
@@ -47,7 +48,8 @@
             "N' DROP DATABASE AUDIT SPECIFICATION WWI_DatabaseAuditSpecification;'",
             "N' USE master;  DROP SERVER AUDIT SPECIFICATION WWI_ServerAuditSpecification;'",
             "N' USE master;  DROP SERVER AUDIT [WWI_Audit];'"
-          ]
+          ],
+          "op_kinds": []
         }
       }
     ],
@@ -60,23 +62,22 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 23,
-          "nesting_level": 2,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 18,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.database_audit_specifications",
           "detail": "",
-          "dynamic_sql": "DROP DATABASE AUDIT SPECIFICATION WWI_DatabaseAuditSpecification;",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
-            "IF: @AreDatabaseAuditSpecificationsSupported <> 0",
-            "IF: EXISTS (SELECT 1         FROM   sys.database_audit_specifications         WHERE  name = N'WWI_DatabaseAuditSpecification')"
+            "IF: @AreDatabaseAuditSpecificationsSupported <> 0"
           ],
           "condition_keys": [
-            "IF#17",
-            "IF#19"
+            "IF#16"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.database_audit_specifications"
         }
       },
       {
@@ -87,19 +88,22 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 33,
-          "nesting_level": 1,
+          "line_no": 22,
+          "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "DROP SERVER AUDIT SPECIFICATION WWI_ServerAuditSpecification;",
+          "dynamic_sql": "DROP DATABASE AUDIT SPECIFICATION WWI_DatabaseAuditSpecification;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
-            "IF: EXISTS (SELECT 1         FROM   sys.server_audit_specifications         WHERE  name = N'WWI_ServerAuditSpecification')"
+            "IF: @AreDatabaseAuditSpecificationsSupported <> 0",
+            "IF: EXISTS (SELECT 1         FROM   sys.database_audit_specifications         WHERE  name = N'WWI_DatabaseAuditSpecification')"
           ],
           "condition_keys": [
-            "IF#27"
+            "IF#16",
+            "IF#18"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -112,21 +116,18 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 42,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 26,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.server_audit_specifications",
           "detail": "",
-          "dynamic_sql": "DROP SERVER AUDIT [WWI_Audit];",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: EXISTS (SELECT 1         FROM   sys.server_audits         WHERE  name = N'WWI_Audit')"
-          ],
-          "condition_keys": [
-            "IF#36"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.server_audit_specifications"
         }
       },
       {
@@ -137,7 +138,81 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 49,
+          "line_no": 32,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP SERVER AUDIT SPECIFICATION WWI_ServerAuditSpecification;",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: EXISTS (SELECT 1         FROM   sys.server_audit_specifications         WHERE  name = N'WWI_ServerAuditSpecification')"
+          ],
+          "condition_keys": [
+            "IF#26"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_RemoveAuditing#step4",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 4,
+          "sequence": 5,
+          "line_no": 35,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.server_audits",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.server_audits"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_RemoveAuditing#step5",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 5,
+          "sequence": 6,
+          "line_no": 41,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP SERVER AUDIT [WWI_Audit];",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: EXISTS (SELECT 1         FROM   sys.server_audits         WHERE  name = N'WWI_Audit')"
+          ],
+          "condition_keys": [
+            "IF#35"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_RemoveAuditing#step6",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 6,
+          "sequence": 7,
+          "line_no": 48,
           "nesting_level": 1,
           "action": "THROW",
           "step_type": "Notification",
@@ -145,11 +220,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "CATCH: ON ERROR"
           ],
           "condition_keys": [
-            "CATCH#15"
+            "CATCH#14"
           ],
           "label": "THROW"
         }
@@ -172,17 +248,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step0",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step0",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+      "to": "WideWorldImporters:table:sys.database_audit_specifications",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.database_audit_specifications_4f8a05a4.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.database_audit_specifications"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -220,17 +300,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step2",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step2",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+      "to": "WideWorldImporters:table:sys.server_audit_specifications",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.server_audit_specifications_2e6f66bd.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.server_audit_specifications"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -244,6 +328,82 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.server_audits",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.server_audits_fc536493.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.server_audits"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step6",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:THROW",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
@@ -252,13 +412,13 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step6",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:0a5c32e0",
+      "from": "WideWorldImporters:rule:IF:05060b5c",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step0",
       "to_label": "Step",
@@ -266,9 +426,17 @@
     },
     {
       "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:0a5c32e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step1",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:0d6e4be3",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step2",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step5",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
     },
@@ -276,8 +444,16 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:436f8b8f",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step1",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_RemoveAuditing",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
     }
   ]

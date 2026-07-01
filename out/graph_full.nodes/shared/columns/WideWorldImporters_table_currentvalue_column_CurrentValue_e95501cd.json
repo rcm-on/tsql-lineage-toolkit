@@ -23,6 +23,12 @@
       "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@CurrentTableMaximumValue",
       "from_label": "Variable",
       "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:#currentvalue",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_currentvalue_876b3702.json"
     }
   ],
   "edges_out": []

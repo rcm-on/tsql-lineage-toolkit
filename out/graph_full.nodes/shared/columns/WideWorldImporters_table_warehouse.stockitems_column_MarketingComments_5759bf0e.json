@@ -13,6 +13,29 @@
     "ordinal": 17
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:warehouse.stockitems:column:SearchDetails",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_SearchDetails_8e62eaed.json",
+      "props": {
+        "logic": "(concat([StockItemName], N' ', [MarketingComments]))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:CONCAT"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "ordinal": 17
+      }
+    }
+  ],
   "edges_out": []
 }

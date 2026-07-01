@@ -52,6 +52,21 @@
       "from": "WideWorldImporters::Integration.GetCityUpdates#step6",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.stateprovinces:UNIQUE:dacbb6ce",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.stateprovinces_UNIQUE_dacbb6ce_a80bcc06.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.stateprovinces",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "ordinal": 3
+      }
     }
   ],
   "edges_out": []

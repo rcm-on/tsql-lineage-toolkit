@@ -18,7 +18,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Customers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Customers/object.json"
+        "path": "objects/WideWorldImporters_Website.Customers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ]
   },
@@ -27,7 +32,45 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Customers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      "path": "objects/WideWorldImporters_Website.Customers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:sales.customercategories:DEFAULT:d441d3f9",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_sales.customercategories_DEFAULT_d441d3f9_8e8555e3.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.customercategories",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customers:column:CustomerCategoryID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerCategoryID_59d1d96b.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_CustomerCategoryID_Sales_CustomerCategories"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.specialdeals:column:CustomerCategoryID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_CustomerCategoryID_d6c547bf.json",
+      "props": {
+        "constraint": "FK_Sales_SpecialDeals_CustomerCategoryID_Sales_CustomerCategories"
+      }
     }
   ],
   "edges_out": []

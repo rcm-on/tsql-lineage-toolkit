@@ -6,13 +6,23 @@
   "properties": {
     "name": "ValidTo",
     "table": "warehouse.stockitems_archive",
-    "data_type": "DATETIME2",
+    "data_type": "DATETIME2 (7)",
     "is_nullable": false,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 25
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems_archive",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_archive_ed3c2625.json",
+      "props": {
+        "ordinal": 25
+      }
+    }
+  ],
   "edges_out": []
 }

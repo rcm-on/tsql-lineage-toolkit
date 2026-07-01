@@ -9,8 +9,21 @@
     "expression": "CAST (SERVERPROPERTY(N'EngineEdition') AS INT) <> 5"
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "NESTED_IN",
+      "from": "WideWorldImporters:rule:IF:29021c6a",
+      "from_label": "Rule",
+      "path": "shared/rules/WideWorldImporters_rule_IF_29021c6a_04056d22.json"
+    }
+  ],
   "edges_out": [
+    {
+      "type": "GOVERNS",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
     {
       "type": "NESTED_IN",
       "to": "WideWorldImporters:rule:IF_ELSE:e7e944e0",

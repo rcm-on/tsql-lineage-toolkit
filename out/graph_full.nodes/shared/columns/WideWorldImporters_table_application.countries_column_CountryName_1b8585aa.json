@@ -52,6 +52,21 @@
       "from": "WideWorldImporters::Integration.GetCityUpdates#step6",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.countries:UNIQUE:9c668c1a",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.countries_UNIQUE_9c668c1a_ba933f1a.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.countries",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "props": {
+        "ordinal": 2
+      }
     }
   ],
   "edges_out": []

@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sys.indexes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.json",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "sys.indexes"
@@ -20,12 +20,56 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sys.tables",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "sys.tables",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.indexes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.indexes"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/nav.json"
     }
   ]
 }

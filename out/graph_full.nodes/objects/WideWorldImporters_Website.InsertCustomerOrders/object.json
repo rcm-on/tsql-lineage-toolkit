@@ -74,7 +74,8 @@
           "name": "@OrdersToGenerate",
           "data_type": "TABLE",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       }
     ],
@@ -87,7 +88,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 21,
+          "line_no": 20,
           "nesting_level": 0,
           "action": "INSERT",
           "step_type": "Staging",
@@ -95,6 +96,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "INSERT -> @OrdersToGenerate"
@@ -108,7 +110,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 27,
+          "line_no": 26,
           "nesting_level": 0,
           "action": "BEGIN_TRAN",
           "step_type": "Transaction",
@@ -116,6 +118,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "BEGIN_TRAN"
@@ -129,7 +132,7 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 29,
+          "line_no": 28,
           "nesting_level": 0,
           "action": "INSERT",
           "step_type": "Load",
@@ -137,6 +140,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "INSERT -> Sales.Orders"
@@ -150,7 +154,7 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 40,
+          "line_no": 39,
           "nesting_level": 0,
           "action": "INSERT",
           "step_type": "Load",
@@ -158,6 +162,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "INSERT -> Sales.OrderLines"
@@ -171,7 +176,7 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 54,
+          "line_no": 53,
           "nesting_level": 0,
           "action": "COMMIT_TRAN",
           "step_type": "Transaction",
@@ -179,6 +184,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "COMMIT_TRAN"
@@ -192,7 +198,7 @@
         "properties": {
           "order": 5,
           "sequence": 6,
-          "line_no": 58,
+          "line_no": 57,
           "nesting_level": 2,
           "action": "ROLLBACK",
           "step_type": "Transaction",
@@ -200,13 +206,14 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "CATCH: ON ERROR",
             "IF: XACT_STATE() <> 0"
           ],
           "condition_keys": [
-            "CATCH#25",
-            "IF#58"
+            "CATCH#24",
+            "IF#57"
           ],
           "label": "ROLLBACK"
         }
@@ -219,7 +226,7 @@
         "properties": {
           "order": 6,
           "sequence": 7,
-          "line_no": 60,
+          "line_no": 59,
           "nesting_level": 1,
           "action": "THROW",
           "step_type": "Notification",
@@ -227,11 +234,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "CATCH: ON ERROR"
           ],
           "condition_keys": [
-            "CATCH#25"
+            "CATCH#24"
           ],
           "label": "THROW"
         }
@@ -244,7 +252,7 @@
         "properties": {
           "order": 7,
           "sequence": 8,
-          "line_no": 61,
+          "line_no": 60,
           "nesting_level": 1,
           "action": "RETURN",
           "step_type": "Control",
@@ -252,11 +260,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "CATCH: ON ERROR"
           ],
           "condition_keys": [
-            "CATCH#25"
+            "CATCH#24"
           ],
           "label": "RETURN"
         }
@@ -269,7 +278,7 @@
         "properties": {
           "order": 8,
           "sequence": 9,
-          "line_no": 64,
+          "line_no": 63,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -277,6 +286,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -736,6 +746,14 @@
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.InsertCustomerOrders#step5",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.InsertCustomerOrders",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Website.InsertCustomerOrders/object.json"
     }
   ]

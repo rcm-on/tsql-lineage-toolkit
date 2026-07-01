@@ -70,6 +70,35 @@
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.customers:column:CityName",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_CityName_46149bdf.json",
+      "props": {
+        "logic": "c.CityName",
+        "via_view": true
+      }
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.suppliers:column:CityName",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.suppliers_column_CityName_639c5f6d.json",
+      "props": {
+        "logic": "c.CityName",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.cities",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "ordinal": 2
+      }
     }
   ],
   "edges_out": []

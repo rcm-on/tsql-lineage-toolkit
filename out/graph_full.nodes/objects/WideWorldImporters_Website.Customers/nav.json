@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].Cities",
@@ -21,7 +21,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.deliverymethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].DeliveryMethods",
@@ -34,7 +34,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].People",
@@ -47,7 +47,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.BuyingGroups",
@@ -60,7 +60,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.CustomerCategories",
@@ -73,11 +73,19 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Sales.Customers"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.Customers",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.Customers/nav.json"
     }
   ]
 }

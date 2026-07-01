@@ -155,6 +155,9 @@ public static class GraphExporter
         if (tableSchemas is { Count: > 0 })
             BuildTableSchemas(graph, tableSchemas, tableIds, columnIds, includeColumns);
 
+        if (includeColumns)
+            BuildViewLineage(graph, results, tableIds, columnIds);
+
         foreach (var r in results)
         {
             var (db, _) = SplitName(r.ObjectName);
@@ -253,6 +256,11 @@ public static class GraphExporter
                         // Assignment RHS texts ("'CREATE INDEX ' + @Name", ...) in
                         // source order - reconstructs how a dynamic-SQL string is built.
                         ["construction"] = r.VariableConstructions.TryGetValue(v.Name, out var ctor) ? ctor : new List<string>(),
+                        // Structured operators used across all assignments to this variable
+                        // (see OperatorClassifier) - e.g. ["concat:+"] flags a string built
+                        // by concatenation (dynamic-SQL injection surface), ["arith:*"] a
+                        // numeric computation. Empty for a plain literal/column assignment.
+                        ["op_kinds"] = r.VariableOpKinds.TryGetValue(v.Name, out var vops) ? vops : new List<string>(),
                     },
                 });
                 graph.Relationships.Add(new GraphRel
@@ -313,8 +321,12 @@ public static class GraphExporter
                         ["step_type"] = ClassifyStepType(fl.ConsequenceType, fl.ConsequenceTarget),
                         ["target_name"] = fl.ConsequenceTarget,
                         ["detail"] = fl.Detail,
-                        ["dynamic_sql"] = fl.DynamicSqlText,
+                        // Display cap: DynamicSqlText carries the FULL resolved literal (so
+                        // ResolveDynamicSqlLinks can re-parse it); truncate only here, where it
+                        // becomes the descriptive node property, to keep nodestore files small.
+                        ["dynamic_sql"] = SqlText.Truncate(fl.DynamicSqlText, 200),
                         ["is_dynamic_sql"] = fl.DynamicSqlVars.Count > 0,
+                        ["select_star"] = fl.SelectStar,
                         ["condition_path"] = fl.ConditionPath,
                         ["condition_keys"] = fl.ConditionKeys,
                         ["label"] = $"{fl.ConsequenceType}{(fl.Detail.Length > 0 ? $" ({fl.Detail})" : "")} -> {fl.ConsequenceTarget}".TrimEnd(' ', '-', '>'),
@@ -498,7 +510,7 @@ public static class GraphExporter
                         }
                     }
                 }
-                else if (fl.ConsequenceTarget.Length > 0 && fl.ConsequenceType is "INSERT" or "UPDATE" or "DELETE" or "MERGE" or "SELECT" or "ALTER" or "TRUNCATE" && !IsTempOrVariable(fl.ConsequenceTarget))
+                else if (fl.ConsequenceTarget.Length > 0 && fl.ConsequenceType is "INSERT" or "UPDATE" or "DELETE" or "MERGE" or "SELECT" or "ALTER" or "TRUNCATE" or "OUTPUT" && !IsTempOrVariable(fl.ConsequenceTarget))
                 {
                     var (tableId, tableName) = GetOrCreateTable(graph, tableIds, db, fl.ConsequenceTarget);
                     var relType = fl.ConsequenceType is "SELECT" ? "READS_FROM" : "WRITES_TO";
@@ -533,11 +545,19 @@ public static class GraphExporter
                         foreach (var colName in fl.Columns)
                         {
                             var colId = GetOrCreateColumn(graph, columnIds, tableId, tableName, colName);
+                            var colRelProps = new Dictionary<string, object>();
+                            // ALTER's Detail ("DROP COLUMN"/"ALTER COLUMN") disambiguates a
+                            // schema-changing WRITES_COLUMN from an ordinary INSERT/UPDATE
+                            // write - an impact query for "what breaks if I drop this column"
+                            // filters on this instead of treating every writer as a consumer.
+                            if (fl.ConsequenceType == "ALTER" && fl.Detail.Length > 0)
+                                colRelProps["detail"] = fl.Detail;
                             graph.Relationships.Add(new GraphRel
                             {
                                 Type = colRelType,
                                 StartNodeId = stepId,
                                 EndNodeId = colId,
+                                Properties = colRelProps,
                             });
                         }
 
@@ -561,16 +581,18 @@ public static class GraphExporter
                                     foreach (var filterColName in filterCol.Columns)
                                     {
                                         var filterColId = GetOrCreateColumn(graph, columnIds, filterTableId, filterTableName, filterColName);
+                                        var condProps = new Dictionary<string, object>
+                                        {
+                                            ["line_no"] = fl.LineNo,
+                                            ["caused_by_step"] = stepId,
+                                        };
+                                        AddOpKinds(condProps, fl.FilterOpKinds);
                                         graph.Relationships.Add(new GraphRel
                                         {
                                             Type = "CONDITIONED_BY",
                                             StartNodeId = writtenColId,
                                             EndNodeId = filterColId,
-                                            Properties = new Dictionary<string, object>
-                                            {
-                                                ["line_no"] = fl.LineNo,
-                                                ["caused_by_step"] = stepId,
-                                            },
+                                            Properties = condProps,
                                         });
                                     }
                                 }
@@ -598,21 +620,23 @@ public static class GraphExporter
                                     {
                                         var (origTableId, origTableName) = GetOrCreateTable(graph, tableIds, db, origin.Table);
                                         var origColId = GetOrCreateColumn(graph, columnIds, origTableId, origTableName, origin.Column);
+                                        var transientProps = new Dictionary<string, object>
+                                        {
+                                            ["logic"] = deriv.TransformationExpression,
+                                            ["line_no"] = fl.LineNo,
+                                            ["caused_by_step"] = stepId,
+                                            ["via_transient"] = string.Join(" -> ", origin.Via),
+                                            ["origin_logic"] = origin.Logic,
+                                            ["origin_line_no"] = origin.LineNo,
+                                            ["origin_step"] = origin.StepId,
+                                        };
+                                        AddOpKinds(transientProps, deriv.OpKinds);
                                         graph.Relationships.Add(new GraphRel
                                         {
                                             Type = "DERIVES_FROM",
                                             StartNodeId = targetColId,
                                             EndNodeId = origColId,
-                                            Properties = new Dictionary<string, object>
-                                            {
-                                                ["logic"] = deriv.TransformationExpression,
-                                                ["line_no"] = fl.LineNo,
-                                                ["caused_by_step"] = stepId,
-                                                ["via_transient"] = string.Join(" -> ", origin.Via),
-                                                ["origin_logic"] = origin.Logic,
-                                                ["origin_line_no"] = origin.LineNo,
-                                                ["origin_step"] = origin.StepId,
-                                            },
+                                            Properties = transientProps,
                                         });
                                     }
                                 }
@@ -623,17 +647,19 @@ public static class GraphExporter
                             foreach (var srcCol in deriv.SourceColumns)
                             {
                                 var srcColId = GetOrCreateColumn(graph, columnIds, srcTableId, srcTableName, srcCol);
+                                var derivProps = new Dictionary<string, object>
+                                {
+                                    ["logic"] = deriv.TransformationExpression,
+                                    ["line_no"] = fl.LineNo,
+                                    ["caused_by_step"] = stepId,
+                                };
+                                AddOpKinds(derivProps, deriv.OpKinds);
                                 graph.Relationships.Add(new GraphRel
                                 {
                                     Type = "DERIVES_FROM",
                                     StartNodeId = targetColId,
                                     EndNodeId = srcColId,
-                                    Properties = new Dictionary<string, object>
-                                    {
-                                        ["logic"] = deriv.TransformationExpression,
-                                        ["line_no"] = fl.LineNo,
-                                        ["caused_by_step"] = stepId,
-                                    },
+                                    Properties = derivProps,
                                 });
                             }
                         }
@@ -669,11 +695,14 @@ public static class GraphExporter
                         foreach (var colName in filterCol.Columns)
                         {
                             var colId = GetOrCreateColumn(graph, columnIds, filterTableId, filterTableName, colName);
+                            var filtersProps = new Dictionary<string, object>();
+                            AddOpKinds(filtersProps, fl.FilterOpKinds);
                             graph.Relationships.Add(new GraphRel
                             {
                                 Type = "FILTERS_ON",
                                 StartNodeId = stepId,
                                 EndNodeId = colId,
+                                Properties = filtersProps,
                             });
                         }
                     }
@@ -934,6 +963,83 @@ public static class GraphExporter
             }
         }
 
+        // ── :Trigger nodes for triggers an object CREATEs in its body (typically via
+        // resolved dynamic SQL - see SqlAnalyzer.ExtractTriggerCreation). Modeled as
+        // first-class :SqlObject nodes (Gemini's design answer #2), deliberately DECOUPLED
+        // from the creating proc: the proc CREATES the trigger, but the trigger's own body
+        // runs later, when the base table is modified - so its writes must NOT be attributed
+        // to the proc. This is the "what trigger, on whom, when" layer; the body's lineage is
+        // a later phase. See docs/dynamic-trigger-modeling-spec.md.
+        var triggerNodeIds = new HashSet<string>(StringComparer.Ordinal);
+        var createsSeen = new HashSet<(string, string)>();
+        foreach (var r in results)
+        {
+            if (r.CreatedTriggers.Count == 0)
+                continue;
+            var (db, _) = SplitName(r.ObjectName);
+            foreach (var trig in r.CreatedTriggers)
+            {
+                var plain = trig.TriggerName.Replace("[", "").Replace("]", "").Trim();
+                if (plain.Length == 0)
+                    continue;
+                var triggerId = $"{db}::{plain}";
+                if (triggerNodeIds.Add(triggerId))
+                {
+                    var (schemaName, shortName) = SplitSchemaObject(plain);
+                    graph.Nodes.Add(new GraphNode
+                    {
+                        Id = triggerId,
+                        Labels = new List<string> { "SqlObject", "Trigger" },
+                        Properties = new Dictionary<string, object>
+                        {
+                            ["database"] = db,
+                            ["schema"] = schemaName,
+                            ["name"] = shortName,
+                            ["full_name"] = plain,
+                            ["object_type"] = "TRIGGER",
+                            // After / InsteadOf / For, and the DML events it fires on.
+                            ["trigger_timing"] = trig.Timing,
+                            ["trigger_events"] = trig.Events,
+                            // No source file: it only exists as text built at runtime.
+                            ["is_dynamically_created"] = true,
+                        },
+                    });
+                    // Trigger -[:ON]-> the table whose INSERT/UPDATE/DELETE fires it.
+                    // De-bracket so the Table node's `name` is clean "Schema.Table" and
+                    // dedups with the same table however another step referenced it.
+                    var onTableRaw = trig.OnTable.Replace("[", "").Replace("]", "").Trim();
+                    var (onTableId, _) = GetOrCreateTable(graph, tableIds, db, onTableRaw);
+                    graph.Relationships.Add(new GraphRel
+                    {
+                        Type = "ON",
+                        StartNodeId = triggerId,
+                        EndNodeId = onTableId,
+                        Properties = new Dictionary<string, object>
+                        {
+                            ["events"] = trig.Events,
+                            ["timing"] = trig.Timing,
+                        },
+                    });
+                }
+                // proc -[:CREATES]-> Trigger (one per creating object; DDL, not runtime nav).
+                if (createsSeen.Add((r.ObjectName, triggerId)))
+                    graph.Relationships.Add(new GraphRel
+                    {
+                        Type = "CREATES",
+                        StartNodeId = r.ObjectName,
+                        EndNodeId = triggerId,
+                        Properties = new Dictionary<string, object> { ["line_no"] = trig.LineNo },
+                    });
+            }
+        }
+
+        // Promote the SQL containment hierarchy (Database -> Schema -> Object/Table)
+        // to real nodes, so "everything in schema Sales" / "impact across this database"
+        // is a graph traversal instead of string-parsing the `database`/`schema`
+        // properties. Runs last, over the finished node set, so it catches every
+        // SqlObject and Table (including the view/derived tables added late).
+        BuildContainmentHierarchy(graph);
+
         // Assign a stable sequential id to every relationship so consumers can
         // unambiguously reference individual edges (especially when a single Step
         // has multiple READS_FROM/WRITES_TO edges for multi-table operations).
@@ -941,6 +1047,90 @@ public static class GraphExporter
             graph.Relationships[i].Id = $"r{i}";
 
         return graph;
+    }
+
+    /// <summary>
+    /// Adds :Database and :Schema nodes plus CONTAINS edges
+    /// (Database -[:CONTAINS]-> Schema -[:CONTAINS]-> SqlObject/Table), derived from the
+    /// database/schema of every existing SqlObject and Table. Both are *shared* nodes
+    /// (deduped globally): a schema/database is referenced by many objects. Column nodes
+    /// keep their table-scheme ids untouched - this only adds the upper containment
+    /// layer, so existing READS_COLUMN/DERIVES_FROM stay valid.
+    /// </summary>
+    private static void BuildContainmentHierarchy(GraphPayload graph)
+    {
+        var dbIds = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var schemaIds = new Dictionary<(string db, string schema), string>();
+        var containsSeen = new HashSet<(string from, string to)>();
+
+        void AddContains(string from, string to)
+        {
+            if (containsSeen.Add((from, to)))
+                graph.Relationships.Add(new GraphRel { Type = "CONTAINS", StartNodeId = from, EndNodeId = to });
+        }
+
+        string EnsureDatabase(string db)
+        {
+            if (!dbIds.TryGetValue(db, out var id))
+            {
+                id = $"{db}:database";
+                dbIds[db] = id;
+                graph.Nodes.Add(new GraphNode
+                {
+                    Id = id,
+                    Labels = new List<string> { "Database" },
+                    Properties = new Dictionary<string, object> { ["name"] = db },
+                });
+            }
+            return id;
+        }
+
+        string EnsureSchema(string db, string schema)
+        {
+            // Key by lower-cased schema: a SqlObject carries it original-case ("Application")
+            // while a Table carries it normalized-lower ("application"); without this they'd
+            // mint two :Schema nodes with the same id. Display name keeps first-seen case
+            // (SqlObjects are emitted before Tables, so original case wins).
+            var key = (db: db, schema: schema.ToLowerInvariant());
+            if (!schemaIds.TryGetValue(key, out var id))
+            {
+                id = $"{db}:schema:{key.schema}";
+                schemaIds[key] = id;
+                graph.Nodes.Add(new GraphNode
+                {
+                    Id = id,
+                    Labels = new List<string> { "Schema" },
+                    Properties = new Dictionary<string, object> { ["database"] = db, ["name"] = schema },
+                });
+                AddContains(EnsureDatabase(db), id);
+            }
+            return id;
+        }
+
+        // Snapshot first: EnsureDatabase/EnsureSchema append to graph.Nodes while we iterate.
+        foreach (var n in graph.Nodes.ToList())
+        {
+            bool isObject = n.Labels.Contains("SqlObject");
+            bool isTable = n.Labels.Contains("Table");
+            if (!isObject && !isTable)
+                continue;
+
+            var db = n.Properties.TryGetValue("database", out var d) ? d?.ToString() ?? "" : "";
+            if (db.Length == 0)
+                continue;
+
+            string schema;
+            if (isObject && n.Properties.TryGetValue("schema", out var s))
+                schema = s?.ToString() ?? "dbo";
+            else
+                // Table "name" is "schema.table" (or just "table" -> dbo).
+                (schema, _) = SplitSchemaObject(NormalizeRef(n.Properties.TryGetValue("name", out var nm) ? nm?.ToString() ?? "" : ""));
+
+            if (schema.Length == 0)
+                schema = "dbo";
+
+            AddContains(EnsureSchema(db, schema), n.Id);
+        }
     }
 
     /// <summary>
@@ -1013,6 +1203,36 @@ public static class GraphExporter
                         Properties = { ["ordinal"] = col.Ordinal },
                     });
                 }
+
+                // Declarative DDL constraints (CHECK/DEFAULT/UNIQUE) as :BusinessRule nodes:
+                // HAS_RULE from the table, CONSTRAINS to each governed column. These carry
+                // semantic intent ("Qty > 0") that an impact query needs but a column
+                // attribute can't express. PK/FK/NOT NULL stay as attributes/FK edges.
+                foreach (var con in schema.Constraints)
+                {
+                    var ruleId = $"{db}:bizrule:{tableKey.Item2}:{con.Kind}:{StableHash(con.Expression + "|" + string.Join(",", con.Columns))}";
+                    if (graph.Nodes.All(n => n.Id != ruleId))
+                    {
+                        graph.Nodes.Add(new GraphNode
+                        {
+                            Id = ruleId,
+                            Labels = new List<string> { "BusinessRule" },
+                            Properties = new Dictionary<string, object>
+                            {
+                                ["kind"] = con.Kind,
+                                ["expression"] = con.Expression,
+                                ["name"] = con.Name ?? "",
+                                ["table"] = tableKey.Item2,
+                            },
+                        });
+                        graph.Relationships.Add(new GraphRel { Type = "HAS_RULE", StartNodeId = tableId, EndNodeId = ruleId });
+                    }
+                    foreach (var colName in con.Columns)
+                    {
+                        if (columnIds.TryGetValue((tableId, colName.ToLowerInvariant()), out var govColId))
+                            graph.Relationships.Add(new GraphRel { Type = "CONSTRAINS", StartNodeId = ruleId, EndNodeId = govColId });
+                    }
+                }
             }
         }
 
@@ -1069,6 +1289,128 @@ public static class GraphExporter
                 }
             }
         }
+
+        // Pass 3: computed columns ("Total AS Price * Qty"). DERIVES_FROM from the
+        // computed column to each other column of the same table its expression
+        // reads - same edge type/shape as INSERT...SELECT lineage (GraphExporter
+        // above), so a query walking DERIVES_FROM doesn't need a special case for
+        // "this column is derived via DDL vs. via a procedure's data flow".
+        if (includeColumns)
+        {
+            foreach (var schema in tableSchemas)
+            {
+                if (schema.Error != null)
+                    continue;
+
+                var (db, plain) = SplitName(schema.ObjectName);
+                var tableKey = (db, NormalizeRef(plain));
+                if (!tableIds.TryGetValue(tableKey, out var tableId))
+                    continue;
+
+                foreach (var col in schema.Columns)
+                {
+                    if (col.ComputedSourceColumns.Count == 0)
+                        continue;
+
+                    if (!columnIds.TryGetValue((tableId, col.Name.ToLowerInvariant()), out var colId))
+                        continue;
+
+                    foreach (var srcCol in col.ComputedSourceColumns)
+                    {
+                        if (!columnIds.TryGetValue((tableId, srcCol.ToLowerInvariant()), out var srcColId))
+                            continue;
+
+                        var computedProps = new Dictionary<string, object>
+                        {
+                            ["logic"] = col.ComputedExpression,
+                            ["via_computed_column"] = true,
+                        };
+                        AddOpKinds(computedProps, col.ComputedOpKinds);
+                        graph.Relationships.Add(new GraphRel
+                        {
+                            Type = "DERIVES_FROM",
+                            StartNodeId = colId,
+                            EndNodeId = srcColId,
+                            Properties = computedProps,
+                        });
+                    }
+                }
+            }
+        }
+
+    }
+
+    /// <summary>
+    /// View output-column lineage ("CREATE VIEW v AS SELECT a.X+a.Y AS Total ..").
+    /// DERIVES_FROM from the view's own :Column (Total) to each base table column it
+    /// reads (a.X, a.Y) - same edge shape as INSERT...SELECT/computed columns, so a view
+    /// becomes a transparent lineage hop, tagged via_view so a reader can tell it apart.
+    /// </summary>
+    private static void BuildViewLineage(GraphPayload graph, List<ObjectResult> results,
+        Dictionary<(string db, string name), string> tableIds,
+        Dictionary<(string tableId, string column), string> columnIds)
+    {
+        foreach (var r in results)
+        {
+            if (r.ViewColumnLineage.Count == 0)
+                continue;
+
+            var (db, plain) = SplitName(r.ObjectName);
+            var (viewTableId, viewTableName) = GetOrCreateTable(graph, tableIds, db, plain);
+
+            // The view's output columns keep the table-scheme id (":table:<view>:column:<c>")
+            // so a downstream "SELECT c FROM <view>" reader's READS_COLUMN lands on the
+            // same node - lineage stays continuous. But that id hangs the column off a
+            // :Table node that's disconnected from the view's :SqlObject, leaving the
+            // object's output columns unreachable from the object itself. Link them back
+            // with HAS_COLUMN from the SqlObject (deduped) so "the columns of this view"
+            // is answerable from the view node, not just from its phantom table twin.
+            var ownedCols = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (var deriv in r.ViewColumnLineage)
+            {
+                if (IsTempOrVariable(deriv.SourceTable))
+                    continue;
+
+                var outColId = GetOrCreateColumn(graph, columnIds, viewTableId, viewTableName, deriv.TargetColumn);
+                if (ownedCols.Add(outColId))
+                    graph.Relationships.Add(new GraphRel
+                    {
+                        Type = "HAS_COLUMN",
+                        StartNodeId = r.ObjectName,
+                        EndNodeId = outColId,
+                    });
+                var (srcTableId, srcTableName) = GetOrCreateTable(graph, tableIds, db, deriv.SourceTable);
+                foreach (var srcCol in deriv.SourceColumns)
+                {
+                    var srcColId = GetOrCreateColumn(graph, columnIds, srcTableId, srcTableName, srcCol);
+                    var viewProps = new Dictionary<string, object>
+                    {
+                        ["logic"] = deriv.TransformationExpression,
+                        ["via_view"] = true,
+                    };
+                    AddOpKinds(viewProps, deriv.OpKinds);
+                    graph.Relationships.Add(new GraphRel
+                    {
+                        Type = "DERIVES_FROM",
+                        StartNodeId = outColId,
+                        EndNodeId = srcColId,
+                        Properties = viewProps,
+                    });
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Adds the structured operator tokens (see <see cref="OperatorClassifier"/>) to an
+    /// edge's properties as "op_kinds", but only when there are any - a plain column copy
+    /// ("INSERT T(a) SELECT a") or operator-free predicate leaves the edge uncluttered.
+    /// </summary>
+    private static void AddOpKinds(Dictionary<string, object> props, IReadOnlyList<string> ops)
+    {
+        if (ops.Count > 0)
+            props["op_kinds"] = ops;
     }
 
     /// <summary>Returns the (possibly newly-created) :Table node for "db.tableName", de-duplicated via tableIds.</summary>

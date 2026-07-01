@@ -28,6 +28,21 @@
       "from": "WideWorldImporters::Integration.GetMovementUpdates#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:warehouse.stockitemtransactions:DEFAULT:d7065349",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_warehouse.stockitemtransactions_DEFAULT_d7065349_81885f53.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitemtransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitemtransactions_3348b64c.json",
+      "props": {
+        "ordinal": 1
+      }
     }
   ],
   "edges_out": []

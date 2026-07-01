@@ -59,6 +59,9 @@
             "N' CREATE PROCEDURE Website.InvoiceCustomerOrders @OrdersToInvoice Website.OrderIDList READONLY, @PackedByPersonID int, @InvoicedByPersonID int WITH EXECUTE AS OWNER AS BEGIN     SET NOCOUNT ON;     SET XACT_ABORT ON;      DECLARE @InvoicesToGenerate TABLE     (         OrderID int PRIMARY KEY,     ",
             "N' CREATE PROCEDURE Website.RecordColdRoomTemperatures @SensorReadings Website.SensorDataList READONLY WITH NATIVE_COMPILATION, SCHEMABINDING, EXECUTE AS OWNER AS BEGIN ATOMIC WITH ( \tTRANSACTION ISOLATION LEVEL = SNAPSHOT, \tLANGUAGE = N''English'' )     BEGIN TRY  \t\tDECLARE @NumberOfReadings int = ",
             "N' CREATE PROCEDURE Website.InsertCustomerOrders @Orders Website.OrderList READONLY, @OrderLines Website.OrderLineList READONLY, @OrdersCreatedByPersonID int, @SalespersonPersonID int WITH EXECUTE AS OWNER AS BEGIN     SET NOCOUNT ON;     SET XACT_ABORT ON;      DECLARE @OrdersToGenerate AS TABLE   "
+          ],
+          "op_kinds": [
+            "arith:+"
           ]
         }
       },
@@ -71,7 +74,8 @@
           "name": "@SQLDataFolder",
           "data_type": "NVARCHAR (MAX)",
           "default": "CAST (SERVERPROPERTY('InstanceDefaultDataPath') AS NVARCHAR (MAX))",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -83,7 +87,8 @@
           "name": "@MemoryOptimizedFilegroupFolder",
           "data_type": "NVARCHAR (MAX)",
           "default": "@SQLDataFolder + N'WideWorldImporters_InMemory_Data_1'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       }
     ],
@@ -96,25 +101,24 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 26,
-          "nesting_level": 3,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 20,
+          "nesting_level": 2,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.filegroups",
           "detail": "",
-          "dynamic_sql": "ALTER DATABASE CURRENT ADD FILEGROUP WWI_InMemory_Data CONTAINS MEMORY_OPTIMIZED_DATA;",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: CAST (SERVERPROPERTY(N'EngineEdition') AS INT) <> 5",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.filegroups             WHERE  name = N'WWI_InMemory_Data')"
+            "IF: CAST (SERVERPROPERTY(N'EngineEdition') AS INT) <> 5"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#16",
-            "IF#21"
+            "IF_ELSE#7",
+            "IF#15"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.filegroups"
         }
       },
       {
@@ -125,23 +129,24 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 33,
+          "line_no": 25,
           "nesting_level": 3,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "ALTER DATABASE CURRENT ADD FILEGROUP WWI_InMemory_Data CONTAINS MEMORY_OPTIMIZED_DATA;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: CAST (SERVERPROPERTY(N'EngineEdition') AS INT) <> 5",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.filegroups             WHERE  name = N'WWI_InMemory_Data')"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#16",
-            "IF#21"
+            "IF_ELSE#7",
+            "IF#15",
+            "IF#20"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -154,19 +159,24 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 41,
-          "nesting_level": 1,
+          "line_no": 32,
+          "nesting_level": 3,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "ALTER DATABASE CURRENT SET MEMORY_OPTIMIZED_ELEVATE_TO_SNAPSHOT = ON;",
+          "dynamic_sql": "",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: CAST (SERVERPROPERTY(N'EngineEdition') AS INT) <> 5",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.filegroups             WHERE  name = N'WWI_InMemory_Data')"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7",
+            "IF#15",
+            "IF#20"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -179,21 +189,20 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 50,
-          "nesting_level": 2,
+          "line_no": 40,
+          "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "ALTER TABLE Warehouse.ColdRoomTemperatures SET (SYSTEM_VERSIONING = OFF); ALTER TABLE Warehouse.ColdRoomTemperatures DROP PERIOD FOR SYSTEM_TIME; ALTER TABLE Warehouse.ColdRoomTemperatures DROP CONSTR",
+          "dynamic_sql": "ALTER DATABASE CURRENT SET MEMORY_OPTIMIZED_ELEVATE_TO_SNAPSHOT = ON;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#43"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -206,23 +215,22 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 56,
-          "nesting_level": 2,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 42,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
-          "dynamic_sql": "EXEC dbo.sp_rename @objname = N'Warehouse.ColdRoomTemperatures', @newname = N'ColdRoomTemperatures_Backup', @objtype = N'OBJECT';",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#43"
+            "IF_ELSE#7"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -233,21 +241,22 @@
         "properties": {
           "order": 5,
           "sequence": 6,
-          "line_no": 70,
+          "line_no": 49,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE TABLE Warehouse.ColdRoomTemperatures ( ColdRoomTemperatureID bigint IDENTITY(1,1) NOT NULL, ColdRoomSensorNumber int NOT NULL, RecordedWhen datetime2(7) NOT NULL, Temperature decimal(10, 2) NOT",
+          "dynamic_sql": "ALTER TABLE Warehouse.ColdRoomTemperatures SET (SYSTEM_VERSIONING = OFF); ALTER TABLE Warehouse.ColdRoomTemperatures DROP PERIOD FOR SYSTEM_TIME; ALTER TABLE Warehouse.ColdRoomTemperatures DROP CONSTR",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#43"
+            "IF_ELSE#7",
+            "IF#42"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -260,21 +269,22 @@
         "properties": {
           "order": 6,
           "sequence": 7,
-          "line_no": 81,
+          "line_no": 55,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "SET IDENTITY_INSERT Warehouse.ColdRoomTemperatures ON; INSERT Warehouse.ColdRoomTemperatures (ColdRoomTemperatureID, ColdRoomSensorNumber, RecordedWhen, Temperature, ValidFrom, ValidTo) SELECT ColdRoo",
+          "dynamic_sql": "EXEC dbo.sp_rename @objname = N'Warehouse.ColdRoomTemperatures', @newname = N'ColdRoomTemperatures_Backup', @objtype = N'OBJECT';",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#43"
+            "IF_ELSE#7",
+            "IF#42"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -287,23 +297,24 @@
         "properties": {
           "order": 7,
           "sequence": 8,
-          "line_no": 1,
+          "line_no": 69,
           "nesting_level": 2,
-          "action": "INSERT",
-          "step_type": "Load",
-          "target_name": "Warehouse.ColdRoomTemperatures",
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
-          "is_dynamic_sql": false,
+          "dynamic_sql": "CREATE TABLE Warehouse.ColdRoomTemperatures ( ColdRoomTemperatureID bigint IDENTITY(1,1) NOT NULL, ColdRoomSensorNumber int NOT NULL, RecordedWhen datetime2(7) NOT NULL, Temperature decimal(10, 2) NOT",
+          "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#43"
+            "IF_ELSE#7",
+            "IF#42"
           ],
-          "label": "INSERT -> Warehouse.ColdRoomTemperatures"
+          "label": "EXEC -> (dynamic SQL)"
         }
       },
       {
@@ -314,21 +325,22 @@
         "properties": {
           "order": 8,
           "sequence": 9,
-          "line_no": 84,
+          "line_no": 80,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "DROP TABLE Warehouse.ColdRoomTemperatures_Backup;",
+          "dynamic_sql": "SET IDENTITY_INSERT Warehouse.ColdRoomTemperatures ON; INSERT Warehouse.ColdRoomTemperatures (ColdRoomTemperatureID, ColdRoomSensorNumber, RecordedWhen, Temperature, ValidFrom, ValidTo) SELECT ColdRoo",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#43"
+            "IF_ELSE#7",
+            "IF#42"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -341,23 +353,24 @@
         "properties": {
           "order": 9,
           "sequence": 10,
-          "line_no": 89,
+          "line_no": 1,
           "nesting_level": 2,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "action": "INSERT",
+          "step_type": "Load",
+          "target_name": "Warehouse.ColdRoomTemperatures",
           "detail": "",
-          "dynamic_sql": "ALTER TABLE Warehouse.ColdRoomTemperatures ADD PERIOD FOR SYSTEM_TIME(ValidFrom, ValidTo);",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#43"
+            "IF_ELSE#7",
+            "IF#42"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "INSERT -> Warehouse.ColdRoomTemperatures"
         }
       },
       {
@@ -368,21 +381,22 @@
         "properties": {
           "order": 10,
           "sequence": 11,
-          "line_no": 94,
+          "line_no": 83,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "ALTER TABLE Warehouse.ColdRoomTemperatures SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = Warehouse.ColdRoomTemperatures_Archive, DATA_CONSISTENCY_CHECK = ON));",
+          "dynamic_sql": "DROP TABLE Warehouse.ColdRoomTemperatures_Backup;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#43"
+            "IF_ELSE#7",
+            "IF#42"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -395,21 +409,22 @@
         "properties": {
           "order": 11,
           "sequence": 12,
-          "line_no": 103,
+          "line_no": 88,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "ALTER TABLE Warehouse.VehicleTemperatures DROP CONSTRAINT PK_Warehouse_VehicleTemperatures;",
+          "dynamic_sql": "ALTER TABLE Warehouse.ColdRoomTemperatures ADD PERIOD FOR SYSTEM_TIME(ValidFrom, ValidTo);",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#98"
+            "IF_ELSE#7",
+            "IF#42"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -422,21 +437,22 @@
         "properties": {
           "order": 12,
           "sequence": 13,
-          "line_no": 109,
+          "line_no": 93,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "EXEC dbo.sp_rename @objname = N'Warehouse.VehicleTemperatures', @newname = N'VehicleTemperatures_Backup', @objtype = N'OBJECT';",
+          "dynamic_sql": "ALTER TABLE Warehouse.ColdRoomTemperatures SET (SYSTEM_VERSIONING = ON (HISTORY_TABLE = Warehouse.ColdRoomTemperatures_Archive, DATA_CONSISTENCY_CHECK = ON));",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'ColdRoomTemperatures'                    AND is_memory_optimi"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#98"
+            "IF_ELSE#7",
+            "IF#42"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -449,23 +465,22 @@
         "properties": {
           "order": 13,
           "sequence": 14,
-          "line_no": 124,
-          "nesting_level": 2,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 97,
+          "nesting_level": 1,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
-          "dynamic_sql": "CREATE TABLE Warehouse.VehicleTemperatures ( VehicleTemperatureID bigint IDENTITY(1,1) NOT NULL, VehicleRegistration nvarchar(20) COLLATE Latin1_General_CI_AS NOT NULL, ChillerSensorNumber int NOT NUL",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#98"
+            "IF_ELSE#7"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -476,21 +491,22 @@
         "properties": {
           "order": 14,
           "sequence": 15,
-          "line_no": 135,
+          "line_no": 102,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "SET IDENTITY_INSERT Warehouse.VehicleTemperatures ON; INSERT Warehouse.VehicleTemperatures (VehicleTemperatureID, VehicleRegistration, ChillerSensorNumber, RecordedWhen, Temperature, FullSensorData, I",
+          "dynamic_sql": "ALTER TABLE Warehouse.VehicleTemperatures DROP CONSTRAINT PK_Warehouse_VehicleTemperatures;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#98"
+            "IF_ELSE#7",
+            "IF#97"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -503,21 +519,22 @@
         "properties": {
           "order": 15,
           "sequence": 16,
-          "line_no": 138,
+          "line_no": 108,
           "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "DROP TABLE Warehouse.VehicleTemperatures_Backup;",
+          "dynamic_sql": "EXEC dbo.sp_rename @objname = N'Warehouse.VehicleTemperatures', @newname = N'VehicleTemperatures_Backup', @objtype = N'OBJECT';",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
           ],
           "condition_keys": [
-            "IF_ELSE#8",
-            "IF#98"
+            "IF_ELSE#7",
+            "IF#97"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -530,19 +547,22 @@
         "properties": {
           "order": 16,
           "sequence": 17,
-          "line_no": 145,
-          "nesting_level": 1,
+          "line_no": 123,
+          "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.InvoiceCustomerOrders;",
+          "dynamic_sql": "CREATE TABLE Warehouse.VehicleTemperatures ( VehicleTemperatureID bigint IDENTITY(1,1) NOT NULL, VehicleRegistration nvarchar(20) COLLATE Latin1_General_CI_AS NOT NULL, ChillerSensorNumber int NOT NUL",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7",
+            "IF#97"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -555,19 +575,22 @@
         "properties": {
           "order": 17,
           "sequence": 18,
-          "line_no": 147,
-          "nesting_level": 1,
+          "line_no": 134,
+          "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.InsertCustomerOrders;",
+          "dynamic_sql": "SET IDENTITY_INSERT Warehouse.VehicleTemperatures ON; INSERT Warehouse.VehicleTemperatures (VehicleTemperatureID, VehicleRegistration, ChillerSensorNumber, RecordedWhen, Temperature, FullSensorData, I",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7",
+            "IF#97"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -580,21 +603,24 @@
         "properties": {
           "order": 18,
           "sequence": 19,
-          "line_no": 149,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 1,
+          "nesting_level": 2,
+          "action": "INSERT",
+          "step_type": "Load",
+          "target_name": "Warehouse.VehicleTemperatures",
           "detail": "",
-          "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.RecordColdRoomTemperatures;",
-          "is_dynamic_sql": true,
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7",
+            "IF#97"
           ],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "INSERT -> Warehouse.VehicleTemperatures"
         }
       },
       {
@@ -605,19 +631,22 @@
         "properties": {
           "order": 19,
           "sequence": 20,
-          "line_no": 154,
-          "nesting_level": 1,
+          "line_no": 137,
+          "nesting_level": 2,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "DROP TYPE IF EXISTS Website.OrderIDList;",
+          "dynamic_sql": "DROP TABLE Warehouse.VehicleTemperatures_Backup;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
-            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)",
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = N'VehicleTemperatures'                    AND is_memory_optimiz"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7",
+            "IF#97"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -630,19 +659,20 @@
         "properties": {
           "order": 20,
           "sequence": 21,
-          "line_no": 156,
+          "line_no": 144,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "DROP TYPE IF EXISTS Website.OrderLineList;",
+          "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.InvoiceCustomerOrders;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -655,19 +685,20 @@
         "properties": {
           "order": 21,
           "sequence": 22,
-          "line_no": 158,
+          "line_no": 146,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "DROP TYPE IF EXISTS Website.OrderList;",
+          "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.InsertCustomerOrders;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -680,19 +711,20 @@
         "properties": {
           "order": 22,
           "sequence": 23,
-          "line_no": 160,
+          "line_no": 148,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "DROP TYPE IF EXISTS Website.SensorDataList;",
+          "dynamic_sql": "DROP PROCEDURE IF EXISTS Website.RecordColdRoomTemperatures;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -705,19 +737,20 @@
         "properties": {
           "order": 23,
           "sequence": 24,
-          "line_no": 170,
+          "line_no": 153,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE TYPE Website.OrderIDList AS TABLE ( OrderID int PRIMARY KEY NONCLUSTERED ) WITH (MEMORY_OPTIMIZED = ON);",
+          "dynamic_sql": "DROP TYPE IF EXISTS Website.OrderIDList;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -730,19 +763,20 @@
         "properties": {
           "order": 24,
           "sequence": 25,
-          "line_no": 185,
+          "line_no": 155,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE TYPE Website.OrderList AS TABLE ( OrderReference int PRIMARY KEY NONCLUSTERED, CustomerID int, ContactPersonID int, ExpectedDeliveryDate date, CustomerPurchaseOrderNumber nvarchar(20), IsUnders",
+          "dynamic_sql": "DROP TYPE IF EXISTS Website.OrderLineList;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -755,19 +789,20 @@
         "properties": {
           "order": 25,
           "sequence": 26,
-          "line_no": 197,
+          "line_no": 157,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE TYPE Website.OrderLineList AS TABLE ( OrderReference int, StockItemID int, [Description] nvarchar(100), Quantity int, INDEX IX_Website_OrderLineList NONCLUSTERED (OrderReference) ) WITH (MEMORY",
+          "dynamic_sql": "DROP TYPE IF EXISTS Website.OrderList;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -780,19 +815,20 @@
         "properties": {
           "order": 26,
           "sequence": 27,
-          "line_no": 208,
+          "line_no": 159,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE TYPE Website.SensorDataList AS TABLE ( SensorDataListID int IDENTITY(1,1) PRIMARY KEY NONCLUSTERED, ColdRoomSensorNumber int, RecordedWhen datetime2(7), Temperature decimal(18,2) ) WITH (MEMORY",
+          "dynamic_sql": "DROP TYPE IF EXISTS Website.SensorDataList;",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -805,19 +841,20 @@
         "properties": {
           "order": 27,
           "sequence": 28,
-          "line_no": 365,
+          "line_no": 169,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE Website.InvoiceCustomerOrders @OrdersToInvoice Website.OrderIDList READONLY, @PackedByPersonID int, @InvoicedByPersonID int WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT ON; SET XACT_ABO",
+          "dynamic_sql": "CREATE TYPE Website.OrderIDList AS TABLE ( OrderID int PRIMARY KEY NONCLUSTERED ) WITH (MEMORY_OPTIMIZED = ON);",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -830,19 +867,20 @@
         "properties": {
           "order": 28,
           "sequence": 29,
-          "line_no": 418,
+          "line_no": 184,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE Website.RecordColdRoomTemperatures @SensorReadings Website.SensorDataList READONLY WITH NATIVE_COMPILATION, SCHEMABINDING, EXECUTE AS OWNER AS BEGIN ATOMIC WITH ( TRANSACTION ISOLATIO",
+          "dynamic_sql": "CREATE TYPE Website.OrderList AS TABLE ( OrderReference int PRIMARY KEY NONCLUSTERED, CustomerID int, ContactPersonID int, ExpectedDeliveryDate date, CustomerPurchaseOrderNumber nvarchar(20), IsUnders",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -855,19 +893,20 @@
         "properties": {
           "order": 29,
           "sequence": 30,
-          "line_no": 485,
+          "line_no": 196,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE Website.InsertCustomerOrders @Orders Website.OrderList READONLY, @OrderLines Website.OrderLineList READONLY, @OrdersCreatedByPersonID int, @SalespersonPersonID int WITH EXECUTE AS OWN",
+          "dynamic_sql": "CREATE TYPE Website.OrderLineList AS TABLE ( OrderReference int, StockItemID int, [Description] nvarchar(100), Quantity int, INDEX IX_Website_OrderLineList NONCLUSTERED (OrderReference) ) WITH (MEMORY",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
           ],
           "condition_keys": [
-            "IF_ELSE#8"
+            "IF_ELSE#7"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -880,7 +919,111 @@
         "properties": {
           "order": 30,
           "sequence": 31,
-          "line_no": 490,
+          "line_no": 207,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TYPE Website.SensorDataList AS TABLE ( SensorDataListID int IDENTITY(1,1) PRIMARY KEY NONCLUSTERED, ColdRoomSensorNumber int, RecordedWhen datetime2(7), Temperature decimal(18,2) ) WITH (MEMORY",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#7"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step31",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 31,
+          "sequence": 32,
+          "line_no": 364,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE Website.InvoiceCustomerOrders @OrdersToInvoice Website.OrderIDList READONLY, @PackedByPersonID int, @InvoicedByPersonID int WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT ON; SET XACT_ABO",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#7"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step32",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 32,
+          "sequence": 33,
+          "line_no": 417,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE Website.RecordColdRoomTemperatures @SensorReadings Website.SensorDataList READONLY WITH NATIVE_COMPILATION, SCHEMABINDING, EXECUTE AS OWNER AS BEGIN ATOMIC WITH ( TRANSACTION ISOLATIO",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#7"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step33",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 33,
+          "sequence": 34,
+          "line_no": 484,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE Website.InsertCustomerOrders @Orders Website.OrderList READONLY, @OrderLines Website.OrderLineList READONLY, @OrdersCreatedByPersonID int, @SalespersonPersonID int WITH EXECUTE AS OWN",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF_ELSE: NOT (SERVERPROPERTY(N'IsXTPSupported') = 0)"
+          ],
+          "condition_keys": [
+            "IF_ELSE#7"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Application.Configuration_EnableInMemory#step34",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 34,
+          "sequence": 35,
+          "line_no": 489,
           "nesting_level": 1,
           "action": "THROW",
           "step_type": "Notification",
@@ -888,11 +1031,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "CATCH: ON ERROR"
           ],
           "condition_keys": [
-            "CATCH#15"
+            "CATCH#14"
           ],
           "label": "THROW"
         }
@@ -915,12 +1059,32 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.filegroups",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.filegroups_378fd67b.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.filegroups"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@MemoryOptimizedFilegroupFolder",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
       "from_label": "Step",
       "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
@@ -928,14 +1092,6 @@
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
     {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step1",
       "from_label": "Step",
@@ -1035,17 +1191,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1155,25 +1315,98 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:INSERT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures_backup",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_backup_7369095b.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.VehicleTemperatures_Backup",
+        "via": "JOIN"
+      }
     },
     {
-      "type": "USES_VARIABLE",
+      "type": "WRITES_COLUMN",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:ChillerSensorNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_ChillerSensorNumbe_dedc9460.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:CompressedSensorData",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_CompressedSensorDa_77277c79.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:FullSensorData",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_FullSensorData_9bfbb828.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:IsCompressed",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_IsCompressed_a805d11d.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:RecordedWhen",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_RecordedWhen_052b7656.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:Temperature",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_Temperature_bfb31d6d.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:VehicleRegistration",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_VehicleRegistratio_2d3e0501.json"
+    },
+    {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures:column:VehicleTemperatureID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_column_VehicleTemperature_3562f018.json"
+    },
+    {
+      "type": "WRITES_TO",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.VehicleTemperatures"
+      }
     },
     {
       "type": "ACTION",
@@ -1491,6 +1724,102 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step30",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step30",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step30",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step31",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step31",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step31",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step32",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step32",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step32",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step33",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step33",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step33",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step34",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:THROW",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
@@ -1499,17 +1828,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
       "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1570,14 +1903,75 @@
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:action:INSERT",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_INSERT_7166a1df.json"
     },
     {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures_backup",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_backup_d7c1aa62.json",
+      "props": {
+        "action_type": "INSERT",
+        "table": "Warehouse.ColdRoomTemperatures_Backup",
+        "via": "JOIN"
+      }
+    },
+    {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ColdRoomSensorNumber",
       "to_label": "Column",
@@ -1585,7 +1979,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ColdRoomTemperatureID",
       "to_label": "Column",
@@ -1593,7 +1987,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:RecordedWhen",
       "to_label": "Column",
@@ -1601,7 +1995,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:Temperature",
       "to_label": "Column",
@@ -1609,7 +2003,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ValidFrom",
       "to_label": "Column",
@@ -1617,7 +2011,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ValidTo",
       "to_label": "Column",
@@ -1625,7 +2019,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step7",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
@@ -1636,66 +2030,10 @@
       }
     },
     {
-      "type": "ACTION",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
-    },
-    {
-      "type": "BUILDS_SQL_FROM",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step8",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "ACTION",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
-    },
-    {
-      "type": "BUILDS_SQL_FROM",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step9",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step30",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:29021c6a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step34",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
@@ -1709,25 +2047,9 @@
     },
     {
       "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:d673d53a",
+      "from": "WideWorldImporters:rule:IF:29021c6a",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step11",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:d673d53a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step12",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:d673d53a",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
@@ -1749,6 +2071,46 @@
     },
     {
       "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:d673d53a",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step16",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:d673d53a",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step17",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:d673d53a",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:d673d53a",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step19",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:dd060970",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:e64a4f4d",
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step10",
@@ -1759,7 +2121,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:e64a4f4d",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step3",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step11",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
@@ -1767,7 +2129,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:e64a4f4d",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step12",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
@@ -1815,39 +2177,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step16",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step17",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step19",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step2",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
@@ -1929,6 +2259,62 @@
       "from_label": "Rule",
       "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step29",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step3",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step30",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step31",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step32",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step33",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF_ELSE:e7e944e0",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_EnableInMemory",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     }
   ]

@@ -13,7 +13,7 @@
   "edges_out": [
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step0",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step1",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     }

@@ -13,7 +13,7 @@
   "edges_out": [
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
+      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step6",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
     }

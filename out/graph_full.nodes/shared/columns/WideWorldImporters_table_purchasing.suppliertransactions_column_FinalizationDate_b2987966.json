@@ -13,6 +13,31 @@
     "ordinal": 12
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions:column:IsFinalized",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliertransactions_column_IsFinalized_836047a3.json",
+      "props": {
+        "logic": "(CASE WHEN [FinalizationDate] IS NULL THEN CONVERT (BIT, (0)) ELSE CONVERT (BIT, (1)) END)",
+        "via_computed_column": true,
+        "op_kinds": [
+          "case:CASE",
+          "cast:CONVERT",
+          "null:IS NULL"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliertransactions_96862ed5.json",
+      "props": {
+        "ordinal": 12
+      }
+    }
+  ],
   "edges_out": []
 }

@@ -56,6 +56,67 @@
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:purchasing.suppliers:DEFAULT:751f39b2",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_purchasing.suppliers_DEFAULT_751f39b2_f3b6263e.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.suppliers:column:SupplierID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.suppliers_column_SupplierID_8d4d1535.json",
+      "props": {
+        "logic": "s.SupplierID",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:purchasing.suppliers",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.purchaseorders:column:SupplierID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorders_column_SupplierID_da4baa41.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrders_SupplierID_Purchasing_Suppliers"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions:column:SupplierID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliertransactions_column_SupplierID_7aef3c0f.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierTransactions_SupplierID_Purchasing_Suppliers"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitems:column:SupplierID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitems_column_SupplierID_a95e5a74.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItems_SupplierID_Purchasing_Suppliers"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitemtransactions:column:SupplierID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_SupplierID_d9587212.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemTransactions_SupplierID_Purchasing_Suppliers"
+      }
     }
   ],
   "edges_out": []

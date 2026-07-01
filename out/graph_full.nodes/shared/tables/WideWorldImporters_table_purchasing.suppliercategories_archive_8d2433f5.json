@@ -31,6 +31,12 @@
         "action_type": "SELECT",
         "table": "Purchasing.SupplierCategories_Archive"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:purchasing",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_purchasing_cdda06b8.json"
     }
   ],
   "edges_out": [

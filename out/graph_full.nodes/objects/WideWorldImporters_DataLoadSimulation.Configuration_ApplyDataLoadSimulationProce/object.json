@@ -50,7 +50,8 @@
             "N' CREATE PROCEDURE DataLoadSimulation.RecordInvoiceDeliveries @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN     SET NOCOUNT ON;     SET XACT_ABORT ON;      IF @IsSilentMode = 0     BEGIN         PRINT N''Recording in",
             "N' CREATE PROCEDURE DataLoadSimulation.UpdateCustomFields @CurrentDateTime AS date WITH EXECUTE AS OWNER AS BEGIN     DECLARE @StartingWhen datetime2(7) = CAST(@CurrentDateTime AS date);      SET @StartingWhen = DATEADD(hour, 23, @StartingWhen);      -- Populate custom data for stock items      UPDA",
             "N' CREATE PROCEDURE DataLoadSimulation.DailyProcessToCreateHistory @StartDate date, @EndDate date, @AverageNumberOfCustomerOrdersPerDay int, @SaturdayPercentageOfNormalWorkDay int, @SundayPercentageOfNormalWorkDay int, @UpdateCustomFields bit, @IsSilentMode bit, @AreDatesPrinted bit AS BEGIN     SET"
-          ]
+          ],
+          "op_kinds": []
         }
       }
     ],
@@ -63,7 +64,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 9,
+          "line_no": 8,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
@@ -71,6 +72,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad"
@@ -84,21 +86,18 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 395,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 12,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.objects",
           "detail": "",
-          "dynamic_sql": "CREATE FUNCTION DataLoadSimulation.GetAreaCode ( @StateProvinceCode nvarchar(2) ) RETURNS INT WITH EXECUTE AS OWNER AS BEGIN DECLARE @AreaCode int; WITH AreaCodes AS ( SELECT StateProvinceCode, AreaCo",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.objects             WHERE  name = N'GetAreaCode'                    AND type = N'FN'            "
-          ],
-          "condition_keys": [
-            "IF#13"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.objects"
         }
       },
       {
@@ -109,19 +108,20 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 449,
+          "line_no": 394,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ActivateWebsiteLogons @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT O",
+          "dynamic_sql": "CREATE FUNCTION DataLoadSimulation.GetAreaCode ( @StateProvinceCode nvarchar(2) ) RETURNS INT WITH EXECUTE AS OWNER AS BEGIN DECLARE @AreaCode int; WITH AreaCodes AS ( SELECT StateProvinceCode, AreaCo",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.objects             WHERE  name = N'GetAreaCode'                    AND type = N'FN'            "
           ],
           "condition_keys": [
-            "IF#398"
+            "IF#12"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -134,21 +134,18 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 870,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 397,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.AddCustomers @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT ON; SET XA",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
-          ],
-          "condition_keys": [
-            "IF#452"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
         }
       },
       {
@@ -159,19 +156,20 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 922,
+          "line_no": 448,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.AddSpecialDeals @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF CAS",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ActivateWebsiteLogons @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT O",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
           ],
           "condition_keys": [
-            "IF#873"
+            "IF#397"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -184,21 +182,18 @@
         "properties": {
           "order": 5,
           "sequence": 6,
-          "line_no": 1009,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 451,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.AddStockItems @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; DECLARE ",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
-          ],
-          "condition_keys": [
-            "IF#925"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
         }
       },
       {
@@ -209,19 +204,20 @@
         "properties": {
           "order": 6,
           "sequence": 7,
-          "line_no": 1060,
+          "line_no": 869,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ChangePasswords @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT ON; SET",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.AddCustomers @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT ON; SET XA",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
           ],
           "condition_keys": [
-            "IF#1012"
+            "IF#451"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -234,21 +230,18 @@
         "properties": {
           "order": 7,
           "sequence": 8,
-          "line_no": 1173,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 872,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.CreateCustomerOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @NumberOfCustomerOrders int, @IsSilentMode bit WITH EXECUTE AS ",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
-          ],
-          "condition_keys": [
-            "IF#1063"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
         }
       },
       {
@@ -259,19 +252,20 @@
         "properties": {
           "order": 8,
           "sequence": 9,
-          "line_no": 1376,
+          "line_no": 921,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.InvoicePickedOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.AddSpecialDeals @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF CAS",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
           ],
           "condition_keys": [
-            "IF#1176"
+            "IF#872"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -284,21 +278,18 @@
         "properties": {
           "order": 9,
           "sequence": 10,
-          "line_no": 1539,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 924,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.MakeTemporalChanges @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; DE",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
-          ],
-          "condition_keys": [
-            "IF#1379"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
         }
       },
       {
@@ -309,19 +300,20 @@
         "properties": {
           "order": 10,
           "sequence": 11,
-          "line_no": 1604,
+          "line_no": 1008,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PaySuppliers @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF @IsSil",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.AddStockItems @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; DECLARE ",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
           ],
           "condition_keys": [
-            "IF#1542"
+            "IF#924"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -334,21 +326,18 @@
         "properties": {
           "order": 11,
           "sequence": 12,
-          "line_no": 1674,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 1011,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PerformStocktake @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF @I",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
-          ],
-          "condition_keys": [
-            "IF#1607"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
         }
       },
       {
@@ -359,19 +348,20 @@
         "properties": {
           "order": 12,
           "sequence": 13,
-          "line_no": 1797,
+          "line_no": 1059,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PickStockForCustomerOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ChangePasswords @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT ON; SET",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
           ],
           "condition_keys": [
-            "IF#1677"
+            "IF#1011"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -384,21 +374,18 @@
         "properties": {
           "order": 13,
           "sequence": 14,
-          "line_no": 1925,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 1062,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PlaceSupplierOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
-          ],
-          "condition_keys": [
-            "IF#1800"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
         }
       },
       {
@@ -409,19 +396,20 @@
         "properties": {
           "order": 14,
           "sequence": 15,
-          "line_no": 1990,
+          "line_no": 1172,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ProcessCustomerPayments @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.CreateCustomerOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @NumberOfCustomerOrders int, @IsSilentMode bit WITH EXECUTE AS ",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
           ],
           "condition_keys": [
-            "IF#1928"
+            "IF#1062"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -434,21 +422,18 @@
         "properties": {
           "order": 15,
           "sequence": 16,
-          "line_no": 2099,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 1175,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ReceivePurchaseOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; ",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
-          ],
-          "condition_keys": [
-            "IF#1993"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
         }
       },
       {
@@ -459,19 +444,20 @@
         "properties": {
           "order": 16,
           "sequence": 17,
-          "line_no": 2158,
+          "line_no": 1375,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.RecordColdRoomTemperatures @AverageSecondsBetweenReadings int, @NumberOfSensors int, @CurrentDateTime datetime2(7), @EndOfTime datetime2(7), @IsSilentMode bit WITH ",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.InvoicePickedOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
           ],
           "condition_keys": [
-            "IF#2102"
+            "IF#1175"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -484,21 +470,18 @@
         "properties": {
           "order": 17,
           "sequence": 18,
-          "line_no": 2234,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 1378,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.RecordDeliveryVanTemperatures @AverageSecondsBetweenReadings int, @NumberOfSensors int, @CurrentDateTime datetime2(7), @StartingWhen datetime, @IsSilentMode bit WIT",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
-          ],
-          "condition_keys": [
-            "IF#2161"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
         }
       },
       {
@@ -509,19 +492,20 @@
         "properties": {
           "order": 18,
           "sequence": 19,
-          "line_no": 2329,
+          "line_no": 1538,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.RecordInvoiceDeliveries @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.MakeTemporalChanges @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; DE",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
           ],
           "condition_keys": [
-            "IF#2237"
+            "IF#1378"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -534,21 +518,18 @@
         "properties": {
           "order": 19,
           "sequence": 20,
-          "line_no": 2574,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 1541,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.UpdateCustomFields @CurrentDateTime AS date WITH EXECUTE AS OWNER AS BEGIN DECLARE @StartingWhen datetime2(7) = CAST(@CurrentDateTime AS date); SET @StartingWhen = ",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
-          ],
-          "condition_keys": [
-            "IF#2332"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
         }
       },
       {
@@ -559,19 +540,20 @@
         "properties": {
           "order": 20,
           "sequence": 21,
-          "line_no": 2766,
+          "line_no": 1603,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.DailyProcessToCreateHistory @StartDate date, @EndDate date, @AverageNumberOfCustomerOrdersPerDay int, @SaturdayPercentageOfNormalWorkDay int, @SundayPercentageOfNor",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PaySuppliers @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF @IsSil",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
           ],
           "condition_keys": [
-            "IF#2577"
+            "IF#1541"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -584,7 +566,487 @@
         "properties": {
           "order": 21,
           "sequence": 22,
-          "line_no": 2769,
+          "line_no": 1606,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step22",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 22,
+          "sequence": 23,
+          "line_no": 1673,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PerformStocktake @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF @I",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+          ],
+          "condition_keys": [
+            "IF#1606"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step23",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 23,
+          "sequence": 24,
+          "line_no": 1676,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step24",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 24,
+          "sequence": 25,
+          "line_no": 1796,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PickStockForCustomerOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+          ],
+          "condition_keys": [
+            "IF#1676"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step25",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 25,
+          "sequence": 26,
+          "line_no": 1799,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step26",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 26,
+          "sequence": 27,
+          "line_no": 1924,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.PlaceSupplierOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; IF",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+          ],
+          "condition_keys": [
+            "IF#1799"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step27",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 27,
+          "sequence": 28,
+          "line_no": 1927,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step28",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 28,
+          "sequence": 29,
+          "line_no": 1989,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ProcessCustomerPayments @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+          ],
+          "condition_keys": [
+            "IF#1927"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step29",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 29,
+          "sequence": 30,
+          "line_no": 1992,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step30",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 30,
+          "sequence": 31,
+          "line_no": 2098,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.ReceivePurchaseOrders @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit AS BEGIN SET NOCOUNT ON; SET XACT_ABORT ON; ",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+          ],
+          "condition_keys": [
+            "IF#1992"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step31",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 31,
+          "sequence": 32,
+          "line_no": 2101,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step32",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 32,
+          "sequence": 33,
+          "line_no": 2157,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.RecordColdRoomTemperatures @AverageSecondsBetweenReadings int, @NumberOfSensors int, @CurrentDateTime datetime2(7), @EndOfTime datetime2(7), @IsSilentMode bit WITH ",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+          ],
+          "condition_keys": [
+            "IF#2101"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step33",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 33,
+          "sequence": 34,
+          "line_no": 2160,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step34",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 34,
+          "sequence": 35,
+          "line_no": 2233,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.RecordDeliveryVanTemperatures @AverageSecondsBetweenReadings int, @NumberOfSensors int, @CurrentDateTime datetime2(7), @StartingWhen datetime, @IsSilentMode bit WIT",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+          ],
+          "condition_keys": [
+            "IF#2160"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step35",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 35,
+          "sequence": 36,
+          "line_no": 2236,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step36",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 36,
+          "sequence": 37,
+          "line_no": 2328,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.RecordInvoiceDeliveries @CurrentDateTime datetime2(7), @StartingWhen datetime, @EndOfTime datetime2(7), @IsSilentMode bit WITH EXECUTE AS OWNER AS BEGIN SET NOCOUNT",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+          ],
+          "condition_keys": [
+            "IF#2236"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step37",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 37,
+          "sequence": 38,
+          "line_no": 2331,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step38",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 38,
+          "sequence": 39,
+          "line_no": 2573,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.UpdateCustomFields @CurrentDateTime AS date WITH EXECUTE AS OWNER AS BEGIN DECLARE @StartingWhen datetime2(7) = CAST(@CurrentDateTime AS date); SET @StartingWhen = ",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+          ],
+          "condition_keys": [
+            "IF#2331"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step39",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 39,
+          "sequence": 40,
+          "line_no": 2576,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step40",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 40,
+          "sequence": 41,
+          "line_no": 2765,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE PROCEDURE DataLoadSimulation.DailyProcessToCreateHistory @StartDate date, @EndDate date, @AverageNumberOfCustomerOrdersPerDay int, @SaturdayPercentageOfNormalWorkDay int, @SundayPercentageOfNor",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.procedures             WHERE  SCHEMA_NAME(schema_id) = N'DataLoadSimulation'                    "
+          ],
+          "condition_keys": [
+            "IF#2576"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step41",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 41,
+          "sequence": 42,
+          "line_no": 2768,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
@@ -592,6 +1054,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad"
@@ -861,17 +1324,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step1",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step1",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      "to": "WideWorldImporters:table:sys.objects",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.objects_24b18807.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.objects"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -909,17 +1376,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step11",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step11",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -957,17 +1428,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step13",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step13",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1005,17 +1480,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step15",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step15",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1053,17 +1532,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step17",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step17",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1101,17 +1584,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step19",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step19",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1172,6 +1659,578 @@
     {
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step21",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step22",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step23",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step24",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step25",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step26",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step26",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step26",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step27",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step27",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step27",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step28",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step28",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step28",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step29",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step29",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step29",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step30",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step30",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step30",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step31",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step31",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step31",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step32",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step32",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step32",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step33",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step33",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step33",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step34",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step34",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step34",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step35",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step35",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step35",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step36",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step36",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step36",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step37",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step37",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step37",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step38",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step38",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step38",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step39",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step39",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step39",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step40",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step40",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step40",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step41",
       "from_label": "Step",
       "to": "WideWorldImporters:action:EXEC",
       "to_label": "Action",
@@ -1179,7 +2238,7 @@
     },
     {
       "type": "TARGETS",
-      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step21",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step41",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
       "to_label": "SqlObject",
@@ -1187,67 +2246,23 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
-    },
-    {
-      "type": "BUILDS_SQL_FROM",
-      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
-      "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
-      "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "ACTION",
-      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
-    },
-    {
-      "type": "BUILDS_SQL_FROM",
-      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step4",
-      "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step5",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step5",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1285,17 +2300,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step7",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step7",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1333,17 +2352,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step9",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
       "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step9",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -1365,23 +2388,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step11",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1359037b",
-      "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step12",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1359037b",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step13",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
     },
@@ -1397,23 +2404,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step15",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1359037b",
-      "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step16",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1359037b",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step17",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
     },
@@ -1429,22 +2420,6 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step19",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1359037b",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step2",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1359037b",
-      "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step20",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
@@ -1453,7 +2428,71 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step22",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1359037b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step24",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1359037b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step26",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1359037b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step28",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1359037b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step30",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1359037b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step32",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1359037b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step34",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1359037b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step36",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:1359037b",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step38",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
     },
@@ -1469,7 +2508,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step5",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step40",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
     },
@@ -1485,23 +2524,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:1359037b",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step7",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1359037b",
-      "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step8",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:1359037b",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step9",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
     },
@@ -1509,8 +2532,16 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:51a1fac6",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step1",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step2",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:dataloadsimulation",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
     }
   ]

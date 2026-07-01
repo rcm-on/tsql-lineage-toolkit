@@ -77,6 +77,11 @@
           "construction": [
             "N'INSERT #CurrentValue (CurrentValue) SELECT COALESCE(MAX(' + QUOTENAME(@ColumnName) + N'), 0) FROM ' + QUOTENAME(@SchemaName) + N'.' + QUOTENAME(@TableName) + N';'",
             "N'ALTER SEQUENCE Sequences.' + QUOTENAME(@SequenceName) + N' RESTART WITH ' + CAST (@NewSequenceValue AS NVARCHAR (20)) + N';'"
+          ],
+          "op_kinds": [
+            "arith:+",
+            "cast:CAST",
+            "func:QUOTENAME"
           ]
         }
       },
@@ -91,7 +96,8 @@
           "default": "",
           "construction": [
             "(SELECT CurrentValue  FROM   #CurrentValue)"
-          ]
+          ],
+          "op_kinds": []
         }
       },
       {
@@ -105,6 +111,9 @@
           "default": "",
           "construction": [
             "@CurrentTableMaximumValue + 1"
+          ],
+          "op_kinds": [
+            "arith:+"
           ]
         }
       },
@@ -117,7 +126,8 @@
           "name": "@CurrentSequenceMaximumValue",
           "data_type": "BIGINT",
           "default": "(SELECT CAST (current_value AS BIGINT)  FROM   sys.sequences  WHERE  name = @SequenceName         AND SCHEMA_NAME(schema",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       }
     ],
@@ -130,17 +140,18 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 18,
+          "line_no": 13,
           "nesting_level": 0,
-          "action": "CREATE_TABLE",
-          "step_type": "Maintenance",
-          "target_name": "#CurrentValue",
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.sequences",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "CREATE_TABLE -> #CurrentValue"
+          "label": "SELECT -> sys.sequences"
         }
       },
       {
@@ -151,17 +162,18 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 24,
+          "line_no": 17,
           "nesting_level": 0,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "action": "CREATE_TABLE",
+          "step_type": "Maintenance",
+          "target_name": "#CurrentValue",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "CREATE_TABLE -> #CurrentValue"
         }
       },
       {
@@ -172,17 +184,18 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 25,
+          "line_no": 23,
           "nesting_level": 0,
-          "action": "SELECT",
-          "step_type": "Staging",
-          "target_name": "#CurrentValue",
-          "detail": "→ @CurrentTableMaximumValue",
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": false,
+          "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "SELECT (→ @CurrentTableMaximumValue) -> #CurrentValue"
+          "label": "EXEC -> (dynamic SQL)"
         }
       },
       {
@@ -193,17 +206,18 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 26,
+          "line_no": 24,
           "nesting_level": 0,
-          "action": "DROP_TABLE",
-          "step_type": "Maintenance",
+          "action": "SELECT",
+          "step_type": "Staging",
           "target_name": "#CurrentValue",
-          "detail": "",
+          "detail": "→ @CurrentTableMaximumValue",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "DROP_TABLE -> #CurrentValue"
+          "label": "SELECT (→ @CurrentTableMaximumValue) -> #CurrentValue"
         }
       },
       {
@@ -214,7 +228,51 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 32,
+          "line_no": 24,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Staging",
+          "target_name": "#CurrentValue",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> #CurrentValue"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step5",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 5,
+          "sequence": 6,
+          "line_no": 25,
+          "nesting_level": 0,
+          "action": "DROP_TABLE",
+          "step_type": "Maintenance",
+          "target_name": "#CurrentValue",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DROP_TABLE -> #CurrentValue"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step6",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 6,
+          "sequence": 7,
+          "line_no": 31,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
@@ -222,11 +280,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: @CurrentTableMaximumValue >= @CurrentSequenceMaximumValue"
           ],
           "condition_keys": [
-            "IF#28"
+            "IF#27"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -249,13 +308,41 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step0",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.sequences",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.sequences_088be382.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.sequences"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#param:@SequenceName",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step1",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:CREATE_TABLE",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_CREATE_TABLE_f06c2897.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step1",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
       "from_label": "Step",
       "to": "WideWorldImporters:action:EXEC",
       "to_label": "Action",
@@ -263,7 +350,7 @@
     },
     {
       "type": "BUILDS_SQL_FROM",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step1",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
       "from_label": "Step",
       "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@SQL",
       "to_label": "Variable",
@@ -271,25 +358,9 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step1",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
       "from_label": "Step",
       "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
-    },
-    {
-      "type": "ACTION",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:SELECT",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
-      "from_label": "Step",
-      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@CurrentTableMaximumValue",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
     },
@@ -297,13 +368,45 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@CurrentTableMaximumValue",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@CurrentTableMaximumValue",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step5",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:DROP_TABLE",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_DROP_TABLE_d4bc7329.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:action:EXEC",
       "to_label": "Action",
@@ -311,7 +414,7 @@
     },
     {
       "type": "BUILDS_SQL_FROM",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step6",
       "from_label": "Step",
       "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@SQL",
       "to_label": "Variable",
@@ -319,7 +422,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step6",
       "from_label": "Step",
       "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#var:@SQL",
       "to_label": "Variable",
@@ -337,8 +440,16 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:67abcccd",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
+      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step6",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:sequences",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
     }
   ]

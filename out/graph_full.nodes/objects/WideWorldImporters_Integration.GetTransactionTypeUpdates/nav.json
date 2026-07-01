@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.transactiontypes_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_archive_ba7c90b6.json",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_archive_ba7c90b6.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].TransactionTypes_Archive"
@@ -20,7 +20,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.transactiontypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "[Application].TransactionTypes"
@@ -32,12 +32,20 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.transactiontypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].TransactionTypes",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetTransactionTypeUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/nav.json"
     }
   ]
 }

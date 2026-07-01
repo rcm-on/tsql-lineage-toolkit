@@ -8,11 +8,19 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.StockItems"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.SearchForStockItems",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.SearchForStockItems/nav.json"
     }
   ]
 }

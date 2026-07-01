@@ -9,7 +9,7 @@
     "schema": "Application",
     "name": "DetermineCustomerAccess",
     "full_name": "Application.DetermineCustomerAccess",
-    "object_type": "UNKNOWN",
+    "object_type": "INLINE_TABLE_FUNCTION",
     "has_transaction": false,
     "has_error_handling": false,
     "has_cursor": false,
@@ -32,7 +32,30 @@
       }
     ],
     "variables": [],
-    "steps": []
+    "steps": [
+      {
+        "id": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 0,
+          "sequence": 1,
+          "line_no": 5,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "[Application].Cities",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> [Application].Cities"
+        }
+      }
+    ]
   },
   "edges_out": [
     {
@@ -43,8 +66,70 @@
       "to_label": "Workflow",
       "path": "shared/other/wf_WideWorldImporters_application_552b8a6f.json",
       "props": {
-        "object_type": "UNKNOWN"
+        "object_type": "INLINE_TABLE_FUNCTION"
       }
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.cities",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].Cities"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.cities",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].Cities",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.stateprovinces",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].StateProvinces",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Application.DetermineCustomerAccess#param:@CityID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Application.DetermineCustomerAccess/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.DetermineCustomerAccess",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.DetermineCustomerAccess/object.json"
     }
   ]
 }

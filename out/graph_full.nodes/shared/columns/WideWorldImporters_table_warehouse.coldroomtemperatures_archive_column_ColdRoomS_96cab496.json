@@ -13,6 +13,16 @@
     "ordinal": 2
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.coldroomtemperatures_archive",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_archive_c2a1fe2d.json",
+      "props": {
+        "ordinal": 2
+      }
+    }
+  ],
   "edges_out": []
 }

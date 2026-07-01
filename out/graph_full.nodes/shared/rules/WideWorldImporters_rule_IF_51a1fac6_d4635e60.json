@@ -13,7 +13,7 @@
   "edges_out": [
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step1",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step2",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
     }

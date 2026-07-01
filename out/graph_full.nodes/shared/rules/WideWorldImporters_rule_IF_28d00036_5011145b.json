@@ -31,31 +31,31 @@
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step5",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step13",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step6",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step14",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step7",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step15",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step8",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step16",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },
     {
       "type": "GOVERNS",
-      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
+      "to": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step17",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
     },

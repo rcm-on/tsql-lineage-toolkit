@@ -31,6 +31,12 @@
         "action_type": "SELECT",
         "table": "Sales.BuyingGroups_Archive"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:sales",
+      "from_label": "Schema",
+      "path": "shared/schemas/WideWorldImporters_schema_sales_75776514.json"
     }
   ],
   "edges_out": [

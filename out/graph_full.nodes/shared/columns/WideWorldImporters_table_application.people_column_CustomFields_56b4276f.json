@@ -13,6 +13,29 @@
     "ordinal": 17
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:application.people:column:OtherLanguages",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_OtherLanguages_cafd7bce.json",
+      "props": {
+        "logic": "(json_query([CustomFields], N'$.OtherLanguages'))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:JSON_QUERY"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.people",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "props": {
+        "ordinal": 17
+      }
+    }
+  ],
   "edges_out": []
 }

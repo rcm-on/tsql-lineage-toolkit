@@ -41,7 +41,8 @@
           "name": "@NumberOfReadings",
           "data_type": "INT",
           "default": "(SELECT MAX(SensorDataListID)  FROM   @SensorReadings)",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -55,7 +56,8 @@
           "default": "(SELECT MIN(SensorDataListID)  FROM   @SensorReadings)",
           "construction": [
             "1"
-          ]
+          ],
+          "op_kinds": []
         }
       },
       {
@@ -69,7 +71,8 @@
           "default": "",
           "construction": [
             "ColdRoomSensorNumber"
-          ]
+          ],
+          "op_kinds": []
         }
       },
       {
@@ -83,7 +86,8 @@
           "default": "",
           "construction": [
             "RecordedWhen"
-          ]
+          ],
+          "op_kinds": []
         }
       },
       {
@@ -97,7 +101,8 @@
           "default": "",
           "construction": [
             "Temperature"
-          ]
+          ],
+          "op_kinds": []
         }
       }
     ],
@@ -110,7 +115,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 24,
+          "line_no": 23,
           "nesting_level": 1,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -118,11 +123,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @Counter <= @NumberOfReadings"
           ],
           "condition_keys": [
-            "WHILE#22"
+            "WHILE#21"
           ],
           "label": "SELECT"
         }
@@ -135,7 +141,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 30,
+          "line_no": 29,
           "nesting_level": 1,
           "action": "UPDATE",
           "step_type": "Transformation",
@@ -143,11 +149,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @Counter <= @NumberOfReadings"
           ],
           "condition_keys": [
-            "WHILE#22"
+            "WHILE#21"
           ],
           "label": "UPDATE -> Warehouse.ColdRoomTemperatures"
         }
@@ -160,7 +167,7 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 37,
+          "line_no": 36,
           "nesting_level": 2,
           "action": "INSERT",
           "step_type": "Load",
@@ -168,13 +175,14 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @Counter <= @NumberOfReadings",
             "IF: @@ROWCOUNT = 0"
           ],
           "condition_keys": [
-            "WHILE#22",
-            "IF#35"
+            "WHILE#21",
+            "IF#34"
           ],
           "label": "INSERT -> Warehouse.ColdRoomTemperatures"
         }
@@ -187,7 +195,7 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 47,
+          "line_no": 46,
           "nesting_level": 1,
           "action": "THROW",
           "step_type": "Notification",
@@ -195,11 +203,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "CATCH: ON ERROR"
           ],
           "condition_keys": [
-            "CATCH#11"
+            "CATCH#10"
           ],
           "label": "THROW"
         }
@@ -212,7 +221,7 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 49,
+          "line_no": 48,
           "nesting_level": 1,
           "action": "RETURN",
           "step_type": "Control",
@@ -220,11 +229,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "CATCH: ON ERROR"
           ],
           "condition_keys": [
-            "CATCH#11"
+            "CATCH#10"
           ],
           "label": "RETURN"
         }
@@ -305,7 +315,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.coldroomtemperatures:column:ColdRoomSensorNumber",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_ColdRoomSensorNum_8f23eeb1.json"
+      "path": "shared/columns/WideWorldImporters_table_warehouse.coldroomtemperatures_column_ColdRoomSensorNum_8f23eeb1.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "USES_VARIABLE",
@@ -481,6 +496,14 @@
       "from_label": "Rule",
       "to": "WideWorldImporters::Website.RecordColdRoomTemperatures#step1",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.RecordColdRoomTemperatures",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Website.RecordColdRoomTemperatures/object.json"
     }
   ]

@@ -13,6 +13,14 @@
     "ordinal": 1
   },
   "refs": {
+    "WideWorldImporters::Application.Configuration_EnableInMemory": [
+      {
+        "type": "WRITES_COLUMN",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      }
+    ],
     "WideWorldImporters::Website.VehicleTemperatures": [
       {
         "type": "READS_COLUMN",
@@ -24,11 +32,48 @@
   },
   "edges_in": [
     {
+      "type": "WRITES_COLUMN",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step18",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
       "type": "READS_COLUMN",
       "from": "WideWorldImporters::Website.VehicleTemperatures#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.VehicleTemperatures/object.json"
+    },
+    {
+      "type": "DERIVES_FROM",
+      "from": "WideWorldImporters:table:website.vehicletemperatures:column:VehicleTemperatureID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.vehicletemperatures_column_VehicleTemperatureID_8dc40d38.json",
+      "props": {
+        "logic": "vt.VehicleTemperatureID",
+        "via_view": true
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.vehicletemperatures",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.vehicletemperatures_e42230f7.json",
+      "props": {
+        "ordinal": 1
+      }
     }
   ],
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:warehouse.vehicletemperatures_backup:column:VehicleTemperatureID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.vehicletemperatures_backup_column_VehicleTemp_03fd12d4.json",
+      "props": {
+        "logic": "VehicleTemperatureID",
+        "line_no": 1,
+        "caused_by_step": "WideWorldImporters::Application.Configuration_EnableInMemory#step18"
+      }
+    }
+  ]
 }

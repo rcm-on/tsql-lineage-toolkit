@@ -7,12 +7,432 @@
     "name": "SELECT"
   },
   "refs": {
+    "WideWorldImporters::Application.AddRoleMemberIfNonexistent": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyAuditing": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+      }
+    ],
     "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": [
       {
         "type": "ACTION",
         "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step8",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_ApplyPartitioning": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step18",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step7",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_EnableInMemory": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.Configuration_RemoveAuditing": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step2",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.CreateRoleIfNonexistent": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+      }
+    ],
+    "WideWorldImporters::Application.DetermineCustomerAccess": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Application.DetermineCustomerAccess/object.json"
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step11",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step13",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step15",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step17",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step19",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step21",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step23",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step25",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step27",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step29",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step31",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step33",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step35",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step37",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step39",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step7",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step9",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step37",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step40",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step43",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step46",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step49",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step52",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step55",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step58",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step61",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step64",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step67",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step70",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step73",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step76",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step79",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step82",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step85",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json"
+      }
+    ],
+    "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
       }
     ],
     "WideWorldImporters::Integration.GetCityUpdates": [
@@ -55,6 +475,12 @@
       {
         "type": "ACTION",
         "from": "WideWorldImporters::Integration.GetCityUpdates#step30",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetCityUpdates#step31",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
       }
@@ -101,12 +527,24 @@
         "from": "WideWorldImporters::Integration.GetCustomerUpdates#step30",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetCustomerUpdates#step31",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
       }
     ],
     "WideWorldImporters::Integration.GetEmployeeUpdates": [
       {
         "type": "ACTION",
         "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step12",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step13",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
       },
@@ -143,6 +581,12 @@
       {
         "type": "ACTION",
         "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step12",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step13",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
       },
@@ -192,6 +636,12 @@
       },
       {
         "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetStockItemUpdates#step13",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+      },
+      {
+        "type": "ACTION",
         "from": "WideWorldImporters::Integration.GetStockItemUpdates#step2",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
@@ -230,6 +680,12 @@
       },
       {
         "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetSupplierUpdates#step22",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+      },
+      {
+        "type": "ACTION",
         "from": "WideWorldImporters::Integration.GetSupplierUpdates#step3",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
@@ -239,6 +695,12 @@
       {
         "type": "ACTION",
         "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step12",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step13",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
       },
@@ -255,12 +717,46 @@
         "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
       }
     ],
+    "WideWorldImporters::Integration.GetTransactionUpdates": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetTransactionUpdates#step0",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Integration.GetTransactionUpdates#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json"
+      }
+    ],
     "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
+        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step0",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.ActivateWebsiteLogon": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
       }
     ],
     "WideWorldImporters::Website.CalculateCustomerPrice": [
@@ -293,6 +789,24 @@
         "from": "WideWorldImporters::Website.CalculateCustomerPrice#step4",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step5",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step6",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.CalculateCustomerPrice#step7",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
       }
     ],
     "WideWorldImporters::Website.Customers": [
@@ -301,6 +815,26 @@
         "from": "WideWorldImporters::Website.Customers#step0",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      }
+    ],
+    "WideWorldImporters::Website.InvoiceCustomerOrders": [
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+      },
+      {
+        "type": "ACTION",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+        "from_label": "Step",
+        "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
     ],
     "WideWorldImporters::Website.RecordColdRoomTemperatures": [
@@ -371,9 +905,405 @@
   "edges_in": [
     {
       "type": "ACTION",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
       "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step7",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing#step8",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyFullTextIndexing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step18",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step7",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_ApplyPartitioning#step9",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyPartitioning/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step13",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step2",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Application.DetermineCustomerAccess#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Application.DetermineCustomerAccess/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step11",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step13",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step15",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step17",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step19",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step21",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step23",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step25",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step27",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step29",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step31",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step33",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step35",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step37",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step39",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step7",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures#step9",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_ApplyDataLoadSimulationProce/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step37",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step40",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step43",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step46",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step49",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step52",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step55",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step58",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step61",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step64",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step67",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step70",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step73",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step76",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step79",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step82",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step85",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.PopulateDataToCurrentDate/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad/object.json"
     },
     {
       "type": "ACTION",
@@ -414,6 +1344,12 @@
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetCityUpdates#step30",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step31",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
     },
@@ -461,7 +1397,19 @@
     },
     {
       "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCustomerUpdates#step31",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCustomerUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step12",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetEmployeeUpdates#step13",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetEmployeeUpdates/object.json"
     },
@@ -492,6 +1440,12 @@
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step12",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetPaymentMethodUpdates#step13",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetPaymentMethodUpdates/object.json"
     },
@@ -533,6 +1487,12 @@
     },
     {
       "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetStockItemUpdates#step13",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetStockItemUpdates#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/object.json"
@@ -569,6 +1529,12 @@
     },
     {
       "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetSupplierUpdates#step22",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetSupplierUpdates#step3",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/object.json"
@@ -576,6 +1542,12 @@
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step12",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionTypeUpdates#step13",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Integration.GetTransactionTypeUpdates/object.json"
     },
@@ -593,9 +1565,39 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step2",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step0",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step3",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues#step4",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Sequences.ReseedSequenceBeyondTableValues/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
     },
     {
       "type": "ACTION",
@@ -629,9 +1631,45 @@
     },
     {
       "type": "ACTION",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step5",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step6",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.CalculateCustomerPrice#step7",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "ACTION",
       "from": "WideWorldImporters::Website.Customers#step0",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.Customers/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },
     {
       "type": "ACTION",

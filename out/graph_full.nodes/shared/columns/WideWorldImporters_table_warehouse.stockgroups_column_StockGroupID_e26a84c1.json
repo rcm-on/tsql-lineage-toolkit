@@ -13,6 +13,40 @@
     "ordinal": 1
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:warehouse.stockgroups:DEFAULT:3eed4799",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_warehouse.stockgroups_DEFAULT_3eed4799_ddc39e36.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockgroups",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.specialdeals:column:StockGroupID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.specialdeals_column_StockGroupID_8b497562.json",
+      "props": {
+        "constraint": "FK_Sales_SpecialDeals_StockGroupID_Warehouse_StockGroups"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:warehouse.stockitemstockgroups:column:StockGroupID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemstockgroups_column_StockGroupID_ca5f1bdb.json",
+      "props": {
+        "constraint": "FK_Warehouse_StockItemStockGroups_StockGroupID_Warehouse_StockGroups"
+      }
+    }
+  ],
   "edges_out": []
 }

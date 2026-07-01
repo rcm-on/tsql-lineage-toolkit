@@ -13,7 +13,13 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+        "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:=",
+            "logical:AND"
+          ]
+        }
       }
     ]
   },
@@ -22,7 +28,19 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step1",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
+      "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:=",
+          "logical:AND"
+        ]
+      }
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sys.indexes",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.indexes_71f71038.json"
     }
   ],
   "edges_out": []

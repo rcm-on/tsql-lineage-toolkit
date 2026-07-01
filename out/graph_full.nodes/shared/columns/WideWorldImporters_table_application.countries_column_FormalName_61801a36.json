@@ -13,6 +13,22 @@
     "ordinal": 3
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.countries:UNIQUE:76874e0c",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.countries_UNIQUE_76874e0c_975cdddf.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.countries",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "props": {
+        "ordinal": 3
+      }
+    }
+  ],
   "edges_out": []
 }

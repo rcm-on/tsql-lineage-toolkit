@@ -28,6 +28,15 @@
       "from": "WideWorldImporters::Website.CalculateCustomerPrice#var:@UnitPrice",
       "from_label": "Variable",
       "path": "objects/WideWorldImporters_Website.CalculateCustomerPrice/object.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:warehouse.stockitems",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "ordinal": 14
+      }
     }
   ],
   "edges_out": []

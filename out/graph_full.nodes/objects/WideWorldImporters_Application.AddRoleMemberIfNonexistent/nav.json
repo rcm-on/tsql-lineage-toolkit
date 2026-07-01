@@ -1,5 +1,39 @@
 ﻿{
   "id": "WideWorldImporters::Application.AddRoleMemberIfNonexistent",
   "name": "Application.AddRoleMemberIfNonexistent",
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.database_principals",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.database_principals_2a499795.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.database_principals",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.database_role_members",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.database_role_members_cf72cddf.nav.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.database_role_members"
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.AddRoleMemberIfNonexistent",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/nav.json"
+    }
+  ]
 }

@@ -52,7 +52,8 @@
           "name": "@EndOfTime",
           "data_type": "DATETIME2 (7)",
           "default": "'99991231 23:59:59.9999999'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -64,7 +65,8 @@
           "name": "@InitialLoadDate",
           "data_type": "DATE",
           "default": "'20130101'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -76,7 +78,8 @@
           "name": "@CountryID",
           "data_type": "INT",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -88,7 +91,8 @@
           "name": "@StateProvinceID",
           "data_type": "INT",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -100,7 +104,8 @@
           "name": "@CityID",
           "data_type": "INT",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -112,7 +117,8 @@
           "name": "@ValidFrom",
           "data_type": "DATETIME2 (7)",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       }
     ],
@@ -125,7 +131,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 14,
+          "line_no": 13,
           "nesting_level": 0,
           "action": "CREATE_TABLE",
           "step_type": "Maintenance",
@@ -133,6 +139,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CREATE_TABLE -> #CityChanges"
@@ -146,7 +153,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 37,
+          "line_no": 36,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
           "step_type": "Cursor",
@@ -154,6 +161,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DECLARE_CURSOR -> CountryChangeList"
@@ -167,7 +175,7 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 37,
+          "line_no": 36,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -175,6 +183,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> [Application].Countries_Archive"
@@ -188,7 +197,7 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 37,
+          "line_no": 36,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -196,6 +205,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> [Application].Countries"
@@ -209,7 +219,7 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 54,
+          "line_no": 53,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
           "step_type": "Cursor",
@@ -217,6 +227,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "OPEN_CURSOR -> CountryChangeList"
@@ -230,7 +241,7 @@
         "properties": {
           "order": 5,
           "sequence": 6,
-          "line_no": 55,
+          "line_no": 54,
           "nesting_level": 0,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -238,6 +249,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "FETCH -> CountryChangeList"
@@ -251,7 +263,7 @@
         "properties": {
           "order": 6,
           "sequence": 7,
-          "line_no": 59,
+          "line_no": 58,
           "nesting_level": 1,
           "action": "INSERT",
           "step_type": "Staging",
@@ -259,11 +271,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#57"
+            "WHILE#56"
           ],
           "label": "INSERT -> #CityChanges"
         }
@@ -276,7 +289,7 @@
         "properties": {
           "order": 7,
           "sequence": 8,
-          "line_no": 71,
+          "line_no": 70,
           "nesting_level": 1,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -284,11 +297,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#57"
+            "WHILE#56"
           ],
           "label": "FETCH -> CountryChangeList"
         }
@@ -301,7 +315,7 @@
         "properties": {
           "order": 8,
           "sequence": 9,
-          "line_no": 74,
+          "line_no": 73,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
           "step_type": "Cursor",
@@ -309,6 +323,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CLOSE_CURSOR -> CountryChangeList"
@@ -322,7 +337,7 @@
         "properties": {
           "order": 9,
           "sequence": 10,
-          "line_no": 75,
+          "line_no": 74,
           "nesting_level": 0,
           "action": "DEALLOCATE",
           "step_type": "Cursor",
@@ -330,6 +345,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DEALLOCATE -> CountryChangeList"
@@ -343,7 +359,7 @@
         "properties": {
           "order": 10,
           "sequence": 11,
-          "line_no": 79,
+          "line_no": 78,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
           "step_type": "Cursor",
@@ -351,6 +367,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DECLARE_CURSOR -> StateProvinceChangeList"
@@ -364,7 +381,7 @@
         "properties": {
           "order": 11,
           "sequence": 12,
-          "line_no": 79,
+          "line_no": 78,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -372,6 +389,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> [Application].StateProvinces_Archive"
@@ -385,7 +403,7 @@
         "properties": {
           "order": 12,
           "sequence": 13,
-          "line_no": 79,
+          "line_no": 78,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -393,6 +411,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> [Application].StateProvinces"
@@ -406,7 +425,7 @@
         "properties": {
           "order": 13,
           "sequence": 14,
-          "line_no": 96,
+          "line_no": 95,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
           "step_type": "Cursor",
@@ -414,6 +433,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "OPEN_CURSOR -> StateProvinceChangeList"
@@ -427,7 +447,7 @@
         "properties": {
           "order": 14,
           "sequence": 15,
-          "line_no": 97,
+          "line_no": 96,
           "nesting_level": 0,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -435,6 +455,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "FETCH -> StateProvinceChangeList"
@@ -448,7 +469,7 @@
         "properties": {
           "order": 15,
           "sequence": 16,
-          "line_no": 101,
+          "line_no": 100,
           "nesting_level": 1,
           "action": "INSERT",
           "step_type": "Staging",
@@ -456,11 +477,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#99"
+            "WHILE#98"
           ],
           "label": "INSERT -> #CityChanges"
         }
@@ -473,7 +495,7 @@
         "properties": {
           "order": 16,
           "sequence": 17,
-          "line_no": 113,
+          "line_no": 112,
           "nesting_level": 1,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -481,11 +503,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#99"
+            "WHILE#98"
           ],
           "label": "FETCH -> StateProvinceChangeList"
         }
@@ -498,7 +521,7 @@
         "properties": {
           "order": 17,
           "sequence": 18,
-          "line_no": 116,
+          "line_no": 115,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
           "step_type": "Cursor",
@@ -506,6 +529,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CLOSE_CURSOR -> StateProvinceChangeList"
@@ -519,7 +543,7 @@
         "properties": {
           "order": 18,
           "sequence": 19,
-          "line_no": 117,
+          "line_no": 116,
           "nesting_level": 0,
           "action": "DEALLOCATE",
           "step_type": "Cursor",
@@ -527,6 +551,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DEALLOCATE -> StateProvinceChangeList"
@@ -540,7 +565,7 @@
         "properties": {
           "order": 19,
           "sequence": 20,
-          "line_no": 121,
+          "line_no": 120,
           "nesting_level": 0,
           "action": "DECLARE_CURSOR",
           "step_type": "Cursor",
@@ -548,6 +573,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DECLARE_CURSOR -> CityChangeList"
@@ -561,7 +587,7 @@
         "properties": {
           "order": 20,
           "sequence": 21,
-          "line_no": 121,
+          "line_no": 120,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -569,6 +595,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> [Application].Cities_Archive"
@@ -582,7 +609,7 @@
         "properties": {
           "order": 21,
           "sequence": 22,
-          "line_no": 121,
+          "line_no": 120,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -590,6 +617,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> [Application].Cities"
@@ -603,7 +631,7 @@
         "properties": {
           "order": 22,
           "sequence": 23,
-          "line_no": 136,
+          "line_no": 135,
           "nesting_level": 0,
           "action": "OPEN_CURSOR",
           "step_type": "Cursor",
@@ -611,6 +639,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "OPEN_CURSOR -> CityChangeList"
@@ -624,7 +653,7 @@
         "properties": {
           "order": 23,
           "sequence": 24,
-          "line_no": 137,
+          "line_no": 136,
           "nesting_level": 0,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -632,6 +661,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "FETCH -> CityChangeList"
@@ -645,7 +675,7 @@
         "properties": {
           "order": 24,
           "sequence": 25,
-          "line_no": 141,
+          "line_no": 140,
           "nesting_level": 1,
           "action": "INSERT",
           "step_type": "Staging",
@@ -653,11 +683,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#139"
+            "WHILE#138"
           ],
           "label": "INSERT -> #CityChanges"
         }
@@ -670,7 +701,7 @@
         "properties": {
           "order": 25,
           "sequence": 26,
-          "line_no": 153,
+          "line_no": 152,
           "nesting_level": 1,
           "action": "FETCH",
           "step_type": "Cursor",
@@ -678,11 +709,12 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [
             "WHILE: @@FETCH_STATUS = 0"
           ],
           "condition_keys": [
-            "WHILE#139"
+            "WHILE#138"
           ],
           "label": "FETCH -> CityChangeList"
         }
@@ -695,7 +727,7 @@
         "properties": {
           "order": 26,
           "sequence": 27,
-          "line_no": 156,
+          "line_no": 155,
           "nesting_level": 0,
           "action": "CLOSE_CURSOR",
           "step_type": "Cursor",
@@ -703,6 +735,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CLOSE_CURSOR -> CityChangeList"
@@ -716,7 +749,7 @@
         "properties": {
           "order": 27,
           "sequence": 28,
-          "line_no": 157,
+          "line_no": 156,
           "nesting_level": 0,
           "action": "DEALLOCATE",
           "step_type": "Cursor",
@@ -724,6 +757,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "DEALLOCATE -> CityChangeList"
@@ -737,7 +771,7 @@
         "properties": {
           "order": 28,
           "sequence": 29,
-          "line_no": 161,
+          "line_no": 160,
           "nesting_level": 0,
           "action": "CREATE_INDEX",
           "step_type": "Maintenance",
@@ -745,6 +779,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "CREATE_INDEX -> #CityChanges"
@@ -758,7 +793,7 @@
         "properties": {
           "order": 29,
           "sequence": 30,
-          "line_no": 166,
+          "line_no": 165,
           "nesting_level": 0,
           "action": "UPDATE",
           "step_type": "Transformation",
@@ -766,6 +801,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "UPDATE -> #CityChanges"
@@ -779,7 +815,7 @@
         "properties": {
           "order": 30,
           "sequence": 31,
-          "line_no": 172,
+          "line_no": 165,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Staging",
@@ -787,6 +823,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> #CityChanges"
@@ -800,17 +837,18 @@
         "properties": {
           "order": 31,
           "sequence": 32,
-          "line_no": 178,
+          "line_no": 171,
           "nesting_level": 0,
-          "action": "DROP_TABLE",
-          "step_type": "Maintenance",
+          "action": "SELECT",
+          "step_type": "Staging",
           "target_name": "#CityChanges",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "DROP_TABLE -> #CityChanges"
+          "label": "SELECT -> #CityChanges"
         }
       },
       {
@@ -821,7 +859,29 @@
         "properties": {
           "order": 32,
           "sequence": 33,
-          "line_no": 180,
+          "line_no": 177,
+          "nesting_level": 0,
+          "action": "DROP_TABLE",
+          "step_type": "Maintenance",
+          "target_name": "#CityChanges",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "DROP_TABLE -> #CityChanges"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetCityUpdates#step33",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 33,
+          "sequence": 34,
+          "line_no": 179,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -829,6 +889,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -1591,8 +1652,24 @@
       "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step30",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetCityUpdates#var:@EndOfTime",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetCityUpdates#step31",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step32",
       "from_label": "Step",
       "to": "WideWorldImporters:action:DROP_TABLE",
       "to_label": "Action",
@@ -1600,7 +1677,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Integration.GetCityUpdates#step32",
+      "from": "WideWorldImporters::Integration.GetCityUpdates#step33",
       "from_label": "Step",
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
@@ -1835,6 +1912,14 @@
       "from_label": "Rule",
       "to": "WideWorldImporters::Integration.GetCityUpdates#step7",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetCityUpdates",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Integration.GetCityUpdates/object.json"
     }
   ]

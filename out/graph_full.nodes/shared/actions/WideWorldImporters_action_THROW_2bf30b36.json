@@ -10,7 +10,7 @@
     "WideWorldImporters::Application.AddRoleMemberIfNonexistent": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+        "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step2",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
       }
@@ -18,7 +18,7 @@
     "WideWorldImporters::Application.Configuration_ApplyAuditing": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step3",
+        "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step6",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
       }
@@ -26,7 +26,7 @@
     "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step10",
+        "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step13",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
       }
@@ -42,7 +42,7 @@
     "WideWorldImporters::Application.Configuration_EnableInMemory": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step30",
+        "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step34",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
       }
@@ -50,7 +50,7 @@
     "WideWorldImporters::Application.Configuration_RemoveAuditing": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
+        "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step6",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
       }
@@ -66,7 +66,7 @@
     "WideWorldImporters::Application.CreateRoleIfNonexistent": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+        "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step2",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
       }
@@ -74,7 +74,7 @@
     "WideWorldImporters::Website.ActivateWebsiteLogon": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+        "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step2",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
       }
@@ -98,13 +98,13 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step13",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       },
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step2",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -135,19 +135,19 @@
   "edges_in": [
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step1",
+      "from": "WideWorldImporters::Application.AddRoleMemberIfNonexistent#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.AddRoleMemberIfNonexistent/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step3",
+      "from": "WideWorldImporters::Application.Configuration_ApplyAuditing#step6",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyAuditing/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step10",
+      "from": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing#step13",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_ApplyColumnstoreIndexing/object.json"
     },
@@ -159,13 +159,13 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step30",
+      "from": "WideWorldImporters::Application.Configuration_EnableInMemory#step34",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_EnableInMemory/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step3",
+      "from": "WideWorldImporters::Application.Configuration_RemoveAuditing#step6",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.Configuration_RemoveAuditing/object.json"
     },
@@ -177,13 +177,13 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step1",
+      "from": "WideWorldImporters::Application.CreateRoleIfNonexistent#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Application.CreateRoleIfNonexistent/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step1",
+      "from": "WideWorldImporters::Website.ActivateWebsiteLogon#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.ActivateWebsiteLogon/object.json"
     },
@@ -201,13 +201,13 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step13",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step2",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },

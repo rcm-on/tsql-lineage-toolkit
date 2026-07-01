@@ -29,7 +29,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 4,
+          "line_no": 3,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -37,6 +37,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Sales.Customers"
@@ -57,6 +58,118 @@
       }
     },
     {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:AlternateContact",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_AlternateContact_bc4624ca.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:BuyingGroupName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_BuyingGroupName_105d84b4.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:CityName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_CityName_46149bdf.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:CustomerCategoryName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_CustomerCategoryName_c1999e34.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:CustomerID",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_CustomerID_66b6330b.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:CustomerName",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_CustomerName_859dccc4.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:DeliveryLocation",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_DeliveryLocation_9c72da48.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:DeliveryMethod",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_DeliveryMethod_ff29410b.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:DeliveryRun",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_DeliveryRun_206e3dd3.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:FaxNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_FaxNumber_dd2e19fa.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:PhoneNumber",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_PhoneNumber_f8d941b8.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:PrimaryContact",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_PrimaryContact_4cd8ebfb.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:RunPosition",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_RunPosition_f7240f49.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters::Website.Customers",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters:table:website.customers:column:WebsiteURL",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_website.customers_column_WebsiteURL_949f0404.json"
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::Website.Customers#step0",
       "from_label": "Step",
@@ -70,7 +183,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.cities:column:CityID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.cities_column_CityID_63dabfa7.json"
+      "path": "shared/columns/WideWorldImporters_table_application.cities_column_CityID_63dabfa7.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -78,7 +196,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.deliverymethods:column:DeliveryMethodID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.deliverymethods_column_DeliveryMethodID_0668c523.json"
+      "path": "shared/columns/WideWorldImporters_table_application.deliverymethods_column_DeliveryMethodID_0668c523.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -86,7 +209,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people:column:PersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json"
+      "path": "shared/columns/WideWorldImporters_table_application.people_column_PersonID_84c7abf5.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -94,7 +222,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.buyinggroups:column:BuyingGroupID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_column_BuyingGroupID_08a3384c.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.buyinggroups_column_BuyingGroupID_08a3384c.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -102,7 +235,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customercategories:column:CustomerCategoryID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_column_CustomerCategoryID_f8db0ef6.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customercategories_column_CustomerCategoryID_f8db0ef6.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -110,7 +248,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:AlternateContactPersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_AlternateContactPersonID_04bec3c0.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_AlternateContactPersonID_04bec3c0.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -118,7 +261,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:BuyingGroupID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_BuyingGroupID_c9a569e5.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_BuyingGroupID_c9a569e5.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -126,7 +274,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:CustomerCategoryID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerCategoryID_59d1d96b.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_CustomerCategoryID_59d1d96b.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -134,7 +287,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:DeliveryCityID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryCityID_824c2cf8.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryCityID_824c2cf8.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -142,7 +300,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:DeliveryMethodID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryMethodID_926417bd.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryMethodID_926417bd.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
@@ -150,7 +313,12 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:PrimaryContactPersonID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_PrimaryContactPersonID_61c9deed.json"
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_PrimaryContactPersonID_61c9deed.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -332,6 +500,14 @@
         "action_type": "SELECT",
         "table": "Sales.Customers"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.Customers",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Website.Customers/object.json"
     }
   ]
 }

@@ -5,14 +5,15 @@
   let DATA = null, current = null, kindFilter = 'all', dynOnly = false, impactDepth = 3;
   let schemaPinned = new Set();  // tables currently pinned in the Schema Explorer
 
-  // Shared nav bar: always includes Overview, Risks and Schema ORM buttons.
+  // Shared nav bar: always includes Overview, Risks, Derived inventory and Schema ORM.
   function navBar(active) {
     const btn = (id, label, onclick) =>
       `<button class="${active === id ? 'on' : ''}" onclick="${onclick}">${label}</button>`;
     return `<div class="nav">
-      ${btn('overview', '◉ Resumen general', 'SD.app.openOverview()')}
-      ${btn('risks',    '⚠ Riesgos',          'SD.app.openRisks()')}
-      ${btn('schema',   '📐 Esquema ORM',      'SD.app.openSchema()')}
+      ${btn('overview',  '◉ Resumen general', 'SD.app.openOverview()')}
+      ${btn('risks',     '⚠ Riesgos',          'SD.app.openRisks()')}
+      ${btn('inventory', '🧮 Derivados',        'SD.app.openInventory()')}
+      ${btn('schema',    '📐 Esquema ORM',      'SD.app.openSchema()')}
     </div>`;
   }
 
@@ -43,7 +44,7 @@
     const rows = ents.filter(e => e.name.toLowerCase().includes(f)).map(e => {
       const badges = e.kind === 'table'
         ? (e.temp ? `<span class="b tmp">⌗ ${e.cols} tmp</span>` : `<span class="b tbl">▦ ${e.cols}</span>`)
-        : [e.complexity > 1 ? `<span class="b cc">cc${e.complexity}</span>` : '', e.dyn > 0 ? `<span class="b dyn">dyn${e.dyn}</span>` : '', e.parseError ? `<span class="b err">err</span>` : ''].join('');
+        : [e.isTrigger ? `<span class="b trg">⚡TRG</span>` : '', e.complexity > 1 ? `<span class="b cc">cc${e.complexity}</span>` : '', e.dyn > 0 ? `<span class="b dyn">dyn${e.dyn}</span>` : '', e.parseError ? `<span class="b err">err</span>` : ''].join('');
       return `<div class="item ${e.kind}${e.temp ? ' temp' : ''}" data-n="${esc(e.name)}"><span class="nm">${esc(e.name)}</span><span class="badges">${badges}</span></div>`;
     }).join('');
     $('#list').innerHTML = rows || `<div class="muted" style="padding:12px">Sin coincidencias</div>`;
@@ -72,6 +73,13 @@
     $('#main').innerHTML = navBar('risks') + '<h2>Riesgos y malas prácticas</h2>' + SD.components.RisksView(DATA);
     $('#main').scrollTop = 0;
     SD.mm.renderAll($('#main'));
+  }
+
+  function openInventory() {
+    current = null;
+    document.querySelectorAll('.item').forEach(e => e.classList.remove('sel'));
+    $('#main').innerHTML = navBar('inventory') + SD.components.InventoryView(DATA);
+    $('#main').scrollTop = 0;
   }
 
   function openObject(name) {
@@ -228,7 +236,7 @@
     tryLoadDemo();
   }
 
-  SD.app = { init, load, openObject, openOverview, openRisks, openSchema, setFilter,
+  SD.app = { init, load, openObject, openOverview, openRisks, openInventory, openSchema, setFilter,
              schemaAdd, schemaRemove, schemaExpand, schemaClear, setImpactDepth };
   document.addEventListener('DOMContentLoaded', init);
 })(window.SD = window.SD || {});

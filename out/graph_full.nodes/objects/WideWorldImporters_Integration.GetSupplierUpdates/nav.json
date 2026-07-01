@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_archive_57090ba7.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_archive_57090ba7.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Purchasing.Suppliers_Archive"
@@ -20,7 +20,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Purchasing.Suppliers"
@@ -32,7 +32,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].People",
@@ -45,7 +45,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Purchasing.SupplierCategories",
@@ -58,7 +58,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Purchasing.Suppliers",
@@ -71,7 +71,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliercategories_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_archive_8d2433f5.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_archive_8d2433f5.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Purchasing.SupplierCategories_Archive"
@@ -83,7 +83,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Purchasing.SupplierCategories"
@@ -95,7 +95,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "[Application].People",
@@ -108,7 +108,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Purchasing.SupplierCategories",
@@ -121,12 +121,20 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Purchasing.Suppliers",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetSupplierUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetSupplierUpdates/nav.json"
     }
   ]
 }

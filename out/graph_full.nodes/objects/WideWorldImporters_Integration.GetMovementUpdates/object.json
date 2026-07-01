@@ -52,7 +52,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 11,
+          "line_no": 10,
           "nesting_level": 0,
           "action": "SELECT",
           "step_type": "Extraction",
@@ -60,6 +60,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "SELECT -> Warehouse.StockItemTransactions"
@@ -73,7 +74,7 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 26,
+          "line_no": 25,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -81,6 +82,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -114,7 +116,14 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:LastEditedWhen",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_LastEditedWhen_84d4afcb.json"
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemtransactions_column_LastEditedWhen_84d4afcb.json",
+      "props": {
+        "op_kinds": [
+          "compare:<=",
+          "compare:>",
+          "logical:AND"
+        ]
+      }
     },
     {
       "type": "READS_COLUMN",
@@ -223,6 +232,14 @@
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetMovementUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetMovementUpdates/object.json"
     }
   ]
 }

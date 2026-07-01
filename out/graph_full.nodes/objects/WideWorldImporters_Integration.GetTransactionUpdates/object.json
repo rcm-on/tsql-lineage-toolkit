@@ -52,7 +52,51 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 57,
+          "line_no": 10,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "Sales.CustomerTransactions",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> Sales.CustomerTransactions"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetTransactionUpdates#step1",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 1,
+          "sequence": 2,
+          "line_no": 10,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "Purchasing.SupplierTransactions",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> Purchasing.SupplierTransactions"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Integration.GetTransactionUpdates#step2",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 2,
+          "sequence": 3,
+          "line_no": 56,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -60,6 +104,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -83,9 +128,102 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Integration.GetTransactionUpdates#step0",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.customertransactions",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.customertransactions_39c8f4a7.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.CustomerTransactions"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoices",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.Invoices",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionUpdates#param:@LastCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionUpdates#param:@NewCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:purchasing.suppliertransactions",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliertransactions_96862ed5.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Purchasing.SupplierTransactions"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionUpdates#param:@LastCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Integration.GetTransactionUpdates#param:@NewCutoff",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Integration.GetTransactionUpdates#step2",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_RETURN_d3d120d4.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetTransactionUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetTransactionUpdates/object.json"
     }
   ]
 }

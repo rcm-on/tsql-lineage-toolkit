@@ -82,7 +82,7 @@
     "WideWorldImporters::Website.InvoiceCustomerOrders": [
       {
         "type": "ACTION",
-        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+        "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
         "from_label": "Step",
         "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
       }
@@ -153,7 +153,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },

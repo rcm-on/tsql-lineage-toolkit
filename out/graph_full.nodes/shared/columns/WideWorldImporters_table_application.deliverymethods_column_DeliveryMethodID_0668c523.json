@@ -18,7 +18,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Customers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Customers/object.json"
+        "path": "objects/WideWorldImporters_Website.Customers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ],
     "WideWorldImporters::Website.Suppliers": [
@@ -26,7 +31,12 @@
         "type": "FILTERS_ON",
         "from": "WideWorldImporters::Website.Suppliers#step0",
         "from_label": "Step",
-        "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+        "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+        "props": {
+          "op_kinds": [
+            "compare:="
+          ]
+        }
       }
     ]
   },
@@ -35,13 +45,74 @@
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Customers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Customers/object.json"
+      "path": "objects/WideWorldImporters_Website.Customers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "FILTERS_ON",
       "from": "WideWorldImporters::Website.Suppliers#step0",
       "from_label": "Step",
-      "path": "objects/WideWorldImporters_Website.Suppliers/object.json"
+      "path": "objects/WideWorldImporters_Website.Suppliers/object.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
+    },
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.deliverymethods:DEFAULT:f96016a2",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.deliverymethods_DEFAULT_f96016a2_c374338f.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.deliverymethods",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.purchaseorders:column:DeliveryMethodID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.purchaseorders_column_DeliveryMethodID_8fe31877.json",
+      "props": {
+        "constraint": "FK_Purchasing_PurchaseOrders_DeliveryMethodID_Application_DeliveryMethods"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliers:column:DeliveryMethodID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliers_column_DeliveryMethodID_c43db84e.json",
+      "props": {
+        "constraint": "FK_Purchasing_Suppliers_DeliveryMethodID_Application_DeliveryMethods"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customers:column:DeliveryMethodID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customers_column_DeliveryMethodID_926417bd.json",
+      "props": {
+        "constraint": "FK_Sales_Customers_DeliveryMethodID_Application_DeliveryMethods"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.invoices:column:DeliveryMethodID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_DeliveryMethodID_e3aced76.json",
+      "props": {
+        "constraint": "FK_Sales_Invoices_DeliveryMethodID_Application_DeliveryMethods"
+      }
     }
   ],
   "edges_out": []

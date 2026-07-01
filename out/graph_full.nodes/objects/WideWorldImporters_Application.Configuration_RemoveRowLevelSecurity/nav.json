@@ -1,5 +1,14 @@
 ﻿{
   "id": "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity",
   "name": "Application.Configuration_RemoveRowLevelSecurity",
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:application",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.Configuration_RemoveRowLevelSecurity/nav.json"
+    }
+  ]
 }

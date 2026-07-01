@@ -8,7 +8,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems_archive",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_archive_ed3c2625.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_archive_ed3c2625.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.StockItems_Archive"
@@ -20,7 +20,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.nav.json",
       "props": {
         "action_type": "SELECT",
         "table": "Warehouse.StockItems"
@@ -32,7 +32,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.colors",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Warehouse.Colors",
@@ -45,7 +45,7 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Warehouse.PackageTypes",
@@ -58,12 +58,20 @@
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.nav.json",
       "props": {
         "action_type": "INSERT",
         "table": "Warehouse.StockItems",
         "via": "JOIN"
       }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:integration",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Integration.GetStockItemUpdates",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Integration.GetStockItemUpdates/nav.json"
     }
   ]
 }

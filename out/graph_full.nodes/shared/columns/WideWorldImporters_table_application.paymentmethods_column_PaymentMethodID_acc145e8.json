@@ -13,6 +13,40 @@
     "ordinal": 1
   },
   "refs": {},
-  "edges_in": [],
+  "edges_in": [
+    {
+      "type": "CONSTRAINS",
+      "from": "WideWorldImporters:bizrule:application.paymentmethods:DEFAULT:aca9ee28",
+      "from_label": "BusinessRule",
+      "path": "shared/businessrules/WideWorldImporters_bizrule_application.paymentmethods_DEFAULT_aca9ee28_03c51e30.json"
+    },
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:application.paymentmethods",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "props": {
+        "ordinal": 1
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:purchasing.suppliertransactions:column:PaymentMethodID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_purchasing.suppliertransactions_column_PaymentMethodID_bd353a3b.json",
+      "props": {
+        "constraint": "FK_Purchasing_SupplierTransactions_PaymentMethodID_Application_PaymentMethods"
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "WideWorldImporters:table:sales.customertransactions:column:PaymentMethodID",
+      "from_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.customertransactions_column_PaymentMethodID_91b739b0.json",
+      "props": {
+        "constraint": "FK_Sales_CustomerTransactions_PaymentMethodID_Application_PaymentMethods"
+      }
+    }
+  ],
   "edges_out": []
 }

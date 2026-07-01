@@ -81,6 +81,12 @@
             "N''",
             "N'DROP TRIGGER IF EXISTS ' + QUOTENAME(@SchemaName) + N'.[TR_' + @SchemaName + N'_' + @TableName + N'_DataLoad_Modify];'",
             "N'CREATE TRIGGER ' + QUOTENAME(@SchemaName) + N'.[TR_' + @SchemaName + N'_' + @TableName + N'_DataLoad_Modify]' + @CrLf + N'ON ' + QUOTENAME(@SchemaName) + N'.' + QUOTENAME(@TableName) + @CrLf + N'AFTER INSERT, UPDATE' + @CrLf + N'AS' + @CrLf + N'BEGIN' + @CrLf + @Indent + N'SET NOCOUNT ON;' + @CrLf"
+          ],
+          "op_kinds": [
+            "arith:+",
+            "case:CASE",
+            "compare:<>",
+            "func:QUOTENAME"
           ]
         }
       },
@@ -93,7 +99,8 @@
           "name": "@CrLf",
           "data_type": "NVARCHAR (2)",
           "default": "NCHAR(13) + NCHAR(10)",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -105,7 +112,8 @@
           "name": "@Indent",
           "data_type": "NVARCHAR (4)",
           "default": "N'    '",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -135,7 +143,8 @@
             "N'Warehouse'",
             "N'Warehouse'",
             "N'Warehouse'"
-          ]
+          ],
+          "op_kinds": []
         }
       },
       {
@@ -165,7 +174,8 @@
             "N'PackageTypes'",
             "N'StockGroups'",
             "N'StockItems'"
-          ]
+          ],
+          "op_kinds": []
         }
       },
       {
@@ -195,7 +205,8 @@
             "N' [PackageTypeID], [PackageTypeName],'",
             "N' [StockGroupID], [StockGroupName],'",
             "N' [StockItemID], [StockItemName], [SupplierID], [ColorID], [UnitPackageID], [OuterPackageID], [Brand], [Size], [LeadTimeDays], [QuantityPerOuter], [IsChillerStock], [Barcode], [TaxRate], [UnitPrice], [RecommendedRetailPrice], [TypicalWeightPerUnit], [MarketingComments], [InternalComments], [Photo],"
-          ]
+          ],
+          "op_kinds": []
         }
       },
       {
@@ -225,7 +236,8 @@
             "N' d.[PackageTypeID], d.[PackageTypeName],'",
             "N' d.[StockGroupID], d.[StockGroupName],'",
             "N' d.[StockItemID], d.[StockItemName], d.[SupplierID], d.[ColorID], d.[UnitPackageID], d.[OuterPackageID], d.[Brand], d.[Size], d.[LeadTimeDays], d.[QuantityPerOuter], d.[IsChillerStock], d.[Barcode], d.[TaxRate], d.[UnitPrice], d.[RecommendedRetailPrice], d.[TypicalWeightPerUnit], d.[MarketingComme"
-          ]
+          ],
+          "op_kinds": []
         }
       },
       {
@@ -255,7 +267,8 @@
             "N'PackageTypeID'",
             "N'StockGroupID'",
             "N'StockItemID'"
-          ]
+          ],
+          "op_kinds": []
         }
       },
       {
@@ -267,7 +280,8 @@
           "name": "@TemporalFromColumnName",
           "data_type": "sysname",
           "default": "N'ValidFrom'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -279,7 +293,8 @@
           "name": "@TemporalToColumnName",
           "data_type": "sysname",
           "default": "N'ValidTo'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -291,7 +306,8 @@
           "name": "@TemporalTableSuffix",
           "data_type": "NVARCHAR (MAX)",
           "default": "N'Archive'",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       },
       {
@@ -321,7 +337,8 @@
             "N'LastEditedBy'",
             "N'LastEditedBy'",
             "N'LastEditedBy'"
-          ]
+          ],
+          "op_kinds": []
         }
       }
     ],
@@ -334,21 +351,18 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 9,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "[Application].Configuration_RemoveRowLevelSecurity",
+          "line_no": 6,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.procedures",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
-          "condition_path": [
-            "IF: EXISTS (SELECT 1         FROM   sys.procedures         WHERE  name = N'Configuration_RemoveRowLevelSecurity')"
-          ],
-          "condition_keys": [
-            "IF#7"
-          ],
-          "label": "EXEC -> [Application].Configuration_RemoveRowLevelSecurity"
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.procedures"
         }
       },
       {
@@ -359,17 +373,22 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 25,
-          "nesting_level": 0,
-          "action": "ALTER",
-          "step_type": "Maintenance",
-          "target_name": "[Application].[Cities]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "line_no": 8,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "[Application].Configuration_RemoveRowLevelSecurity",
+          "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
-          "condition_path": [],
-          "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[Cities]"
+          "select_star": false,
+          "condition_path": [
+            "IF: EXISTS (SELECT 1         FROM   sys.procedures         WHERE  name = N'Configuration_RemoveRowLevelSecurity')"
+          ],
+          "condition_keys": [
+            "IF#6"
+          ],
+          "label": "EXEC -> [Application].Configuration_RemoveRowLevelSecurity"
         }
       },
       {
@@ -380,17 +399,18 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 26,
+          "line_no": 24,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Application].[Cities]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Application].[Cities]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[Cities]"
         }
       },
       {
@@ -401,17 +421,18 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 28,
+          "line_no": 25,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Application].[Countries]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Application].[Cities]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[Countries]"
+          "label": "ALTER (DROP PERIOD) -> [Application].[Cities]"
         }
       },
       {
@@ -422,17 +443,18 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 29,
+          "line_no": 27,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Application].[Countries]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Application].[Countries]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[Countries]"
         }
       },
       {
@@ -443,17 +465,18 @@
         "properties": {
           "order": 5,
           "sequence": 6,
-          "line_no": 31,
+          "line_no": 28,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Application].[DeliveryMethods]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Application].[Countries]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[DeliveryMethods]"
+          "label": "ALTER (DROP PERIOD) -> [Application].[Countries]"
         }
       },
       {
@@ -464,17 +487,18 @@
         "properties": {
           "order": 6,
           "sequence": 7,
-          "line_no": 32,
+          "line_no": 30,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Application].[DeliveryMethods]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Application].[DeliveryMethods]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[DeliveryMethods]"
         }
       },
       {
@@ -485,17 +509,18 @@
         "properties": {
           "order": 7,
           "sequence": 8,
-          "line_no": 34,
+          "line_no": 31,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Application].[PaymentMethods]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Application].[DeliveryMethods]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[PaymentMethods]"
+          "label": "ALTER (DROP PERIOD) -> [Application].[DeliveryMethods]"
         }
       },
       {
@@ -506,17 +531,18 @@
         "properties": {
           "order": 8,
           "sequence": 9,
-          "line_no": 35,
+          "line_no": 33,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Application].[PaymentMethods]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Application].[PaymentMethods]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[PaymentMethods]"
         }
       },
       {
@@ -527,17 +553,18 @@
         "properties": {
           "order": 9,
           "sequence": 10,
-          "line_no": 37,
+          "line_no": 34,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Application].[People]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Application].[PaymentMethods]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[People]"
+          "label": "ALTER (DROP PERIOD) -> [Application].[PaymentMethods]"
         }
       },
       {
@@ -548,17 +575,18 @@
         "properties": {
           "order": 10,
           "sequence": 11,
-          "line_no": 38,
+          "line_no": 36,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Application].[People]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Application].[People]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[People]"
         }
       },
       {
@@ -569,17 +597,18 @@
         "properties": {
           "order": 11,
           "sequence": 12,
-          "line_no": 40,
+          "line_no": 37,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Application].[StateProvinces]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Application].[People]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[StateProvinces]"
+          "label": "ALTER (DROP PERIOD) -> [Application].[People]"
         }
       },
       {
@@ -590,17 +619,18 @@
         "properties": {
           "order": 12,
           "sequence": 13,
-          "line_no": 41,
+          "line_no": 39,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Application].[StateProvinces]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Application].[StateProvinces]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[StateProvinces]"
         }
       },
       {
@@ -611,17 +641,18 @@
         "properties": {
           "order": 13,
           "sequence": 14,
-          "line_no": 43,
+          "line_no": 40,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Application].[TransactionTypes]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Application].[StateProvinces]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[TransactionTypes]"
+          "label": "ALTER (DROP PERIOD) -> [Application].[StateProvinces]"
         }
       },
       {
@@ -632,17 +663,18 @@
         "properties": {
           "order": 14,
           "sequence": 15,
-          "line_no": 44,
+          "line_no": 42,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Application].[TransactionTypes]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Application].[TransactionTypes]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Application].[TransactionTypes]"
         }
       },
       {
@@ -653,17 +685,18 @@
         "properties": {
           "order": 15,
           "sequence": 16,
-          "line_no": 46,
+          "line_no": 43,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Purchasing].[SupplierCategories]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Application].[TransactionTypes]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Purchasing].[SupplierCategories]"
+          "label": "ALTER (DROP PERIOD) -> [Application].[TransactionTypes]"
         }
       },
       {
@@ -674,17 +707,18 @@
         "properties": {
           "order": 16,
           "sequence": 17,
-          "line_no": 47,
+          "line_no": 45,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Purchasing].[SupplierCategories]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Purchasing].[SupplierCategories]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Purchasing].[SupplierCategories]"
         }
       },
       {
@@ -695,17 +729,18 @@
         "properties": {
           "order": 17,
           "sequence": 18,
-          "line_no": 49,
+          "line_no": 46,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Purchasing].[Suppliers]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Purchasing].[SupplierCategories]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Purchasing].[Suppliers]"
+          "label": "ALTER (DROP PERIOD) -> [Purchasing].[SupplierCategories]"
         }
       },
       {
@@ -716,17 +751,18 @@
         "properties": {
           "order": 18,
           "sequence": 19,
-          "line_no": 50,
+          "line_no": 48,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Purchasing].[Suppliers]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Purchasing].[Suppliers]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Purchasing].[Suppliers]"
         }
       },
       {
@@ -737,17 +773,18 @@
         "properties": {
           "order": 19,
           "sequence": 20,
-          "line_no": 52,
+          "line_no": 49,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Sales].[BuyingGroups]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Purchasing].[Suppliers]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Sales].[BuyingGroups]"
+          "label": "ALTER (DROP PERIOD) -> [Purchasing].[Suppliers]"
         }
       },
       {
@@ -758,17 +795,18 @@
         "properties": {
           "order": 20,
           "sequence": 21,
-          "line_no": 53,
+          "line_no": 51,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Sales].[BuyingGroups]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Sales].[BuyingGroups]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Sales].[BuyingGroups]"
         }
       },
       {
@@ -779,17 +817,18 @@
         "properties": {
           "order": 21,
           "sequence": 22,
-          "line_no": 55,
+          "line_no": 52,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Sales].[CustomerCategories]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Sales].[BuyingGroups]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Sales].[CustomerCategories]"
+          "label": "ALTER (DROP PERIOD) -> [Sales].[BuyingGroups]"
         }
       },
       {
@@ -800,17 +839,18 @@
         "properties": {
           "order": 22,
           "sequence": 23,
-          "line_no": 56,
+          "line_no": 54,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Sales].[CustomerCategories]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Sales].[CustomerCategories]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Sales].[CustomerCategories]"
         }
       },
       {
@@ -821,17 +861,18 @@
         "properties": {
           "order": 23,
           "sequence": 24,
-          "line_no": 58,
+          "line_no": 55,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Sales].[Customers]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Sales].[CustomerCategories]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Sales].[Customers]"
+          "label": "ALTER (DROP PERIOD) -> [Sales].[CustomerCategories]"
         }
       },
       {
@@ -842,17 +883,18 @@
         "properties": {
           "order": 24,
           "sequence": 25,
-          "line_no": 59,
+          "line_no": 57,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Sales].[Customers]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Sales].[Customers]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Sales].[Customers]"
         }
       },
       {
@@ -863,17 +905,18 @@
         "properties": {
           "order": 25,
           "sequence": 26,
-          "line_no": 61,
+          "line_no": 58,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Warehouse].[ColdRoomTemperatures]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Sales].[Customers]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Warehouse].[ColdRoomTemperatures]"
+          "label": "ALTER (DROP PERIOD) -> [Sales].[Customers]"
         }
       },
       {
@@ -884,17 +927,18 @@
         "properties": {
           "order": 26,
           "sequence": 27,
-          "line_no": 62,
+          "line_no": 60,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Warehouse].[ColdRoomTemperatures]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Warehouse].[ColdRoomTemperatures]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Warehouse].[ColdRoomTemperatures]"
         }
       },
       {
@@ -905,17 +949,18 @@
         "properties": {
           "order": 27,
           "sequence": 28,
-          "line_no": 64,
+          "line_no": 61,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Warehouse].[Colors]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Warehouse].[ColdRoomTemperatures]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Warehouse].[Colors]"
+          "label": "ALTER (DROP PERIOD) -> [Warehouse].[ColdRoomTemperatures]"
         }
       },
       {
@@ -926,17 +971,18 @@
         "properties": {
           "order": 28,
           "sequence": 29,
-          "line_no": 65,
+          "line_no": 63,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Warehouse].[Colors]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Warehouse].[Colors]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Warehouse].[Colors]"
         }
       },
       {
@@ -947,17 +993,18 @@
         "properties": {
           "order": 29,
           "sequence": 30,
-          "line_no": 67,
+          "line_no": 64,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Warehouse].[PackageTypes]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Warehouse].[Colors]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Warehouse].[PackageTypes]"
+          "label": "ALTER (DROP PERIOD) -> [Warehouse].[Colors]"
         }
       },
       {
@@ -968,17 +1015,18 @@
         "properties": {
           "order": 30,
           "sequence": 31,
-          "line_no": 68,
+          "line_no": 66,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Warehouse].[PackageTypes]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Warehouse].[PackageTypes]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Warehouse].[PackageTypes]"
         }
       },
       {
@@ -989,17 +1037,18 @@
         "properties": {
           "order": 31,
           "sequence": 32,
-          "line_no": 70,
+          "line_no": 67,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Warehouse].[StockGroups]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Warehouse].[PackageTypes]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Warehouse].[StockGroups]"
+          "label": "ALTER (DROP PERIOD) -> [Warehouse].[PackageTypes]"
         }
       },
       {
@@ -1010,17 +1059,18 @@
         "properties": {
           "order": 32,
           "sequence": 33,
-          "line_no": 71,
+          "line_no": 69,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Warehouse].[StockGroups]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Warehouse].[StockGroups]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Warehouse].[StockGroups]"
         }
       },
       {
@@ -1031,17 +1081,18 @@
         "properties": {
           "order": 33,
           "sequence": 34,
-          "line_no": 73,
+          "line_no": 70,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
-          "target_name": "[Warehouse].[StockItems]",
-          "detail": "SET SYSTEM_VERSIONING=OFF",
+          "target_name": "[Warehouse].[StockGroups]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Warehouse].[StockItems]"
+          "label": "ALTER (DROP PERIOD) -> [Warehouse].[StockGroups]"
         }
       },
       {
@@ -1052,17 +1103,18 @@
         "properties": {
           "order": 34,
           "sequence": 35,
-          "line_no": 74,
+          "line_no": 72,
           "nesting_level": 0,
           "action": "ALTER",
           "step_type": "Maintenance",
           "target_name": "[Warehouse].[StockItems]",
-          "detail": "DROP PERIOD",
+          "detail": "SET SYSTEM_VERSIONING=OFF",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "ALTER (DROP PERIOD) -> [Warehouse].[StockItems]"
+          "label": "ALTER (SET SYSTEM_VERSIONING=OFF) -> [Warehouse].[StockItems]"
         }
       },
       {
@@ -1073,17 +1125,18 @@
         "properties": {
           "order": 35,
           "sequence": 36,
-          "line_no": 85,
+          "line_no": 73,
           "nesting_level": 0,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
-          "detail": "",
+          "action": "ALTER",
+          "step_type": "Maintenance",
+          "target_name": "[Warehouse].[StockItems]",
+          "detail": "DROP PERIOD",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "ALTER (DROP PERIOD) -> [Warehouse].[StockItems]"
         }
       },
       {
@@ -1094,20 +1147,17 @@
         "properties": {
           "order": 36,
           "sequence": 37,
-          "line_no": 110,
-          "nesting_level": 1,
+          "line_no": 84,
+          "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Application].[TR_Application_Cities_DataLoad_Modify];",
           "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#108"
-          ],
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1119,17 +1169,18 @@
         "properties": {
           "order": 37,
           "sequence": 38,
-          "line_no": 122,
+          "line_no": 107,
           "nesting_level": 0,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1140,19 +1191,20 @@
         "properties": {
           "order": 38,
           "sequence": 39,
-          "line_no": 147,
+          "line_no": 109,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Application].[TR_Application_Cities_DataLoad_Modify] ON [Application].[Cities] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[ValidFrom] ",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
           ],
           "condition_keys": [
-            "IF#145"
+            "IF#107"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -1165,14 +1217,15 @@
         "properties": {
           "order": 39,
           "sequence": 40,
-          "line_no": 159,
+          "line_no": 121,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Application].[TR_Application_Countries_DataLoad_Modify];",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
@@ -1186,21 +1239,18 @@
         "properties": {
           "order": 40,
           "sequence": 41,
-          "line_no": 184,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 144,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#182"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1211,16 +1261,21 @@
         "properties": {
           "order": 41,
           "sequence": 42,
-          "line_no": 196,
-          "nesting_level": 0,
+          "line_no": 146,
+          "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Application].[TR_Application_Countries_DataLoad_Modify] ON [Application].[Countries] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[Valid",
           "is_dynamic_sql": true,
-          "condition_path": [],
-          "condition_keys": [],
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#144"
+          ],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1232,20 +1287,17 @@
         "properties": {
           "order": 42,
           "sequence": 43,
-          "line_no": 221,
-          "nesting_level": 1,
+          "line_no": 158,
+          "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Application].[TR_Application_DeliveryMethods_DataLoad_Modify];",
           "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#219"
-          ],
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1257,17 +1309,18 @@
         "properties": {
           "order": 43,
           "sequence": 44,
-          "line_no": 233,
+          "line_no": 181,
           "nesting_level": 0,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1278,19 +1331,20 @@
         "properties": {
           "order": 44,
           "sequence": 45,
-          "line_no": 258,
+          "line_no": 183,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Application].[TR_Application_DeliveryMethods_DataLoad_Modify] ON [Application].[DeliveryMethods] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
           ],
           "condition_keys": [
-            "IF#256"
+            "IF#181"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -1303,14 +1357,15 @@
         "properties": {
           "order": 45,
           "sequence": 46,
-          "line_no": 270,
+          "line_no": 195,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Application].[TR_Application_PaymentMethods_DataLoad_Modify];",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
@@ -1324,21 +1379,18 @@
         "properties": {
           "order": 46,
           "sequence": 47,
-          "line_no": 295,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 218,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#293"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1349,16 +1401,21 @@
         "properties": {
           "order": 47,
           "sequence": 48,
-          "line_no": 307,
-          "nesting_level": 0,
+          "line_no": 220,
+          "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Application].[TR_Application_PaymentMethods_DataLoad_Modify] ON [Application].[PaymentMethods] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 5100",
           "is_dynamic_sql": true,
-          "condition_path": [],
-          "condition_keys": [],
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#218"
+          ],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1370,20 +1427,17 @@
         "properties": {
           "order": 48,
           "sequence": 49,
-          "line_no": 332,
-          "nesting_level": 1,
+          "line_no": 232,
+          "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Application].[TR_Application_People_DataLoad_Modify];",
           "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#330"
-          ],
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1395,17 +1449,18 @@
         "properties": {
           "order": 49,
           "sequence": 50,
-          "line_no": 344,
+          "line_no": 255,
           "nesting_level": 0,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1416,19 +1471,20 @@
         "properties": {
           "order": 50,
           "sequence": 51,
-          "line_no": 369,
+          "line_no": 257,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Application].[TR_Application_People_DataLoad_Modify] ON [Application].[People] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[ValidFrom] ",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
           ],
           "condition_keys": [
-            "IF#367"
+            "IF#255"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -1441,14 +1497,15 @@
         "properties": {
           "order": 51,
           "sequence": 52,
-          "line_no": 381,
+          "line_no": 269,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Application].[TR_Application_StateProvinces_DataLoad_Modify];",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
@@ -1462,21 +1519,18 @@
         "properties": {
           "order": 52,
           "sequence": 53,
-          "line_no": 406,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 292,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#404"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1487,16 +1541,21 @@
         "properties": {
           "order": 53,
           "sequence": 54,
-          "line_no": 418,
-          "nesting_level": 0,
+          "line_no": 294,
+          "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Application].[TR_Application_StateProvinces_DataLoad_Modify] ON [Application].[StateProvinces] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 5100",
           "is_dynamic_sql": true,
-          "condition_path": [],
-          "condition_keys": [],
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#292"
+          ],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1508,20 +1567,17 @@
         "properties": {
           "order": 54,
           "sequence": 55,
-          "line_no": 443,
-          "nesting_level": 1,
+          "line_no": 306,
+          "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Application].[TR_Application_TransactionTypes_DataLoad_Modify];",
           "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#441"
-          ],
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1533,17 +1589,18 @@
         "properties": {
           "order": 55,
           "sequence": 56,
-          "line_no": 455,
+          "line_no": 329,
           "nesting_level": 0,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1554,19 +1611,20 @@
         "properties": {
           "order": 56,
           "sequence": 57,
-          "line_no": 480,
+          "line_no": 331,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Application].[TR_Application_TransactionTypes_DataLoad_Modify] ON [Application].[TransactionTypes] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW ",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
           ],
           "condition_keys": [
-            "IF#478"
+            "IF#329"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -1579,14 +1637,15 @@
         "properties": {
           "order": 57,
           "sequence": 58,
-          "line_no": 492,
+          "line_no": 343,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Purchasing].[TR_Purchasing_SupplierCategories_DataLoad_Modify];",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
@@ -1600,21 +1659,18 @@
         "properties": {
           "order": 58,
           "sequence": 59,
-          "line_no": 517,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 366,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#515"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1625,16 +1681,21 @@
         "properties": {
           "order": 59,
           "sequence": 60,
-          "line_no": 529,
-          "nesting_level": 0,
+          "line_no": 368,
+          "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Purchasing].[TR_Purchasing_SupplierCategories_DataLoad_Modify] ON [Purchasing].[SupplierCategories] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW",
           "is_dynamic_sql": true,
-          "condition_path": [],
-          "condition_keys": [],
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#366"
+          ],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1646,20 +1707,17 @@
         "properties": {
           "order": 60,
           "sequence": 61,
-          "line_no": 554,
-          "nesting_level": 1,
+          "line_no": 380,
+          "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Purchasing].[TR_Purchasing_Suppliers_DataLoad_Modify];",
           "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#552"
-          ],
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1671,17 +1729,18 @@
         "properties": {
           "order": 61,
           "sequence": 62,
-          "line_no": 566,
+          "line_no": 403,
           "nesting_level": 0,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1692,19 +1751,20 @@
         "properties": {
           "order": 62,
           "sequence": 63,
-          "line_no": 591,
+          "line_no": 405,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Purchasing].[TR_Purchasing_Suppliers_DataLoad_Modify] ON [Purchasing].[Suppliers] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[ValidFro",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
           ],
           "condition_keys": [
-            "IF#589"
+            "IF#403"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -1717,14 +1777,15 @@
         "properties": {
           "order": 63,
           "sequence": 64,
-          "line_no": 603,
+          "line_no": 417,
           "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Sales].[TR_Sales_BuyingGroups_DataLoad_Modify];",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
@@ -1738,21 +1799,18 @@
         "properties": {
           "order": 64,
           "sequence": 65,
-          "line_no": 628,
-          "nesting_level": 1,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "line_no": 440,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#626"
-          ],
-          "label": "EXEC -> (dynamic SQL)"
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1763,16 +1821,21 @@
         "properties": {
           "order": 65,
           "sequence": 66,
-          "line_no": 640,
-          "nesting_level": 0,
+          "line_no": 442,
+          "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Sales].[TR_Sales_BuyingGroups_DataLoad_Modify] ON [Sales].[BuyingGroups] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[ValidFrom] must b",
           "is_dynamic_sql": true,
-          "condition_path": [],
-          "condition_keys": [],
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#440"
+          ],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1784,20 +1847,17 @@
         "properties": {
           "order": 66,
           "sequence": 67,
-          "line_no": 665,
-          "nesting_level": 1,
+          "line_no": 454,
+          "nesting_level": 0,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Sales].[TR_Sales_CustomerCategories_DataLoad_Modify];",
           "is_dynamic_sql": true,
-          "condition_path": [
-            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
-          ],
-          "condition_keys": [
-            "IF#663"
-          ],
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
           "label": "EXEC -> (dynamic SQL)"
         }
       },
@@ -1809,17 +1869,18 @@
         "properties": {
           "order": 67,
           "sequence": 68,
-          "line_no": 677,
+          "line_no": 477,
           "nesting_level": 0,
-          "action": "EXEC",
-          "step_type": "Orchestration",
-          "target_name": "(dynamic SQL)",
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
           "detail": "",
           "dynamic_sql": "",
-          "is_dynamic_sql": true,
+          "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "EXEC -> (dynamic SQL)"
+          "label": "SELECT -> sys.tables"
         }
       },
       {
@@ -1830,19 +1891,440 @@
         "properties": {
           "order": 68,
           "sequence": 69,
-          "line_no": 702,
+          "line_no": 479,
           "nesting_level": 1,
           "action": "EXEC",
           "step_type": "Orchestration",
           "target_name": "(dynamic SQL)",
           "detail": "",
-          "dynamic_sql": "",
+          "dynamic_sql": "CREATE TRIGGER [Sales].[TR_Sales_CustomerCategories_DataLoad_Modify] ON [Sales].[CustomerCategories] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[Valid",
           "is_dynamic_sql": true,
+          "select_star": false,
           "condition_path": [
             "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
           ],
           "condition_keys": [
-            "IF#700"
+            "IF#477"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step69",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 69,
+          "sequence": 70,
+          "line_no": 491,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Sales].[TR_Sales_Customers_DataLoad_Modify];",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step70",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 70,
+          "sequence": 71,
+          "line_no": 514,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step71",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 71,
+          "sequence": 72,
+          "line_no": 516,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TRIGGER [Sales].[TR_Sales_Customers_DataLoad_Modify] ON [Sales].[Customers] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[ValidFrom] must be upda",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#514"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step72",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 72,
+          "sequence": 73,
+          "line_no": 528,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Warehouse].[TR_Warehouse_ColdRoomTemperatures_DataLoad_Modify];",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step73",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 73,
+          "sequence": 74,
+          "line_no": 551,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step74",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 74,
+          "sequence": 75,
+          "line_no": 553,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TRIGGER [Warehouse].[TR_Warehouse_ColdRoomTemperatures_DataLoad_Modify] ON [Warehouse].[ColdRoomTemperatures] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THRO",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#551"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step75",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 75,
+          "sequence": 76,
+          "line_no": 565,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Warehouse].[TR_Warehouse_Colors_DataLoad_Modify];",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step76",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 76,
+          "sequence": 77,
+          "line_no": 588,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step77",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 77,
+          "sequence": 78,
+          "line_no": 590,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TRIGGER [Warehouse].[TR_Warehouse_Colors_DataLoad_Modify] ON [Warehouse].[Colors] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[ValidFrom] must b",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#588"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step78",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 78,
+          "sequence": 79,
+          "line_no": 602,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Warehouse].[TR_Warehouse_PackageTypes_DataLoad_Modify];",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step79",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 79,
+          "sequence": 80,
+          "line_no": 625,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step80",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 80,
+          "sequence": 81,
+          "line_no": 627,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TRIGGER [Warehouse].[TR_Warehouse_PackageTypes_DataLoad_Modify] ON [Warehouse].[PackageTypes] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[Valid",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#625"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step81",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 81,
+          "sequence": 82,
+          "line_no": 639,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Warehouse].[TR_Warehouse_StockGroups_DataLoad_Modify];",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step82",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 82,
+          "sequence": 83,
+          "line_no": 662,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step83",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 83,
+          "sequence": 84,
+          "line_no": 664,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TRIGGER [Warehouse].[TR_Warehouse_StockGroups_DataLoad_Modify] ON [Warehouse].[StockGroups] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[ValidFr",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#662"
+          ],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step84",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 84,
+          "sequence": 85,
+          "line_no": 676,
+          "nesting_level": 0,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "DROP TRIGGER IF EXISTS [Warehouse].[TR_Warehouse_StockItems_DataLoad_Modify];",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "EXEC -> (dynamic SQL)"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step85",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 85,
+          "sequence": 86,
+          "line_no": 699,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "sys.tables",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> sys.tables"
+        }
+      },
+      {
+        "id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step86",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 86,
+          "sequence": 87,
+          "line_no": 701,
+          "nesting_level": 1,
+          "action": "EXEC",
+          "step_type": "Orchestration",
+          "target_name": "(dynamic SQL)",
+          "detail": "",
+          "dynamic_sql": "CREATE TRIGGER [Warehouse].[TR_Warehouse_StockItems_DataLoad_Modify] ON [Warehouse].[StockItems] AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; IF NOT UPDATE([ValidFrom]) BEGIN THROW 51000, '[ValidFrom",
+          "is_dynamic_sql": true,
+          "select_star": false,
+          "condition_path": [
+            "IF: NOT EXISTS (SELECT 1             FROM   sys.tables             WHERE  name = @TableName                    AND is_memory_optimized <> 0)"
+          ],
+          "condition_keys": [
+            "IF#699"
           ],
           "label": "EXEC -> (dynamic SQL)"
         }
@@ -1875,8 +2357,215 @@
       }
     },
     {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.TR_Application_Cities_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.TR_Application_Cities_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 109
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.TR_Application_Countries_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.TR_Application_Countries_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 146
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.TR_Application_DeliveryMethods_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.TR_Application_DeliveryMethods_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 183
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.TR_Application_PaymentMethods_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.TR_Application_PaymentMethods_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 220
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.TR_Application_People_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.TR_Application_People_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 257
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.TR_Application_StateProvinces_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.TR_Application_StateProvinces_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 294
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Application.TR_Application_TransactionTypes_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Application.TR_Application_TransactionTypes_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 331
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Purchasing.TR_Purchasing_SupplierCategories_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Purchasing.TR_Purchasing_SupplierCategories_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 368
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Purchasing.TR_Purchasing_Suppliers_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Purchasing.TR_Purchasing_Suppliers_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 405
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Sales.TR_Sales_BuyingGroups_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Sales.TR_Sales_BuyingGroups_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 442
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Sales.TR_Sales_CustomerCategories_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Sales.TR_Sales_CustomerCategories_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 479
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Sales.TR_Sales_Customers_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Sales.TR_Sales_Customers_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 516
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Warehouse.TR_Warehouse_ColdRoomTemperatures_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Warehouse.TR_Warehouse_ColdRoomTemperatures_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 553
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Warehouse.TR_Warehouse_Colors_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Warehouse.TR_Warehouse_Colors_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 590
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Warehouse.TR_Warehouse_PackageTypes_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Warehouse.TR_Warehouse_PackageTypes_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 627
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Warehouse.TR_Warehouse_StockGroups_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Warehouse.TR_Warehouse_StockGroups_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 664
+      }
+    },
+    {
+      "type": "CREATES",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "from_label": "SqlObject",
+      "to": "WideWorldImporters::Warehouse.TR_Warehouse_StockItems_DataLoad_Modify",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_Warehouse.TR_Warehouse_StockItems_DataLoad_Modify/object.json",
+      "props": {
+        "line_no": 701
+      }
+    },
+    {
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step0",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.procedures",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.procedures_b864e628.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.procedures"
+      }
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step1",
       "from_label": "Step",
       "to": "WideWorldImporters:action:EXEC",
       "to_label": "Action",
@@ -1884,7 +2573,7 @@
     },
     {
       "type": "TARGETS",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step0",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step1",
       "from_label": "Step",
       "to": "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity",
       "to_label": "SqlObject",
@@ -1892,26 +2581,6 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step1",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:ALTER",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_ALTER_1870a0d0.json"
-    },
-    {
-      "type": "WRITES_TO",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step1",
-      "from_label": "Step",
-      "to": "WideWorldImporters:table:application.cities",
-      "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
-      "props": {
-        "action_type": "ALTER",
-        "table": "[Application].[Cities]"
-      }
-    },
-    {
-      "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step10",
       "from_label": "Step",
       "to": "WideWorldImporters:action:ALTER",
@@ -1942,12 +2611,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step11",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.stateprovinces",
+      "to": "WideWorldImporters:table:application.people",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
+      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[StateProvinces]"
+        "table": "[Application].[People]"
       }
     },
     {
@@ -1982,12 +2651,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step13",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.transactiontypes",
+      "to": "WideWorldImporters:table:application.stateprovinces",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "path": "shared/tables/WideWorldImporters_table_application.stateprovinces_727a78c6.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[TransactionTypes]"
+        "table": "[Application].[StateProvinces]"
       }
     },
     {
@@ -2022,12 +2691,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step15",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:purchasing.suppliercategories",
+      "to": "WideWorldImporters:table:application.transactiontypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Purchasing].[SupplierCategories]"
+        "table": "[Application].[TransactionTypes]"
       }
     },
     {
@@ -2062,12 +2731,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step17",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:purchasing.suppliers",
+      "to": "WideWorldImporters:table:purchasing.suppliercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliercategories_2a69f266.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Purchasing].[Suppliers]"
+        "table": "[Purchasing].[SupplierCategories]"
       }
     },
     {
@@ -2102,12 +2771,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step19",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:sales.buyinggroups",
+      "to": "WideWorldImporters:table:purchasing.suppliers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
+      "path": "shared/tables/WideWorldImporters_table_purchasing.suppliers_4c49b98c.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Sales].[BuyingGroups]"
+        "table": "[Purchasing].[Suppliers]"
       }
     },
     {
@@ -2162,12 +2831,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step21",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:sales.customercategories",
+      "to": "WideWorldImporters:table:sales.buyinggroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.buyinggroups_450c70c4.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Sales].[CustomerCategories]"
+        "table": "[Sales].[BuyingGroups]"
       }
     },
     {
@@ -2202,12 +2871,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step23",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:sales.customers",
+      "to": "WideWorldImporters:table:sales.customercategories",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customercategories_7967ff62.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Sales].[Customers]"
+        "table": "[Sales].[CustomerCategories]"
       }
     },
     {
@@ -2242,12 +2911,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step25",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
+      "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
+      "path": "shared/tables/WideWorldImporters_table_sales.customers_11c7f33b.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Warehouse].[ColdRoomTemperatures]"
+        "table": "[Sales].[Customers]"
       }
     },
     {
@@ -2282,12 +2951,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step27",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:warehouse.colors",
+      "to": "WideWorldImporters:table:warehouse.coldroomtemperatures",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.coldroomtemperatures_b14d34d9.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Warehouse].[Colors]"
+        "table": "[Warehouse].[ColdRoomTemperatures]"
       }
     },
     {
@@ -2322,12 +2991,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step29",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:warehouse.packagetypes",
+      "to": "WideWorldImporters:table:warehouse.colors",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.colors_e9fadd1a.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Warehouse].[PackageTypes]"
+        "table": "[Warehouse].[Colors]"
       }
     },
     {
@@ -2342,12 +3011,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step3",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.countries",
+      "to": "WideWorldImporters:table:application.cities",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
+      "path": "shared/tables/WideWorldImporters_table_application.cities_44373ccb.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[Countries]"
+        "table": "[Application].[Cities]"
       }
     },
     {
@@ -2382,12 +3051,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step31",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:warehouse.stockgroups",
+      "to": "WideWorldImporters:table:warehouse.packagetypes",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.packagetypes_accd012f.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Warehouse].[StockGroups]"
+        "table": "[Warehouse].[PackageTypes]"
       }
     },
     {
@@ -2422,12 +3091,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step33",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to": "WideWorldImporters:table:warehouse.stockgroups",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockgroups_b850d8f1.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Warehouse].[StockItems]"
+        "table": "[Warehouse].[StockGroups]"
       }
     },
     {
@@ -2454,25 +3123,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step35",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:ALTER",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_ALTER_1870a0d0.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step35",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
-    },
-    {
-      "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step35",
-      "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
-      "to_label": "Variable",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "ALTER",
+        "table": "[Warehouse].[StockItems]"
+      }
     },
     {
       "type": "ACTION",
@@ -2502,12 +3167,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step37",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step37",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step37",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -2518,7 +3195,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step37",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -2594,12 +3271,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step40",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step40",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step40",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -2610,7 +3299,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step40",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -2666,12 +3355,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step43",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step43",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step43",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -2682,7 +3383,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step43",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -2738,12 +3439,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step46",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step46",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step46",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -2754,7 +3467,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step46",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -2810,12 +3523,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step49",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step49",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step49",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -2826,7 +3551,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step49",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -2842,12 +3567,12 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step5",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.deliverymethods",
+      "to": "WideWorldImporters:table:application.countries",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.countries_498e70d0.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[DeliveryMethods]"
+        "table": "[Application].[Countries]"
       }
     },
     {
@@ -2902,12 +3627,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step52",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step52",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step52",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -2918,7 +3655,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step52",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -2974,12 +3711,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step55",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step55",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step55",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -2990,7 +3739,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step55",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3046,12 +3795,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step58",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step58",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step58",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -3062,7 +3823,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step58",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3138,12 +3899,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step61",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step61",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step61",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -3154,7 +3927,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step61",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3210,12 +3983,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step64",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step64",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step64",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -3226,7 +4011,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step64",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3282,12 +4067,24 @@
       "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step67",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:EXEC",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
     },
     {
-      "type": "BUILDS_SQL_FROM",
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step67",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step67",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
@@ -3298,7 +4095,7 @@
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step67",
       "from_label": "Step",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
       "to_label": "Variable",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3321,6 +4118,30 @@
     {
       "type": "USES_VARIABLE",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step68",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step69",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step69",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step69",
       "from_label": "Step",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
       "to_label": "Variable",
@@ -3338,13 +4159,301 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step7",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.paymentmethods",
+      "to": "WideWorldImporters:table:application.deliverymethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
+      "path": "shared/tables/WideWorldImporters_table_application.deliverymethods_e9c839d4.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[PaymentMethods]"
+        "table": "[Application].[DeliveryMethods]"
       }
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step70",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step70",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step70",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step70",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step71",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step71",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step71",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step72",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step72",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step72",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step73",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step73",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step73",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step73",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step74",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step74",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step74",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step75",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step75",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step75",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step76",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step76",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step76",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step76",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step77",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step77",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step77",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step78",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step78",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step78",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step79",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step79",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step79",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step79",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
     {
       "type": "ACTION",
@@ -3368,6 +4477,198 @@
     },
     {
       "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step80",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step80",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step80",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step81",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step81",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step81",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step82",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step82",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step82",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step82",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step83",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step83",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step83",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step84",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step84",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step84",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step85",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step85",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sys.tables",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sys.tables_b8e0c0f8.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "sys.tables"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step85",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step85",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@TableName",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step86",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:EXEC",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_EXEC_35229bb2.json"
+    },
+    {
+      "type": "BUILDS_SQL_FROM",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step86",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step86",
+      "from_label": "Step",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#var:@SQL",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "ACTION",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:action:ALTER",
@@ -3378,27 +4679,19 @@
       "type": "WRITES_TO",
       "from": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step9",
       "from_label": "Step",
-      "to": "WideWorldImporters:table:application.people",
+      "to": "WideWorldImporters:table:application.paymentmethods",
       "to_label": "Table",
-      "path": "shared/tables/WideWorldImporters_table_application.people_85cdefe4.json",
+      "path": "shared/tables/WideWorldImporters_table_application.paymentmethods_10ed8bf1.json",
       "props": {
         "action_type": "ALTER",
-        "table": "[Application].[People]"
+        "table": "[Application].[PaymentMethods]"
       }
     },
     {
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:0971f1a4",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step0",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:b0baf130",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step36",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step1",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3414,15 +4707,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:b0baf130",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step40",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:b0baf130",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step42",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step41",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3438,15 +4723,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:b0baf130",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step46",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:b0baf130",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step48",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step47",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3462,15 +4739,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:b0baf130",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step52",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:b0baf130",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step54",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step53",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3486,15 +4755,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:b0baf130",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step58",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:b0baf130",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step60",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step59",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3510,15 +4771,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:b0baf130",
       "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step64",
-      "to_label": "Step",
-      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
-    },
-    {
-      "type": "GOVERNS",
-      "from": "WideWorldImporters:rule:IF:b0baf130",
-      "from_label": "Rule",
-      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step66",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step65",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     },
@@ -3528,6 +4781,62 @@
       "from_label": "Rule",
       "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step68",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b0baf130",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step71",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b0baf130",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step74",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b0baf130",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step77",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b0baf130",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step80",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b0baf130",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step83",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "GOVERNS",
+      "from": "WideWorldImporters:rule:IF:b0baf130",
+      "from_label": "Rule",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad#step86",
+      "to_label": "Step",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:dataloadsimulation",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad/object.json"
     }
   ]

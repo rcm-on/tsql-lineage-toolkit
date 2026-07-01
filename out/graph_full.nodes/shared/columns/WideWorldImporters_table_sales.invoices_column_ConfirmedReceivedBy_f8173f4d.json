@@ -6,13 +6,37 @@
   "properties": {
     "name": "ConfirmedReceivedBy",
     "table": "sales.invoices",
-    "data_type": "NVARCHAR (4000)",
+    "data_type": "",
     "is_nullable": true,
     "is_identity": false,
     "is_primary_key": false,
     "ordinal": 23
   },
   "refs": {},
-  "edges_in": [],
-  "edges_out": []
+  "edges_in": [
+    {
+      "type": "HAS_COLUMN",
+      "from": "WideWorldImporters:table:sales.invoices",
+      "from_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "ordinal": 23
+      }
+    }
+  ],
+  "edges_out": [
+    {
+      "type": "DERIVES_FROM",
+      "to": "WideWorldImporters:table:sales.invoices:column:ReturnedDeliveryData",
+      "to_label": "Column",
+      "path": "shared/columns/WideWorldImporters_table_sales.invoices_column_ReturnedDeliveryData_250e2089.json",
+      "props": {
+        "logic": "(json_value([ReturnedDeliveryData], N'$.ReceivedBy'))",
+        "via_computed_column": true,
+        "op_kinds": [
+          "func:JSON_VALUE"
+        ]
+      }
+    }
+  ]
 }

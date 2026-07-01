@@ -1,5 +1,14 @@
 ﻿{
   "id": "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
   "name": "DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
-  "edges_out": []
+  "edges_out": [
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:dataloadsimulation",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
+      "to_label": "SqlObject",
+      "path": "objects/WideWorldImporters_DataLoadSimulation.Configuration_RemoveDataLoadSimulationProc/nav.json"
+    }
+  ]
 }

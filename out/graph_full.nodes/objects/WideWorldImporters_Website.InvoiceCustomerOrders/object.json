@@ -63,7 +63,8 @@
           "name": "@InvoicesToGenerate",
           "data_type": "TABLE",
           "default": "",
-          "construction": []
+          "construction": [],
+          "op_kinds": []
         }
       }
     ],
@@ -76,7 +77,7 @@
         "properties": {
           "order": 0,
           "sequence": 1,
-          "line_no": 23,
+          "line_no": 22,
           "nesting_level": 0,
           "action": "INSERT",
           "step_type": "Staging",
@@ -84,6 +85,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "INSERT -> @InvoicesToGenerate"
@@ -97,21 +99,18 @@
         "properties": {
           "order": 1,
           "sequence": 2,
-          "line_no": 46,
-          "nesting_level": 1,
-          "action": "THROW",
-          "step_type": "Notification",
-          "target_name": "",
+          "line_no": 22,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "Sales.OrderLines",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
-          "condition_path": [
-            "IF: EXISTS (SELECT 1         FROM   @OrdersToInvoice AS oti         WHERE  NOT EXISTS (SELECT 1                            FROM   @InvoicesToGen"
-          ],
-          "condition_keys": [
-            "IF#43"
-          ],
-          "label": "THROW"
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> Sales.OrderLines"
         }
       },
       {
@@ -122,17 +121,22 @@
         "properties": {
           "order": 2,
           "sequence": 3,
-          "line_no": 49,
-          "nesting_level": 0,
-          "action": "BEGIN_TRAN",
-          "step_type": "Transaction",
+          "line_no": 45,
+          "nesting_level": 1,
+          "action": "THROW",
+          "step_type": "Notification",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
-          "condition_path": [],
-          "condition_keys": [],
-          "label": "BEGIN_TRAN"
+          "select_star": false,
+          "condition_path": [
+            "IF: EXISTS (SELECT 1         FROM   @OrdersToInvoice AS oti         WHERE  NOT EXISTS (SELECT 1                            FROM   @InvoicesToGen"
+          ],
+          "condition_keys": [
+            "IF#42"
+          ],
+          "label": "THROW"
         }
       },
       {
@@ -143,17 +147,18 @@
         "properties": {
           "order": 3,
           "sequence": 4,
-          "line_no": 51,
+          "line_no": 48,
           "nesting_level": 0,
-          "action": "INSERT",
-          "step_type": "Load",
-          "target_name": "Sales.Invoices",
+          "action": "BEGIN_TRAN",
+          "step_type": "Transaction",
+          "target_name": "",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "INSERT -> Sales.Invoices"
+          "label": "BEGIN_TRAN"
         }
       },
       {
@@ -164,17 +169,18 @@
         "properties": {
           "order": 4,
           "sequence": 5,
-          "line_no": 75,
+          "line_no": 50,
           "nesting_level": 0,
           "action": "INSERT",
           "step_type": "Load",
-          "target_name": "Sales.InvoiceLines",
+          "target_name": "Sales.Invoices",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "INSERT -> Sales.InvoiceLines"
+          "label": "INSERT -> Sales.Invoices"
         }
       },
       {
@@ -185,17 +191,18 @@
         "properties": {
           "order": 5,
           "sequence": 6,
-          "line_no": 95,
+          "line_no": 74,
           "nesting_level": 0,
           "action": "INSERT",
           "step_type": "Load",
-          "target_name": "Warehouse.StockItemTransactions",
+          "target_name": "Sales.InvoiceLines",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "INSERT -> Warehouse.StockItemTransactions"
+          "label": "INSERT -> Sales.InvoiceLines"
         }
       },
       {
@@ -206,17 +213,18 @@
         "properties": {
           "order": 6,
           "sequence": 7,
-          "line_no": 108,
+          "line_no": 94,
           "nesting_level": 0,
-          "action": "UPDATE",
-          "step_type": "Transformation",
-          "target_name": "Warehouse.StockItemHoldings",
+          "action": "INSERT",
+          "step_type": "Load",
+          "target_name": "Warehouse.StockItemTransactions",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "UPDATE -> Warehouse.StockItemHoldings"
+          "label": "INSERT -> Warehouse.StockItemTransactions"
         }
       },
       {
@@ -227,17 +235,18 @@
         "properties": {
           "order": 7,
           "sequence": 8,
-          "line_no": 124,
+          "line_no": 94,
           "nesting_level": 0,
-          "action": "INSERT",
-          "step_type": "Load",
-          "target_name": "Sales.CustomerTransactions",
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "[Application].TransactionTypes",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "INSERT -> Sales.CustomerTransactions"
+          "label": "SELECT -> [Application].TransactionTypes"
         }
       },
       {
@@ -248,17 +257,18 @@
         "properties": {
           "order": 8,
           "sequence": 9,
-          "line_no": 144,
+          "line_no": 107,
           "nesting_level": 0,
-          "action": "COMMIT_TRAN",
-          "step_type": "Transaction",
-          "target_name": "",
+          "action": "UPDATE",
+          "step_type": "Transformation",
+          "target_name": "Warehouse.StockItemHoldings",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
-          "label": "COMMIT_TRAN"
+          "label": "UPDATE -> Warehouse.StockItemHoldings"
         }
       },
       {
@@ -269,23 +279,18 @@
         "properties": {
           "order": 9,
           "sequence": 10,
-          "line_no": 148,
-          "nesting_level": 2,
-          "action": "ROLLBACK",
-          "step_type": "Transaction",
-          "target_name": "",
+          "line_no": 123,
+          "nesting_level": 0,
+          "action": "INSERT",
+          "step_type": "Load",
+          "target_name": "Sales.CustomerTransactions",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
-          "condition_path": [
-            "CATCH: ON ERROR",
-            "IF: XACT_STATE() <> 0"
-          ],
-          "condition_keys": [
-            "CATCH#20",
-            "IF#148"
-          ],
-          "label": "ROLLBACK"
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "INSERT -> Sales.CustomerTransactions"
         }
       },
       {
@@ -296,21 +301,18 @@
         "properties": {
           "order": 10,
           "sequence": 11,
-          "line_no": 150,
-          "nesting_level": 1,
-          "action": "THROW",
-          "step_type": "Notification",
-          "target_name": "",
+          "line_no": 123,
+          "nesting_level": 0,
+          "action": "SELECT",
+          "step_type": "Extraction",
+          "target_name": "[Application].TransactionTypes",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
-          "condition_path": [
-            "CATCH: ON ERROR"
-          ],
-          "condition_keys": [
-            "CATCH#20"
-          ],
-          "label": "THROW"
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "SELECT -> [Application].TransactionTypes"
         }
       },
       {
@@ -321,21 +323,18 @@
         "properties": {
           "order": 11,
           "sequence": 12,
-          "line_no": 151,
-          "nesting_level": 1,
-          "action": "RETURN",
-          "step_type": "Control",
+          "line_no": 143,
+          "nesting_level": 0,
+          "action": "COMMIT_TRAN",
+          "step_type": "Transaction",
           "target_name": "",
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
-          "condition_path": [
-            "CATCH: ON ERROR"
-          ],
-          "condition_keys": [
-            "CATCH#20"
-          ],
-          "label": "RETURN"
+          "select_star": false,
+          "condition_path": [],
+          "condition_keys": [],
+          "label": "COMMIT_TRAN"
         }
       },
       {
@@ -346,7 +345,87 @@
         "properties": {
           "order": 12,
           "sequence": 13,
-          "line_no": 154,
+          "line_no": 147,
+          "nesting_level": 2,
+          "action": "ROLLBACK",
+          "step_type": "Transaction",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [
+            "CATCH: ON ERROR",
+            "IF: XACT_STATE() <> 0"
+          ],
+          "condition_keys": [
+            "CATCH#19",
+            "IF#147"
+          ],
+          "label": "ROLLBACK"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.InvoiceCustomerOrders#step13",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 13,
+          "sequence": 14,
+          "line_no": 149,
+          "nesting_level": 1,
+          "action": "THROW",
+          "step_type": "Notification",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#19"
+          ],
+          "label": "THROW"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.InvoiceCustomerOrders#step14",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 14,
+          "sequence": 15,
+          "line_no": 150,
+          "nesting_level": 1,
+          "action": "RETURN",
+          "step_type": "Control",
+          "target_name": "",
+          "detail": "",
+          "dynamic_sql": "",
+          "is_dynamic_sql": false,
+          "select_star": false,
+          "condition_path": [
+            "CATCH: ON ERROR"
+          ],
+          "condition_keys": [
+            "CATCH#19"
+          ],
+          "label": "RETURN"
+        }
+      },
+      {
+        "id": "WideWorldImporters::Website.InvoiceCustomerOrders#step15",
+        "labels": [
+          "Step"
+        ],
+        "properties": {
+          "order": 15,
+          "sequence": 16,
+          "line_no": 153,
           "nesting_level": 0,
           "action": "RETURN",
           "step_type": "Control",
@@ -354,6 +433,7 @@
           "detail": "",
           "dynamic_sql": "",
           "is_dynamic_sql": false,
+          "select_star": false,
           "condition_path": [],
           "condition_keys": [],
           "label": "RETURN"
@@ -414,13 +494,145 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
       "from_label": "Step",
-      "to": "WideWorldImporters:action:THROW",
+      "to": "WideWorldImporters:action:SELECT",
       "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoices",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoices_87fc7031.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.Invoices",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orderlines",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.OrderLines"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.orderlines",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.orderlines_59e25b59.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.OrderLines",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:warehouse.stockitems",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_warehouse.stockitems_0814dcfd.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Warehouse.StockItems",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#param:@OrdersToInvoice",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#var:@InvoicesToGenerate",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },
     {
       "type": "ACTION",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.transactiontypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].TransactionTypes"
+      }
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:sales.invoicelines",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_sales.invoicelines_e8604dbf.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "Sales.InvoiceLines",
+        "via": "JOIN"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#param:@InvoicedByPersonID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#var:@InvoicesToGenerate",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step11",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:COMMIT_TRAN",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_COMMIT_TRAN_e48041a5.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step12",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:ROLLBACK",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_ROLLBACK_ddf682d7.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step13",
       "from_label": "Step",
       "to": "WideWorldImporters:action:THROW",
       "to_label": "Action",
@@ -428,7 +640,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step11",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step14",
       "from_label": "Step",
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
@@ -436,7 +648,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step12",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step15",
       "from_label": "Step",
       "to": "WideWorldImporters:action:RETURN",
       "to_label": "Action",
@@ -446,13 +658,21 @@
       "type": "ACTION",
       "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step2",
       "from_label": "Step",
+      "to": "WideWorldImporters:action:THROW",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_THROW_2bf30b36.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from_label": "Step",
       "to": "WideWorldImporters:action:BEGIN_TRAN",
       "to_label": "Action",
       "path": "shared/actions/WideWorldImporters_action_BEGIN_TRAN_53e5058e.json"
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:action:INSERT",
       "to_label": "Action",
@@ -460,7 +680,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:BillToCustomerID",
       "to_label": "Column",
@@ -468,7 +688,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:CustomerID",
       "to_label": "Column",
@@ -476,7 +696,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:DeliveryAddressLine1",
       "to_label": "Column",
@@ -484,7 +704,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:DeliveryAddressLine2",
       "to_label": "Column",
@@ -492,7 +712,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:DeliveryMethodID",
       "to_label": "Column",
@@ -500,7 +720,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:DeliveryRun",
       "to_label": "Column",
@@ -508,7 +728,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:PrimaryContactPersonID",
       "to_label": "Column",
@@ -516,7 +736,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers:column:RunPosition",
       "to_label": "Column",
@@ -524,7 +744,7 @@
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customers",
       "to_label": "Table",
@@ -537,7 +757,7 @@
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orders",
       "to_label": "Table",
@@ -550,7 +770,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#param:@InvoicedByPersonID",
       "to_label": "Parameter",
@@ -558,7 +778,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#param:@PackedByPersonID",
       "to_label": "Parameter",
@@ -566,7 +786,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#var:@InvoicesToGenerate",
       "to_label": "Variable",
@@ -574,7 +794,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:AccountsPersonID",
       "to_label": "Column",
@@ -582,7 +802,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:BillToCustomerID",
       "to_label": "Column",
@@ -590,7 +810,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:Comments",
       "to_label": "Column",
@@ -598,7 +818,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:ContactPersonID",
       "to_label": "Column",
@@ -606,7 +826,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:CreditNoteReason",
       "to_label": "Column",
@@ -614,7 +834,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:CustomerID",
       "to_label": "Column",
@@ -622,7 +842,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:CustomerPurchaseOrderNumber",
       "to_label": "Column",
@@ -630,7 +850,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:DeliveryInstructions",
       "to_label": "Column",
@@ -638,7 +858,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:DeliveryMethodID",
       "to_label": "Column",
@@ -646,7 +866,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:DeliveryRun",
       "to_label": "Column",
@@ -654,7 +874,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:InternalComments",
       "to_label": "Column",
@@ -662,7 +882,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:InvoiceDate",
       "to_label": "Column",
@@ -670,7 +890,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:InvoiceID",
       "to_label": "Column",
@@ -678,7 +898,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:IsCreditNote",
       "to_label": "Column",
@@ -686,7 +906,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:LastEditedBy",
       "to_label": "Column",
@@ -694,7 +914,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:LastEditedWhen",
       "to_label": "Column",
@@ -702,7 +922,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:OrderID",
       "to_label": "Column",
@@ -710,7 +930,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:PackedByPersonID",
       "to_label": "Column",
@@ -718,7 +938,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:ReturnedDeliveryData",
       "to_label": "Column",
@@ -726,7 +946,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:RunPosition",
       "to_label": "Column",
@@ -734,7 +954,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:SalespersonPersonID",
       "to_label": "Column",
@@ -742,7 +962,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:TotalChillerItems",
       "to_label": "Column",
@@ -750,7 +970,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:TotalDryItems",
       "to_label": "Column",
@@ -758,7 +978,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step3",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices",
       "to_label": "Table",
@@ -770,7 +990,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:action:INSERT",
       "to_label": "Action",
@@ -778,7 +998,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemholdings:column:LastCostPrice",
       "to_label": "Column",
@@ -786,7 +1006,7 @@
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.orderlines",
       "to_label": "Table",
@@ -799,7 +1019,7 @@
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemholdings",
       "to_label": "Table",
@@ -812,7 +1032,7 @@
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitems",
       "to_label": "Table",
@@ -825,7 +1045,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#param:@InvoicedByPersonID",
       "to_label": "Parameter",
@@ -833,7 +1053,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#var:@InvoicesToGenerate",
       "to_label": "Variable",
@@ -841,7 +1061,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:Description",
       "to_label": "Column",
@@ -849,7 +1069,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:ExtendedPrice",
       "to_label": "Column",
@@ -857,7 +1077,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:InvoiceID",
       "to_label": "Column",
@@ -865,7 +1085,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:LastEditedBy",
       "to_label": "Column",
@@ -873,7 +1093,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:LastEditedWhen",
       "to_label": "Column",
@@ -881,7 +1101,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:LineProfit",
       "to_label": "Column",
@@ -889,7 +1109,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:PackageTypeID",
       "to_label": "Column",
@@ -897,7 +1117,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:Quantity",
       "to_label": "Column",
@@ -905,7 +1125,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:StockItemID",
       "to_label": "Column",
@@ -913,7 +1133,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:TaxAmount",
       "to_label": "Column",
@@ -921,7 +1141,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:TaxRate",
       "to_label": "Column",
@@ -929,7 +1149,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines:column:UnitPrice",
       "to_label": "Column",
@@ -937,7 +1157,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step4",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines",
       "to_label": "Table",
@@ -949,7 +1169,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:action:INSERT",
       "to_label": "Action",
@@ -957,7 +1177,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:CustomerID",
       "to_label": "Column",
@@ -965,7 +1185,7 @@
     },
     {
       "type": "READS_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices:column:InvoiceID",
       "to_label": "Column",
@@ -973,7 +1193,7 @@
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines",
       "to_label": "Table",
@@ -986,7 +1206,7 @@
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices",
       "to_label": "Table",
@@ -999,7 +1219,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#param:@InvoicedByPersonID",
       "to_label": "Parameter",
@@ -1007,7 +1227,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#var:@InvoicesToGenerate",
       "to_label": "Variable",
@@ -1015,7 +1235,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:CustomerID",
       "to_label": "Column",
@@ -1023,7 +1243,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:InvoiceID",
       "to_label": "Column",
@@ -1031,7 +1251,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:LastEditedBy",
       "to_label": "Column",
@@ -1039,7 +1259,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:LastEditedWhen",
       "to_label": "Column",
@@ -1047,7 +1267,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:PurchaseOrderID",
       "to_label": "Column",
@@ -1055,7 +1275,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:Quantity",
       "to_label": "Column",
@@ -1063,7 +1283,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:StockItemID",
       "to_label": "Column",
@@ -1071,7 +1291,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:SupplierID",
       "to_label": "Column",
@@ -1079,7 +1299,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:TransactionOccurredWhen",
       "to_label": "Column",
@@ -1087,7 +1307,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions:column:TransactionTypeID",
       "to_label": "Column",
@@ -1095,7 +1315,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step5",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemtransactions",
       "to_label": "Table",
@@ -1107,7 +1327,43 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:action:SELECT",
+      "to_label": "Action",
+      "path": "shared/actions/WideWorldImporters_action_SELECT_cff5d17e.json"
+    },
+    {
+      "type": "READS_FROM",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters:table:application.transactiontypes",
+      "to_label": "Table",
+      "path": "shared/tables/WideWorldImporters_table_application.transactiontypes_aabb78c7.json",
+      "props": {
+        "action_type": "SELECT",
+        "table": "[Application].TransactionTypes"
+      }
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#param:@InvoicedByPersonID",
+      "to_label": "Parameter",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "USES_VARIABLE",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from_label": "Step",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#var:@InvoicesToGenerate",
+      "to_label": "Variable",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "ACTION",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "to": "WideWorldImporters:action:UPDATE",
       "to_label": "Action",
@@ -1115,15 +1371,20 @@
     },
     {
       "type": "FILTERS_ON",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemholdings:column:StockItemID",
       "to_label": "Column",
-      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_StockItemID_09ba3f31.json"
+      "path": "shared/columns/WideWorldImporters_table_warehouse.stockitemholdings_column_StockItemID_09ba3f31.json",
+      "props": {
+        "op_kinds": [
+          "compare:="
+        ]
+      }
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoicelines",
       "to_label": "Table",
@@ -1136,7 +1397,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#param:@InvoicedByPersonID",
       "to_label": "Parameter",
@@ -1144,7 +1405,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#var:@InvoicesToGenerate",
       "to_label": "Variable",
@@ -1152,7 +1413,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemholdings:column:LastEditedBy",
       "to_label": "Column",
@@ -1160,7 +1421,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemholdings:column:LastEditedWhen",
       "to_label": "Column",
@@ -1168,7 +1429,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemholdings:column:QuantityOnHand",
       "to_label": "Column",
@@ -1176,7 +1437,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step6",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
       "from_label": "Step",
       "to": "WideWorldImporters:table:warehouse.stockitemholdings",
       "to_label": "Table",
@@ -1188,7 +1449,7 @@
     },
     {
       "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:action:INSERT",
       "to_label": "Action",
@@ -1196,7 +1457,7 @@
     },
     {
       "type": "READS_FROM",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.invoices",
       "to_label": "Table",
@@ -1209,7 +1470,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#param:@InvoicedByPersonID",
       "to_label": "Parameter",
@@ -1217,7 +1478,7 @@
     },
     {
       "type": "USES_VARIABLE",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters::Website.InvoiceCustomerOrders#var:@InvoicesToGenerate",
       "to_label": "Variable",
@@ -1225,7 +1486,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:AmountExcludingTax",
       "to_label": "Column",
@@ -1233,7 +1494,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:CustomerID",
       "to_label": "Column",
@@ -1241,7 +1502,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:FinalizationDate",
       "to_label": "Column",
@@ -1249,7 +1510,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:InvoiceID",
       "to_label": "Column",
@@ -1257,7 +1518,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:LastEditedBy",
       "to_label": "Column",
@@ -1265,7 +1526,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:LastEditedWhen",
       "to_label": "Column",
@@ -1273,7 +1534,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:OutstandingBalance",
       "to_label": "Column",
@@ -1281,7 +1542,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:PaymentMethodID",
       "to_label": "Column",
@@ -1289,7 +1550,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:TaxAmount",
       "to_label": "Column",
@@ -1297,7 +1558,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:TransactionAmount",
       "to_label": "Column",
@@ -1305,7 +1566,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:TransactionDate",
       "to_label": "Column",
@@ -1313,7 +1574,7 @@
     },
     {
       "type": "WRITES_COLUMN",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions:column:TransactionTypeID",
       "to_label": "Column",
@@ -1321,7 +1582,7 @@
     },
     {
       "type": "WRITES_TO",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step7",
+      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
       "from_label": "Step",
       "to": "WideWorldImporters:table:sales.customertransactions",
       "to_label": "Table",
@@ -1332,26 +1593,10 @@
       }
     },
     {
-      "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step8",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:COMMIT_TRAN",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_COMMIT_TRAN_e48041a5.json"
-    },
-    {
-      "type": "ACTION",
-      "from": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
-      "from_label": "Step",
-      "to": "WideWorldImporters:action:ROLLBACK",
-      "to_label": "Action",
-      "path": "shared/actions/WideWorldImporters_action_ROLLBACK_ddf682d7.json"
-    },
-    {
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step10",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step13",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },
@@ -1359,7 +1604,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:CATCH:e0ad2a42",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step11",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step14",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },
@@ -1367,7 +1612,7 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:96cd9fce",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step9",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step12",
       "to_label": "Step",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     },
@@ -1375,8 +1620,16 @@
       "type": "GOVERNS",
       "from": "WideWorldImporters:rule:IF:fecfc94a",
       "from_label": "Rule",
-      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step1",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders#step2",
       "to_label": "Step",
+      "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
+    },
+    {
+      "type": "CONTAINS",
+      "from": "WideWorldImporters:schema:website",
+      "from_label": "Schema",
+      "to": "WideWorldImporters::Website.InvoiceCustomerOrders",
+      "to_label": "SqlObject",
       "path": "objects/WideWorldImporters_Website.InvoiceCustomerOrders/object.json"
     }
   ]
