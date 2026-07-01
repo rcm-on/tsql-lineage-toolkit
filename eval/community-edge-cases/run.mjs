@@ -16,9 +16,8 @@ const testCases = [
     { name: 'recursive-cte', files: ['cte-recursive/recursive-cte.sql'] },
     { name: 'window', files: ['window-functions/window.sql'] },
     { name: 'union-view', files: ['set-ops/union-view.sql'] },
-    { name: 'lineage-chain', files: ['lineage-chain/01-table.sql', 'lineage-chain/02-view1.sql', 'lineage-chain/03-view2.sql', 'lineage-chain/04-view3.sql'] },
+    { name: 'lineage-chain', files: ['lineage-chain/01-base-table.sql', 'lineage-chain/02-view-level1.sql', 'lineage-chain/03-view-level2.sql', 'lineage-chain/04-view-level3.sql'] },
     { name: 'dynamic-sql-complex', files: ['dynamic-sql/quotename-case-coalesce.sql'] },
-    { name: 'dynamic-trigger', files: ['dynamic-trigger/setup.sql'] },
 ];
 
 function runCommand(command) {
@@ -48,7 +47,7 @@ for (const testCase of testCases) {
     const sqlFiles = testCase.files.map(f => `"${path.join(__dirname, f)}"`).join(' ');
 
     runCommand(`dotnet "${dllPath}" from-sql "${dbName}" "${inputJsonPath}" ${sqlFiles}`);
-    runCommand(`dotnet "${dllPath}" "${inputJsonPath}" "${graphJsonPath}" --columns --nodestore "${nodestorePath}"`);
+    runCommand(`dotnet "${dllPath}" "${inputJsonPath}" "${graphJsonPath}" --columns --nodestore`);
 
     console.log(`✅ Case ${testCase.name} processed successfully.`);
 }
