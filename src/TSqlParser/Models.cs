@@ -72,8 +72,10 @@ public record FlowLinkInfo(
     IReadOnlyList<string>? UsedVariables = null,
     IReadOnlyList<TableColumnRef>? ExtraReads = null,
     IReadOnlyList<TableColumnRef>? FilterColumns = null,
+    IReadOnlyList<string>? FilterOpKinds = null,
     string Detail = "",
-    string DynamicSqlText = "")
+    string DynamicSqlText = "",
+    bool SelectStar = false)
 {
     public IReadOnlyList<string> DynamicSqlVars { get; init; } = DynamicSqlVars ?? Array.Empty<string>();
     public IReadOnlyList<string> ConditionPath { get; init; } = ConditionPath ?? Array.Empty<string>();
@@ -84,22 +86,50 @@ public record FlowLinkInfo(
     public IReadOnlyList<string> UsedVariables { get; init; } = UsedVariables ?? Array.Empty<string>();
     public IReadOnlyList<TableColumnRef> ExtraReads { get; init; } = ExtraReads ?? Array.Empty<TableColumnRef>();
     public IReadOnlyList<TableColumnRef> FilterColumns { get; init; } = FilterColumns ?? Array.Empty<TableColumnRef>();
+    /// <summary>Normalized operator tokens of this step's WHERE/JOIN-ON predicates (see <see cref="OperatorClassifier"/>) - the AND/OR/comparison structure behind FilterColumns. Empty when there's no predicate.</summary>
+    public IReadOnlyList<string> FilterOpKinds { get; init; } = FilterOpKinds ?? Array.Empty<string>();
     /// <summary>Short subtype label for ALTER steps (e.g. "DROP PERIOD", "ADD CONSTRAINT"). Empty for other action types.</summary>
     public string Detail { get; init; } = Detail;
     /// <summary>
     /// For "EXEC (dynamic SQL)" steps whose executed string could be reconstructed to a
-    /// pure literal (no @variables/functions/column refs feeding it): the SQL that runs,
-    /// whitespace-collapsed and truncated. Empty when the string is built at runtime and
-    /// thus not statically resolvable. Descriptive only - not re-parsed into lineage.
+    /// pure literal: the SQL that runs, whitespace-collapsed, USE-stripped and FULL
+    /// (untruncated). Empty when the string is built at runtime and thus not statically
+    /// resolvable. Consumed two ways: SqlAnalyzer.ResolveDynamicSqlLinks re-parses it for the
+    /// inner DML's lineage, and GraphExporter emits a truncated copy as the descriptive
+    /// "dynamic_sql" node property. Keep it full here so re-parse isn't capped at the display
+    /// length.
     /// </summary>
     public string DynamicSqlText { get; init; } = DynamicSqlText;
 }
 
-/// <summary>One target column of an INSERT...SELECT, paired with the source table/columns its value comes from, and the SQL expression (e.g. "s.Col1 + s.Col2") that computed it.</summary>
-public record ColumnDerivation(string TargetColumn, string SourceTable, IReadOnlyList<string> SourceColumns, string TransformationExpression = "");
+/// <summary>
+/// One target column of an INSERT...SELECT, paired with the source table/columns its
+/// value comes from, the SQL expression (e.g. "s.Col1 + s.Col2") that computed it, and
+/// the normalized operator tokens of that expression (see <see cref="OperatorClassifier"/>).
+/// </summary>
+public record ColumnDerivation(
+    string TargetColumn, string SourceTable, IReadOnlyList<string> SourceColumns,
+    string TransformationExpression = "", IReadOnlyList<string>? OpKinds = null)
+{
+    public IReadOnlyList<string> OpKinds { get; init; } = OpKinds ?? Array.Empty<string>();
+}
 
 /// <summary>One table referenced in a FROM/JOIN, paired with the columns of it that a step reads.</summary>
 public record TableColumnRef(string Table, IReadOnlyList<string> Columns);
+
+/// <summary>
+/// A "CREATE TRIGGER" found in an object's body - typically inside resolved dynamic SQL
+/// (EXEC of a built-up string), but also a literal one. Records enough to model the trigger
+/// as its own node: its name, the table it fires ON, its timing (AFTER/INSTEAD OF/FOR) and
+/// the DML events (INSERT/UPDATE/DELETE). The trigger BODY's own lineage is a later phase;
+/// this is the "what trigger, on whom, when" layer (see docs/dynamic-trigger-modeling-spec.md).
+/// </summary>
+public record TriggerCreationInfo(
+    string TriggerName, string OnTable, string Timing,
+    IReadOnlyList<string> Events, int LineNo)
+{
+    public IReadOnlyList<string> Events { get; init; } = Events ?? Array.Empty<string>();
+}
 
 /// <summary>
 /// One "SET @var = expr" / "SELECT @var = expr FROM S ..." assignment whose value
@@ -124,6 +154,14 @@ public class WalkContext
     /// reconstructs how a dynamic-SQL string was built. Keyed by @variable name.
     /// </summary>
     public Dictionary<string, List<string>> VariableConstructions { get; } = new();
+
+    /// <summary>
+    /// Per-variable union of the operator tokens (see <see cref="OperatorClassifier"/>)
+    /// across every expression assigned to it - so a variable fed by "@a + @b" or a
+    /// dynamic-SQL string built by "'... ' + @name" carries its arithmetic/concat
+    /// operators, the same way a column does. Keyed by @variable name.
+    /// </summary>
+    public Dictionary<string, SortedSet<string>> VariableOpKinds { get; } = new();
 
     /// <summary>
     /// Per-variable current value, but only while it remains a pure string literal
@@ -184,8 +222,21 @@ public class WalkContext
     }
 }
 
-/// <summary>One column of a CREATE TABLE, as declared in its DDL.</summary>
-public record ColumnDef(string Name, string DataType, bool IsNullable, bool IsIdentity, bool IsPrimaryKey, int Ordinal);
+/// <summary>
+/// One column of a CREATE TABLE, as declared in its DDL. ComputedExpression/
+/// ComputedSourceColumns are non-empty only for computed columns ("AS Price * Qty"):
+/// the SQL expression and the other column(s) of the same table it reads, so
+/// GraphExporter can link the computed column to them via DERIVES_FROM.
+/// </summary>
+public record ColumnDef(
+    string Name, string DataType, bool IsNullable, bool IsIdentity, bool IsPrimaryKey, int Ordinal,
+    string ComputedExpression = "", IReadOnlyList<string>? ComputedSourceColumns = null,
+    IReadOnlyList<string>? ComputedOpKinds = null)
+{
+    public IReadOnlyList<string> ComputedSourceColumns { get; init; } = ComputedSourceColumns ?? Array.Empty<string>();
+    /// <summary>Normalized operator tokens of the computed-column expression (see <see cref="OperatorClassifier"/>); empty for non-computed columns.</summary>
+    public IReadOnlyList<string> ComputedOpKinds { get; init; } = ComputedOpKinds ?? Array.Empty<string>();
+}
 
 /// <summary>
 /// One FOREIGN KEY constraint: Columns (this table) -> ReferencedTable.ReferencedColumns,
@@ -193,12 +244,22 @@ public record ColumnDef(string Name, string DataType, bool IsNullable, bool IsId
 /// </summary>
 public record ForeignKeyDef(IReadOnlyList<string> Columns, string ReferencedTable, IReadOnlyList<string> ReferencedColumns, string? ConstraintName = null);
 
-/// <summary>Result of parsing one CREATE TABLE statement: its columns and foreign keys.</summary>
+/// <summary>
+/// One declarative DDL constraint that carries business meaning beyond a column's own
+/// attributes: a CHECK predicate, a DEFAULT expression, or a UNIQUE key. PK / FK / NOT
+/// NULL are already represented (column attributes + FK edges), so they're not duplicated
+/// here. Columns = the column(s) the constraint governs. Surfaced as :BusinessRule nodes
+/// (HAS_RULE from the table, CONSTRAINS to each column).
+/// </summary>
+public record ConstraintDef(string Kind, string Expression, IReadOnlyList<string> Columns, string? Name = null);
+
+/// <summary>Result of parsing one CREATE TABLE statement: its columns, foreign keys and declarative constraints.</summary>
 public class TableSchemaResult
 {
     public string ObjectName { get; }
     public List<ColumnDef> Columns { get; } = new();
     public List<ForeignKeyDef> ForeignKeys { get; } = new();
+    public List<ConstraintDef> Constraints { get; } = new();
     public string? Error { get; set; }
 
     public TableSchemaResult(string objectName) => ObjectName = objectName;
@@ -215,6 +276,12 @@ public class ObjectResult
     public List<string> FunctionCalls { get; } = new();
     public List<VariableAssignmentInfo> VariableAssignments { get; } = new();
     public Dictionary<string, List<string>> VariableConstructions { get; } = new();
+    /// <summary>Per-variable operator tokens (see <see cref="OperatorClassifier"/>), unioned across all its assignments. Surfaced on the Variable node as op_kinds.</summary>
+    public Dictionary<string, List<string>> VariableOpKinds { get; } = new();
+    /// <summary>For a VIEW: each output column paired with the base table column(s) its value comes from (see <see cref="OperatorClassifier"/> for ops). Empty for non-views. Surfaced as DERIVES_FROM off the view's own :Column nodes.</summary>
+    public List<ColumnDerivation> ViewColumnLineage { get; } = new();
+    /// <summary>Triggers this object's body CREATEs (usually via resolved dynamic SQL). Surfaced as a :Trigger node with CREATES/ON edges. See <see cref="TriggerCreationInfo"/>.</summary>
+    public List<TriggerCreationInfo> CreatedTriggers { get; } = new();
     public bool HasTransaction { get; set; }
     public bool HasErrorHandling { get; set; }
     public bool HasCursor { get; set; }

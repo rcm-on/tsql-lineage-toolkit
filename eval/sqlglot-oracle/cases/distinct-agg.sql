@@ -1,0 +1,1 @@
+SELECT COUNT(DISTINCT a) AS c FROM dbo.t

@@ -38,6 +38,60 @@ FROM owner w JOIN nodes n ON n.id = w.o
 WHERE n.label='SqlObject'
 GROUP BY n.id ORDER BY hops, n.name;
 
+-- @col_impact  Column-level transitive impact, WITH DEPTH + ordered chain. For the
+-- column you're about to change/drop, lists every column whose value derives from
+-- it, how many DERIVES_FROM hops away (depth), and the exact origin -> ... ->
+-- consumer path. DERIVES_FROM points consumer -> source, so downstream impact walks
+-- edges backwards (dst = a column we already reached, src = a new consumer of it).
+-- The idpath column carries the visited node ids for an O(1) cycle guard (instr),
+-- so a computed column feeding itself transitively can't loop forever.
+-- Replace the seed id with your column. Find it with:
+--   SELECT id FROM nodes WHERE label='Column' AND name='<ColName>';
+-- (the id encodes db:table:column, so it disambiguates same-named columns.)
+WITH RECURSIVE impact(col, depth, idpath, chain) AS (
+  SELECT e.src, 1,
+         e.dst || '|' || e.src,
+         substr(e.dst, instr(e.dst, ':table:') + 7) || ' -> ' || substr(e.src, instr(e.src, ':table:') + 7)
+  FROM edges e
+  WHERE e.dst = 'WideWorldImporters:table:sales.orderlines:column:UnitPrice'
+    AND e.type = 'DERIVES_FROM'
+  UNION ALL
+  SELECT e.src, i.depth + 1,
+         i.idpath || '|' || e.src,
+         i.chain || ' -> ' || substr(e.src, instr(e.src, ':table:') + 7)
+  FROM edges e JOIN impact i ON e.dst = i.col
+  WHERE e.type = 'DERIVES_FROM' AND i.depth < 20
+    AND instr(i.idpath, e.src) = 0)
+SELECT substr(col, instr(col, ':table:') + 7) AS affected_column, hops, chain
+FROM (SELECT col, depth AS hops, chain,
+             ROW_NUMBER() OVER (PARTITION BY col ORDER BY depth) AS rn
+      FROM impact)
+WHERE rn = 1 ORDER BY hops, affected_column;
+
+-- @col_provenance  The mirror of @col_impact: where a column's value COMES FROM,
+-- with depth + ordered chain. Walks DERIVES_FROM forwards (src = the column we
+-- reached, dst = a source it derives from) to the ultimate origin column(s) - the
+-- "ordered remediation" view: fix the deepest source first, then work outward.
+WITH RECURSIVE prov(col, depth, idpath, chain) AS (
+  SELECT e.dst, 1,
+         e.src || '|' || e.dst,
+         substr(e.src, instr(e.src, ':table:') + 7) || ' <- ' || substr(e.dst, instr(e.dst, ':table:') + 7)
+  FROM edges e
+  WHERE e.src = 'WideWorldImporters:table:sales.orderlines:column:LineTotal'
+    AND e.type = 'DERIVES_FROM'
+  UNION ALL
+  SELECT e.dst, p.depth + 1,
+         p.idpath || '|' || e.dst,
+         p.chain || ' <- ' || substr(e.dst, instr(e.dst, ':table:') + 7)
+  FROM edges e JOIN prov p ON e.src = p.col
+  WHERE e.type = 'DERIVES_FROM' AND p.depth < 20
+    AND instr(p.idpath, e.dst) = 0)
+SELECT substr(col, instr(col, ':table:') + 7) AS source_column, hops, chain
+FROM (SELECT col, depth AS hops, chain,
+             ROW_NUMBER() OVER (PARTITION BY col ORDER BY depth) AS rn
+      FROM prov)
+WHERE rn = 1 ORDER BY hops, source_column;
+
 -- @coupling  SP-to-SP coupling: fan-out (calls made) and fan-in (called by).
 SELECT n.name,
        (SELECT COUNT(*) FROM edges e WHERE e.type='CALLS' AND e.src=n.id) AS fan_out,

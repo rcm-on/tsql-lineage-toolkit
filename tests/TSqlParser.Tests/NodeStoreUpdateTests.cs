@@ -133,7 +133,9 @@ public class NodeStoreUpdateTests : IDisposable
         var procBNavFile = beforeFiles.Single(f => f.StartsWith("objects/") && f.Contains("ProcB") && f.EndsWith("nav.json"));
         Assert.Equal(beforeContent[procBNavFile], afterContent[procBNavFile]);
 
-        var tableYFile = beforeFiles.Single(f => f.StartsWith("shared/tables/") && f.Contains("tablex") == false && f.Contains("TableY", StringComparison.OrdinalIgnoreCase));
+        // Each shared node now also has a sibling .nav.json, so match the primary
+        // .json only (exclude .nav.json) to keep .Single() unambiguous.
+        var tableYFile = beforeFiles.Single(f => f.StartsWith("shared/tables/") && f.Contains("tablex") == false && f.Contains("TableY", StringComparison.OrdinalIgnoreCase) && f.EndsWith(".json") && !f.EndsWith(".nav.json"));
         Assert.Equal(beforeContent[tableYFile], afterContent[tableYFile]);
 
         // A new shared file for TableZ was added.
@@ -163,14 +165,17 @@ public class NodeStoreUpdateTests : IDisposable
         var beforeFiles = AllFiles(store).ToList();
         var procBDir = beforeFiles.First(f => f.StartsWith("objects/") && f.Contains("ProcB"));
         var procBObjectDir = Path.GetDirectoryName(procBDir)!.Replace('\\', '/');
-        var tableYFile = beforeFiles.Single(f => f.StartsWith("shared/tables/") && f.Contains("TableY", StringComparison.OrdinalIgnoreCase));
+        var tableYFile = beforeFiles.Single(f => f.StartsWith("shared/tables/") && f.Contains("TableY", StringComparison.OrdinalIgnoreCase) && f.EndsWith(".json") && !f.EndsWith(".nav.json"));
 
         // ProcB (and its only reference to TableY) disappears from the input.
         var graph2 = BuildGraph(("ProcA", ProcASql));
         var stats = NodeStoreExporter.Update(graph2, store, Db, JsonOptions);
 
         Assert.Equal(1, stats.ObjectsRemoved);
-        Assert.Equal(1, stats.SharedRemoved);
+        // SharedRemoved counts files, not nodes (same as SharedWritten): the orphaned
+        // TableY node is two files - its shared/tables/*.json plus the sibling *.nav.json
+        // that every shared node now carries - both GC'd.
+        Assert.Equal(2, stats.SharedRemoved);
         Assert.Equal(0, stats.ObjectsWritten); // ProcA's own object.json is unchanged
         Assert.Equal(1, stats.ObjectsUnchanged);
 
@@ -201,6 +206,9 @@ public class NodeStoreUpdateTests : IDisposable
         // The single EXEC(@s) step is dynamic SQL; the procedure has at least 2 steps total.
         Assert.True(procD.GetProperty("total_steps").GetInt32() >= 2);
         Assert.Equal(1, procD.GetProperty("dynamic_sql_steps").GetInt32());
+        // @s is built from a pure literal ('SELECT Id FROM dbo.TableX') - it resolves
+        // fully, so this dynamic step is NOT one of the "real gap" unresolved ones.
+        Assert.Equal(0, procD.GetProperty("unresolved_dynamic_sql_steps").GetInt32());
         // The IF branch gives this procedure a cyclomatic_complexity above the trivial baseline.
         Assert.True(procD.GetProperty("cyclomatic_complexity").GetInt32() >= 1);
 
@@ -210,9 +218,70 @@ public class NodeStoreUpdateTests : IDisposable
         Assert.Equal(0, tableX.GetProperty("fk_out_count").GetInt32());
     }
 
+    // EXEC(@sql) where @sql is built from a procedure PARAMETER (never assignable to a
+    // known literal) can never resolve - the parser fails closed (no WRITES_TO/READS_FROM
+    // is fabricated), so this object's lineage is genuinely incomplete, not "provably
+    // touches nothing else". unresolved_dynamic_sql_steps is the only signal of that gap.
+    [Fact]
+    public void Write_ModelJson_CountsUnresolvedDynamicSqlSeparatelyFromResolved()
+    {
+        const string sql = "CREATE PROCEDURE dbo.ProcE @TableName NVARCHAR(128) AS BEGIN " +
+            "DECLARE @sql NVARCHAR(MAX); SET @sql = 'SELECT * FROM ' + @TableName; EXEC(@sql); END";
+        var graph = BuildGraph(("dbo.ProcE", sql));
+        var store = NewTempDir();
+        NodeStoreExporter.Write(graph, store, Db, JsonOptions);
+
+        var model = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(Path.Combine(store, "model.json")));
+        var procE = model.GetProperty("nodes").EnumerateArray()
+            .Single(n => n.GetProperty("label").GetString() == "SqlObject");
+
+        Assert.Equal(1, procE.GetProperty("dynamic_sql_steps").GetInt32());
+        // @TableName is a parameter, never a literal - ConcatLiterals can't resolve it,
+        // so this step is the "real gap" case, distinct from the literal-resolved one
+        // covered by Write_ModelJson_RollsUpComplexityAndDynamicSqlStatsPerObject_AndFkCountPerTable.
+        Assert.Equal(1, procE.GetProperty("unresolved_dynamic_sql_steps").GetInt32());
+        // And, consistent with "fails closed": no WRITES_TO/READS_FROM was fabricated for it.
+        Assert.DoesNotContain(graph.Relationships, r => r.Type is "WRITES_TO" or "READS_FROM");
+    }
+
+    // A <Table>_Archive with degree=0 next to a <Table> with degree>0 is a SQL Server
+    // system-versioned temporal history table (engine-populated on UPDATE/DELETE of the
+    // base table, never referenced by name in application T-SQL) - not an orphaned/unused
+    // table, so model.json should label it instead of leaving it looking like dead data.
+    [Fact]
+    public void Write_ModelJson_ClassifiesArchiveTableAsExpectedTemporalHistory()
+    {
+        var tableX = TableAnalyzer.AnalyzeTable($"{Db}::dbo.TableX", "CREATE TABLE dbo.TableX (Id INT NOT NULL PRIMARY KEY)");
+        var tableXArchive = TableAnalyzer.AnalyzeTable($"{Db}::dbo.TableX_Archive", "CREATE TABLE dbo.TableX_Archive (Id INT NOT NULL)");
+        Assert.Null(tableX.Error);
+        Assert.Null(tableXArchive.Error);
+
+        var procA = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.ProcA", ProcASql);
+        Assert.Null(procA.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { procA }, includeColumns: false,
+            tableSchemas: new List<TableSchemaResult> { tableX, tableXArchive });
+        var store = NewTempDir();
+        NodeStoreExporter.Write(graph, store, Db, JsonOptions);
+
+        var model = JsonSerializer.Deserialize<JsonElement>(File.ReadAllText(Path.Combine(store, "model.json")));
+        var tableNodes = model.GetProperty("nodes").EnumerateArray()
+            .Where(n => n.GetProperty("label").GetString() == "Table")
+            .ToDictionary(n => n.GetProperty("name").GetString()!, n => n);
+
+        Assert.True(tableNodes["dbo.TableX"].GetProperty("degree").GetInt32() > 0);
+        Assert.False(tableNodes["dbo.TableX"].TryGetProperty("classification", out _));
+
+        Assert.Equal(0, tableNodes["dbo.TableX_Archive"].GetProperty("degree").GetInt32());
+        Assert.Equal("historial temporal, esperado", tableNodes["dbo.TableX_Archive"].GetProperty("classification").GetString());
+    }
+
+    // Must mirror NodeStoreExporter.NavEdgeTypes. CONTAINS (Database/Schema
+    // containment) and DERIVES_FROM (column-to-column lineage) joined the nav set
+    // when those features landed; this copy lagged behind and broke the nav tests.
     private static readonly HashSet<string> NavEdgeTypes = new()
     {
-        "CALLS", "WRITES_TO", "READS_FROM", "AFFECTS", "FK_TO",
+        "CALLS", "WRITES_TO", "READS_FROM", "AFFECTS", "FK_TO", "CONTAINS", "DERIVES_FROM",
     };
 
     // A step that reads a real table must produce READS_FROM even when (a) the read
@@ -225,6 +294,7 @@ public class NodeStoreUpdateTests : IDisposable
     [InlineData("cursor-union", "CREATE PROCEDURE dbo.P AS BEGIN DECLARE c CURSOR FOR SELECT Id FROM dbo.SourceA UNION SELECT Id FROM dbo.SourceB; OPEN c; END", "dbo.sourcea,dbo.sourceb")]
     [InlineData("insert-temp", "CREATE PROCEDURE dbo.P AS BEGIN CREATE TABLE #t (Id int); INSERT INTO #t (Id) SELECT b.Id FROM dbo.SourceB AS b; END", "dbo.sourceb")]
     [InlineData("insert-temp-systime", "CREATE PROCEDURE dbo.P AS BEGIN CREATE TABLE #t (Id int); INSERT INTO #t (Id) SELECT b.Id FROM dbo.SourceB FOR SYSTEM_TIME AS OF '2020-01-01' AS b; END", "dbo.sourceb")]
+    [InlineData("cursor-systime-between", "CREATE PROCEDURE dbo.P AS BEGIN DECLARE c CURSOR FOR SELECT Id FROM dbo.SourceA FOR SYSTEM_TIME BETWEEN '2020-01-01' AND '2020-02-01'; OPEN c; END", "dbo.sourcea")]
     [InlineData("select-into-temp", "CREATE PROCEDURE dbo.P AS BEGIN SELECT b.Id INTO #t FROM dbo.SourceB AS b; END", "dbo.sourceb")]
     public void ReadsFrom_SurvivesCursorBodyAndTempTarget(string label, string sql, string expectedCsv)
     {
@@ -237,6 +307,63 @@ public class NodeStoreUpdateTests : IDisposable
             .ToList();
         var expected = expectedCsv.Split(',').OrderBy(x => x, StringComparer.Ordinal).ToList();
         Assert.Equal(expected, reads);
+    }
+
+    // A top-level UNION in a standalone SELECT, and an inline table-valued function's
+    // RETURN (SELECT ...) body, both read real tables - previously their reads were
+    // dropped (the SELECT handler only walked a single QuerySpecification; the inline
+    // TVF body was never walked), leaving the object with degree 0.
+    [Theory]
+    [InlineData("union-select", "CREATE PROCEDURE dbo.P AS BEGIN SELECT Id FROM dbo.SourceA UNION ALL SELECT Id FROM dbo.SourceB; END", "dbo.sourcea,dbo.sourceb")]
+    [InlineData("union-paren", "CREATE PROCEDURE dbo.P AS BEGIN SELECT Id FROM dbo.SourceA UNION (SELECT Id FROM dbo.SourceB); END", "dbo.sourcea,dbo.sourceb")]
+    [InlineData("inline-tvf", "CREATE FUNCTION dbo.F() RETURNS TABLE AS RETURN (SELECT Id FROM dbo.SourceC)", "dbo.sourcec")]
+    public void ReadsFrom_SurvivesUnionSelectAndInlineTvf(string label, string sql, string expectedCsv)
+    {
+        var graph = BuildGraph(("dbo.Obj", sql));
+        var reads = graph.Relationships
+            .Where(r => r.Type == "READS_FROM")
+            .Select(r => r.EndNodeId.Split(":table:")[^1])
+            .Distinct()
+            .OrderBy(x => x, StringComparer.Ordinal)
+            .ToList();
+        var expected = expectedCsv.Split(',').OrderBy(x => x, StringComparer.Ordinal).ToList();
+        Assert.Equal(expected, reads);
+    }
+
+    // Tables read only inside scalar / EXISTS / IN subqueries (in WHERE, the SELECT
+    // list, function arguments, or an IF/WHILE predicate) are real read lineage and
+    // must surface as READS_FROM - previously they were dropped because only FROM
+    // clauses were walked.
+    [Theory]
+    [InlineData("if-exists", "CREATE PROCEDURE dbo.P AS BEGIN IF EXISTS (SELECT 1 FROM dbo.SourceA) PRINT 'x'; END", "dbo.sourcea")]
+    [InlineData("where-in", "CREATE PROCEDURE dbo.P AS BEGIN SELECT Id FROM dbo.SourceA WHERE Id IN (SELECT Id FROM dbo.SourceB); END", "dbo.sourcea,dbo.sourceb")]
+    [InlineData("select-scalar", "CREATE PROCEDURE dbo.P AS BEGIN SELECT (SELECT COUNT(*) FROM dbo.SourceC) AS n; END", "dbo.sourcec")]
+    [InlineData("tvf-exists", "CREATE FUNCTION dbo.F(@x int) RETURNS TABLE AS RETURN (SELECT 1 AS r WHERE EXISTS (SELECT 1 FROM dbo.SourceD WHERE Id = @x))", "dbo.sourced")]
+    public void ReadsFrom_CapturesSubqueryReads(string label, string sql, string expectedCsv)
+    {
+        var graph = BuildGraph(("dbo.Obj", sql));
+        var reads = graph.Relationships
+            .Where(r => r.Type == "READS_FROM")
+            .Select(r => r.EndNodeId.Split(":table:")[^1])
+            .Distinct()
+            .OrderBy(x => x, StringComparer.Ordinal)
+            .ToList();
+        var expected = expectedCsv.Split(',').OrderBy(x => x, StringComparer.Ordinal).ToList();
+        Assert.Equal(expected, reads);
+    }
+
+    // MERGE captures both sides (USING source read, target write) — confirmed by
+    // the diagnostic round, NOT a hole (kept as a regression guard).
+    [Fact]
+    public void ReadsFrom_MergeCapturesSourceAndTarget()
+    {
+        var graph = BuildGraph(("dbo.P",
+            "CREATE PROCEDURE dbo.P AS BEGIN MERGE INTO dbo.Target t USING dbo.Source s ON t.Id=s.Id " +
+            "WHEN MATCHED THEN UPDATE SET t.V=s.V WHEN NOT MATCHED THEN INSERT (Id,V) VALUES (s.Id,s.V); END"));
+        var reads = graph.Relationships.Where(r => r.Type == "READS_FROM").Select(r => r.EndNodeId.Split(":table:")[^1]).ToList();
+        var writes = graph.Relationships.Where(r => r.Type == "WRITES_TO").Select(r => r.EndNodeId.Split(":table:")[^1]).ToList();
+        Assert.Contains("dbo.source", reads);
+        Assert.Contains("dbo.target", writes);
     }
 
     [Fact]

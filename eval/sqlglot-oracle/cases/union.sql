@@ -1,0 +1,1 @@
+SELECT a FROM dbo.t1 UNION SELECT b FROM dbo.t2

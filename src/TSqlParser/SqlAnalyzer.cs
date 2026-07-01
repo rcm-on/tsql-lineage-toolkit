@@ -51,6 +51,8 @@ public static class SqlAnalyzer
         // walk that SELECT directly so the view's own lineage (which table/columns
         // it reads) gets computed exactly like any other object's SELECT step.
         var viewSelect = statementList == null ? FindViewSelect(topStatements) : null;
+        var tvfSelect = statementList == null && viewSelect == null
+            ? FindInlineTableFunctionSelect(topStatements) : null;
 
         IList<TSqlStatement> bodyStatements;
         if (statementList != null)
@@ -60,6 +62,10 @@ public static class SqlAnalyzer
         else if (viewSelect != null)
         {
             bodyStatements = new List<TSqlStatement> { viewSelect };
+        }
+        else if (tvfSelect != null)
+        {
+            bodyStatements = new List<TSqlStatement> { tvfSelect };
         }
         else
         {
@@ -79,8 +85,14 @@ public static class SqlAnalyzer
         result.FlowLinks.AddRange(ctx.FlowLinks);
         result.ExecCalls.AddRange(ctx.ExecCalls.Distinct());
         result.VariableAssignments.AddRange(ctx.VariableAssignments);
+        // View output-column lineage: each "SELECT expr AS Out" column DERIVES_FROM its
+        // base table column(s), making the view a real lineage hop (not just a reader).
+        if (viewSelect != null)
+            result.ViewColumnLineage.AddRange(AstWalker.ViewColumnLineage(viewSelect, FindViewColumns(topStatements)));
         foreach (var kv in ctx.VariableConstructions)
             result.VariableConstructions[kv.Key] = kv.Value;
+        foreach (var kv in ctx.VariableOpKinds)
+            result.VariableOpKinds[kv.Key] = kv.Value.ToList();
 
         var funcCollector = new AstWalker.FunctionCallCollector();
         if (statementList != null)
@@ -95,7 +107,10 @@ public static class SqlAnalyzer
         result.HasCursor = ctx.HasCursor;
         result.DynamicSqlCount = ctx.DynamicSqlCount;
         result.ComplexityScore = 1 + ctx.DecisionCount;
-        result.ObjectType = statementList != null ? DetectObjectType(topStatements) : (viewSelect != null ? "VIEW" : "SCRIPT");
+        result.ObjectType = statementList != null ? DetectObjectType(topStatements)
+            : viewSelect != null ? "VIEW"
+            : tvfSelect != null ? "INLINE_TABLE_FUNCTION"
+            : "SCRIPT";
 
         // Re-parse any EXEC steps whose dynamic SQL resolved to a pure literal:
         // extract INSERT/SELECT/UPDATE/DELETE/MERGE targets from the literal text
@@ -133,6 +148,17 @@ public static class SqlAnalyzer
                 continue;
 
             var stmts = ((TSqlScript)fragment).Batches.SelectMany(b => b.Statements).ToList();
+
+            // A resolved dynamic "CREATE TRIGGER ..." is DDL, so it never becomes a DML
+            // FlowLink below; record it separately so GraphExporter can model the trigger
+            // as its own node with CREATES/ON edges (see docs/dynamic-trigger-modeling-spec.md).
+            foreach (var ct in stmts.OfType<CreateTriggerStatement>())
+            {
+                var trig = ExtractTriggerCreation(ct, fl.LineNo);
+                if (trig != null)
+                    result.CreatedTriggers.Add(trig);
+            }
+
             var dml = stmts.Where(s =>
                 s is InsertStatement or UpdateStatement or DeleteStatement or
                 SelectStatement or MergeStatement).ToList();
@@ -160,6 +186,24 @@ public static class SqlAnalyzer
         // Insert resolved links in reverse order to keep indices stable.
         foreach (var (afterIndex, links) in toInsert.OrderByDescending(t => t.afterIndex))
             result.FlowLinks.InsertRange(afterIndex + 1, links);
+    }
+
+    /// <summary>
+    /// Pulls the "what trigger, on whom, when" out of a CREATE TRIGGER: its name, the table it
+    /// fires ON, the timing (AFTER/INSTEAD OF/FOR) and the DML events (INSERT/UPDATE/DELETE).
+    /// Returns null if the name or ON-table can't be read (defensive - never invents a node).
+    /// </summary>
+    private static TriggerCreationInfo? ExtractTriggerCreation(CreateTriggerStatement ct, int lineNo)
+    {
+        var name = SqlText.Generate(ct.Name);
+        var onTable = SqlText.Generate(ct.TriggerObject?.Name);
+        if (name.Length == 0 || onTable.Length == 0)
+            return null;
+        var events = (ct.TriggerActions ?? Array.Empty<TriggerAction>())
+            .Select(a => a.TriggerActionType.ToString().ToUpperInvariant())
+            .Distinct()
+            .ToList();
+        return new TriggerCreationInfo(name, onTable, ct.TriggerType.ToString(), events, lineNo);
     }
 
     private static string DetectObjectType(IList<TSqlStatement> topStatements)
@@ -209,6 +253,37 @@ public static class SqlAnalyzer
         {
             if (stmt.GetType().Name.Contains("View") &&
                 stmt.GetType().GetProperty("SelectStatement")?.GetValue(stmt) is SelectStatement sel)
+                return sel;
+        }
+        return null;
+    }
+
+    /// <summary>The explicit column list of "CREATE VIEW v (Col1, Col2) AS ..." (empty when the view names its columns through the SELECT instead), used to name the view's output columns positionally.</summary>
+    private static IReadOnlyList<string> FindViewColumns(IList<TSqlStatement> topStatements)
+    {
+        foreach (var stmt in topStatements)
+        {
+            if (stmt.GetType().Name.Contains("View") &&
+                stmt.GetType().GetProperty("Columns")?.GetValue(stmt) is IEnumerable<Identifier> cols)
+                return cols.Select(c => c.Value).Where(v => !string.IsNullOrEmpty(v)).ToList();
+        }
+        return Array.Empty<string>();
+    }
+
+    /// <summary>
+    /// Finds an inline table-valued function's body SELECT. An inline TVF
+    /// (CREATE FUNCTION ... RETURNS TABLE AS RETURN (SELECT ...)) has no
+    /// StatementList - its body lives on ReturnType as a SelectFunctionReturnType -
+    /// so without this it falls through to the bare-DML path and is dropped,
+    /// leaving the function with no read lineage at all.
+    /// </summary>
+    private static SelectStatement? FindInlineTableFunctionSelect(IList<TSqlStatement> topStatements)
+    {
+        foreach (var stmt in topStatements)
+        {
+            if (stmt.GetType().Name.Contains("Function") &&
+                stmt.GetType().GetProperty("ReturnType")?.GetValue(stmt)
+                    is SelectFunctionReturnType { SelectStatement: { } sel })
                 return sel;
         }
         return null;

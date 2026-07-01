@@ -23,11 +23,11 @@ public static class DbValidator
         // objectId -> database, for SqlObject nodes (used for CALLS validation)
         var objectDb = new Dictionary<string, string>();
 
-        foreach (var node in root.GetProperty("Nodes").EnumerateArray())
+        foreach (var node in Prop(root, "Nodes", "nodes").EnumerateArray())
         {
-            var labels = node.GetProperty("Labels").EnumerateArray().Select(l => l.GetString()).ToList();
-            var id = node.GetProperty("Id").GetString()!;
-            var props = node.GetProperty("Properties");
+            var labels = Prop(node, "Labels", "labels").EnumerateArray().Select(l => l.GetString()).ToList();
+            var id = Prop(node, "Id", "id").GetString()!;
+            var props = Prop(node, "Properties", "properties");
 
             if (labels.Contains("Table"))
             {
@@ -44,11 +44,11 @@ public static class DbValidator
         var graphFks = new HashSet<(string db, string child, string parent)>();
         var graphCalls = new HashSet<(string db, string caller, string callee)>();
 
-        foreach (var rel in root.GetProperty("Relationships").EnumerateArray())
+        foreach (var rel in Prop(root, "Relationships", "relationships").EnumerateArray())
         {
-            var type = rel.GetProperty("Type").GetString();
-            var startId = rel.GetProperty("StartNodeId").GetString()!;
-            var endId = rel.GetProperty("EndNodeId").GetString()!;
+            var type = Prop(rel, "Type", "type").GetString();
+            var startId = Prop(rel, "StartNodeId", "source").GetString()!;
+            var endId = Prop(rel, "EndNodeId", "target").GetString()!;
 
             if (type == "FK_TO" && tableDb.TryGetValue(startId, out var fkDb) && tableDb.ContainsKey(endId))
                 graphFks.Add((fkDb, tableName[startId], tableName[endId]));
@@ -111,6 +111,15 @@ public static class DbValidator
         var idx = objectId.IndexOf("::", StringComparison.Ordinal);
         return (idx >= 0 ? objectId[(idx + 2)..] : objectId).Replace("[", "").Replace("]", "").ToLowerInvariant();
     }
+
+    /// <summary>
+    /// Reads a property by either its PascalCase (historic Neo4j shape) or camelCase
+    /// (current parser output) name - the graph JSON is camelCase (nodes/id/labels/
+    /// properties, source/target) while this validator was written against the old
+    /// PascalCase keys. Mirrors the dual-format handling in dashboard/src/shape.js.
+    /// </summary>
+    private static JsonElement Prop(JsonElement el, string pascal, string camel) =>
+        el.TryGetProperty(pascal, out var v) ? v : el.GetProperty(camel);
 
     private static string GetString(JsonElement props, string name) =>
         props.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.String ? v.GetString()! : "";

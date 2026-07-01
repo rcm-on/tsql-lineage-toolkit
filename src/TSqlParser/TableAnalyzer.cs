@@ -58,6 +58,20 @@ public static class TableAnalyzer
                         fk.ConstraintIdentifier?.Value
                     ));
                     break;
+
+                case UniqueConstraintDefinition { IsPrimaryKey: false } uq:
+                    result.Constraints.Add(new ConstraintDef(
+                        "UNIQUE",
+                        string.Join(", ", uq.Columns.Select(col => LastIdentifier(col.Column.MultiPartIdentifier))),
+                        uq.Columns.Select(col => LastIdentifier(col.Column.MultiPartIdentifier)).ToList(),
+                        uq.ConstraintIdentifier?.Value));
+                    break;
+
+                case CheckConstraintDefinition chk:
+                    result.Constraints.Add(new ConstraintDef(
+                        "CHECK", SqlText.Generate(chk.CheckCondition),
+                        CollectColumns(chk.CheckCondition), chk.ConstraintIdentifier?.Value));
+                    break;
             }
         }
 
@@ -89,10 +103,39 @@ public static class TableAnalyzer
                             fkc.ConstraintIdentifier?.Value
                         ));
                         break;
+                    case UniqueConstraintDefinition { IsPrimaryKey: false } uqc:
+                        result.Constraints.Add(new ConstraintDef("UNIQUE", colName, new List<string> { colName }, uqc.ConstraintIdentifier?.Value));
+                        break;
+                    case CheckConstraintDefinition chkc:
+                        result.Constraints.Add(new ConstraintDef("CHECK", SqlText.Generate(chkc.CheckCondition), CollectColumns(chkc.CheckCondition), chkc.ConstraintIdentifier?.Value));
+                        break;
+                    case DefaultConstraintDefinition dcd:
+                        result.Constraints.Add(new ConstraintDef("DEFAULT", SqlText.Generate(dcd.Expression), new List<string> { colName }, dcd.ConstraintIdentifier?.Value));
+                        break;
                 }
             }
 
-            result.Columns.Add(new ColumnDef(colName, dataType, isNullable, col.IdentityOptions != null, isPk, ordinal));
+            // A column DEFAULT can also hang off the dedicated DefaultConstraint property
+            // (not the Constraints list), depending on how the DDL was written.
+            if (col.DefaultConstraint != null)
+                result.Constraints.Add(new ConstraintDef("DEFAULT", SqlText.Generate(col.DefaultConstraint.Expression), new List<string> { colName }, col.DefaultConstraint.ConstraintIdentifier?.Value));
+
+            var computedExpr = "";
+            IReadOnlyList<string> computedSources = Array.Empty<string>();
+            IReadOnlyList<string> computedOps = Array.Empty<string>();
+            if (col.ComputedColumnExpression != null)
+            {
+                computedExpr = SqlText.Generate(col.ComputedColumnExpression);
+                var collector = new ColumnRefCollector();
+                col.ComputedColumnExpression.Accept(collector);
+                computedSources = collector.Columns
+                    .Where(c => !string.Equals(c, colName, StringComparison.OrdinalIgnoreCase))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToList();
+                computedOps = OperatorClassifier.Classify(col.ComputedColumnExpression);
+            }
+
+            result.Columns.Add(new ColumnDef(colName, dataType, isNullable, col.IdentityOptions != null, isPk, ordinal, computedExpr, computedSources, computedOps));
         }
 
         return result;
@@ -100,4 +143,25 @@ public static class TableAnalyzer
 
     private static string LastIdentifier(MultiPartIdentifier ident) =>
         ident.Identifiers.Count > 0 ? ident.Identifiers[^1].Value : "";
+
+    /// <summary>Distinct (unqualified) column names referenced anywhere in a fragment - e.g. a CHECK predicate "Qty > 0 AND Price >= 0" -> ["Qty", "Price"].</summary>
+    private static List<string> CollectColumns(TSqlFragment fragment)
+    {
+        var collector = new ColumnRefCollector();
+        fragment.Accept(collector);
+        return collector.Columns.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+    }
+
+    /// <summary>Collects the (unqualified) column names referenced by a computed-column expression - e.g. "Price * Qty" -> ["Price", "Qty"].</summary>
+    private sealed class ColumnRefCollector : TSqlFragmentVisitor
+    {
+        public List<string> Columns { get; } = new();
+
+        public override void Visit(ColumnReferenceExpression node)
+        {
+            var ids = node.MultiPartIdentifier?.Identifiers;
+            if (ids is { Count: > 0 })
+                Columns.Add(ids[^1].Value);
+        }
+    }
 }

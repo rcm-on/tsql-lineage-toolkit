@@ -70,7 +70,7 @@ public static class AstWalker
                     // Previously only the cursor name was recorded, so those READS_FROM
                     // were lost entirely. Walk every QuerySpecification in the definition
                     // (UNION/parenthesized branches included) and emit its source reads.
-                    foreach (var cursorFrom in CursorFromClauses(dcs.CursorDefinition?.Select?.QueryExpression))
+                    foreach (var cursorFrom in QueryFromClauses(dcs.CursorDefinition?.Select?.QueryExpression))
                     {
                         var cursorRefs = CollectTableRefs(cursorFrom, cteNames, cteBaseTables);
                         if (cursorRefs.Count == 0)
@@ -91,10 +91,12 @@ public static class AstWalker
                     break;
 
                 case IfStatement ifs:
+                    EmitSubqueryReads(ifs.Predicate, ctx, condStack, ifs, cteNames, cteBaseTables);
                     WalkIf(ifs, condStack, ctx, depth, cteNames, cteBaseTables);
                     break;
 
                 case WhileStatement ws:
+                    EmitSubqueryReads(ws.Predicate, ctx, condStack, ws, cteNames, cteBaseTables);
                     ctx.DecisionCount++;
                     var whileText = SqlText.Truncate(SqlText.Generate(ws.Predicate), 140);
                     condStack.Add(new Condition("WHILE", whileText, depth, ws.StartLine));
@@ -147,7 +149,7 @@ public static class AstWalker
                         if (insColumns.Count == 0)
                             insColumns = ResolveAllColumns(insTarget, ctx) ?? insColumns;
                         var (lineage, insExtraReads) = InsertSelectLineage(ins, insColumns, cteNames, cteBaseTables);
-                        ProcessOutputClause(ins.InsertSpecification?.OutputClause, insTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+                        ProcessOutputClause(ins.InsertSpecification?.OutputIntoClause, insTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
 
                         AddLink(ctx, condStack, "INSERT", insTarget, stmt, cteNames, cteBaseTables, columns: insColumns, columnLineage: lineage, extraReads: insExtraReads);
                     }
@@ -169,9 +171,10 @@ public static class AstWalker
                                 updExtraReads = BuildExtraReads(partners, new List<TableColumnRef>(), skipFirst: false);
                         }
 
-                        ProcessOutputClause(upd.UpdateSpecification?.OutputClause, updTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+                        ProcessOutputClause(upd.UpdateSpecification?.OutputIntoClause, updTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
 
-                        AddLink(ctx, condStack, "UPDATE", updTarget, stmt, cteNames, cteBaseTables, columns: updColumns, extraReads: updExtraReads);
+                        var updLineage = UpdateSetLineage(upd, updTarget, cteNames, cteBaseTables);
+                        AddLink(ctx, condStack, "UPDATE", updTarget, stmt, cteNames, cteBaseTables, columns: updColumns, columnLineage: updLineage, extraReads: updExtraReads);
                     }
                     break;
 
@@ -192,7 +195,7 @@ public static class AstWalker
                                 delExtraReads = BuildExtraReads(partners, new List<TableColumnRef>(), skipFirst: false);
                         }
 
-                        ProcessOutputClause(del.DeleteSpecification?.OutputClause, delTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+                        ProcessOutputClause(del.DeleteSpecification?.OutputIntoClause, delTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
                         AddLink(ctx, condStack, "DELETE", delTarget, stmt, cteNames, cteBaseTables, extraReads: delExtraReads);
                     }
                     break;
@@ -212,21 +215,25 @@ public static class AstWalker
                             mrgExtraReads = BuildExtraReads(refs, new List<TableColumnRef>(), skipFirst: false);
                         }
 
-                        ProcessOutputClause(mrg.MergeSpecification?.OutputClause, mrgTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
-                        AddLink(ctx, condStack, "MERGE", mrgTarget, stmt, cteNames, cteBaseTables, extraReads: mrgExtraReads);
+                        ProcessOutputClause(mrg.MergeSpecification?.OutputIntoClause, mrgTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+
+                        var mrgLineage = MergeLineage(mrg, mrgTarget, cteNames, cteBaseTables);
+                        var mrgColumns = mrgLineage.Select(d => d.TargetColumn).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                        AddLink(ctx, condStack, "MERGE", mrgTarget, stmt, cteNames, cteBaseTables, columns: mrgColumns, columnLineage: mrgLineage, extraReads: mrgExtraReads);
                     }
                     break;
 
                 case AlterTableStatement alt:
-                    AddLink(ctx, condStack, "ALTER", SqlText.Generate(alt.SchemaObjectName), stmt, cteNames, cteBaseTables, detail: AlterDetail(alt));
+                    AddLink(ctx, condStack, "ALTER", SqlText.Generate(alt.SchemaObjectName), stmt, cteNames, cteBaseTables, detail: AlterDetail(alt), columns: AlterColumns(alt));
                     break;
 
                 case ExecuteStatement exec:
                     {
                         var (target, isDynamic, dynamicVars) = ExecTarget(exec);
                         // When the executed string reconstructs to a pure literal, surface
-                        // *what* it runs (e.g. "CREATE PARTITION FUNCTION ...") - descriptive
-                        // only; not re-parsed into lineage (see ResolveExecLiteral).
+                        // *what* it runs (e.g. "CREATE PARTITION FUNCTION ..."). Kept FULL here;
+                        // SqlAnalyzer.ResolveDynamicSqlLinks re-parses it for the inner DML's
+                        // lineage, and the display copy is truncated later in GraphExporter.
                         var dynText = isDynamic ? ResolveExecLiteral(exec, ctx) : "";
                         AddLink(ctx, condStack, "EXEC", target, stmt, cteNames, cteBaseTables, isDynamic ? dynamicVars : null, dynamicSqlText: dynText);
                         if (!isDynamic && target.Length > 0)
@@ -284,7 +291,8 @@ public static class AstWalker
                         List<string> selColumns;
                         List<TableColumnRef> extraReads;
 
-                        if (qs.SelectElements.Any(e => e is SelectStarExpression))
+                        var isSelectStar = qs.SelectElements.Any(e => e is SelectStarExpression);
+                        if (isSelectStar)
                         {
                             // "SELECT * FROM T": expand to T's full column list when known.
                             selColumns = (tableRefs.Count == 1 ? ResolveAllColumns(selTarget, ctx) : null) ?? new List<string>();
@@ -302,10 +310,42 @@ public static class AstWalker
                                 }
                             List<TableColumnRef> extras;
                             (selColumns, extras) = SplitColumnsByTable(refs, tableRefs);
+                            // CROSS/OUTER APPLY xmlcol.nodes() shreds an XML column: that
+                            // column is genuinely read, but its only mention is the apply
+                            // target (a function table reference), invisible to the select
+                            // list above. Add each apply's base column as a read.
+                            foreach (var src in BuildXmlApplyMap(qs.FromClause, tableRefs).Values)
+                                if (string.Equals(src.Table, selTarget, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    if (!selColumns.Contains(src.Column, StringComparer.OrdinalIgnoreCase))
+                                        selColumns.Add(src.Column);
+                                }
+                                else
+                                {
+                                    var idx = extras.FindIndex(e => string.Equals(e.Table, src.Table, StringComparison.OrdinalIgnoreCase));
+                                    if (idx < 0)
+                                        extras.Add(new TableColumnRef(src.Table, new[] { src.Column }));
+                                    else if (!extras[idx].Columns.Contains(src.Column, StringComparer.OrdinalIgnoreCase))
+                                        extras[idx] = new TableColumnRef(src.Table, extras[idx].Columns.Append(src.Column).ToArray());
+                                }
                             extraReads = BuildExtraReads(tableRefs, extras, skipFirst: true);
                         }
 
-                        AddLink(ctx, condStack, "SELECT", selTarget, stmt, cteNames, cteBaseTables, columns: selColumns, extraReads: extraReads);
+                        AddLink(ctx, condStack, "SELECT", selTarget, stmt, cteNames, cteBaseTables, columns: selColumns, extraReads: extraReads, selectStar: isSelectStar);
+                    }
+                    // Top-level set operation (UNION/EXCEPT/INTERSECT) or a parenthesized
+                    // query: the branch above only covers a single QuerySpecification, so
+                    // its source reads were dropped. Walk each branch's FROM for its reads.
+                    else if (sel.QueryExpression is BinaryQueryExpression or QueryParenthesisExpression)
+                    {
+                        foreach (var setFrom in QueryFromClauses(sel.QueryExpression))
+                        {
+                            var setRefs = CollectTableRefs(setFrom, cteNames, cteBaseTables);
+                            if (setRefs.Count == 0)
+                                continue;
+                            var setExtra = BuildExtraReads(setRefs, new List<TableColumnRef>(), skipFirst: true);
+                            AddLink(ctx, condStack, "SELECT", setRefs[0].Table, stmt, cteNames, cteBaseTables, extraReads: setExtra);
+                        }
                     }
                     break;
 
@@ -364,6 +404,13 @@ public static class AstWalker
                     // surface instead as Variable nodes, not control-flow steps).
                     break;
             }
+
+            // Reads hiding in scalar/EXISTS/IN subqueries (WHERE, SELECT list, function
+            // args) the per-statement handlers above don't walk. Control-flow containers
+            // are skipped here - their bodies recurse, and their own predicates are
+            // captured in the IF/WHILE cases.
+            if (stmt is not (BeginEndBlockStatement or IfStatement or WhileStatement or TryCatchStatement))
+                EmitSubqueryReads(stmt, ctx, condStack, stmt, cteNames, cteBaseTables);
         }
     }
 
@@ -440,9 +487,50 @@ public static class AstWalker
 
         foreach (var cte in ctes.CommonTableExpressions)
         {
-            if (cte.QueryExpression is QuerySpecification { FromClause: not null } qs)
-                cteBaseTables[cte.ExpressionName.Value] = CollectTableRefs(qs.FromClause, cteNames, cteBaseTables);
+            // A CTE body can be a single QuerySpecification OR a set operation
+            // (BinaryQueryExpression: UNION/UNION ALL of an anchor + recursive member,
+            // or any unioned CTE). Collect base tables from every branch so recursive
+            // and unioned CTEs resolve instead of contributing nothing. Drop the CTE's
+            // own name (the recursive member references itself) to avoid a phantom self-ref.
+            var refs = CollectQueryExprTableRefs(cte.QueryExpression, cteNames, cteBaseTables);
+            refs.RemoveAll(r => string.Equals(r.Table, cte.ExpressionName.Value, StringComparison.OrdinalIgnoreCase));
+            cteBaseTables[cte.ExpressionName.Value] = refs;
         }
+    }
+
+    /// <summary>
+    /// Base table refs from every QuerySpecification inside a query expression,
+    /// recursing through BinaryQueryExpression (UNION/EXCEPT/INTERSECT) and
+    /// parenthesized queries - so a recursive or unioned CTE body resolves to all the
+    /// real tables its branches read, not just the first one.
+    /// </summary>
+    private static List<(string Alias, string Table)> CollectQueryExprTableRefs(QueryExpression qe, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    {
+        var result = new List<(string Alias, string Table)>();
+        void Visit(QueryExpression? q)
+        {
+            switch (q)
+            {
+                case QuerySpecification { FromClause: not null } qs:
+                    foreach (var r in CollectTableRefs(qs.FromClause, cteNames, cteBaseTables))
+                        // Dedup by TABLE (anchor + recursive member usually read the same
+                        // base table under different aliases - "Employees" vs "e"). Keeping
+                        // both would make the CTE look like a 2-table FROM and an outer
+                        // query's unqualified columns would be dropped as ambiguous.
+                        if (!result.Any(x => string.Equals(x.Table, r.Table, StringComparison.OrdinalIgnoreCase)))
+                            result.Add(r);
+                    break;
+                case BinaryQueryExpression bqe:
+                    Visit(bqe.FirstQueryExpression);
+                    Visit(bqe.SecondQueryExpression);
+                    break;
+                case QueryParenthesisExpression qpe:
+                    Visit(qpe.QueryExpression);
+                    break;
+            }
+        }
+        Visit(qe);
+        return result;
     }
 
     private static WithCtesAndXmlNamespaces? GetCtes(TSqlStatement stmt) =>
@@ -478,6 +566,29 @@ public static class AstWalker
         return "";
     }
 
+    /// <summary>
+    /// Column(s) an ALTER TABLE names directly, read off the typed AST (not regex):
+    /// ALTER COLUMN's own ColumnIdentifier, or each dropped column from a
+    /// "DROP COLUMN A, B" list (TableElementType.Column - skips DROP CONSTRAINT/INDEX/
+    /// PERIOD entries mixed into the same statement). Passed through to AddLink's
+    /// "columns" param so GraphExporter links the step to the affected :Column
+    /// node(s) (WRITES_COLUMN) the same way it does for INSERT/UPDATE - letting an
+    /// impact query find a dropped/altered column's readers without a special case.
+    /// Empty for ADD COLUMN, RENAME (sp_rename - tracked only as a generic EXEC, see
+    /// ExecTarget) and other ALTER TABLE subtypes.
+    /// </summary>
+    private static List<string> AlterColumns(AlterTableStatement alt) => alt switch
+    {
+        AlterTableAlterColumnStatement acs when acs.ColumnIdentifier != null =>
+            new List<string> { acs.ColumnIdentifier.Value },
+        AlterTableDropTableElementStatement dts =>
+            dts.AlterTableDropTableElements
+                .Where(e => e.TableElementType == TableElementType.Column && e.Name != null)
+                .Select(e => e.Name.Value)
+                .ToList(),
+        _ => new List<string>(),
+    };
+
     private static void AddLink(
         WalkContext ctx,
         List<Condition> condStack,
@@ -491,8 +602,10 @@ public static class AstWalker
         IReadOnlyList<ColumnDerivation>? columnLineage = null,
         IReadOnlyList<TableColumnRef>? extraReads = null,
         IReadOnlyList<TableColumnRef>? filterColumnsOverride = null,
+        IReadOnlyList<string>? filterOpKindsOverride = null,
         string detail = "",
-        string dynamicSqlText = "")
+        string dynamicSqlText = "",
+        bool selectStar = false)
     {
         var (condType, condText) = condStack.Count > 0
             ? (condStack[^1].Type, condStack[^1].Text)
@@ -511,6 +624,7 @@ public static class AstWalker
         // ON clause isn't a WhereClause - pass filterColumnsOverride directly instead).
         var filterColumns = filterColumnsOverride;
         var nestedTableRefs = new List<(string Alias, string Table)>();
+        List<string> filterOpKinds = (filterOpKindsOverride ?? Array.Empty<string>()).ToList();
         if (filterColumns == null && cteNames != null && cteBaseTables != null)
         {
             // UPDATE/DELETE without an explicit FROM clause has no FromClause to walk -
@@ -526,7 +640,7 @@ public static class AstWalker
                 DeleteStatement del2 when TargetName(del2.DeleteSpecification?.Target, cteNames) is { Length: > 0 } tn => new List<(string Alias, string Table)> { ("", tn) },
                 _ => new List<(string Alias, string Table)>(),
             };
-            (filterColumns, nestedTableRefs) = ExtractFilterColumns(stmt, currentTableRefs, cteNames, cteBaseTables);
+            (filterColumns, nestedTableRefs, filterOpKinds) = ExtractFilterColumns(stmt, currentTableRefs, cteNames, cteBaseTables);
         }
 
         // A nested EXISTS/IN/scalar-comparison subquery's own table (e.g.
@@ -547,8 +661,10 @@ public static class AstWalker
             condType, condText, consequenceType, target,
             condStack.Count, stmt.StartLine, dynamicSqlVars, path, keys, columns, columnLineage, usedVariables, mergedExtraReads,
             FilterColumns: filterColumns,
+            FilterOpKinds: filterOpKinds,
             Detail: detail,
-            DynamicSqlText: dynamicSqlText
+            DynamicSqlText: dynamicSqlText,
+            SelectStar: selectStar
         ));
     }
 
@@ -560,7 +676,7 @@ public static class AstWalker
     /// Only SELECT/UPDATE/DELETE have a WhereClause; other statement kinds (INSERT,
     /// MERGE's ON clause, EXEC, ...) simply yield no filter columns here.
     /// </summary>
-    private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs) ExtractFilterColumns(
+    private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs, List<string> FilterOpKinds) ExtractFilterColumns(
         TSqlStatement stmt, List<(string Alias, string Table)> tableRefs, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
     {
         WhereClause? whereClause = stmt switch
@@ -597,12 +713,13 @@ public static class AstWalker
     /// in before resolving, and returned separately so the caller (AddLink) can also
     /// add a READS_FROM for those tables, not just FILTERS_ON.
     /// </summary>
-    private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs) ExtractFilterColumnsCore(
+    private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs, List<string> FilterOpKinds) ExtractFilterColumnsCore(
         WhereClause? whereClause, IList<TableReference> fromTableReferences, List<(string Alias, string Table)> tableRefs,
         HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
     {
         var filterRefs = new List<(string? Qualifier, string Column)>();
         var nestedTableRefs = new List<(string Alias, string Table)>();
+        var opKinds = new SortedSet<string>(StringComparer.Ordinal);
 
         void CollectFrom(TSqlFragment? fragment)
         {
@@ -612,6 +729,11 @@ public static class AstWalker
             var collector = new QualifiedColumnCollector();
             fragment.Accept(collector);
             filterRefs.AddRange(collector.Refs);
+
+            // Operator structure (AND/OR/comparison/LIKE/IN/...) behind the predicate -
+            // the queryable complement to the columns it touches.
+            foreach (var op in OperatorClassifier.Classify(fragment))
+                opKinds.Add(op);
 
             var nested = new NestedSubqueryCollector();
             fragment.Accept(nested);
@@ -639,7 +761,7 @@ public static class AstWalker
         if (primaryCols.Count > 0 && tableRefs.Count > 0)
             result.Add(new TableColumnRef(tableRefs[0].Table, primaryCols));
         result.AddRange(extras);
-        return (result, nestedTableRefs);
+        return (result, nestedTableRefs, opKinds.ToList());
     }
 
     /// <summary>
@@ -700,17 +822,44 @@ public static class AstWalker
         if (string.IsNullOrEmpty(outputTargetName))
             return;
 
+        // inserted/deleted both mirror the action target's columns, so resolve either to it.
         var tableRefs = new List<(string Alias, string Table)> { ("inserted", actionTarget), ("deleted", actionTarget) };
+        var selectCols = outputInto.SelectColumns.OfType<SelectScalarExpression>().ToList();
+
         var allRefs = new List<(string? Qualifier, string Column)>();
-        foreach (var element in outputInto.SelectColumns.OfType<SelectScalarExpression>())
+        foreach (var element in selectCols)
         {
             var collector = new QualifiedColumnCollector();
             element.Expression.Accept(collector);
             allRefs.AddRange(collector.Refs);
         }
-
         var (_, extras) = SplitColumnsByTable(allRefs, tableRefs);
-        AddLink(ctx, condStack, "OUTPUT", outputTargetName, stmt, cteNames, cteBaseTables, extraReads: extras);
+
+        // Column lineage: "OUTPUT inserted.X, deleted.Y INTO Log(A, B)" -> Log.A DERIVES_FROM
+        // <target>.X, Log.B DERIVES_FROM <target>.Y (positional, like INSERT ... SELECT).
+        // Needs the explicit INTO column list to name the log's target columns.
+        var outCols = (outputInto.IntoTableColumns ?? (IList<ColumnReferenceExpression>)Array.Empty<ColumnReferenceExpression>())
+            .Select(ColumnName).ToList();
+        var outLineage = new List<ColumnDerivation>();
+        if (outCols.Count > 0 && outCols.Count == selectCols.Count)
+        {
+            for (int i = 0; i < outCols.Count; i++)
+            {
+                var collector = new QualifiedColumnCollector();
+                selectCols[i].Expression.Accept(collector);
+                if (collector.Refs.Count == 0)
+                    continue;   // OUTPUT $action / literal - no column source
+                var (primaryCols, exs) = SplitColumnsByTable(collector.Refs, tableRefs);
+                var exprText = SqlText.Generate(selectCols[i].Expression);
+                var exprOps = OperatorClassifier.Classify(selectCols[i].Expression);
+                if (primaryCols.Count > 0)
+                    outLineage.Add(new ColumnDerivation(outCols[i], tableRefs[0].Table, primaryCols, exprText, exprOps));
+                foreach (var ex in exs)
+                    outLineage.Add(new ColumnDerivation(outCols[i], ex.Table, ex.Columns, exprText, exprOps));
+            }
+        }
+
+        AddLink(ctx, condStack, "OUTPUT", outputTargetName, stmt, cteNames, cteBaseTables, columns: outCols, columnLineage: outLineage, extraReads: extras);
     }
 
     /// <summary>
@@ -732,7 +881,7 @@ public static class AstWalker
     /// set-operation query) whose branches each read different tables contributes all
     /// of them, not just the first QuerySpecification.
     /// </summary>
-    private static IEnumerable<FromClause> CursorFromClauses(QueryExpression? qe)
+    private static IEnumerable<FromClause> QueryFromClauses(QueryExpression? qe)
     {
         switch (qe)
         {
@@ -740,12 +889,57 @@ public static class AstWalker
                 yield return qs.FromClause;
                 break;
             case BinaryQueryExpression bqe:
-                foreach (var f in CursorFromClauses(bqe.FirstQueryExpression)) yield return f;
-                foreach (var f in CursorFromClauses(bqe.SecondQueryExpression)) yield return f;
+                foreach (var f in QueryFromClauses(bqe.FirstQueryExpression)) yield return f;
+                foreach (var f in QueryFromClauses(bqe.SecondQueryExpression)) yield return f;
                 break;
             case QueryParenthesisExpression qpe:
-                foreach (var f in CursorFromClauses(qpe.QueryExpression)) yield return f;
+                foreach (var f in QueryFromClauses(qpe.QueryExpression)) yield return f;
                 break;
+        }
+    }
+
+    /// <summary>
+    /// Emits a SELECT read step for every real table referenced inside a scalar /
+    /// EXISTS / IN subquery within <paramref name="fragment"/> (a statement or a
+    /// predicate). These live in WHERE clauses, SELECT-list expressions and function
+    /// arguments - read lineage the FROM-based handlers never see (e.g. a function
+    /// whose body is just `RETURN (SELECT 1 WHERE EXISTS (SELECT ... FROM T))`).
+    /// Deduplicated to the owning object downstream, so overlapping with a main FROM
+    /// read is harmless.
+    /// </summary>
+    private static void EmitSubqueryReads(TSqlFragment? fragment, WalkContext ctx, List<Condition> condStack, TSqlStatement stmt, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    {
+        if (fragment == null)
+            return;
+        var collector = new ScalarSubqueryTableCollector(cteNames, cteBaseTables);
+        fragment.Accept(collector);
+        if (collector.Tables.Count == 0)
+            return;
+        var target = collector.Tables[0].Table;
+        var extra = BuildExtraReads(collector.Tables, new List<TableColumnRef>(), skipFirst: true);
+        AddLink(ctx, condStack, "SELECT", target, stmt, cteNames, cteBaseTables, extraReads: extra);
+    }
+
+    /// <summary>Collects the real source tables of every scalar/EXISTS/IN subquery
+    /// (each a <see cref="ScalarSubquery"/>) reachable in a fragment, descending into
+    /// nested subqueries automatically; CTE references are skipped.</summary>
+    private sealed class ScalarSubqueryTableCollector : TSqlFragmentVisitor
+    {
+        public readonly List<(string Alias, string Table)> Tables = new();
+        private readonly HashSet<string> _cteNames;
+        private readonly Dictionary<string, List<(string Alias, string Table)>> _cteBaseTables;
+
+        public ScalarSubqueryTableCollector(HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+        {
+            _cteNames = cteNames;
+            _cteBaseTables = cteBaseTables;
+        }
+
+        public override void Visit(ScalarSubquery node)
+        {
+            foreach (var fc in QueryFromClauses(node.QueryExpression))
+                foreach (var t in CollectTableRefs(fc, _cteNames, _cteBaseTables))
+                    Tables.Add(t);
         }
     }
 
@@ -789,10 +983,90 @@ public static class AstWalker
                 foreach (var innerTref in innerQs.FromClause.TableReferences)
                     CollectTableRefsInto(innerTref, cteNames, cteBaseTables, result);
                 break;
+            case PivotedTableReference pvt:
+                // "(subquery) PIVOT (...) AS p": the pivot wraps an inner table reference
+                // (usually a derived table); its base tables are the real sources.
+                CollectTableRefsInto(pvt.TableReference, cteNames, cteBaseTables, result);
+                break;
+            case UnpivotedTableReference unpvt:
+                CollectTableRefsInto(unpvt.TableReference, cteNames, cteBaseTables, result);
+                break;
             // TVFs, pivots, derived tables with a non-QuerySpecification body, etc.:
             // no alias->table mapping is possible, so columns qualified with their
             // alias simply won't resolve below.
         }
+    }
+
+    /// <summary>
+    /// Maps each CROSS/OUTER APPLY ...nodes() alias to the base XML column it shreds, so
+    /// projected XML accessors ("alias.ref.value(...)") can be traced back to a real
+    /// column. AdventureWorks views shred XML with
+    /// <c>CROSS APPLY xmlcol.nodes('...') AS A(ref)</c> then project
+    /// <c>A.ref.value('...', t)</c>; the apply target is a SchemaObjectFunctionTableReference
+    /// whose name is "[qualifier.]column.nodes", invisible to alias->table resolution.
+    /// Applies are walked in source order so a chained apply
+    /// (<c>A.ref.nodes(...) AS B(ref)</c>) inherits A's source column.
+    /// </summary>
+    private static Dictionary<string, (string Table, string Column)> BuildXmlApplyMap(
+        FromClause fromClause, List<(string Alias, string Table)> tableRefs)
+    {
+        var map = new Dictionary<string, (string Table, string Column)>(StringComparer.OrdinalIgnoreCase);
+        foreach (var tref in FlattenTableRefs(fromClause))
+        {
+            if (tref is not SchemaObjectFunctionTableReference fn)
+                continue;
+            var alias = fn.Alias?.Value;
+            var ids = fn.SchemaObject?.Identifiers;
+            // Last identifier is the method ("nodes"); need at least "column.nodes".
+            if (alias is not { Length: > 0 } || ids is not { Count: >= 2 } ||
+                !ids[^1].Value.Equals("nodes", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var column = ids[^2].Value;
+            var qualifier = ids.Count >= 3 ? ids[^3].Value : null;
+            (string Table, string Column)? src =
+                qualifier != null && map.TryGetValue(qualifier, out var chained) ? chained
+                : qualifier != null ? ResolveAlias(qualifier, column, tableRefs)
+                : tableRefs.Count == 1 ? (tableRefs[0].Table, column)
+                : null;
+            if (src is { } s)
+                map[alias] = s;
+        }
+        return map;
+    }
+
+    /// <summary>Resolves "alias.column" against FROM/JOIN aliases; null if the alias isn't a real table.</summary>
+    private static (string Table, string Column)? ResolveAlias(string qualifier, string column, List<(string Alias, string Table)> tableRefs)
+    {
+        foreach (var (a, t) in tableRefs)
+            if (string.Equals(a, qualifier, StringComparison.OrdinalIgnoreCase))
+                return (t, column);
+        return null;
+    }
+
+    /// <summary>All table references under a FROM clause in source (left-to-right) order, descending through joins/applies.</summary>
+    private static IEnumerable<TableReference> FlattenTableRefs(FromClause fromClause)
+    {
+        IEnumerable<TableReference> Walk(TableReference t)
+        {
+            switch (t)
+            {
+                case QualifiedJoin qj:
+                    foreach (var x in Walk(qj.FirstTableReference)) yield return x;
+                    foreach (var x in Walk(qj.SecondTableReference)) yield return x;
+                    break;
+                case UnqualifiedJoin uqj:
+                    foreach (var x in Walk(uqj.FirstTableReference)) yield return x;
+                    foreach (var x in Walk(uqj.SecondTableReference)) yield return x;
+                    break;
+                default:
+                    yield return t;
+                    break;
+            }
+        }
+        foreach (var tref in fromClause.TableReferences)
+            foreach (var x in Walk(tref))
+                yield return x;
     }
 
     /// <summary>
@@ -940,13 +1214,246 @@ public static class AstWalker
 
                 var (primaryCols, extras) = SplitColumnsByTable(collector.Refs, tableRefs);
                 var exprText = SqlText.Generate(sse.Expression);
+                var exprOps = OperatorClassifier.Classify(sse.Expression);
                 if (primaryCols.Count > 0)
-                    lineage.Add(new ColumnDerivation(insColumns[i], tableRefs[0].Table, primaryCols, exprText));
+                    lineage.Add(new ColumnDerivation(insColumns[i], tableRefs[0].Table, primaryCols, exprText, exprOps));
                 foreach (var extra in extras)
-                    lineage.Add(new ColumnDerivation(insColumns[i], extra.Table, extra.Columns, exprText));
+                    lineage.Add(new ColumnDerivation(insColumns[i], extra.Table, extra.Columns, exprText, exprOps));
             }
         }
         return (lineage, extraReads);
+    }
+
+    /// <summary>
+    /// Column lineage for "UPDATE T SET Col = expr [, ...] [FROM ...]": the value-flow
+    /// counterpart of <see cref="InsertSelectLineage"/>. For each SET clause whose
+    /// right-hand side references columns, emits a ColumnDerivation(Col -> source
+    /// columns) with the expression text + operator tokens - so "SET Total = Price * Qty"
+    /// records Total DERIVES_FROM Price/Qty (op arith:*), not just that Total was written.
+    /// Sources resolve against the target table (default for unqualified columns) plus any
+    /// FROM-clause tables. A column's dependency on its own prior value ("SET A = A + 1")
+    /// is dropped - a self-loop adds no lineage and would just clutter the impact graph.
+    /// </summary>
+    private static List<ColumnDerivation> UpdateSetLineage(UpdateStatement upd, string updTarget, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    {
+        var lineage = new List<ColumnDerivation>();
+        var setClauses = upd.UpdateSpecification?.SetClauses;
+        if (setClauses == null || updTarget.Length == 0)
+            return lineage;
+
+        // Target table first, so unqualified columns in the SET expression default to it
+        // (SplitColumnsByTable treats tableRefs[0] as the primary table).
+        var tableRefs = new List<(string Alias, string Table)> { (updTarget, updTarget) };
+        var fromClause = upd.UpdateSpecification?.FromClause;
+        if (fromClause != null)
+            foreach (var tr in CollectTableRefs(fromClause, cteNames, cteBaseTables))
+                if (!tableRefs.Any(x => string.Equals(x.Alias, tr.Alias, StringComparison.OrdinalIgnoreCase) && string.Equals(x.Table, tr.Table, StringComparison.OrdinalIgnoreCase)))
+                    tableRefs.Add(tr);
+
+        foreach (var sc in setClauses)
+        {
+            if (sc is not AssignmentSetClause { Column: not null, NewValue: not null } asc)
+                continue;
+            var targetCol = ColumnName(asc.Column);
+            if (targetCol.Length == 0)
+                continue;
+
+            var collector = new QualifiedColumnCollector();
+            asc.NewValue.Accept(collector);
+            if (collector.Refs.Count == 0)
+                continue;   // literal/parameter only - no column source
+
+            var (primaryCols, extras) = SplitColumnsByTable(collector.Refs, tableRefs);
+            var exprText = SqlText.Generate(asc.NewValue);
+            var exprOps = OperatorClassifier.Classify(asc.NewValue);
+
+            // Drop the self-reference (SET A = A + 1) from the target table's columns.
+            primaryCols = primaryCols.Where(c => !string.Equals(c, targetCol, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (primaryCols.Count > 0)
+                lineage.Add(new ColumnDerivation(targetCol, tableRefs[0].Table, primaryCols, exprText, exprOps));
+            foreach (var extra in extras)
+                lineage.Add(new ColumnDerivation(targetCol, extra.Table, extra.Columns, exprText, exprOps));
+        }
+        return lineage;
+    }
+
+    /// <summary>
+    /// Column lineage for a MERGE's action clauses - the previously-missing piece that
+    /// left MERGE with table-level READS_FROM/WRITES_TO but zero column lineage. Handles
+    /// WHEN MATCHED THEN UPDATE SET (like <see cref="UpdateSetLineage"/>) and WHEN NOT
+    /// MATCHED THEN INSERT (cols) VALUES (exprs) (like the VALUES path of an INSERT): each
+    /// target column DERIVES_FROM the source column(s) in its expression. Columns resolve
+    /// against the target (alias-qualified or unqualified) plus the USING source table(s);
+    /// the target's own prior value is dropped as a self-loop.
+    /// </summary>
+    private static List<ColumnDerivation> MergeLineage(MergeStatement mrg, string mrgTarget, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    {
+        var lineage = new List<ColumnDerivation>();
+        var spec = mrg.MergeSpecification;
+        if (spec == null || mrgTarget.Length == 0)
+            return lineage;
+
+        // Target first (so t.-qualified / unqualified refs resolve to it), then USING source(s).
+        var tableRefs = new List<(string Alias, string Table)> { (spec.TableAlias?.Value ?? mrgTarget, mrgTarget) };
+        if (spec.TableReference != null)
+        {
+            var srcRefs = new List<(string Alias, string Table)>();
+            CollectTableRefsInto(spec.TableReference, cteNames, cteBaseTables, srcRefs);
+            foreach (var r in srcRefs)
+                if (!tableRefs.Any(x => string.Equals(x.Alias, r.Alias, StringComparison.OrdinalIgnoreCase) && string.Equals(x.Table, r.Table, StringComparison.OrdinalIgnoreCase)))
+                    tableRefs.Add(r);
+        }
+
+        void AddFrom(string targetCol, ScalarExpression expr)
+        {
+            if (targetCol.Length == 0) return;
+            var collector = new QualifiedColumnCollector();
+            expr.Accept(collector);
+            if (collector.Refs.Count == 0) return;   // literal/parameter only
+            var (primaryCols, extras) = SplitColumnsByTable(collector.Refs, tableRefs);
+            var exprText = SqlText.Generate(expr);
+            var exprOps = OperatorClassifier.Classify(expr);
+            primaryCols = primaryCols.Where(c => !string.Equals(c, targetCol, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (primaryCols.Count > 0)
+                lineage.Add(new ColumnDerivation(targetCol, tableRefs[0].Table, primaryCols, exprText, exprOps));
+            foreach (var extra in extras)
+                lineage.Add(new ColumnDerivation(targetCol, extra.Table, extra.Columns, exprText, exprOps));
+        }
+
+        foreach (var clause in spec.ActionClauses)
+        {
+            switch (clause.Action)
+            {
+                case UpdateMergeAction uma:
+                    foreach (var sc in uma.SetClauses)
+                        if (sc is AssignmentSetClause { Column: not null, NewValue: not null } asc)
+                            AddFrom(ColumnName(asc.Column), asc.NewValue);
+                    break;
+
+                case InsertMergeAction { Source: ValuesInsertSource { RowValues.Count: > 0 } vis } ima:
+                    var insCols = ima.Columns.Select(ColumnName).ToList();
+                    var row = vis.RowValues[0].ColumnValues;
+                    if (insCols.Count > 0 && insCols.Count == row.Count)
+                        for (int i = 0; i < insCols.Count; i++)
+                            AddFrom(insCols[i], row[i]);
+                    break;
+            }
+        }
+        return lineage;
+    }
+
+    /// <summary>
+    /// Column lineage for a view body ("CREATE VIEW v AS SELECT expr AS Out, ... FROM ..."):
+    /// each output column DERIVES_FROM the base table column(s) in its SELECT expression,
+    /// with the expression text + operator tokens - so a view is a first-class lineage hop
+    /// (Out -> base.Col), not just a black box that "reads" tables. Output names come from
+    /// the explicit view column list when given, else the SELECT element's alias, else a
+    /// bare column reference's own name (an unnamed computed column is skipped - it has no
+    /// stable name to attribute). Only a single QuerySpecification is handled; UNION/EXCEPT
+    /// view bodies are left for a later pass rather than guessed positionally.
+    /// </summary>
+    public static List<ColumnDerivation> ViewColumnLineage(SelectStatement select, IReadOnlyList<string>? explicitColumns)
+    {
+        var lineage = new List<ColumnDerivation>();
+
+        // A view body is a single QuerySpecification OR a set operation
+        // (UNION/EXCEPT/INTERSECT). Process every branch: output column names are
+        // positional, taken from the first branch (SQL semantics) or the explicit view
+        // column list, and each branch contributes its own source columns at that position.
+        var branches = QuerySpecs(select.QueryExpression).Where(b => b.FromClause != null).ToList();
+        if (branches.Count == 0)
+            return lineage;
+
+        var cteNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var cteBaseTables = new Dictionary<string, List<(string Alias, string Table)>>(StringComparer.OrdinalIgnoreCase);
+        CollectCteNames(select, cteNames, cteBaseTables);
+
+        var first = branches[0];
+        var hasExplicit = explicitColumns is { Count: > 0 } && explicitColumns.Count == first.SelectElements.Count;
+        string OutName(int i, QuerySpecification branch) =>
+            hasExplicit ? explicitColumns![i]
+            : i < first.SelectElements.Count && first.SelectElements[i] is SelectScalarExpression fsse ? ViewOutputName(fsse)
+            : branch.SelectElements[i] is SelectScalarExpression bsse ? ViewOutputName(bsse)
+            : "";
+
+        foreach (var branch in branches)
+        {
+            var tableRefs = CollectTableRefs(branch.FromClause!, cteNames, cteBaseTables);
+            if (tableRefs.Count == 0)
+                continue;
+
+            // CROSS/OUTER APPLY xmlcol.nodes() aliases -> the base XML column they shred,
+            // so projected "applyAlias.ref.value(...)" accessors resolve to a real column.
+            var xmlApply = BuildXmlApplyMap(branch.FromClause!, tableRefs);
+
+            for (int i = 0; i < branch.SelectElements.Count; i++)
+            {
+                if (branch.SelectElements[i] is not SelectScalarExpression sse)
+                    continue;   // SelectStarExpression etc. - can't name the columns without schema
+
+                var outName = OutName(i, branch);
+                if (outName.Length == 0)
+                    continue;
+
+                var collector = new QualifiedColumnCollector();
+                sse.Expression.Accept(collector);
+                if (collector.Refs.Count == 0)
+                    continue;   // constant/parameter expression - no column source
+
+                // Split off references whose qualifier is a CROSS APPLY alias: resolve
+                // those through the apply map to their base XML column; the rest go
+                // through the normal alias->table resolution.
+                var normalRefs = new List<(string? Qualifier, string Column)>();
+                var xmlResolved = new List<(string Table, string Column)>();
+                foreach (var rf in collector.Refs)
+                {
+                    if (rf.Qualifier != null && xmlApply.TryGetValue(rf.Qualifier, out var xmlSrc))
+                        xmlResolved.Add(xmlSrc);
+                    else
+                        normalRefs.Add(rf);
+                }
+
+                var (primaryCols, extras) = SplitColumnsByTable(normalRefs, tableRefs);
+                var exprText = SqlText.Generate(sse.Expression);
+                var exprOps = OperatorClassifier.Classify(sse.Expression);
+                if (primaryCols.Count > 0)
+                    lineage.Add(new ColumnDerivation(outName, tableRefs[0].Table, primaryCols, exprText, exprOps));
+                foreach (var extra in extras)
+                    lineage.Add(new ColumnDerivation(outName, extra.Table, extra.Columns, exprText, exprOps));
+                foreach (var grp in xmlResolved.GroupBy(x => x.Table, StringComparer.OrdinalIgnoreCase))
+                    lineage.Add(new ColumnDerivation(outName, grp.Key,
+                        grp.Select(x => x.Column).Distinct(StringComparer.OrdinalIgnoreCase).ToList(), exprText, exprOps));
+            }
+        }
+        return lineage;
+    }
+
+    /// <summary>Every QuerySpecification (SELECT block) inside a query expression, descending through UNION/EXCEPT/INTERSECT and parentheses, in source order.</summary>
+    private static IEnumerable<QuerySpecification> QuerySpecs(QueryExpression? qe)
+    {
+        switch (qe)
+        {
+            case QuerySpecification qs:
+                yield return qs;
+                break;
+            case BinaryQueryExpression bqe:
+                foreach (var b in QuerySpecs(bqe.FirstQueryExpression)) yield return b;
+                foreach (var b in QuerySpecs(bqe.SecondQueryExpression)) yield return b;
+                break;
+            case QueryParenthesisExpression qpe:
+                foreach (var b in QuerySpecs(qpe.QueryExpression)) yield return b;
+                break;
+        }
+    }
+
+    /// <summary>Output column name of a view SELECT element: alias if given, else a bare column reference's own name, else "" (unnamed computed column).</summary>
+    private static string ViewOutputName(SelectScalarExpression sse)
+    {
+        if (sse.ColumnName?.Value is { Length: > 0 } alias)
+            return alias;
+        if (sse.Expression is ColumnReferenceExpression cre)
+            return ColumnName(cre);
+        return "";
     }
 
     /// <summary>
@@ -984,7 +1491,7 @@ public static class AstWalker
         var (selColumns, extras) = SplitColumnsByTable(refs, tableRefs);
         var extraReads = BuildExtraReads(tableRefs, extras, skipFirst: true);
 
-        var (filterColumns, nestedTableRefs) = ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables);
+        var (filterColumns, nestedTableRefs, filterOpKinds) = ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables);
         if (nestedTableRefs.Count > 0)
             foreach (var (_, nestedTable) in nestedTableRefs)
                 if (!extraReads.Any(e => string.Equals(e.Table, nestedTable, StringComparison.OrdinalIgnoreCase)))
@@ -992,7 +1499,7 @@ public static class AstWalker
 
         AddLink(ctx, condStack, "SELECT", target, stmt, cteNames, cteBaseTables,
             columns: selColumns, extraReads: extraReads, filterColumnsOverride: filterColumns,
-            detail: $"→ {varName}");
+            filterOpKindsOverride: filterOpKinds, detail: $"→ {varName}");
     }
 
     /// <summary>
@@ -1047,6 +1554,17 @@ public static class AstWalker
     /// </summary>
     private static void RecordConstruction(WalkContext ctx, string varName, ScalarExpression expr)
     {
+        // Operator tokens of this RHS, unioned into the variable's running set - covers
+        // both value math ("@a + @b") and dynamic-SQL string building ("'...' + @name").
+        var ops = OperatorClassifier.Classify(expr);
+        if (ops.Count > 0)
+        {
+            if (!ctx.VariableOpKinds.TryGetValue(varName, out var opSet))
+                ctx.VariableOpKinds[varName] = opSet = new SortedSet<string>(StringComparer.Ordinal);
+            foreach (var op in ops)
+                opSet.Add(op);
+        }
+
         var text = SqlText.Truncate(SqlText.Generate(expr), 300);
         if (text.Length == 0)
             return;
@@ -1072,9 +1590,12 @@ public static class AstWalker
 
     /// <summary>
     /// Best-effort static evaluation of a scalar expression to the literal string it
-    /// produces, supporting string literals, parentheses, literal-valued @variables and
-    /// "a + b" concatenation of those. Returns null for anything runtime-dependent
-    /// (column refs, params with no literal value, function calls, CASE, etc.).
+    /// produces, supporting string literals, parentheses, literal-valued @variables,
+    /// "a + b" concatenation of those, QUOTENAME(...), NCHAR(n)/CHAR(n) of a literal code,
+    /// COALESCE(...), and CASE WHEN/THEN/ELSE (see ResolveBoolean for the WHEN condition
+    /// evaluation). Returns null for anything
+    /// runtime-dependent (column refs, params with no literal value, other function calls,
+    /// CASE branches whose condition can't be determined, etc.).
     /// </summary>
     private static string? ResolveLiteral(ScalarExpression? expr, WalkContext ctx)
     {
@@ -1090,6 +1611,135 @@ public static class AstWalker
                 var l = ResolveLiteral(b.FirstExpression, ctx);
                 var r = ResolveLiteral(b.SecondExpression, ctx);
                 return l != null && r != null ? l + r : null;
+            // QUOTENAME(@x) / QUOTENAME(@x, quoteChar): a very common wrapper around an
+            // otherwise-literal identifier piece (schema/table name) in dynamic-DDL builder
+            // procs - without this case, a single QUOTENAME() call anywhere in a "+"
+            // concatenation made the WHOLE dynamic_sql resolve to null (ConcatLiterals bails
+            // on the first unresolved part), even when every variable involved was a plain
+            // SET @var = N'literal' a few lines earlier. Real case: WideWorldImporters'
+            // DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad builds 34 EXEC(@SQL)
+            // trigger DROP/CREATE statements from QUOTENAME(@SchemaName)+'.'+QUOTENAME(@TableName)
+            // where @SchemaName/@TableName are always literal SETs - all 34 were silently
+            // unresolved (dynamic_sql=="") before this fix.
+            case FunctionCall fc when string.Equals(fc.FunctionName?.Value, "QUOTENAME", StringComparison.OrdinalIgnoreCase)
+                && fc.Parameters is { Count: 1 or 2 }:
+            {
+                var inner = ResolveLiteral(fc.Parameters[0], ctx);
+                if (inner == null)
+                    return null;
+                var quote = fc.Parameters.Count == 2 ? ResolveLiteral(fc.Parameters[1], ctx) : "[";
+                return quote switch
+                {
+                    "[" or "]" => $"[{inner.Replace("]", "]]")}]",
+                    "'" => $"'{inner.Replace("'", "''")}'",
+                    "\"" => $"\"{inner.Replace("\"", "\"\"")}\"",
+                    "`" => $"`{inner.Replace("`", "``")}`",
+                    _ => null,
+                };
+            }
+            // NCHAR(n) / CHAR(n): produce a single character from a code point. The common
+            // real use is building separators - WideWorldImporters'
+            // DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad sets
+            // @CrLf = NCHAR(13) + NCHAR(10) and concatenates it into every CREATE TRIGGER
+            // body it builds. Without this case @CrLf never resolved, so all 17 CREATE
+            // TRIGGER EXEC steps stayed unresolved (the 17 DROP TRIGGER steps don't use
+            // @CrLf, which is why only half resolved after the QUOTENAME fix). Restricted to
+            // a literal integer code in the BMP, non-surrogate, so the result is a single
+            // well-defined char; anything else fails closed.
+            case FunctionCall fc when (string.Equals(fc.FunctionName?.Value, "NCHAR", StringComparison.OrdinalIgnoreCase)
+                    || string.Equals(fc.FunctionName?.Value, "CHAR", StringComparison.OrdinalIgnoreCase))
+                && fc.Parameters is { Count: 1 }
+                && fc.Parameters[0] is IntegerLiteral codeLit
+                && int.TryParse(codeLit.Value, out var code)
+                && code >= 0 && code <= 0xFFFF && !char.IsSurrogate((char)code):
+                return ((char)code).ToString();
+            // COALESCE(a, b, ...): ScriptDom models this as its own AST node (not a
+            // FunctionCall). Real T-SQL semantics: first argument that is non-NULL at
+            // runtime wins. Since ctx.ResolvedVars only contains variables actually SET to a
+            // literal, "ResolveLiteral resolves" and "is non-NULL here" coincide for the
+            // patterns this walker tracks, so "first part that resolves" is a faithful
+            // static evaluation - not just a best-effort guess.
+            case CoalesceExpression coalesce:
+            {
+                foreach (var part in coalesce.Expressions)
+                {
+                    var coalesced = ResolveLiteral(part, ctx);
+                    if (coalesced != null)
+                        return coalesced;
+                }
+                return null;
+            }
+            // CASE WHEN ... THEN ... [WHEN ... THEN ...] [ELSE ...] END: walk the WHEN
+            // clauses in order (matching real CASE evaluation), statically evaluating each
+            // condition via ResolveBoolean. The first clause whose condition can't be
+            // determined aborts the whole CASE to null (fails closed) - we can't know
+            // whether an earlier untaken branch would have matched.
+            case SearchedCaseExpression sce:
+            {
+                foreach (var when in sce.WhenClauses)
+                {
+                    var cond = ResolveBoolean(when.WhenExpression, ctx);
+                    if (cond == null)
+                        return null;
+                    if (cond == true)
+                        return ResolveLiteral(when.ThenExpression, ctx);
+                }
+                return sce.ElseExpression != null ? ResolveLiteral(sce.ElseExpression, ctx) : null;
+            }
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>
+    /// Best-effort static evaluation of a boolean expression to true/false, supporting
+    /// "=" / "&lt;&gt;" / "!=" comparisons of two ResolveLiteral-resolvable operands, IS
+    /// [NOT] NULL, parentheses and AND/OR of those. Returns null (unknown) for anything else
+    /// - in particular for comparison types other than equals/not-equals (ordinal string
+    /// comparison would not reliably match SQL Server's collation rules for ordering), which
+    /// keeps callers like the SearchedCaseExpression case above failing closed rather than
+    /// risking a wrong branch.
+    /// </summary>
+    private static bool? ResolveBoolean(BooleanExpression? expr, WalkContext ctx)
+    {
+        switch (expr)
+        {
+            case BooleanParenthesisExpression p:
+                return ResolveBoolean(p.Expression, ctx);
+            case BooleanBinaryExpression { BinaryExpressionType: BooleanBinaryExpressionType.And } and1:
+            {
+                var l = ResolveBoolean(and1.FirstExpression, ctx);
+                var r = ResolveBoolean(and1.SecondExpression, ctx);
+                return l == null || r == null ? null : l & r;
+            }
+            case BooleanBinaryExpression { BinaryExpressionType: BooleanBinaryExpressionType.Or } or1:
+            {
+                var l = ResolveBoolean(or1.FirstExpression, ctx);
+                var r = ResolveBoolean(or1.SecondExpression, ctx);
+                return l == null || r == null ? null : l | r;
+            }
+            case BooleanComparisonExpression cmp:
+            {
+                var l = ResolveLiteral(cmp.FirstExpression, ctx);
+                var r = ResolveLiteral(cmp.SecondExpression, ctx);
+                if (l == null || r == null)
+                    return null;
+                return cmp.ComparisonType switch
+                {
+                    BooleanComparisonType.Equals => string.Equals(l, r, StringComparison.Ordinal),
+                    BooleanComparisonType.NotEqualToBrackets or BooleanComparisonType.NotEqualToExclamation
+                        => !string.Equals(l, r, StringComparison.Ordinal),
+                    _ => (bool?)null,
+                };
+            }
+            case BooleanIsNullExpression isNull:
+            {
+                // A literal value resolved here means the expression is definitely
+                // non-NULL at this point; an unresolved value tells us nothing (it may be
+                // genuinely NULL at runtime, or just outside what this walker tracks).
+                var resolved = ResolveLiteral(isNull.Expression, ctx);
+                return resolved == null ? null : isNull.IsNot;
+            }
             default:
                 return null;
         }
@@ -1097,11 +1747,12 @@ public static class AstWalker
 
     /// <summary>
     /// For a dynamic EXEC ("EXEC(@sql)" / "EXEC sp_executesql @sql, ..."), reconstructs the
-    /// executed SQL when it resolves to a pure literal, returned whitespace-collapsed,
-    /// USE-stripped and truncated for display. "" when built at runtime (the common case).
-    /// Descriptive only: the result is NOT re-parsed into READS/WRITES/CALLS edges - a
-    /// dataset audit showed the literal dynamic SQL here is admin DDL the walker doesn't
-    /// track, so re-parsing would add labels but no lineage.
+    /// executed SQL when it resolves to a pure literal, returned whitespace-collapsed and
+    /// USE-stripped. "" when built at runtime (the common case). Returned in FULL (untruncated)
+    /// because the same string feeds SqlAnalyzer.ResolveDynamicSqlLinks, which re-parses it for
+    /// the inner DML's own lineage - truncating here would silently break re-parse of any
+    /// dynamic SQL longer than the display cap. The display cap (200) is applied downstream, at
+    /// the point the value becomes the descriptive "dynamic_sql" node property (GraphExporter).
     /// </summary>
     private static string ResolveExecLiteral(ExecuteStatement exec, WalkContext ctx)
     {
@@ -1119,7 +1770,7 @@ public static class AstWalker
             return "";
         var collapsed = Regex.Replace(sql, @"\s+", " ").Trim();
         collapsed = Regex.Replace(collapsed, @"^USE\s+\w+\s*;?\s*", "", RegexOptions.IgnoreCase);
-        return SqlText.Truncate(collapsed, 200);
+        return collapsed;
     }
 
     private static string? ConcatLiterals(IEnumerable<ScalarExpression> parts, WalkContext ctx)
@@ -1201,7 +1852,33 @@ public static class AstWalker
             var qualifier = ids.Count > 1 ? ids[^2].Value : null;
             Refs.Add((qualifier, column));
         }
+
+        // XML data-type method calls ("xmlcol.value(...)", "alias.ref.query(...)",
+        // "col.exist(...)"): the accessed XML column is the call target, which is a
+        // MultiPartIdentifierCallTarget (NOT a ColumnReferenceExpression), so it is
+        // otherwise invisible to column collection. Record it as a column reference of
+        // its target so the XML column is tracked as a read and as a lineage source.
+        // The final identifier of the target is the column ("ref" for apply-exposed
+        // rowsets, or the XML column itself); the preceding identifier is its qualifier
+        // (a FROM/JOIN alias, or a CROSS APPLY alias resolved separately via the apply map).
+        public override void Visit(FunctionCall node)
+        {
+            if (node.CallTarget is not MultiPartIdentifierCallTarget { MultiPartIdentifier.Identifiers: { Count: > 0 } ids })
+                return;
+            if (!IsXmlAccessorMethod(node.FunctionName?.Value))
+                return;
+            var column = ids[^1].Value;
+            var qualifier = ids.Count > 1 ? ids[^2].Value : null;
+            Refs.Add((qualifier, column));
+        }
     }
+
+    /// <summary>XML data-type accessor methods usable in a projection (value/query/exist).</summary>
+    private static bool IsXmlAccessorMethod(string? name) =>
+        name is not null && (
+            name.Equals("value", StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("query", StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("exist", StringComparison.OrdinalIgnoreCase));
 
     /// <summary>True if a (possibly schema-qualified) name is a single-part identifier matching a registered CTE alias.</summary>
     private static bool IsCte(SchemaObjectName name, HashSet<string> cteNames) =>

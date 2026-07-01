@@ -318,6 +318,30 @@ public class LineageTests
         var target = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Target");
         Assert.NotNull(target);
         Assert.NotNull(FindRel(graph, "WRITES_TO", r => r.EndNodeId == target!.Id));
+
+        // The USING side is a real read, not just the target's write - confirms
+        // MERGE's source tracking (CollectTableRefsInto on MergeSpecification.TableReference
+        // in AstWalker.cs) isn't limited to the target.
+        var source = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source");
+        Assert.NotNull(source);
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == source!.Id));
+    }
+
+    [Fact]
+    public void Truncate_WritesToTarget()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                TRUNCATE TABLE dbo.Target;
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var target = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Target");
+        Assert.NotNull(target);
+        Assert.NotNull(FindRel(graph, "WRITES_TO", r => r.EndNodeId == target!.Id && (string)r.Properties["action_type"] == "TRUNCATE"));
     }
 
     [Fact]
@@ -347,6 +371,82 @@ public class LineageTests
         Assert.NotNull(varNode);
 
         Assert.NotNull(FindRel(graph, "BUILDS_SQL_FROM", r => r.StartNodeId == step!.Id && r.EndNodeId == varNode!.Id));
+    }
+
+    [Fact]
+    public void DynamicSql_ResolvesQuotenameNcharCaseCoalesceToLiteral()
+    {
+        // Regression for extraction-gaps.md §5.1+§5.2: when every piece of the built
+        // string is statically determinable, dynamic_sql must reconstruct the literal
+        // SQL - exercising QUOTENAME(...), NCHAR(n) (via @CrLf), COALESCE(...) and a
+        // CASE WHEN <comparison> THEN ... ELSE ... END, the exact shape WWI's
+        // DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad uses.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                DECLARE @sql NVARCHAR(MAX)
+                DECLARE @CrLf NVARCHAR(2) = NCHAR(13) + NCHAR(10)
+                DECLARE @Schema SYSNAME = N'dbo'
+                DECLARE @Table SYSNAME = N'Orders'
+                DECLARE @Col SYSNAME = N'LastEditedBy'
+                SET @sql = N'SELECT '
+                    + CASE WHEN COALESCE(@Col, N'') <> N'' THEN QUOTENAME(@Col) ELSE N'NULL' END
+                    + @CrLf + N'FROM ' + QUOTENAME(@Schema) + N'.' + QUOTENAME(@Table) + N';'
+                EXEC (@sql)
+            END
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.TestProc", sql);
+        Assert.Null(result.Error);
+        Assert.Equal(1, result.DynamicSqlCount);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { result });
+        var step = FindNode(graph, n => n.Labels.Contains("Step") && (string)n.Properties["action"] == "EXEC");
+        Assert.NotNull(step);
+        Assert.True((bool)step!.Properties["is_dynamic_sql"]);
+        // dynamic_sql is whitespace-collapsed, so the NCHAR(13)+NCHAR(10) becomes a space.
+        Assert.Equal("SELECT [LastEditedBy] FROM [dbo].[Orders];", (string)step.Properties["dynamic_sql"]);
+    }
+
+    [Fact]
+    public void DynamicTrigger_EmitsTriggerNodeWithCreatesAndOnEdges()
+    {
+        // Fase A of docs/dynamic-trigger-modeling-spec.md: a CREATE TRIGGER built inside
+        // dynamic SQL must surface as its own :Trigger node with a CREATES edge from the
+        // creating proc and an ON edge to the table it fires on (decoupled - the trigger's
+        // own body writes are NOT attributed to the proc). Mirrors WWI's
+        // DeactivateTemporalTablesBeforeDataLoad building CREATE TRIGGER via EXEC(@sql).
+        var sql = """
+            CREATE PROCEDURE dbo.MakeTrigger
+            AS
+            BEGIN
+                DECLARE @sql NVARCHAR(MAX)
+                SET @sql = N'CREATE TRIGGER dbo.TR_Orders_Audit ON dbo.Orders AFTER INSERT, UPDATE AS BEGIN SET NOCOUNT ON; END'
+                EXEC (@sql)
+            END
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.MakeTrigger", sql);
+        Assert.Null(result.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { result });
+
+        var trigger = FindNode(graph, n => n.Labels.Contains("Trigger"));
+        Assert.NotNull(trigger);
+        Assert.Equal("dbo.TR_Orders_Audit", (string)trigger!.Properties["full_name"]);
+        Assert.Equal("After", (string)trigger.Properties["trigger_timing"]);
+        Assert.Equal(new[] { "INSERT", "UPDATE" }, (IReadOnlyList<string>)trigger.Properties["trigger_events"]);
+        Assert.True((bool)trigger.Properties["is_dynamically_created"]);
+
+        // proc -[:CREATES]-> trigger
+        Assert.NotNull(FindRel(graph, "CREATES",
+            r => r.StartNodeId == result.ObjectName && r.EndNodeId == trigger.Id));
+
+        // trigger -[:ON]-> dbo.Orders
+        var ordersTable = FindNode(graph, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).Replace("[", "").Replace("]", "").ToLowerInvariant() == "dbo.orders");
+        Assert.NotNull(ordersTable);
+        Assert.NotNull(FindRel(graph, "ON",
+            r => r.StartNodeId == trigger.Id && r.EndNodeId == ordersTable!.Id));
     }
 
     [Fact]
@@ -1033,5 +1133,406 @@ public class LineageTests
 
         var outPath = Path.Combine(Directory.GetCurrentDirectory(), "graphml_sample.graphml");
         File.WriteAllText(outPath, xml);
+    }
+
+    [Fact]
+    public void ComputedColumn_DerivesFromItsSourceColumns()
+    {
+        var sql = """
+            CREATE TABLE dbo.OrderLines
+            (
+                Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+                Price DECIMAL(10,2) NOT NULL,
+                Qty INT NOT NULL,
+                Total AS (Price * Qty) PERSISTED
+            )
+            """;
+        var table = TableAnalyzer.AnalyzeTable($"{Db}::dbo.OrderLines", sql);
+        Assert.Null(table.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult>(), includeColumns: true,
+            tableSchemas: new List<TableSchemaResult> { table });
+
+        var totalCol = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.orderlines" && (string)n.Properties["name"] == "Total");
+        var priceCol = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.orderlines" && (string)n.Properties["name"] == "Price");
+        var qtyCol = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.orderlines" && (string)n.Properties["name"] == "Qty");
+        Assert.NotNull(totalCol);
+        Assert.NotNull(priceCol);
+        Assert.NotNull(qtyCol);
+
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == totalCol!.Id && r.EndNodeId == priceCol!.Id));
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == totalCol!.Id && r.EndNodeId == qtyCol!.Id));
+    }
+
+    // op_kinds: the structured operator tokens carried alongside the raw `logic` text
+    // on lineage/filter edges (see OperatorClassifier), so a rule engine can reason
+    // about the *kind* of dependency (arithmetic vs comparison vs concat) not just text.
+    private static IReadOnlyList<string> Ops(GraphRel? r) =>
+        r?.Properties.TryGetValue("op_kinds", out var v) == true ? ((IEnumerable<string>)v).ToList() : new List<string>();
+
+    [Fact]
+    public void ComputedColumn_CarriesArithmeticOpKind()
+    {
+        var sql = """
+            CREATE TABLE dbo.OrderLines
+            (
+                Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+                Price DECIMAL(10,2) NOT NULL,
+                Qty INT NOT NULL,
+                Total AS (Price * Qty) PERSISTED
+            )
+            """;
+        var table = TableAnalyzer.AnalyzeTable($"{Db}::dbo.OrderLines", sql);
+        Assert.Null(table.Error);
+        var graph = GraphExporter.Build(new List<ObjectResult>(), includeColumns: true,
+            tableSchemas: new List<TableSchemaResult> { table });
+
+        var totalCol = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.orderlines" && (string)n.Properties["name"] == "Total");
+        var rel = FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == totalCol!.Id);
+        Assert.Contains("arith:*", Ops(rel));
+    }
+
+    [Fact]
+    public void InsertSelectExpression_CarriesArithmeticOpKind()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                INSERT INTO dbo.Target (Total)
+                SELECT s.Price + s.Tax FROM dbo.Source s
+            END
+            """;
+        var graph = BuildGraph(sql);
+        var totalCol = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.target" && (string)n.Properties["name"] == "Total");
+        var rel = FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == totalCol!.Id);
+        Assert.Contains("arith:+", Ops(rel));
+    }
+
+    [Fact]
+    public void UpdateSetExpression_DerivesTargetColumnFromSourceColumns()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                UPDATE dbo.Target SET Total = Price * Qty WHERE Id > 0
+            END
+            """;
+        var graph = BuildGraph(sql);
+        var totalCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.target" && (string)n.Properties["name"] == "Total");
+        var priceCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.target" && (string)n.Properties["name"] == "Price");
+        var qtyCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.target" && (string)n.Properties["name"] == "Qty");
+        Assert.NotNull(totalCol);
+        Assert.NotNull(priceCol);
+        Assert.NotNull(qtyCol);
+
+        var toPrice = FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == totalCol!.Id && r.EndNodeId == priceCol!.Id);
+        Assert.NotNull(toPrice);
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == totalCol!.Id && r.EndNodeId == qtyCol!.Id));
+        Assert.Contains("arith:*", Ops(toPrice));
+    }
+
+    [Fact]
+    public void UpdateSetFromJoin_DerivesTargetColumnFromOtherTable()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                UPDATE t SET t.Total = s.Amount
+                FROM dbo.Target t JOIN dbo.Source s ON s.Id = t.Id
+            END
+            """;
+        var graph = BuildGraph(sql);
+        var totalCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.target" && (string)n.Properties["name"] == "Total");
+        var amountCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.source" && (string)n.Properties["name"] == "Amount");
+        Assert.NotNull(totalCol);
+        Assert.NotNull(amountCol);
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == totalCol!.Id && r.EndNodeId == amountCol!.Id));
+    }
+
+    [Fact]
+    public void UpdateSetSelfReference_DoesNotCreateSelfLoop()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                UPDATE dbo.Target SET Counter = Counter + 1 WHERE Id > 0
+            END
+            """;
+        var graph = BuildGraph(sql);
+        var counterCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.target" && (string)n.Properties["name"] == "Counter");
+        Assert.NotNull(counterCol);
+        Assert.Null(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == counterCol!.Id && r.EndNodeId == counterCol!.Id));
+    }
+
+    [Fact]
+    public void View_OutputColumnDerivesFromBaseColumns()
+    {
+        var sql = """
+            CREATE VIEW dbo.OrderSummary AS
+            SELECT o.Id AS OrderId, o.Price * o.Qty AS Total
+            FROM dbo.Orders o
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.OrderSummary", sql);
+        Assert.Null(result.Error);
+        Assert.Equal("VIEW", result.ObjectType);
+        var graph = GraphExporter.Build(new List<ObjectResult> { result }, includeColumns: true);
+
+        var totalCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.ordersummary" && (string)n.Properties["name"] == "Total");
+        var priceCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.orders" && (string)n.Properties["name"] == "Price");
+        var qtyCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.orders" && (string)n.Properties["name"] == "Qty");
+        var orderIdCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.ordersummary" && (string)n.Properties["name"] == "OrderId");
+        var idCol = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.orders" && (string)n.Properties["name"] == "Id");
+        Assert.NotNull(totalCol);
+        Assert.NotNull(priceCol);
+        Assert.NotNull(qtyCol);
+        Assert.NotNull(orderIdCol);
+
+        var toPrice = FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == totalCol!.Id && r.EndNodeId == priceCol!.Id);
+        Assert.NotNull(toPrice);
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == totalCol!.Id && r.EndNodeId == qtyCol!.Id));
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == orderIdCol!.Id && r.EndNodeId == idCol!.Id));
+        Assert.Contains("arith:*", Ops(toPrice));
+        Assert.True((bool)toPrice!.Properties["via_view"]);
+    }
+
+    [Fact]
+    public void WherePredicate_FiltersOnCarriesLogicalAndComparisonOpKinds()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                SELECT Id FROM dbo.Source WHERE Status = 'X' AND Qty > 0
+            END
+            """;
+        var graph = BuildGraph(sql);
+        var rel = FindRel(graph, "FILTERS_ON");
+        Assert.NotNull(rel);
+        var ops = Ops(rel);
+        Assert.Contains("logical:AND", ops);
+        Assert.Contains("compare:=", ops);
+        Assert.Contains("compare:>", ops);
+    }
+
+    [Fact]
+    public void VariableConcatenation_CarriesConcatOpKind()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+                @Name NVARCHAR(100)
+            AS
+            BEGIN
+                DECLARE @SQL NVARCHAR(MAX)
+                SET @SQL = 'CREATE INDEX IX ON dbo.T (' + @Name + ')'
+            END
+            """;
+        var graph = BuildGraph(sql);
+        var varNode = FindNode(graph, n => n.Labels.Contains("Variable") && (string)n.Properties["name"] == "@SQL");
+        Assert.NotNull(varNode);
+        Assert.Contains("arith:+", ((IEnumerable<string>)varNode!.Properties["op_kinds"]).ToList());
+    }
+
+    [Fact]
+    public void DropColumn_LinksAlterStepToAffectedColumn()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                ALTER TABLE dbo.Target DROP COLUMN LegacyFlag
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var legacyCol = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.target" && (string)n.Properties["name"] == "LegacyFlag");
+        Assert.NotNull(legacyCol);
+
+        var writesColumn = FindRel(graph, "WRITES_COLUMN", r => r.EndNodeId == legacyCol!.Id);
+        Assert.NotNull(writesColumn);
+        Assert.Equal("DROP COLUMN", (string)writesColumn!.Properties["detail"]);
+    }
+
+    [Fact]
+    public void AlterColumn_LinksAlterStepToAffectedColumn()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                ALTER TABLE dbo.Target ALTER COLUMN Status VARCHAR(50) NOT NULL
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var statusCol = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.target" && (string)n.Properties["name"] == "Status");
+        Assert.NotNull(statusCol);
+
+        var writesColumn = FindRel(graph, "WRITES_COLUMN", r => r.EndNodeId == statusCol!.Id);
+        Assert.NotNull(writesColumn);
+        Assert.Equal("ALTER COLUMN", (string)writesColumn!.Properties["detail"]);
+    }
+
+    // ---------------------------------------------------------------------
+    // Test-debt closed (coverage-matrix.md, eje A1.1): four behaviours that
+    // were validated only by the eval/community-edge-cases corpus now have a
+    // unit-level regression net, so an eje-B refactor can't silently break them.
+    // ---------------------------------------------------------------------
+
+    // Mirrors eval/community-edge-cases/dml-advanced/merge-with-output.sql.
+    // OUTPUT ... INTO writes the inserted/deleted pseudo-columns of the MERGE
+    // target into a log table; the log columns must derive from the target's
+    // real column, not vanish (ScriptDOM exposes this on OutputIntoClause).
+    [Fact]
+    public void MergeOutputInto_LogColumnsDeriveFromTargetColumn()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.usp_SyncProducts AS
+            BEGIN
+              MERGE dbo.TargetProducts AS t
+              USING dbo.SourceProducts AS s ON t.Id = s.Id
+              WHEN MATCHED THEN UPDATE SET t.Price = s.Price
+              WHEN NOT MATCHED THEN INSERT (Id, Price) VALUES (s.Id, s.Price)
+              OUTPUT deleted.Price AS OldPrice, inserted.Price AS NewPrice
+              INTO dbo.ProductMergeLog (OldPrice, NewPrice);
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var targetPrice = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.targetproducts" && (string)n.Properties["name"] == "Price");
+        var newPrice = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.productmergelog" && (string)n.Properties["name"] == "NewPrice");
+        var oldPrice = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.productmergelog" && (string)n.Properties["name"] == "OldPrice");
+        Assert.NotNull(targetPrice);
+        Assert.NotNull(newPrice);
+        Assert.NotNull(oldPrice);
+
+        // inserted.Price / deleted.Price both resolve to the target's Price column.
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == newPrice!.Id && r.EndNodeId == targetPrice!.Id));
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == oldPrice!.Id && r.EndNodeId == targetPrice!.Id));
+    }
+
+    // Mirrors eval/community-edge-cases/set-ops/union-view.sql. A view whose body
+    // is a UNION (BinaryQueryExpression) must derive its output column from the
+    // positionally-matching column of EVERY branch, not just the first.
+    [Fact]
+    public void ViewWithUnionBody_OutputColumnDerivesFromAllBranches()
+    {
+        var sql = """
+            CREATE VIEW dbo.vUnion AS
+            SELECT a FROM dbo.t1
+            UNION
+            SELECT b FROM dbo.t2
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.vUnion", sql);
+        Assert.Null(result.Error);
+        Assert.Equal("VIEW", result.ObjectType);
+        var graph = GraphExporter.Build(new List<ObjectResult> { result }, includeColumns: true);
+
+        var outCol = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.vunion" && (string)n.Properties["name"] == "a");
+        var t1a = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.t1" && (string)n.Properties["name"] == "a");
+        var t2b = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.t2" && (string)n.Properties["name"] == "b");
+        Assert.NotNull(outCol);
+        Assert.NotNull(t1a);
+        Assert.NotNull(t2b);
+
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == outCol!.Id && r.EndNodeId == t1a!.Id));
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == outCol!.Id && r.EndNodeId == t2b!.Id));
+    }
+
+    // Mirrors eval/community-edge-cases/cte-recursive/recursive-cte.sql. The view's
+    // body is a recursive CTE (anchor UNION ALL recursive member); lineage of the
+    // real columns must reach the base table through both members.
+    [Fact]
+    public void ViewWithRecursiveCte_TracesRealColumnsToBaseTable()
+    {
+        var sql = """
+            CREATE VIEW dbo.vOrgChart AS
+            WITH cte AS (
+              SELECT EmployeeID, ManagerID, 0 AS Lvl
+              FROM dbo.Employees WHERE ManagerID IS NULL
+              UNION ALL
+              SELECT e.EmployeeID, e.ManagerID, c.Lvl + 1
+              FROM dbo.Employees e JOIN cte c ON e.ManagerID = c.EmployeeID
+            )
+            SELECT EmployeeID, ManagerID, Lvl FROM cte
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.vOrgChart", sql);
+        Assert.Null(result.Error);
+        Assert.Equal("VIEW", result.ObjectType);
+        var graph = GraphExporter.Build(new List<ObjectResult> { result }, includeColumns: true);
+
+        var employees = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Employees");
+        Assert.NotNull(employees);
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == employees!.Id));
+
+        var outEmpId = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.vorgchart" && (string)n.Properties["name"] == "EmployeeID");
+        var baseEmpId = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.employees" && (string)n.Properties["name"] == "EmployeeID");
+        Assert.NotNull(outEmpId);
+        Assert.NotNull(baseEmpId);
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == outEmpId!.Id && r.EndNodeId == baseEmpId!.Id));
+    }
+
+    // Declarative DDL constraints (CHECK/DEFAULT/UNIQUE) surface as :BusinessRule
+    // nodes — HAS_RULE from the table, CONSTRAINS to each governed column. PK/FK/
+    // NOT NULL deliberately stay as column attributes / FK edges, not rules.
+    [Fact]
+    public void Constraints_CheckDefaultUnique_ProduceBusinessRuleNodes()
+    {
+        var tableSql = """
+            CREATE TABLE dbo.Products
+            (
+                Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+                Price DECIMAL(10,2) NOT NULL CONSTRAINT CK_Products_Price CHECK (Price > 0),
+                Qty INT NOT NULL CONSTRAINT DF_Products_Qty DEFAULT (0),
+                Sku NVARCHAR(50) NOT NULL CONSTRAINT UQ_Products_Sku UNIQUE
+            )
+            """;
+        var products = TableAnalyzer.AnalyzeTable($"{Db}::dbo.Products", tableSql);
+        Assert.Null(products.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult>(), includeColumns: true,
+            tableSchemas: new List<TableSchemaResult> { products });
+
+        var table = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Products");
+        Assert.NotNull(table);
+
+        // Exactly three rules: PK and NOT NULL must NOT appear here.
+        var rules = graph.Nodes.Where(n => n.Labels.Contains("BusinessRule")).ToList();
+        Assert.Equal(3, rules.Count);
+
+        void AssertRule(string kind, string columnName)
+        {
+            var rule = rules.FirstOrDefault(n => (string)n.Properties["kind"] == kind);
+            Assert.NotNull(rule);
+            // The table owns the rule...
+            Assert.NotNull(FindRel(graph, "HAS_RULE", r => r.StartNodeId == table!.Id && r.EndNodeId == rule!.Id));
+            // ...and it constrains the expected column.
+            var col = FindNode(graph, n => n.Labels.Contains("Column")
+                && (string)n.Properties["table"] == "dbo.products" && (string)n.Properties["name"] == columnName);
+            Assert.NotNull(col);
+            Assert.NotNull(FindRel(graph, "CONSTRAINS", r => r.StartNodeId == rule!.Id && r.EndNodeId == col!.Id));
+        }
+
+        AssertRule("CHECK", "Price");
+        AssertRule("DEFAULT", "Qty");
+        AssertRule("UNIQUE", "Sku");
     }
 }

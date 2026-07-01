@@ -203,17 +203,19 @@ public static class TableSchemaExtractor
         }
     }
 
-    private record ColumnRow(string Name, string DataType, short MaxLength, byte Precision, byte Scale, bool IsNullable, bool IsIdentity);
+    private record ColumnRow(string Name, string DataType, short MaxLength, byte Precision, byte Scale, bool IsNullable, bool IsIdentity, string ComputedDefinition = "", bool ComputedPersisted = false);
     private record FkRow(string ConstraintName, string ColumnName, string RefSchema, string RefTable, string RefColumn);
 
     private static string? BuildCreateTable(SqlConnection conn, string schema, string table)
     {
         var columns = new List<ColumnRow>();
         using (var cmd = new SqlCommand("""
-            SELECT c.name, tp.name, c.max_length, c.precision, c.scale, c.is_nullable, c.is_identity
+            SELECT c.name, tp.name, c.max_length, c.precision, c.scale, c.is_nullable, c.is_identity,
+                   c.is_computed, cc.definition, cc.is_persisted
             FROM sys.columns c
             JOIN sys.objects o ON c.object_id = o.object_id
             JOIN sys.types tp  ON c.user_type_id = tp.user_type_id
+            LEFT JOIN sys.computed_columns cc ON cc.object_id = c.object_id AND cc.column_id = c.column_id
             WHERE SCHEMA_NAME(o.schema_id) = @schema AND o.name = @table AND o.type = 'U'
             ORDER BY c.column_id
         """, conn))
@@ -222,9 +224,19 @@ public static class TableSchemaExtractor
             cmd.Parameters.AddWithValue("@table", table);
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
+            {
+                var isComputed = reader.GetBoolean(7);
+                // sys.computed_columns.definition is the parenthesized expression, e.g.
+                // "(concat([SearchName],N' ',[OtherLanguages]))" - emit it as a real
+                // computed-column DDL ("[Col] AS (expr) [PERSISTED]") so TableAnalyzer
+                // sees ComputedColumnExpression and builds DERIVES_FROM lineage, instead
+                // of the flattened plain-typed column the old query produced.
                 columns.Add(new ColumnRow(
                     reader.GetString(0), reader.GetString(1), reader.GetInt16(2),
-                    reader.GetByte(3), reader.GetByte(4), reader.GetBoolean(5), reader.GetBoolean(6)));
+                    reader.GetByte(3), reader.GetByte(4), reader.GetBoolean(5), reader.GetBoolean(6),
+                    isComputed && !reader.IsDBNull(8) ? reader.GetString(8) : "",
+                    isComputed && !reader.IsDBNull(9) && reader.GetBoolean(9)));
+            }
         }
 
         if (columns.Count == 0)
@@ -286,6 +298,11 @@ public static class TableSchemaExtractor
 
     private static string ColumnDdl(ColumnRow col)
     {
+        // Computed column: "[Col] AS (expression) [PERSISTED]". The definition from
+        // sys.computed_columns is already parenthesized, so it parses directly.
+        if (col.ComputedDefinition.Length > 0)
+            return $"    [{col.Name}] AS {col.ComputedDefinition}{(col.ComputedPersisted ? " PERSISTED" : "")}";
+
         var dtype = col.DataType;
         if (LenTypes.Contains(dtype))
         {

@@ -348,7 +348,11 @@ return 0;
     var objectSources = new List<SourceObject>();
     foreach (var src in sources)
     {
-        if (createTableRegex.IsMatch(src.Sql))
+        // Route on the FIRST real statement, ignoring leading comments/whitespace:
+        // a header comment before CREATE TABLE must not misroute the file to object
+        // analysis (which would lose its PK and turn its reads/writes into TARGETS
+        // edges instead of READS_FROM/WRITES_TO).
+        if (createTableRegex.IsMatch(StripLeadingComments(src.Sql)))
             schemas.Add(TableAnalyzer.AnalyzeTable(src.Name, src.Sql));
         else
             objectSources.Add(src);
@@ -370,4 +374,35 @@ return 0;
         objResults.Add(SqlAnalyzer.AnalyzeObject(src.Name, src.Sql, cols));
 
     return (objResults, schemas);
+}
+
+// Drops leading whitespace, "--" line comments and "/* */" block comments so the
+// CREATE-TABLE router sees the first real token. Returns "" if the input is only
+// comments/whitespace.
+static string StripLeadingComments(string sql)
+{
+    int i = 0;
+    while (i < sql.Length)
+    {
+        if (char.IsWhiteSpace(sql[i])) { i++; continue; }
+
+        if (sql[i] == '-' && i + 1 < sql.Length && sql[i + 1] == '-')
+        {
+            int nl = sql.IndexOf('\n', i + 2);
+            if (nl < 0) return "";
+            i = nl + 1;
+            continue;
+        }
+
+        if (sql[i] == '/' && i + 1 < sql.Length && sql[i + 1] == '*')
+        {
+            int end = sql.IndexOf("*/", i + 2, StringComparison.Ordinal);
+            if (end < 0) return "";
+            i = end + 2;
+            continue;
+        }
+
+        break;
+    }
+    return i == 0 ? sql : sql.Substring(i);
 }

@@ -15,6 +15,17 @@
     for (const n of (nodes || [])) if (n.kind === 'cond') max = Math.max(max, treeDepth(n.children, d + 1));
     return max;
   }
+  // Aplana el árbol de control a la lista de steps (hojas kind==='step'), entrando
+  // recursivamente en los nodos de condición. Para reglas sentencia a sentencia
+  // (UPDATE/DELETE sin WHERE, SELECT *).
+  function collectSteps(nodes, acc) {
+    acc = acc || [];
+    for (const n of (nodes || [])) {
+      if (n.kind === 'step') acc.push(n);
+      else if (n.kind === 'cond') collectSteps(n.children, acc);
+    }
+    return acc;
+  }
   // Nombre "plano" del objeto sin esquema (para detectar prefijo sp_).
   const leaf = name => (name || '').split('.').pop();
 
@@ -51,6 +62,19 @@
       for (const w of o.writesByTable || [])
         if (w.count >= 3)
           add('med', 'Rendimiento', 'Escrituras repetidas a la misma tabla', o.name, `Escribe ${w.count} veces en ${w.table}: posible candidato a consolidar en una sola operación de conjunto.`);
+
+      const allSteps = collectSteps(o.flow);
+      if (allSteps.some(s => s.selectStar))
+        add('low', 'Rendimiento', 'SELECT *', o.name, 'Usa SELECT *: trae columnas de más, rompe ante cambios de esquema e impide cubrir consultas con índices. Listar columnas explícitas.');
+
+      // ── Integridad (operaciones destructivas) ────────────────
+      const noWhere = allSteps.filter(s => (s.action === 'UPDATE' || s.action === 'DELETE') && (!s.filters || s.filters.length === 0));
+      if (noWhere.length)
+        add('high', 'Integridad', 'UPDATE/DELETE sin WHERE', o.name, `Modifica/borra sin filtro: ${[...new Set(noWhere.map(s => `${s.action} ${s.target}`))].join('; ')}. Afecta a TODAS las filas de la tabla.`);
+
+      const truncates = (o.writes || []).filter(w => w.op === 'TRUNCATE');
+      if (truncates.length)
+        add('med', 'Integridad', 'TRUNCATE de tabla', o.name, `TRUNCATE TABLE ${[...new Set(truncates.map(w => w.table))].join(', ')}: borrado masivo sin log por fila, reinicia IDENTITY y no respeta WHERE/triggers.`);
 
       // ── Mantenibilidad ───────────────────────────────────────
       if (o.complexity >= 10)
@@ -90,6 +114,12 @@
 
       if (t.writers.length > 0 && t.readers.length === 0 && t.columns.length > 0)
         add('low', 'Diseño', 'Tabla escrita pero nunca leída', t.name, 'Recibe escrituras pero ningún objeto analizado la lee (staging, auditoría o dato muerto).');
+
+      if (t.columns.length > 0 && t.columns.every(c => c.nullable))
+        add('low', 'Integridad', 'Tabla totalmente anulable', t.name, `Las ${t.columns.length} columnas admiten NULL: sin NOT NULL ni PK que garantice una fila identificable y con datos mínimos.`);
+
+      if (t.columns.length >= 12)
+        add('low', 'Diseño', 'Tabla ancha', t.name, `${t.columns.length} columnas: posible tabla "Dios" (mezcla responsabilidades), candidata a normalizar/dividir.`);
     }
 
     out.sort((a, b) => SEV[a.sev] - SEV[b.sev] || a.cat.localeCompare(b.cat) || a.component.localeCompare(b.component));
