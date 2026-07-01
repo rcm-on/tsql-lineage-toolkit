@@ -125,6 +125,7 @@ public static class NodeStoreExporter
         public required string ModelJson { get; init; }
         public required string ManifestJson { get; init; }
         public required string IndexJson { get; init; }
+        public required string AuditJson { get; init; }
         public required Stats Stats { get; init; }
     }
 
@@ -292,6 +293,7 @@ public static class NodeStoreExporter
         File.WriteAllText(Path.Combine(outDir, "model.json"), build.ModelJson, Encoding.UTF8);
         File.WriteAllText(Path.Combine(outDir, "manifest.json"), build.ManifestJson, Encoding.UTF8);
         File.WriteAllText(Path.Combine(outDir, "index.json"), build.IndexJson, Encoding.UTF8);
+        File.WriteAllText(Path.Combine(outDir, "audit_report.json"), build.AuditJson, Encoding.UTF8);
 
         return new UpdateStats
         {
@@ -352,6 +354,7 @@ public static class NodeStoreExporter
         File.WriteAllText(Path.Combine(outDir, "model.json"), build.ModelJson, Encoding.UTF8);
         File.WriteAllText(Path.Combine(outDir, "manifest.json"), build.ManifestJson, Encoding.UTF8);
         File.WriteAllText(Path.Combine(outDir, "index.json"), build.IndexJson, Encoding.UTF8);
+        File.WriteAllText(Path.Combine(outDir, "audit_report.json"), build.AuditJson, Encoding.UTF8);
     }
 
     /// <summary>
@@ -956,6 +959,12 @@ public static class NodeStoreExporter
         };
         indexJson = JsonSerializer.Serialize(index, jsonOptions);
 
+        // ── Capa 5: audit_report.json ────────────────────────────────────────
+        // Cross-graph aggregate (hotspots, blind_spots, risk_patterns, orphans,
+        // lineage coverage). Always rebuilt in full — content-hashing individual
+        // objects is wrong because a single upstream change shifts every entry.
+        var auditJson = AuditExporter.Generate(graph, lineageCache, jsonOptions);
+
         return new BuildResult
         {
             ObjectFiles = objectFiles,
@@ -963,6 +972,7 @@ public static class NodeStoreExporter
             ModelJson = modelJson,
             ManifestJson = manifestJson,
             IndexJson = indexJson,
+            AuditJson = auditJson,
             Stats = stats,
         };
     }
