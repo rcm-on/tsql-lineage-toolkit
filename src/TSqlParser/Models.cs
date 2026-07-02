@@ -289,8 +289,13 @@ public class ObjectResult
     public int ComplexityScore { get; set; } = 1;
     public string? Error { get; set; }
 
-    /// <summary>Object kind detected from the SQL definition: PROCEDURE, SCALAR_FUNCTION, TABLE_VALUED_FUNCTION, TRIGGER, VIEW, or SCRIPT (bare DML batch).</summary>
+    /// <summary>Object kind detected from the SQL definition: PROCEDURE, SCALAR_FUNCTION, TABLE_VALUED_FUNCTION, TRIGGER, VIEW, SYNONYM, or SCRIPT (bare DML batch).</summary>
     public string ObjectType { get; set; } = "UNKNOWN";
+
+    /// <summary>For a CREATE SYNONYM object: the base object it points to (schema.name), used to
+    /// resolve references to the synonym back onto the real table/view so impact analysis is not
+    /// split between the alias and its target. Empty for non-synonyms.</summary>
+    public string SynonymTarget { get; set; } = "";
 
     public ObjectResult(string objectName) => ObjectName = objectName;
 }

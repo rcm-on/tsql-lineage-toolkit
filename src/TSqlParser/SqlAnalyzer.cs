@@ -38,6 +38,16 @@ public static class SqlAnalyzer
         var script = (TSqlScript)fragment;
         var topStatements = script.Batches.SelectMany(b => b.Statements).ToList();
 
+        // CREATE SYNONYM has no body, so the general walk below returns early without
+        // ever setting ObjectType. Capture it (and its target) here so references to the
+        // synonym can be resolved back onto the real base object during graph build.
+        var synonym = topStatements.OfType<CreateSynonymStatement>().FirstOrDefault();
+        if (synonym != null)
+        {
+            result.ObjectType = "SYNONYM";
+            result.SynonymTarget = SqlText.Generate(synonym.ForName);
+        }
+
         result.Parameters.AddRange(FindParameters(topStatements));
 
         var dbParts = name.Split("::", 2);
@@ -214,6 +224,7 @@ public static class SqlAnalyzer
             if (t.Contains("Procedure")) return "PROCEDURE";
             if (t.Contains("Trigger")) return "TRIGGER";
             if (t.Contains("View")) return "VIEW";
+            if (t.Contains("Synonym")) return "SYNONYM";
             if (t.Contains("Function"))
             {
                 // TableValuedFunctionReturnType → TVF; else scalar
