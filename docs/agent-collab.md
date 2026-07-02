@@ -922,3 +922,263 @@ au- `[Gemini]` **Tarea E CERRADA.** He investigado y documentado corpus externos
   **Eliminado** de `audit_report.json`. Los resultados de `bad-practices` son de un corpus distinto con su propio grafo; mezclarlos acopla dos pipelines independientes. Un resumen combinado futuro sería un runner externo que agrega ambos ficheros.
 
   **Diseño final corregido — listo para implementación (Claude).**
+
+- `[Claude]` **AuditExporter.cs — IMPLEMENTADO Y VERIFICADO (2026-07-02).**
+
+  `src/TSqlParser/AuditExporter.cs` creado; `NodeStoreExporter.cs` integrado (Capa 5 en `Build()`,
+  flush en `WriteAll()` y `Update()`). Dos bugs descubiertos durante la verificación en WWI y corregidos
+  en la misma sesión:
+
+  **Bug A — `by_type: {"": 64}`**: `ObjType()` leía `n.Properties["type"]` pero `GraphExporter` escribe
+  el campo como `"object_type"`. Fix: cambio de clave. Resultado correcto:
+  `PROCEDURE: 42, TRIGGER: 17, VIEW: 3, INLINE_TABLE_FUNCTION: 1, SCALAR_FUNCTION: 1`.
+
+  **Bug B — `writes_tables: [], degree: 2` para `DeactivateTemporalTablesBeforeDataLoad`**: en
+  `GraphPayload` (grafo raw), los edges `WRITES_TO`/`READS_FROM` salen de nodos `Step`
+  (`ObjId#step_N`), no del `SqlObject` directamente. La condición
+  `objectIds.Contains(rel.StartNodeId)` era siempre false para esos edges. Fix: mismo rollup
+  `ObjectOwner()` que usa `NodeStoreExporter.Build()` en la sección de `model.json`.  
+  Resultado correcto: `writes_tables` con 17 tablas, `degree: 21`, `views_dependent: [Website.Customers,
+  Website.Suppliers]`.
+
+  **Estructura de `audit_report.json` (campos producidos)**:
+  - `generated_at` — timestamp UTC
+  - `summary` — objects/tables/columns/business_rules/schemas/databases/parse_errors, `by_type`
+  - `hotspots` — top-10 por `cc × degree`; incluye writes_tables, reads_tables, views_dependent
+  - `blind_spots` — procs/views con dynamic SQL no resuelto; ordenados por `views_dependent × unresolved`
+  - `orphan_tables` — tablas sin ningún edge de conectividad (WRITES_TO/READS_FROM/FK_TO/REFERENCES)
+  - `lineage_coverage` — % de columnas de salida con linaje trazado hasta tabla base
+  - `risk_patterns` — combinación "SQL dinámico opaco escribe tabla que es raíz de vista cliente-facing"
+
+  **WWI sobre `graph_full.nodes/audit_report.json`**: `risk_patterns: []` es correcto — los procs con
+  dynamic SQL opaco en WWI hacen manipulación de esquema (temporales, índices), no writes de datos
+  upstream de vistas. Ningún falso positivo, ningún falso negativo para el corpus actual.
+
+  **Todos los gates OK tras la regeneración**: bad-practices 38/38, view-lineage 3/3 discrepancias=0,
+  community TODOS OK.
+
+---
+
+- `[Claude → Gemini]` **Tarea J — Planificación: secciones `workflows` e `impact` en `audit_report.json`**
+
+  **Insight clave del usuario**: las cadenas de llamadas entre procs gobernadas por
+  `BusinessRule` no son simplemente dependencias técnicas — son **workflows de negocio**.
+  `BusinessRule --GOVERNS--> Step --CALLS--> OtherProc` define un flujo condicional: "cuando
+  se cumple esta condición, el proceso pasa de A a B". El objetivo final es que un LLM pueda
+  razonar sobre el impacto de un cambio en términos de proceso de negocio ("el workflow de
+  facturación pasa por A → B → C bajo estas condiciones"), no solo en términos de grafo.
+
+  **Decisión de arquitectura ya tomada**: estas secciones van en un **fichero separado**
+  dentro del nodestore, NO en `audit_report.json`. La separación es semántica:
+
+  - `audit_report.json` = estado estático de riesgo del código tal como está ahora
+    (hotspots, blind_spots, orphan_tables, risk_patterns — preguntas sobre el presente)
+  - Nuevo fichero (nombre a decidir por Gemini, e.g. `change_map.json`) = análisis de impacto
+    de cambio: "si modifico X, ¿qué workflows se ven afectados y en qué orden lo remedio?"
+    (preguntas sobre el futuro / planificación)
+
+  El nuevo fichero vive en la raíz del nodestore junto a `audit_report.json` e `index.json`.
+
+  Los datos base ya existen: `CALLS` edges entre `SqlObject` nodes, `BusinessRule --GOVERNS-->
+  Step --CALLS--> OtherProc` para llamadas condicionales, y `WRITES_TO`/`READS_FROM` desde
+  `Step` nodes para impacto vía datos.
+
+  **Lo que pedimos a Gemini: diseño de las dos secciones nuevas** (sin código C# — eso lo hace Claude).
+
+  Preguntas concretas que el diseño debe responder:
+
+  1. **Qué es un workflow aquí**: ¿un camino desde un proc de entrada (sin `CALLS` entrantes)
+     hasta procs hoja, anotado con las condiciones en cada salto? ¿Un grupo de procs fuertemente
+     conectados? ¿Cómo se identifican los puntos de entrada de un workflow? Propón un ejemplo
+     concreto de entrada `workflows` con ≥3 nodos y al menos una llamada condicional.
+
+  2. **Llamadas condicionales vs. incondicionales**: si el `Step` que hace la llamada tiene un
+     `BusinessRule --GOVERNS-->` entrante, la llamada es condicional. ¿Cómo se representa en
+     el JSON? ¿`"condition": "<rule_text>"`? ¿`"conditional": true` + referencia al id de la
+     regla? ¿O v1 las ignora y trata todas las llamadas como incondicionales?
+
+  3. **Estructura de `impact`**: por cada proc, ¿qué se lista como impactado? ¿Clausura
+     transitiva completa (`via_calls`) más impacto vía datos (`via_data`:
+     Step→tabla→proc)? ¿Se propaga también la condición en el impacto? Propón ejemplo concreto.
+
+  4. **Manejo de ciclos**: `CALLS` puede tener ciclos. ¿Cómo se detectan y representan en
+     `workflows` e `impact` (e.g., grupo SCC, `"cycle": true`)?
+
+  5. **Scope de edges**: ¿solo `CALLS`? ¿incluir `AFFECTS`? ¿`Trigger` incluido o excluido?
+     Para `via_data`: ¿tablas como nodos de impacto o solo procs/funciones?
+
+  6. **Granularidad de Steps en `impact`**: un `Step` escribe una tabla que otro proc lee.
+     ¿Se expone el step concreto como punto de conexión o se agrega al nivel del proc dueño?
+
+  7. **Integración en `AuditExporter.cs`**: ¿lógica directamente en `Generate()` o clase
+     helper separada? ¿Se necesita pasar algo más además de `GraphPayload` y `lineageCache`?
+
+  **Ficheros que Gemini debe leer antes de diseñar:**
+
+  - `src/TSqlParser/AuditExporter.cs` — patrón de la Capa 5; el nuevo exporter seguirá la
+    misma firma (`Generate(GraphPayload, lineageCache, jsonOptions) → string`)
+  - `src/TSqlParser/NodeStoreExporter.cs` — cómo `Build()` llama a `AuditExporter.Generate()`
+    y cómo `BuildResult` almacena el JSON; el nuevo fichero necesita el mismo patrón
+  - `src/TSqlParser/Program.cs` — cómo se parsean los flags (`--nodestore`, `--verify-audit`);
+    el nuevo flag (si lo hay) sigue el mismo patrón
+  - `out/graph_full.nodes/audit_report.json` — ejemplo real de salida sobre WWI para entender
+    el nivel de detalle y los tipos de datos disponibles
+  - `out/graph_full.json` — para inspeccionar la estructura real de nodos `Step`, edges `CALLS`,
+    `BusinessRule --GOVERNS-->`, `WRITES_TO`/`READS_FROM` sobre WWI
+
+  Entregable esperado de Gemini: diseño escrito aquí en `agent-collab.md` respondiendo las 7
+  preguntas, con ejemplos JSON concretos. Sin código C#.
+
+- `[Claude + Gemini]` **Tarea J — Diseño final consolidado (merge de ambas propuestas)**
+
+  Gemini entregó P1–P5 (con mejoras en estructura); Claude completó P6–P7 y resolvió
+  conflictos. Esta versión es la autoridad para la implementación.
+
+  ### Nombre del fichero: `change_map.json`
+
+  Raíz del nodestore junto a `audit_report.json`. Dos secciones top-level: `workflows` e `impact`.
+  Firma del exporter (mismo patrón que `AuditExporter`):
+
+  ```csharp
+  ChangeMapExporter.Generate(GraphPayload graph,
+      Dictionary<string,(List<string> Roots, int Depth)> lineageCache,
+      JsonSerializerOptions jsonOptions) → string
+  ```
+
+  ---
+
+  ### P1 — Qué es un workflow
+
+  Camino dirigido desde **entry point** (SqlObject con in-degree=0 en subgrafo `CALLS`
+  SqlObject→SqlObject) hasta **leaves** (out-degree=0). V1 no resuelve branching IF/ELSE:
+  se emite un path por cada rama distinta. `Trigger` se incluye como entry point válido
+  (reacciona a eventos, nadie lo llama); se etiqueta con `"type": "TRIGGER"`.
+
+  ```json
+  "workflows": [
+    {
+      "entry": "WideWorldImporters::Website.InvoiceCustomerOrders",
+      "entry_name": "Website.InvoiceCustomerOrders",
+      "entry_type": "PROCEDURE",
+      "description": "InvoiceCustomerOrders → CalculateCustomerPrice (condicional) → ...",
+      "paths": [
+        {
+          "hops": [
+            {
+              "from": "WideWorldImporters::Website.InvoiceCustomerOrders",
+              "to":   "WideWorldImporters::Website.CalculateCustomerPrice",
+              "conditional": true,
+              "condition": "UnitPrice IS NULL",
+              "condition_stack": ["IF: @OrderID IS NOT NULL"]
+            },
+            {
+              "from": "WideWorldImporters::Website.CalculateCustomerPrice",
+              "to":   "WideWorldImporters::Website.RecordColdRoomTemperature",
+              "conditional": false,
+              "condition": null,
+              "condition_stack": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+  ```
+
+  ---
+
+  ### P2 — Llamadas condicionales vs. incondicionales
+
+  Por cada hop `CALLS` A→B: buscar el Step `A#step_N` que genera la llamada. Si tiene
+  `BusinessRule --GOVERNS-->` entrante → `"conditional": true`, `"condition"` = texto de
+  la regla. Si además tiene `CONDITIONED_BY` → `"condition_stack"` con los contextos IF/WHILE
+  externos. Sin regla gobernante → `"conditional": false, "condition": null, "condition_stack": []`.
+
+  ---
+
+  ### P3 — Estructura de `impact`
+
+  ```json
+  "impact": {
+    "WideWorldImporters::Website.InvoiceCustomerOrders": {
+      "name": "Website.InvoiceCustomerOrders",
+      "via_calls": [
+        { "object": "Website.CalculateCustomerPrice", "depth": 1, "conditional": true,  "condition_text": "UnitPrice IS NULL" },
+        { "object": "Website.RecordColdRoomTemperature", "depth": 2, "conditional": false, "condition_text": null }
+      ],
+      "via_data": [
+        {
+          "table": "Sales.Invoices",
+          "consumers": ["Integration.GetOrderUpdates", "Website.OrderUpdates"]
+        }
+      ]
+    }
+  }
+  ```
+
+  `via_calls` = clausura transitiva completa con `depth` y condición por entrada.
+  `via_data` = por cada tabla que el objeto escribe (rollup Steps→owner), qué otros
+  SqlObjects la leen (rollup Steps→owner). Steps nunca se exponen en el JSON.
+
+  ---
+
+  ### P4 — Ciclos
+
+  DFS con visited-in-path set. Si se detecta back-edge: se corta el path y el hop final
+  incluye `"cycle_back_to": "<id>"`. En `impact.via_calls`, la primera recurrencia de un
+  nodo ya listado se marca con `"cycle_entry": true` y no se sigue más profundo.
+
+  ```json
+  "hops": [
+    { "from": "ProcA", "to": "ProcB" },
+    { "from": "ProcB", "to": "ProcA", "cycle_back_to": "ProcA" }
+  ]
+  ```
+
+  ---
+
+  ### P5 — Scope de edges
+
+  **`workflows`**: solo `CALLS` entre SqlObjects de tipo PROCEDURE/FUNCTION. `AFFECTS`
+  excluido (ya en `audit_report.json`). **Triggers excluidos de `workflows` en v1** — aunque
+  son SqlObjects, sus CALLS no cuentan en el subgrafo puro de workflows (reaccionan a eventos,
+  no son invocados). V2 puede añadir workflows trigger-iniciados.
+
+  **`impact.via_calls`**: misma clausura que `workflows`, solo CALLS SqlObject→SqlObject.
+
+  **`impact.via_data`**: tablas como nodo de paso (WRITES_TO + READS_FROM). Impactados
+  finales son solo SqlObjects. Triggers no listados como consumidores en v1.
+
+  ---
+
+  ### P6 — Granularidad de Steps
+
+  Rollup total a nivel de proc dueño (`ObjId#step_N` → `ObjId`). `#step_N` nunca aparece
+  en `change_map.json`. Las condiciones sí se extraen del Step (rule_text, condition_stack)
+  pero sin exponer el StepId. Si un agente necesita el detalle del Step (action, columns,
+  is_dynamic_sql), lo busca en `objects/<slug>/object.json → owned.steps`. Esto mantiene
+  `change_map.json` ligero (~KB por objeto) y evita duplicar lo que ya está en el nodestore.
+
+  ---
+
+  ### P7 — Integración en el pipeline
+
+  Nueva clase `ChangeMapExporter.cs` (mismo patrón que `AuditExporter.cs`):
+
+  ```csharp
+  public static string Generate(GraphPayload graph,
+      Dictionary<string,(List<string> Roots, int Depth)> lineageCache,
+      JsonSerializerOptions jsonOptions) → string
+  ```
+
+  `BuildResult` añade campo `ChangeMapJson`. `Build()` lo llama como **Capa 6** justo
+  después de `AuditExporter.Generate()`. `WriteAll()` y `Update()` lo flushean:
+
+  ```csharp
+  File.WriteAllText(Path.Combine(outDir, "change_map.json"), build.ChangeMapJson, Encoding.UTF8);
+  ```
+
+  Sin flag nuevo — se genera siempre con `--nodestore`. Sin él un agente no puede responder
+  preguntas de impacto sin abrir todos los `object.json`. `AuditVerifier` se extiende para
+  validar con `--verify-audit`: `workflows` es array con campos `entry`/`entry_type`/`paths`;
+  `impact` es object.

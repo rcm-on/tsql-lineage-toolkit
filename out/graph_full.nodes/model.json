@@ -2750,5 +2750,149 @@
       "from": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
       "to": "WideWorldImporters:table:warehouse.stockitems"
     }
+  ],
+  "workflows": [
+    {
+      "entry": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+      "entry_name": "Application.Configuration_ConfigureForEnterpriseEdition",
+      "entry_type": "PROCEDURE",
+      "paths": [
+        {
+          "hops": [
+            {
+              "from": "Application.Configuration_ConfigureForEnterpriseEdition",
+              "from_id": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+              "to": "Application.Configuration_ApplyColumnstoreIndexing",
+              "to_id": "WideWorldImporters::Application.Configuration_ApplyColumnstoreIndexing"
+            }
+          ]
+        },
+        {
+          "hops": [
+            {
+              "from": "Application.Configuration_ConfigureForEnterpriseEdition",
+              "from_id": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+              "to": "Application.Configuration_ApplyFullTextIndexing",
+              "to_id": "WideWorldImporters::Application.Configuration_ApplyFullTextIndexing"
+            }
+          ]
+        },
+        {
+          "hops": [
+            {
+              "from": "Application.Configuration_ConfigureForEnterpriseEdition",
+              "from_id": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+              "to": "Application.Configuration_ApplyPartitioning",
+              "to_id": "WideWorldImporters::Application.Configuration_ApplyPartitioning"
+            }
+          ]
+        },
+        {
+          "hops": [
+            {
+              "from": "Application.Configuration_ConfigureForEnterpriseEdition",
+              "from_id": "WideWorldImporters::Application.Configuration_ConfigureForEnterpriseEdition",
+              "to": "Application.Configuration_EnableInMemory",
+              "to_id": "WideWorldImporters::Application.Configuration_EnableInMemory"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entry": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+      "entry_name": "DataLoadSimulation.PopulateDataToCurrentDate",
+      "entry_type": "PROCEDURE",
+      "paths": [
+        {
+          "hops": [
+            {
+              "from": "DataLoadSimulation.PopulateDataToCurrentDate",
+              "from_id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+              "to": "DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+              "to_id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures"
+            },
+            {
+              "from": "DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+              "from_id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+              "to": "DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+              "to_id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad"
+            },
+            {
+              "from": "DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+              "from_id": "WideWorldImporters::DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad",
+              "to": "Application.Configuration_RemoveRowLevelSecurity",
+              "to_id": "WideWorldImporters::Application.Configuration_RemoveRowLevelSecurity"
+            }
+          ]
+        },
+        {
+          "hops": [
+            {
+              "from": "DataLoadSimulation.PopulateDataToCurrentDate",
+              "from_id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+              "to": "DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+              "to_id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures"
+            },
+            {
+              "from": "DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+              "from_id": "WideWorldImporters::DataLoadSimulation.Configuration_ApplyDataLoadSimulationProcedures",
+              "to": "DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
+              "to_id": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad"
+            },
+            {
+              "from": "DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
+              "from_id": "WideWorldImporters::DataLoadSimulation.ReactivateTemporalTablesAfterDataLoad",
+              "to": "Application.Configuration_ApplyRowLevelSecurity",
+              "to_id": "WideWorldImporters::Application.Configuration_ApplyRowLevelSecurity"
+            }
+          ]
+        },
+        {
+          "hops": [
+            {
+              "from": "DataLoadSimulation.PopulateDataToCurrentDate",
+              "from_id": "WideWorldImporters::DataLoadSimulation.PopulateDataToCurrentDate",
+              "to": "DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures",
+              "to_id": "WideWorldImporters::DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entry": "WideWorldImporters::Sequences.ReseedAllSequences",
+      "entry_name": "Sequences.ReseedAllSequences",
+      "entry_type": "PROCEDURE",
+      "paths": [
+        {
+          "hops": [
+            {
+              "from": "Sequences.ReseedAllSequences",
+              "from_id": "WideWorldImporters::Sequences.ReseedAllSequences",
+              "to": "Sequences.ReseedSequenceBeyondTableValues",
+              "to_id": "WideWorldImporters::Sequences.ReseedSequenceBeyondTableValues"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "entry": "WideWorldImporters::Website.InsertCustomerOrders",
+      "entry_name": "Website.InsertCustomerOrders",
+      "entry_type": "PROCEDURE",
+      "paths": [
+        {
+          "hops": [
+            {
+              "from": "Website.InsertCustomerOrders",
+              "from_id": "WideWorldImporters::Website.InsertCustomerOrders",
+              "to": "Website.CalculateCustomerPrice",
+              "to_id": "WideWorldImporters::Website.CalculateCustomerPrice"
+            }
+          ]
+        }
+      ]
+    }
   ]
 }

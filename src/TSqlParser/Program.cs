@@ -6,9 +6,13 @@
 // Rule -> GOVERNS -> Step, SqlObject -CALLS-> SqlObject, plus Variable nodes.
 //
 // Usage:
-//   dotnet run -- input.json output_graph.json [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore] [--sqlite]
+//   dotnet run -- input.json output_graph.json [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore] [--verify-audit] [--sqlite]
 //
 // --columns: also emit :Column nodes (HAS_COLUMN / READS_COLUMN / WRITES_COLUMN).
+// --verify-audit: after writing --nodestore, validate audit_report.json invariants
+//   (no empty by_type keys, coverage_pct in [0,100], hotspot scores > 0, valid
+//   risk_pattern severities). Exits non-zero if any invariant fails. No-op without
+//   --nodestore. Also applies to update-nodestore.
 // --graphify: also write "<output_graph>.graphify.json" in the flat
 //   { meta, stats, nodes, edges } shape (src/exporter.py-compatible) for Graphify
 //   / D3 / vis-network (viewer.html) - convertible to Cypher for Neo4j.
@@ -32,6 +36,7 @@ var includeColumns = args.Contains("--columns");
 var emitGraphify = args.Contains("--graphify");
 var emitGraphml = args.Contains("--graphml");
 var emitNodeStore = args.Contains("--nodestore");
+var verifyAudit = args.Contains("--verify-audit");
 var emitSqlite = args.Contains("--sqlite");
 
 // "validate <graph.json> [--server <server>]": cross-checks FK_TO/CALLS edges
@@ -234,6 +239,7 @@ if (positional.Count >= 1 && positional[0] == "update-nodestore")
     };
     var updStats = NodeStoreExporter.Update(updGraph, positional[2], updDb, updJsonOptions);
     Console.WriteLine($"Updated: {updStats.ObjectsWritten} objects ({updStats.ObjectsUnchanged} unchanged, {updStats.ObjectsRemoved} removed), shared: {updStats.SharedWritten} ({updStats.SharedUnchanged} unchanged, {updStats.SharedRemoved} removed) -> {positional[2]}");
+    if (verifyAudit) return AuditVerifier.Verify(positional[2]);
     return 0;
 }
 
@@ -305,6 +311,7 @@ if (emitNodeStore)
         : graphOutputPath + ".nodes";
     var nodeStoreStats = NodeStoreExporter.Write(graph, nodeStorePath, db, jsonOptions);
     Console.WriteLine($"NodeStore: {nodeStoreStats.Objects} objects, {nodeStoreStats.SharedNodes} shared nodes, {nodeStoreStats.Edges} edges -> {nodeStorePath}");
+    if (verifyAudit) return AuditVerifier.Verify(nodeStorePath);
 }
 
 // --sqlite: also write "<graphOutputPath without .json>.db" - a single queryable

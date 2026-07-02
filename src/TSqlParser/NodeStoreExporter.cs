@@ -884,10 +884,61 @@ public static class NodeStoreExporter
             })
             .ToList();
 
+        // ── Workflows (Capa 1 extension: appended to model.json) ─────────────
+        // Call chains from entry-point procs/functions (in-degree 0 in CALLS
+        // subgraph) to leaves, for change-strategy planning bottom-up.
+        // Triggers excluded in v1 (event-driven; not invocable). Conditions on
+        // hops are v2 (CALLS edges are SqlObject→SqlObject — step context lost).
+        var callsOutAdj = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        var callsHasIncoming = new HashSet<string>(StringComparer.Ordinal);
+        var triggerIds = new HashSet<string>(
+            graph.Nodes.Where(n => n.Labels.Contains("SqlObject") &&
+                n.Properties.TryGetValue("object_type", out var ot) && ot is string ots && ots == "TRIGGER")
+            .Select(n => n.Id), StringComparer.Ordinal);
+        var procFuncIds = new HashSet<string>(objectIds.Except(triggerIds), StringComparer.Ordinal);
+
+        foreach (var edge in modelEdges)
+        {
+            if ((string)edge["type"] != "CALLS") continue;
+            var from = (string)edge["from"];
+            var to   = (string)edge["to"];
+            if (!procFuncIds.Contains(from) || !procFuncIds.Contains(to)) continue;
+            if (!callsOutAdj.TryGetValue(from, out var tgts))
+                callsOutAdj[from] = tgts = [];
+            tgts.Add(to);
+            callsHasIncoming.Add(to);
+        }
+
+        var entryPoints = procFuncIds
+            .Where(id => !callsHasIncoming.Contains(id) && callsOutAdj.ContainsKey(id))
+            .OrderBy(id => id, StringComparer.Ordinal)
+            .ToList();
+
+        var modelWorkflows = new List<object>();
+        foreach (var entry in entryPoints)
+        {
+            if (!nodeById.TryGetValue(entry, out var entryNode)) continue;
+            var paths = new List<object>();
+            var hops  = new List<(string From, string To)>();
+            var pathVis = new HashSet<string>(StringComparer.Ordinal);
+            BuildWorkflowPaths(entry, callsOutAdj, nodeById, pathVis, hops, paths,
+                               maxDepth: 10, maxPaths: 30, DisplayName);
+            if (paths.Count == 0) continue;
+            modelWorkflows.Add(new Dictionary<string, object>
+            {
+                ["entry"]      = entry,
+                ["entry_name"] = DisplayName(entryNode),
+                ["entry_type"] = entryNode.Properties.TryGetValue("object_type", out var et)
+                                 && et is string ets ? ets : "",
+                ["paths"]      = paths,
+            });
+        }
+
         modelJson = JsonSerializer.Serialize(new Dictionary<string, object>
         {
-            ["nodes"] = modelNodes,
-            ["edges"] = modelEdges,
+            ["nodes"]     = modelNodes,
+            ["edges"]     = modelEdges,
+            ["workflows"] = modelWorkflows,
         }, jsonOptions);
 
         // ── manifest.json + index.json ──────────────────────────────────────
@@ -1075,5 +1126,62 @@ public static class NodeStoreExporter
         if (Directory.Exists(outDir))
             Directory.Delete(outDir, recursive: true);
         Directory.CreateDirectory(outDir);
+    }
+
+    private static void BuildWorkflowPaths(
+        string current,
+        Dictionary<string, List<string>> callsOut,
+        Dictionary<string, GraphNode> nodeById,
+        HashSet<string> pathVisited,
+        List<(string From, string To)> currentHops,
+        List<object> paths,
+        int maxDepth,
+        int maxPaths,
+        Func<GraphNode, string> displayName)
+    {
+        if (paths.Count >= maxPaths) return;
+
+        bool isLeaf = !callsOut.ContainsKey(current) || currentHops.Count >= maxDepth;
+        if (isLeaf)
+        {
+            if (currentHops.Count > 0)
+                paths.Add(SerializeWorkflowPath(currentHops, nodeById, displayName, cycleTarget: null));
+            return;
+        }
+
+        pathVisited.Add(current);
+        foreach (var target in callsOut[current].OrderBy(t => t, StringComparer.Ordinal))
+        {
+            if (paths.Count >= maxPaths) break;
+            currentHops.Add((current, target));
+            if (pathVisited.Contains(target))
+                paths.Add(SerializeWorkflowPath(currentHops, nodeById, displayName, cycleTarget: target));
+            else
+                BuildWorkflowPaths(target, callsOut, nodeById, pathVisited, currentHops, paths, maxDepth, maxPaths, displayName);
+            currentHops.RemoveAt(currentHops.Count - 1);
+        }
+        pathVisited.Remove(current);
+    }
+
+    private static object SerializeWorkflowPath(
+        List<(string From, string To)> hops,
+        Dictionary<string, GraphNode> nodeById,
+        Func<GraphNode, string> displayName,
+        string? cycleTarget)
+    {
+        var serialized = hops.Select((h, i) =>
+        {
+            var entry = new Dictionary<string, object?>
+            {
+                ["from"]    = nodeById.TryGetValue(h.From, out var fn) ? displayName(fn) : h.From,
+                ["from_id"] = h.From,
+                ["to"]      = nodeById.TryGetValue(h.To,   out var tn) ? displayName(tn) : h.To,
+                ["to_id"]   = h.To,
+            };
+            if (cycleTarget != null && i == hops.Count - 1)
+                entry["cycle_back_to"] = cycleTarget;
+            return (object)entry;
+        }).ToList();
+        return new Dictionary<string, object> { ["hops"] = serialized };
     }
 }
