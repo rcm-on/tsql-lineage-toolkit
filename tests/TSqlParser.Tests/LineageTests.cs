@@ -342,6 +342,39 @@ public class LineageTests
     }
 
     [Fact]
+    public void OpenJson_ShreddedColumns_DeriveFromSourceJsonColumn()
+    {
+        // INSERT ... SELECT j.Field FROM T CROSS APPLY OPENJSON(T.Payload) WITH (...) j:
+        // every shredded column is produced from the single source JSON column, so each
+        // written column must DERIVE_FROM that column (and the column must be read).
+        var graph = BuildGraph("""
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                INSERT INTO dbo.OrderLines (LineId, OrderId, Qty)
+                SELECT j.LineId, j.OrderId, j.Qty
+                FROM dbo.Orders o
+                CROSS APPLY OPENJSON(o.Payload) WITH (LineId INT, OrderId INT, Qty INT) j;
+            END
+            """);
+
+        var payload = FindNode(graph, n => n.Labels.Contains("Column")
+            && (string)n.Properties["table"] == "dbo.orders" && (string)n.Properties["name"] == "Payload");
+        Assert.NotNull(payload);
+        // The JSON source column is read...
+        Assert.NotNull(FindRel(graph, "READS_COLUMN", r => r.EndNodeId == payload!.Id));
+        // ...and each written column derives from it.
+        foreach (var col in new[] { "LineId", "OrderId", "Qty" })
+        {
+            var target = FindNode(graph, n => n.Labels.Contains("Column")
+                && (string)n.Properties["table"] == "dbo.orderlines" && (string)n.Properties["name"] == col);
+            Assert.NotNull(target);
+            Assert.NotNull(FindRel(graph, "DERIVES_FROM",
+                r => r.StartNodeId == target!.Id && r.EndNodeId == payload!.Id));
+        }
+    }
+
+    [Fact]
     public void CteAlias_IsNotEmittedAsTable()
     {
         var sql = """

@@ -1013,6 +1013,23 @@ public static class AstWalker
         var map = new Dictionary<string, (string Table, string Column)>(StringComparer.OrdinalIgnoreCase);
         foreach (var tref in FlattenTableRefs(fromClause))
         {
+            // OPENJSON(<jsonCol>) WITH (...) AS j: every column of alias j is shredded from
+            // the single source JSON column, so map the alias to that base column exactly like
+            // xml .nodes() below. Lets projected "j.Field" accessors trace back to the JSON
+            // column and derive from it.
+            if (tref is OpenJsonTableReference { Alias.Value: { Length: > 0 } ojAlias, Variable: ColumnReferenceExpression { MultiPartIdentifier.Identifiers: { Count: >= 1 } ojIds } })
+            {
+                var ojColumn = ojIds[^1].Value;
+                var ojQualifier = ojIds.Count >= 2 ? ojIds[^2].Value : null;
+                (string Table, string Column)? ojSrc =
+                    ojQualifier != null && map.TryGetValue(ojQualifier, out var ojChained) ? ojChained
+                    : ojQualifier != null ? ResolveAlias(ojQualifier, ojColumn, tableRefs)
+                    : tableRefs.Count == 1 ? (tableRefs[0].Table, ojColumn)
+                    : null;
+                if (ojSrc is { } ojs)
+                    map[ojAlias] = ojs;
+                continue;
+            }
             if (tref is not SchemaObjectFunctionTableReference fn)
                 continue;
             var alias = fn.Alias?.Value;
@@ -1188,15 +1205,32 @@ public static class AstWalker
         if (tableRefs.Count == 0)
             return empty;
 
+        // CROSS/OUTER APPLY xml .nodes() / OPENJSON(<col>) WITH(...) aliases -> the base
+        // column they shred, so "applyAlias.Field" refs resolve to (and derive from) the
+        // real source column instead of dead-ending at the invisible apply alias.
+        var applyMap = BuildXmlApplyMap(qs.FromClause, tableRefs);
+
         var allRefs = new List<(string? Qualifier, string Column)>();
         foreach (var el in qs.SelectElements)
             if (el is SelectScalarExpression sse)
             {
                 var collector = new QualifiedColumnCollector();
                 sse.Expression.Accept(collector);
-                allRefs.AddRange(collector.Refs);
+                foreach (var rf in collector.Refs)
+                    if (!(rf.Qualifier != null && applyMap.ContainsKey(rf.Qualifier)))
+                        allRefs.Add(rf);
             }
         var (_, extrasFromCols) = SplitColumnsByTable(allRefs, tableRefs);
+        // Each apply-shredded source column is genuinely read even though its only mention
+        // is the apply target (invisible to the select list) - add it as a read.
+        foreach (var src in applyMap.Values)
+        {
+            var idx = extrasFromCols.FindIndex(e => string.Equals(e.Table, src.Table, StringComparison.OrdinalIgnoreCase));
+            if (idx < 0)
+                extrasFromCols.Add(new TableColumnRef(src.Table, new[] { src.Column }));
+            else if (!extrasFromCols[idx].Columns.Contains(src.Column, StringComparer.OrdinalIgnoreCase))
+                extrasFromCols[idx] = new TableColumnRef(src.Table, extrasFromCols[idx].Columns.Append(src.Column).ToArray());
+        }
         var extraReads = BuildExtraReads(tableRefs, extrasFromCols, skipFirst: false);
 
         var lineage = new List<ColumnDerivation>();
@@ -1212,13 +1246,26 @@ public static class AstWalker
                 if (collector.Refs.Count == 0)
                     continue;
 
-                var (primaryCols, extras) = SplitColumnsByTable(collector.Refs, tableRefs);
+                // Split refs into apply-shredded (resolve through the map to their base
+                // column) and normal (alias->table resolution), like ViewColumnLineage.
+                var normalRefs = new List<(string? Qualifier, string Column)>();
+                var applyResolved = new List<(string Table, string Column)>();
+                foreach (var rf in collector.Refs)
+                    if (rf.Qualifier != null && applyMap.TryGetValue(rf.Qualifier, out var applySrc))
+                        applyResolved.Add(applySrc);
+                    else
+                        normalRefs.Add(rf);
+
+                var (primaryCols, extras) = SplitColumnsByTable(normalRefs, tableRefs);
                 var exprText = SqlText.Generate(sse.Expression);
                 var exprOps = OperatorClassifier.Classify(sse.Expression);
                 if (primaryCols.Count > 0)
                     lineage.Add(new ColumnDerivation(insColumns[i], tableRefs[0].Table, primaryCols, exprText, exprOps));
                 foreach (var extra in extras)
                     lineage.Add(new ColumnDerivation(insColumns[i], extra.Table, extra.Columns, exprText, exprOps));
+                foreach (var grp in applyResolved.GroupBy(x => x.Table, StringComparer.OrdinalIgnoreCase))
+                    lineage.Add(new ColumnDerivation(insColumns[i], grp.Key,
+                        grp.Select(x => x.Column).Distinct(StringComparer.OrdinalIgnoreCase).ToList(), exprText, exprOps));
             }
         }
         return (lineage, extraReads);

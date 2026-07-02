@@ -94,7 +94,7 @@ T-SQL, tres preguntas que hoy están dispersas en la suite de tests, en
 |---|---|---|---|
 | `PIVOT` / `UNPIVOT` | no | ❌ gap real | rompe `Sales.vSalesPersonSalesByFiscalYears` (AW) |
 | `XQuery .value()` / `.query()` | no | ❌ gap real | rompe `vProductModelCatalogDescription`, `vProductModelInstructions` (AW) |
-| `OPENJSON` / `JSON_VALUE` | tabla sí, columna no | 🟡 sondeado 2026-07-03 | `INSERT ... OPENJSON(x) WITH(...)` captura `WRITES_TO`/`READS_FROM` a nivel tabla; las columnas escritas **no derivan** del JSON de origen (provenance de columna opaca) |
+| `OPENJSON` / `JSON_VALUE` | **sí** | ✅ **arreglado 2026-07-03** | `BuildXmlApplyMap` trata `OPENJSON(<col>) WITH(...) AS j` como el shredding XML: el alias `j` mapea a la columna JSON de origen, así que las columnas troceadas dan `READS_COLUMN` de `Payload` y las escritas `DERIVES_FROM` `Payload`. Test `OpenJson_ShreddedColumns_DeriveFromSourceJsonColumn` |
 | `CROSS/OUTER APPLY` con TVF | **sí** | ✅ **arreglado 2026-07-03** | `FunctionCallCollector.Visit(SchemaObjectFunctionTableReference)` emite `CALLS` a la TVF; el impacto llega a la tabla base por la cadena (proc `CALLS` tvf `READS_FROM` base). Test `Tvf_InvokedViaCrossApply_ProducesCallsEdge`. WWI sin regresión |
 | Sinónimos (`CREATE SYNONYM`) | **sí** | ✅ **arreglado 2026-07-03** | router `from-sql` reconoce `SYNONYM`; `object_type=SYNONYM`; referencias se resuelven a la tabla base (`READS_FROM`/`WRITES_TO` reales) + arista `ALIAS_OF`. Test: `Synonym_ReadThroughSynonym_ResolvesToBaseTable`. Gates WWI sin regresión |
 | UDF escalar (`dbo.fn(...)` en `SELECT`) | **sí** | ✅ sondeado 2026-07-03 | genera `CALLS` a la función + lectura de las columnas argumento |
