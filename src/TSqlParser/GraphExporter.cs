@@ -101,7 +101,11 @@ public static class GraphExporter
             // CALLS/EXEC lookup - whose database segment comes from arbitrary SQL
             // text casing, not from an ObjectName - reliably matches regardless of
             // case (see ResolveCalleeKey below).
-            byPlainName[(NormalizeRef(db), NormalizeRef(plain))] = r.ObjectName;
+            // Synonyms are deliberately excluded: a reference to a synonym must resolve
+            // as a *table read* of its base object (redirected later by ResolveSynonyms),
+            // not as an object reference (TARGETS) that would shadow the READS_FROM.
+            if (r.ObjectType != "SYNONYM")
+                byPlainName[(NormalizeRef(db), NormalizeRef(plain))] = r.ObjectName;
 
             if (r.ObjectType == "VIEW")
             {
@@ -1033,6 +1037,16 @@ public static class GraphExporter
             }
         }
 
+        // ── Synonym resolution ────────────────────────────────────────────────
+        // A CREATE SYNONYM makes `dbo.synOrders` an alias for a real object. Without
+        // resolution a reader of the synonym points at a phantom :Table node distinct
+        // from the base table, so impact analysis is split between the alias and its
+        // target ("who reads Orders?" would miss readers that go through the synonym).
+        // Redirect every edge (and column) referencing a synonym's table node onto the
+        // base object's table node, drop the now-orphan synonym node, and record the
+        // alias as a documentary ALIAS_OF edge from the synonym's SqlObject.
+        ResolveSynonyms(graph, results, tableIds);
+
         // Promote the SQL containment hierarchy (Database -> Schema -> Object/Table)
         // to real nodes, so "everything in schema Sales" / "impact across this database"
         // is a graph traversal instead of string-parsing the `database`/`schema`
@@ -1414,6 +1428,80 @@ public static class GraphExporter
     }
 
     /// <summary>Returns the (possibly newly-created) :Table node for "db.tableName", de-duplicated via tableIds.</summary>
+    /// <summary>
+    /// Resolves CREATE SYNONYM aliases: redirects every relationship (and column node)
+    /// that points at a synonym's :Table node onto the base object's :Table node, so the
+    /// impact graph treats a read/write through the synonym as a read/write of the real
+    /// table. Drops the orphan synonym :Table node and adds an ALIAS_OF edge from the
+    /// synonym's SqlObject to the base table for documentation. Identical edges created by
+    /// the redirect are de-duplicated. No-op when there are no synonyms.
+    /// </summary>
+    private static void ResolveSynonyms(GraphPayload graph, List<ObjectResult> results, Dictionary<(string db, string name), string> tableIds)
+    {
+        var synonyms = results.Where(r => r.ObjectType == "SYNONYM" && r.SynonymTarget.Length > 0).ToList();
+        if (synonyms.Count == 0)
+            return;
+
+        // Build a single id-remap: each synonym's :Table node (and its column nodes) -> the
+        // base object's :Table node (and matching base columns). "<synTableId>" -> "<baseTableId>",
+        // "<synTableId>:column:X" -> "<baseTableId>:column:X".
+        var tableRemap = new Dictionary<string, string>();       // synTableId -> baseTableId
+        var aliasEdges = new List<GraphRel>();
+        foreach (var syn in synonyms)
+        {
+            var (synDb, synPlain) = SplitName(syn.ObjectName);
+            var synTableId = $"{synDb}:table:{NormalizeRef(synPlain)}";
+            var (baseTableId, _) = GetOrCreateTable(graph, tableIds, synDb, syn.SynonymTarget);
+            if (synTableId == baseTableId || tableRemap.ContainsKey(synTableId))
+                continue;
+            tableRemap[synTableId] = baseTableId;
+            if (graph.Nodes.Any(n => n.Id == syn.ObjectName))
+                aliasEdges.Add(new GraphRel
+                {
+                    Type = "ALIAS_OF",
+                    StartNodeId = syn.ObjectName,
+                    EndNodeId = baseTableId,
+                    Properties = new Dictionary<string, object> { ["target"] = syn.SynonymTarget },
+                });
+        }
+        if (tableRemap.Count == 0)
+            return;
+
+        string Remap(string id)
+        {
+            if (tableRemap.TryGetValue(id, out var baseId))
+                return baseId;
+            var colIdx = id.IndexOf(":column:", StringComparison.Ordinal);
+            if (colIdx > 0 && tableRemap.TryGetValue(id.Substring(0, colIdx), out var baseTbl))
+                return baseTbl + id.Substring(colIdx);
+            return id;
+        }
+
+        // GraphRel is init-only, so rebuild the list with remapped endpoints instead of
+        // mutating in place. De-duplicate exact (Type, Start, End) edges the redirect can
+        // create (e.g. two HAS_COLUMN to the same base column); distinct Steps reading the
+        // same table keep their own edges (different StartNodeId), so nothing real is lost.
+        var rebuilt = new List<GraphRel>(graph.Relationships.Count);
+        var seen = new HashSet<(string, string, string)>();
+        foreach (var rel in graph.Relationships.Concat(aliasEdges))
+        {
+            var start = Remap(rel.StartNodeId);
+            var end = Remap(rel.EndNodeId);
+            if (!seen.Add((rel.Type, start, end)))
+                continue;
+            rebuilt.Add(start == rel.StartNodeId && end == rel.EndNodeId
+                ? rel
+                : new GraphRel { Type = rel.Type, StartNodeId = start, EndNodeId = end, Properties = rel.Properties });
+        }
+        graph.Relationships.Clear();
+        graph.Relationships.AddRange(rebuilt);
+
+        // Drop each synonym's now-orphan :Table node and its column nodes (edges point at base).
+        graph.Nodes.RemoveAll(n =>
+            tableRemap.ContainsKey(n.Id) ||
+            (n.Id.IndexOf(":column:", StringComparison.Ordinal) is var ci && ci > 0 && tableRemap.ContainsKey(n.Id.Substring(0, ci))));
+    }
+
     private static (string tableId, string tableName) GetOrCreateTable(GraphPayload graph, Dictionary<(string db, string name), string> tableIds, string db, string tableName)
     {
         var tableKey = (db, NormalizeRef(tableName));

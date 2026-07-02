@@ -2037,5 +2037,21 @@ public static class AstWalker
             if (_seen.Add(name))
                 Names.Add(name);
         }
+
+        public override void Visit(SchemaObjectFunctionTableReference node)
+        {
+            // A table-valued function invoked as a table source ("FROM dbo.tvf(...)",
+            // "CROSS/OUTER APPLY dbo.tvf(...)"): collected so a CALLS edge links the caller
+            // to the TVF exactly like a scalar UDF call - otherwise the TVF (and its
+            // transitive reads of base tables) is invisible to impact analysis. XML
+            // ".nodes()" shredding and other pseudo-functions produce names that match no
+            // analyzed object, so GraphExporter filters them out (resolution against the
+            // known object set), the same way built-in scalar functions are ignored.
+            if (node.SchemaObject == null)
+                return;
+            var name = SqlText.Generate(node.SchemaObject);
+            if (_seen.Add(name))
+                Names.Add(name);
+        }
     }
 }

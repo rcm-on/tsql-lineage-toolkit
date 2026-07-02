@@ -273,6 +273,75 @@ public class LineageTests
     }
 
     [Fact]
+    public void Synonym_ReadThroughSynonym_ResolvesToBaseTable()
+    {
+        // A CREATE SYNONYM must not split impact analysis: a proc that reads through the
+        // synonym must show up as a reader of the real base table, not of a phantom
+        // ":table:dbo.synorders" node. Requires two objects (the synonym + its consumer).
+        var synonym = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.synOrders", "CREATE SYNONYM dbo.synOrders FOR dbo.Orders;");
+        Assert.Null(synonym.Error);
+        Assert.Equal("SYNONYM", synonym.ObjectType);
+
+        var reader = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.TestProc", """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                SELECT OrderId FROM dbo.synOrders;
+            END
+            """);
+        Assert.Null(reader.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { synonym, reader }, includeColumns: true);
+
+        // The phantom synonym :Table node is gone; the base table exists and is read.
+        Assert.Null(FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.synOrders"));
+        var orders = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Orders");
+        Assert.NotNull(orders);
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == orders!.Id));
+
+        // The synonym's SqlObject is retained and documents the alias.
+        Assert.NotNull(FindRel(graph, "ALIAS_OF",
+            r => r.StartNodeId == $"{Db}::dbo.synOrders" && r.EndNodeId == orders!.Id));
+    }
+
+    [Fact]
+    public void Tvf_InvokedViaCrossApply_ProducesCallsEdge()
+    {
+        // A table-valued function invoked as a table source (CROSS APPLY dbo.tvf(...)) must
+        // link the caller to the TVF with a CALLS edge, so impact reaches the TVF's base
+        // tables through the call chain instead of the TVF being invisible.
+        var tvf = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.tvfOrders", """
+            CREATE FUNCTION dbo.tvfOrders(@cid INT)
+            RETURNS TABLE
+            AS
+            RETURN (SELECT OrderId FROM dbo.Orders WHERE CustomerId = @cid);
+            """);
+        Assert.Null(tvf.Error);
+
+        var caller = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.TestProc", """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                SELECT t.OrderId
+                FROM dbo.Customers c
+                CROSS APPLY dbo.tvfOrders(c.CustomerId) t;
+            END
+            """);
+        Assert.Null(caller.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { tvf, caller }, includeColumns: true);
+
+        // The caller CALLS the TVF (invoked as a table source via CROSS APPLY).
+        Assert.NotNull(FindRel(graph, "CALLS",
+            r => r.StartNodeId == $"{Db}::dbo.TestProc" && r.EndNodeId == $"{Db}::dbo.tvfOrders"));
+        // The TVF's body reads the base table, so impact reaches Orders through the call.
+        var orders = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Orders");
+        Assert.NotNull(orders);
+        Assert.NotNull(FindRel(graph, "READS_FROM",
+            r => r.StartNodeId.StartsWith($"{Db}::dbo.tvfOrders") && r.EndNodeId == orders!.Id));
+    }
+
+    [Fact]
     public void CteAlias_IsNotEmittedAsTable()
     {
         var sql = """

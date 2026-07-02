@@ -14,7 +14,7 @@ namespace TSqlParser;
 public static class SqlFileLoader
 {
     private static readonly Regex CreateRegex = new(
-        @"CREATE\s+(?:OR\s+ALTER\s+)?(?:PROC(?:EDURE)?|FUNCTION|TRIGGER|VIEW|TABLE)\s+(\[?[\w$]+\]?)(?:\s*\.\s*(\[?[\w$]+\]?))?",
+        @"CREATE\s+(?:OR\s+ALTER\s+)?(?:PROC(?:EDURE)?|FUNCTION|TRIGGER|VIEW|TABLE|SYNONYM)\s+(\[?[\w$]+\]?)(?:\s*\.\s*(\[?[\w$]+\]?))?",
         RegexOptions.IgnoreCase);
 
     public static int Run(string database, string outputPath, IReadOnlyList<string> sqlFilePaths)

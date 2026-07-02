@@ -94,10 +94,11 @@ T-SQL, tres preguntas que hoy están dispersas en la suite de tests, en
 |---|---|---|---|
 | `PIVOT` / `UNPIVOT` | no | ❌ gap real | rompe `Sales.vSalesPersonSalesByFiscalYears` (AW) |
 | `XQuery .value()` / `.query()` | no | ❌ gap real | rompe `vProductModelCatalogDescription`, `vProductModelInstructions` (AW) |
-| `OPENJSON` / `JSON_VALUE` | ? | ❓ no sondeado | candidato de la checklist F pendiente |
-| `CROSS/OUTER APPLY` con TVF | ? | ❓ no sondeado | — |
-| Sinónimos (`CREATE SYNONYM`) | ? | ❓ no sondeado | — |
-| UDF escalar / TVF multi-statement (lineage a través de la función) | ? | ❓ no sondeado | — |
+| `OPENJSON` / `JSON_VALUE` | tabla sí, columna no | 🟡 sondeado 2026-07-03 | `INSERT ... OPENJSON(x) WITH(...)` captura `WRITES_TO`/`READS_FROM` a nivel tabla; las columnas escritas **no derivan** del JSON de origen (provenance de columna opaca) |
+| `CROSS/OUTER APPLY` con TVF | **sí** | ✅ **arreglado 2026-07-03** | `FunctionCallCollector.Visit(SchemaObjectFunctionTableReference)` emite `CALLS` a la TVF; el impacto llega a la tabla base por la cadena (proc `CALLS` tvf `READS_FROM` base). Test `Tvf_InvokedViaCrossApply_ProducesCallsEdge`. WWI sin regresión |
+| Sinónimos (`CREATE SYNONYM`) | **sí** | ✅ **arreglado 2026-07-03** | router `from-sql` reconoce `SYNONYM`; `object_type=SYNONYM`; referencias se resuelven a la tabla base (`READS_FROM`/`WRITES_TO` reales) + arista `ALIAS_OF`. Test: `Synonym_ReadThroughSynonym_ResolvesToBaseTable`. Gates WWI sin regresión |
+| UDF escalar (`dbo.fn(...)` en `SELECT`) | **sí** | ✅ sondeado 2026-07-03 | genera `CALLS` a la función + lectura de las columnas argumento |
+| TVF inline / multi-statement (lineage a través de la función) | sí (a nivel objeto) | ✅ 2026-07-03 | la TVF captura su propia lectura de tabla base + la invocación `APPLY tvf(...)` ya la enlaza con `CALLS`. Pendiente fino: mapear columnas de salida de la TVF a las del llamador (lineage de columna a través de la función) |
 | Triggers `inserted`/`deleted` (más allá de `MERGE OUTPUT`) | parcial | ❓ no sondeado | la mecánica `inserted`/`deleted` existe por el fix de OUTPUT |
 
 ---
