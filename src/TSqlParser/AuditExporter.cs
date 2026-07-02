@@ -60,6 +60,13 @@ internal static class AuditExporter
         var outputColsMap = new Dictionary<string, List<string>>(StringComparer.Ordinal);
         var connectedTableIds = new HashSet<string>(StringComparer.Ordinal);
 
+        // For impact.via_calls: CALLS adjacency (SqlObject→SqlObject)
+        var callsOutAdj = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+        // For impact.via_data: tableId → set of owning SqlObjects that read it
+        var tableReaderIds = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
+        // For impact.via_data: ownerId → set of tableIds written
+        var writesToIds = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
+
         var macroSeen = new HashSet<(string Type, string From, string To)>();
 
         foreach (var rel in graph.Relationships)
@@ -76,6 +83,12 @@ internal static class AuditExporter
                     {
                         BumpDeg(rel.StartNodeId);
                         BumpDeg(rel.EndNodeId);
+                        if (rel.Type == "CALLS" && objectIds.Contains(rel.StartNodeId) && objectIds.Contains(rel.EndNodeId))
+                        {
+                            if (!callsOutAdj.TryGetValue(rel.StartNodeId, out var cl))
+                                callsOutAdj[rel.StartNodeId] = cl = [];
+                            cl.Add(rel.EndNodeId);
+                        }
                     }
                     break;
                 }
@@ -97,6 +110,9 @@ internal static class AuditExporter
                         BumpDeg(rel.EndNodeId);
                         if (nodeById.TryGetValue(rel.EndNodeId, out var tbl))
                             ListAppend(writesToMap, owner, FullName(tbl));
+                        if (!writesToIds.TryGetValue(owner, out var ws))
+                            writesToIds[owner] = ws = new(StringComparer.Ordinal);
+                        ws.Add(rel.EndNodeId);
                     }
                     break;
                 }
@@ -113,6 +129,9 @@ internal static class AuditExporter
                         BumpDeg(rel.EndNodeId);
                         if (nodeById.TryGetValue(rel.EndNodeId, out var tbl))
                             ListAppend(readsFromMap, owner, FullName(tbl));
+                        if (!tableReaderIds.TryGetValue(rel.EndNodeId, out var rs))
+                            tableReaderIds[rel.EndNodeId] = rs = new(StringComparer.Ordinal);
+                        rs.Add(owner);
                     }
                     break;
                 }
@@ -136,15 +155,17 @@ internal static class AuditExporter
         // (parser failed closed; WRITES_TO/READS_FROM are an undercount).
 
         var unresolvedMap = new Dictionary<string, int>(StringComparer.Ordinal);
+        var dynamicMap = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var n in graph.Nodes)
         {
             if (!n.Labels.Contains("Step")) continue;
             var owner = ObjectOwner(n.Id);
             if (owner == null) continue;
-            if (n.Properties.TryGetValue("is_dynamic_sql", out var dyn) && dyn is true
-                && (!n.Properties.TryGetValue("dynamic_sql", out var ds) || ds is not string { Length: > 0 }))
+            if (n.Properties.TryGetValue("is_dynamic_sql", out var dyn) && dyn is true)
             {
-                unresolvedMap[owner] = unresolvedMap.GetValueOrDefault(owner) + 1;
+                dynamicMap[owner] = dynamicMap.GetValueOrDefault(owner) + 1;
+                if (!n.Properties.TryGetValue("dynamic_sql", out var ds) || ds is not string { Length: > 0 })
+                    unresolvedMap[owner] = unresolvedMap.GetValueOrDefault(owner) + 1;
             }
         }
 
@@ -370,6 +391,121 @@ internal static class AuditExporter
             .Select(r => r.entry)
             .ToList();
 
+        // ── 6b. catalog_driven_dynamic_sql (behavioural blind spot) ──────────
+        // A DISTINCT kind of blind spot from `blind_spots`: there the dynamic SQL
+        // *string* failed to resolve. Here the string resolves fine, but the object
+        // reads the system catalog (sys.*) to decide WHICH objects to act on at
+        // run time. Resolving the string is not understanding the behaviour: the
+        // set of objects it dispatches to depends on live catalog state, so its
+        // WRITES_TO/READS_FROM can still be an undercount even with unresolved=0.
+        // Signal = builds dynamic SQL (dynamic_sql_steps > 0) AND reads sys.*.
+
+        static bool IsCatalog(string tableName) =>
+            tableName.StartsWith("sys.", StringComparison.OrdinalIgnoreCase);
+
+        var catalogDriven = new List<(int dyn, object entry)>();
+        foreach (var id in objectIds)
+        {
+            var dynSteps = dynamicMap.GetValueOrDefault(id);
+            if (dynSteps == 0) continue;
+            var catalogReads = (readsFromMap.GetValueOrDefault(id) ?? new())
+                .Where(IsCatalog)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(s => s, StringComparer.Ordinal)
+                .ToList();
+            if (catalogReads.Count == 0) continue;
+            var n = nodeById[id];
+            catalogDriven.Add((dynSteps, (object)new Dictionary<string, object>
+            {
+                ["id"] = id,
+                ["name"] = FullName(n),
+                ["type"] = ObjType(n),
+                ["dynamic_sql_steps"] = dynSteps,
+                ["unresolved_dynamic_sql_steps"] = unresolvedMap.GetValueOrDefault(id),
+                ["catalog_reads"] = catalogReads,
+                ["reason"] = "builds dynamic SQL and reads the system catalog to select objects at run time; "
+                           + "its WRITES_TO/READS_FROM may undercount the objects it dispatches to, even when the dynamic SQL string itself resolved",
+            }));
+        }
+
+        var catalogDrivenBlindSpots = catalogDriven
+            .OrderByDescending(x => x.dyn)
+            .Select(x => x.entry)
+            .ToList();
+
+        // ── 7. impact ────────────────────────────────────────────────────────
+        // Per-object blast radius: via_calls = transitive CALLS closure (BFS),
+        // via_data = tables written by this object that other objects read.
+        // Only objects with non-empty impact are included.
+
+        var impact = new Dictionary<string, object>(StringComparer.Ordinal);
+        foreach (var id in objectIds.OrderBy(x => x, StringComparer.Ordinal))
+        {
+            if (!nodeById.TryGetValue(id, out var impNode)) continue;
+
+            // via_calls: BFS over CALLS adjacency
+            var viaCalls = new List<object>();
+            var bfsVisited = new HashSet<string>(StringComparer.Ordinal) { id };
+            var bfsQueue = new Queue<(string Id, int Depth)>();
+            if (callsOutAdj.TryGetValue(id, out var directCallees))
+                foreach (var t in directCallees.OrderBy(x => x, StringComparer.Ordinal))
+                    bfsQueue.Enqueue((t, 1));
+
+            while (bfsQueue.Count > 0)
+            {
+                var (cur, depth) = bfsQueue.Dequeue();
+                if (depth > 20 || viaCalls.Count >= 200) break;
+                if (!nodeById.TryGetValue(cur, out var cn)) continue;
+                bool isCycle = bfsVisited.Contains(cur);
+                var callEntry = new Dictionary<string, object?>
+                {
+                    ["object"] = FullName(cn),
+                    ["object_id"] = cur,
+                    ["depth"] = depth,
+                    ["type"] = ObjType(cn),
+                };
+                if (isCycle) callEntry["cycle_entry"] = true;
+                viaCalls.Add(callEntry);
+                if (!isCycle)
+                {
+                    bfsVisited.Add(cur);
+                    if (callsOutAdj.TryGetValue(cur, out var next))
+                        foreach (var t in next.OrderBy(x => x, StringComparer.Ordinal))
+                            bfsQueue.Enqueue((t, depth + 1));
+                }
+            }
+
+            // via_data: tables written by this object → who else reads them
+            var viaData = new List<object>();
+            if (writesToIds.TryGetValue(id, out var writtenTables))
+            {
+                foreach (var tblId in writtenTables.OrderBy(x => x, StringComparer.Ordinal))
+                {
+                    if (!nodeById.TryGetValue(tblId, out var tblNode)) continue;
+                    var consumers = (tableReaderIds.GetValueOrDefault(tblId) ?? [])
+                        .Where(r => r != id)
+                        .OrderBy(r => r, StringComparer.Ordinal)
+                        .Select(r => nodeById.TryGetValue(r, out var rn) ? FullName(rn) : r)
+                        .ToList();
+                    if (consumers.Count > 0)
+                        viaData.Add(new Dictionary<string, object>
+                        {
+                            ["table"] = FullName(tblNode),
+                            ["consumers"] = consumers,
+                        });
+                }
+            }
+
+            if (viaCalls.Count == 0 && viaData.Count == 0) continue;
+            impact[id] = new Dictionary<string, object>
+            {
+                ["name"] = FullName(impNode),
+                ["type"] = ObjType(impNode),
+                ["via_calls"] = viaCalls,
+                ["via_data"] = viaData,
+            };
+        }
+
         // ── assemble ─────────────────────────────────────────────────────
 
         var report = new Dictionary<string, object>
@@ -378,9 +514,11 @@ internal static class AuditExporter
             ["summary"] = summary,
             ["hotspots"] = hotspots,
             ["blind_spots"] = blindSpots,
+            ["catalog_driven_dynamic_sql"] = catalogDrivenBlindSpots,
             ["orphan_tables"] = orphanTables,
             ["lineage_coverage"] = lineageCoverage,
             ["risk_patterns"] = riskPatterns,
+            ["impact"] = impact,
         };
 
         return JsonSerializer.Serialize(report, jsonOptions);
