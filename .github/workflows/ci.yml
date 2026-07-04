@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    name: Build & test (non-Oracle)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build
+        run: dotnet build src/TSqlParser/TSqlParser.csproj -c Release
+
+      - name: Test (Category!=Oracle)
+        run: dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category!=Oracle"
+
+  # Oracle tests (ViewLineageOracleTests) compare against a live SQL Server holding
+  # WideWorldImporters + AdventureWorks2019, and are excluded from the job above via
+  # the Category!=Oracle filter (see docs/task-gates-dotnet.md, Paso 3).
+  #
+  # TODO: this job is NOT implemented. Investigated for Paso 4 (2026-07-04) and found
+  # genuinely blocked, not just fiddly:
+  #   - src/TSqlParser/{DbValidator,ObjectExtractor,TableSchemaExtractor}.cs build the
+  #     connection string with "Integrated Security=true" (Windows auth), hardcoded.
+  #     That file is off-limits for this task (invariant 1 in task-gates-dotnet.md:
+  #     zero behavior changes in src/TSqlParser/), so the connection mode can't be
+  #     swapped to SQL auth to accommodate a container.
+  #   - mcr.microsoft.com/mssql/server (Linux container, the only official SQL Server
+  #     image runnable on a hosted GitHub Actions runner) only supports SQL auth,
+  #     not Windows Integrated Security — there is no AD/Kerberos setup available in
+  #     an ephemeral hosted runner to make Integrated Security work against it.
+  #   - A windows-latest runner has no preinstalled SQL Server instance, and standing
+  #     one up plus restoring both WideWorldImporters-Full.bak and an
+  #     AdventureWorks2019 backup (from the public microsoft/sql-server-samples and
+  #     Microsoft docs releases respectively) with paths matching what RESTORE
+  #     DATABASE expects is a separate, sizeable piece of work on its own.
+  #
+  # Until TSqlParser accepts a SQL-auth connection string (or a self-hosted runner
+  # with a pre-provisioned instance is available), this job stays a stub. Do not
+  # wire it up by weakening the Oracle trait filter in the job above.
+  oracle-tests:
+    name: "Oracle tests (WWI + AdventureWorks2019) — TODO, not implemented"
+    if: false
+    runs-on: windows-latest
+    steps:
+      - run: echo "See TODO comment above oracle-tests in this file."
