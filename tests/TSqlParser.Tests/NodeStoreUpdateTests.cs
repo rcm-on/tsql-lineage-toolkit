@@ -73,6 +73,14 @@ public class NodeStoreUpdateTests : IDisposable
         return JsonSerializer.Serialize(dict, JsonOptions);
     }
 
+    /// <summary>audit_report.json content with its top-level generated_at removed, same rationale as NormalizedIndexJson.</summary>
+    private static string NormalizedAuditJson(string json)
+    {
+        var dict = JsonSerializer.Deserialize<Dictionary<string, object>>(json)!;
+        dict.Remove("generated_at");
+        return JsonSerializer.Serialize(dict, JsonOptions);
+    }
+
     [Fact]
     public void Update_NoChange_LeavesAllFilesUnchanged()
     {
@@ -97,7 +105,10 @@ public class NodeStoreUpdateTests : IDisposable
         {
             if (f == "index.json")
                 continue; // generated_at always refreshed
-            Assert.Equal(beforeContent[f], File.ReadAllText(Path.Combine(store, f)));
+            if (f == "audit_report.json")
+                Assert.Equal(NormalizedAuditJson(beforeContent[f]), NormalizedAuditJson(File.ReadAllText(Path.Combine(store, f))));
+            else
+                Assert.Equal(beforeContent[f], File.ReadAllText(Path.Combine(store, f)));
         }
     }
 
@@ -436,6 +447,10 @@ public class NodeStoreUpdateTests : IDisposable
             if (f == "index.json")
             {
                 Assert.Equal(NormalizedIndexJson(pathB), NormalizedIndexJson(pathA));
+            }
+            else if (f == "audit_report.json")
+            {
+                Assert.Equal(NormalizedAuditJson(File.ReadAllText(pathB)), NormalizedAuditJson(File.ReadAllText(pathA)));
             }
             else
             {
