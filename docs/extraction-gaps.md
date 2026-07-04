@@ -186,3 +186,17 @@ queda en `""` cuando no (ver `index.json.howto.exec_resolution`, `NodeStoreExpor
   mide recall de columna (eso es la métrica A2, pendiente). El gap de PIVOT
   (1 vista AW) encontrado por el gate Oracle del Paso 3 es independiente y ya
   está documentado allí.
+
+### 6.1 RESUELTO (2026-07-04, verificado por auditoría independiente)
+
+Fix en `AstWalker`/`SqlAnalyzer`/`Models` (implementado por Opus, auditado por
+Fable): `WalkContext.TriggerOnTable` captura la tabla del `ON` y el walker
+siembra `inserted`/`deleted` como pseudo-CTEs que resuelven a ella,
+**preservando el alias** (`FROM inserted AS i` → `i.Col` sigue resolviendo).
+Test de regresión: `Trigger_InsertedDeleted_ResolveToOnTable_NoPhantomTables`.
+Medido tras el fix sobre AdventureWorks2019 completa: tablas fantasma **10 → 0**
+(grafo 1136 → 1120 nodos), recall vs oráculo intacto **152/152 (100%)**, y 3
+pares nuevos legítimos que el oráculo ni registra (el trigger ahora depende de
+su tabla ON real: `iWorkOrder/uWorkOrder → Production.WorkOrder`,
+`dVendor → Purchasing.Vendor`). Gates sin regresión: suite 106/106, Oracle
+2/2 (WWI 14/14·12/12·6/6), bad-practices OK=38.

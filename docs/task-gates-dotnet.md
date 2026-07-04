@@ -260,6 +260,79 @@ tests/gates de los pasos 0-1 no modificados.
   seguridad.
 - **Salida:** badge verde en el repo; ningún gate depende de una máquina concreta.
 
+**CERRADO (2026-07-04) — verificado, no narrado:**
+
+1. **`.github/workflows/ci.yml`** (nuevo): job `test` en `push`/`pull_request` a
+   `master`, `runs-on: windows-latest` (mismo SO que la verificación local, sin
+   sorpresas de rutas), `actions/setup-dotnet@v4` con `.NET 10`,
+   `dotnet build src/TSqlParser/TSqlParser.csproj -c Release` seguido de
+   `dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release
+   --filter "Category!=Oracle"`. Cualquier test en rojo hace fallar el step (y
+   el workflow) por comportamiento estándar de `dotnet test`.
+2. **NU1903 eliminado.** Causa raíz: `TSqlParser.csproj` fijaba
+   `Microsoft.Data.Sqlite 9.0.0`, que arrastra `SQLitePCLRaw.lib.e_sqlite3
+   2.1.10` (vulnerabilidad alta, `GHSA-2m69-gcr7-jv3q` / `CVE-2025-6965`,
+   corrupción de memoria en SQLite &lt;3.50.2). Bump a `Microsoft.Data.Sqlite
+   10.0.9` (la serie alineada con `net10.0`) solo movió la transitiva a
+   `SQLitePCLRaw.lib.e_sqlite3 2.1.11` — **el aviso de GitHub cubre `<= 2.1.11`
+   con `first_patched_version: null`** (verificado contra
+   `api.github.com/advisories/GHSA-2m69-gcr7-jv3q`): no existe una versión de
+   ese paquete concreto que lo resuelva. El propio proyecto SQLitePCL.raw lo
+   solucionó **renombrando** la dependencia nativa: `SQLitePCLRaw.bundle_e_sqlite3
+   3.0.3` ya no depende de `SQLitePCLRaw.lib.e_sqlite3` sino de
+   `SQLitePCLRaw.config.e_sqlite3` + `SourceGear.sqlite3 3.50.4.5` (SQLite
+   3.50.4, por encima del umbral del CVE). Fix: referencia directa añadida en
+   `src/TSqlParser/TSqlParser.csproj`:
+
+   ```xml
+   <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.9" />
+   <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
+   ```
+
+   NuGet resuelve el diamante a la versión más alta sin conflicto (misma
+   superficie de API `SQLitePCL.Batteries.Init()` que ya usa
+   `Microsoft.Data.Sqlite`).
+3. **Verificación (comandos reales, salidas reales):**
+
+   ```text
+   $ dotnet build src/TSqlParser/TSqlParser.csproj -c Release
+     TSqlParser -> ...\bin\Release\net10.0\TSqlParser.dll
+   Compilación correcta.
+       0 Advertencia(s)
+       0 Errores
+
+   $ dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category!=Oracle"
+   Correctas! - Con error:     0, Superado:   105, Omitido:     0, Total:   105
+   ```
+
+   (Los warnings `CS8600`/`xUnit2020`/`xUnit1026` que aparecen en la
+   compilación de tests son preexistentes en el proyecto de tests — sin
+   relación con NU1903 — y quedan fuera del alcance de esta tarea.)
+4. **Paso 3 opcional (contenedor SQL Server + Oracle): NO implementado —
+   bloqueo real, documentado como TODO en `ci.yml`, no como pereza.**
+   Investigado antes de escribir el job: los tres extractores que usan SQL
+   Server (`DbValidator.cs:129`, `ObjectExtractor.cs:76`,
+   `TableSchemaExtractor.cs:193`) fijan `Integrated Security=true` (auth
+   Windows) en la cadena de conexión, hardcoded — tocar eso para aceptar auth
+   SQL violaría la invariante 1 (cero cambios de comportamiento en
+   `src/TSqlParser/`). `mcr.microsoft.com/mssql/server` (única imagen oficial
+   viable en un runner hospedado de GitHub Actions) es Linux y solo soporta
+   auth SQL, no Integrated Security — no hay AD/Kerberos disponible en un
+   runner efímero para hacerlo funcionar. Un runner `windows-latest` tampoco
+   trae SQL Server preinstalado, y restaurar WWI + AdventureWorks2019 desde
+   backups públicos con rutas casando con `RESTORE DATABASE` es, en sí mismo,
+   una tarea separada de tamaño no trivial. El job `oracle-tests` queda en
+   `ci.yml` con `if: false` y un comentario largo explicando el bloqueo exacto,
+   para que quien retome esto no repita la investigación.
+5. **Badge verde:** no confirmable desde aquí — depende de que Ramón haga push
+   y GitHub Actions ejecute el workflow. La verificación local equivalente
+   (mismo comando `dotnet test` del yml, ejecutado tal cual) es el punto 3
+   anterior: 105/105.
+
+**No tocado (invariantes respetadas):** `src/TSqlParser/*.cs` sin cambios de
+comportamiento (solo el `.csproj` para el bump de paquetes); tests existentes
+sin cambios; `eval/` sin tocar; ningún gate Node borrado.
+
 ---
 
 ## Invariantes (no negociables durante la migración)

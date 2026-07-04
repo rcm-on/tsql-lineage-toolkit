@@ -99,7 +99,7 @@ T-SQL, tres preguntas que hoy están dispersas en la suite de tests, en
 | Sinónimos (`CREATE SYNONYM`) | **sí** | ✅ **arreglado 2026-07-03** | router `from-sql` reconoce `SYNONYM`; `object_type=SYNONYM`; referencias se resuelven a la tabla base (`READS_FROM`/`WRITES_TO` reales) + arista `ALIAS_OF`. Test: `Synonym_ReadThroughSynonym_ResolvesToBaseTable`. Gates WWI sin regresión |
 | UDF escalar (`dbo.fn(...)` en `SELECT`) | **sí** | ✅ sondeado 2026-07-03 | genera `CALLS` a la función + lectura de las columnas argumento |
 | TVF inline / multi-statement (lineage a través de la función) | sí (a nivel objeto) | ✅ 2026-07-03 | la TVF captura su propia lectura de tabla base + la invocación `APPLY tvf(...)` ya la enlaza con `CALLS`. Pendiente fino: mapear columnas de salida de la TVF a las del llamador (lineage de columna a través de la función) |
-| Triggers `inserted`/`deleted` (más allá de `MERGE OUTPUT`) | parcial | ❓ no sondeado | la mecánica `inserted`/`deleted` existe por el fix de OUTPUT |
+| Triggers `inserted`/`deleted` (más allá de `MERGE OUTPUT`) | **sí** | ✅ **arreglado 2026-07-04** | pseudo-CTEs resolviendo a la tabla del `ON` con alias preservado; test `Trigger_InsertedDeleted_ResolveToOnTable_NoPhantomTables`; medido en AW2019: fantasmas 10→0, recall 152/152 (extraction-gaps.md §6.1) |
 
 ---
 
