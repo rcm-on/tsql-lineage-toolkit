@@ -213,6 +213,20 @@ body.light code.ctor{color:#0a6e94}
 .schema-quick-add{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .schema-tip{color:var(--mut);font-size:11px;margin:6px 0 0;line-height:1.5}
 
+/* workflows view */
+.wf-entry{margin:4px 0;border:1px solid var(--bd);border-radius:6px;overflow:hidden}
+.wf-entry>summary{cursor:pointer;padding:8px 12px;background:var(--pan);font-size:13px;list-style:none}
+.wf-entry>summary::-webkit-details-marker{display:none}
+.wf-entry>summary::before{content:'▸ ';color:var(--mut)}
+.wf-entry[open]>summary::before{content:'▾ '}
+.wf-paths{padding:10px 14px;background:var(--bg);display:flex;flex-direction:column;gap:5px}
+.wf-path{font-size:13px;line-height:1.8;display:flex;align-items:center;flex-wrap:wrap;gap:2px}
+.wf-arrow{color:var(--mut);padding:0 3px;font-size:12px}
+.wf-idx{font-size:10px;margin-right:6px;min-width:22px}
+/* auditoría view */
+.audit-types{margin:6px 0 14px;display:flex;flex-wrap:wrap;gap:4px}
+.audit-ts{margin-top:20px;font-size:11px}
+
 /* riesgos */
 .risk-card .n{color:#ff8a80}
 .sev{font-size:10px;font-weight:bold;padding:2px 7px;border-radius:10px;white-space:nowrap}
