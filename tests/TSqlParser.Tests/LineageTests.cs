@@ -858,6 +858,134 @@ public class LineageTests
     }
 
     [Fact]
+    public void DynamicInsert_ThroughTempTable_BridgesToRealSourceLikeStatic()
+    {
+        // The #staging write lives inside a reconstructed EXEC(@sql) literal; the read
+        // of #staging into a real target is static. The dynamic write must feed the same
+        // tempOrigin bridge the static case uses, so the end result is identical to
+        // InsertSelect_ThroughTempTable_BridgesDerivesFromToRealSourceTable: a
+        // DERIVES_FROM RealTarget.* -> RealSource.* via #staging, and NO #staging node.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                DECLARE @sql NVARCHAR(MAX) =
+                    N'INSERT INTO #staging (Id, Name) SELECT Id, Name FROM dbo.RealSource';
+                EXEC(@sql);
+                INSERT INTO dbo.RealTarget (Id, Name) SELECT Id, Name FROM #staging;
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        // No phantom Table node for the transient bridge.
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).Contains("staging", StringComparison.OrdinalIgnoreCase));
+
+        var idBridge = FindRel(graph, "DERIVES_FROM", r =>
+            r.StartNodeId.EndsWith(":table:dbo.realtarget:column:Id", StringComparison.OrdinalIgnoreCase) &&
+            r.EndNodeId.EndsWith(":table:dbo.realsource:column:Id", StringComparison.OrdinalIgnoreCase));
+        Assert.NotNull(idBridge);
+        Assert.Equal("#staging", idBridge!.Properties["via_transient"]);
+
+        var nameBridge = FindRel(graph, "DERIVES_FROM", r =>
+            r.StartNodeId.EndsWith(":table:dbo.realtarget:column:Name", StringComparison.OrdinalIgnoreCase) &&
+            r.EndNodeId.EndsWith(":table:dbo.realsource:column:Name", StringComparison.OrdinalIgnoreCase));
+        Assert.NotNull(nameBridge);
+    }
+
+    [Fact]
+    public void DynamicInsert_WrappedInIf_ThroughTempTable_StillBridges()
+    {
+        // FRK's dominant dynamic shape: the executed literal wraps its DML in control
+        // flow ("IF <guard> INSERT INTO #staging ..."). ResolveDynamicSqlLinks must
+        // descend the IF to reach the nested INSERT so the temp bridge still forms;
+        // otherwise the whole statement (and its lineage) is silently dropped.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                DECLARE @sql NVARCHAR(MAX) =
+                    N'IF 1 = 1 INSERT INTO #staging (Id, Name) SELECT Id, Name FROM dbo.RealSource';
+                EXEC(@sql);
+                INSERT INTO dbo.RealTarget (Id, Name) SELECT Id, Name FROM #staging;
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).Contains("staging", StringComparison.OrdinalIgnoreCase));
+
+        var bridge = FindRel(graph, "DERIVES_FROM", r =>
+            r.StartNodeId.EndsWith(":table:dbo.realtarget:column:Id", StringComparison.OrdinalIgnoreCase) &&
+            r.EndNodeId.EndsWith(":table:dbo.realsource:column:Id", StringComparison.OrdinalIgnoreCase));
+        Assert.NotNull(bridge);
+        Assert.Equal("#staging", bridge!.Properties["via_transient"]);
+    }
+
+    [Fact]
+    public void DynamicInsert_WrappedInIf_WriteToRealTable_IsCaptured()
+    {
+        // Same control-flow shape but the INSERT targets a REAL table (FRK step13/287:
+        // "IF EXISTS(...) INSERT [DBAtools].[dbo].[BlitzFirst] ..."). Before the fix the
+        // whole reconstructed statement was dropped and this write vanished; it must now
+        // surface as a real WRITES_TO.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                DECLARE @sql NVARCHAR(MAX) =
+                    N'IF EXISTS (SELECT * FROM dbo.Config) INSERT INTO dbo.RealTarget (Id) SELECT Id FROM dbo.RealSource';
+                EXEC(@sql);
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var target = FindNode(graph, n => n.Labels.Contains("Table") &&
+            (string)n.Properties["name"] == "dbo.RealTarget");
+        Assert.NotNull(target);
+        Assert.NotNull(FindRel(graph, "WRITES_TO", r => r.EndNodeId == target!.Id));
+        // The nested SELECT source is real lineage too.
+        Assert.NotNull(FindRel(graph, "READS_FROM",
+            r => r.EndNodeId.EndsWith(":table:dbo.realsource", StringComparison.OrdinalIgnoreCase)));
+    }
+
+    [Fact]
+    public void DynamicInsert_RuntimeVariableSource_InventsNoLineage()
+    {
+        // The executed string is assembled from a runtime value (@tableName), so it can
+        // never be reconstructed to a literal: DynamicSqlText stays empty, no inner DML
+        // is parsed, and NO bridge/read/write may be invented. Fails closed - the whole
+        // point of only ever bridging reconstructed literals.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+                @tableName SYSNAME
+            AS
+            BEGIN
+                DECLARE @sql NVARCHAR(MAX) =
+                    N'INSERT INTO #staging (Id) SELECT Id FROM ' + QUOTENAME(@tableName);
+                EXEC(@sql);
+                INSERT INTO dbo.RealTarget (Id) SELECT Id FROM #staging;
+            END
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.TestProc", sql);
+        Assert.Null(result.Error);
+
+        // Nothing was reconstructed, so the EXEC step carries no resolved DML text.
+        var exec = result.FlowLinks.FirstOrDefault(fl => fl.ConsequenceType == "EXEC");
+        Assert.NotNull(exec);
+        Assert.Equal("", exec!.DynamicSqlText);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { result }, includeColumns: true);
+
+        // No bridge may be invented: #staging was never populated by a known source.
+        Assert.DoesNotContain(graph.Relationships, r => r.Type == "DERIVES_FROM" &&
+            r.EndNodeId.EndsWith(":table:dbo.realsource:column:Id", StringComparison.OrdinalIgnoreCase));
+        // And still no phantom temp node.
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).Contains("staging", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
     public void TempTablePolicy_NoTempTableNodeFromAnyPath()
     {
         // Exercises every path that used to leak a phantom #temp :Table node:

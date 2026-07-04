@@ -171,25 +171,40 @@ public static class SqlAnalyzer
                     result.CreatedTriggers.Add(trig);
             }
 
-            var dml = stmts.Where(s =>
+            // Walk the reconstructed statements for DML lineage. Include the
+            // control-flow wrappers (IF/WHILE/BEGIN...END/TRY...CATCH) so DML nested
+            // inside them is reached too: FRK-style dynamic SQL routinely emits
+            // "IF EXISTS(...) INSERT INTO <realOrTemp> ..." / "IF ... DELETE ..." in a
+            // single executed string, and filtering to top-level DML dropped every one
+            // of those (their real writes and any #temp bridge went missing). AstWalker
+            // already knows how to descend these blocks and attach the reconstructed
+            // condition to the inner DML, so we just let it.
+            var walkable = stmts.Where(s =>
                 s is InsertStatement or UpdateStatement or DeleteStatement or
-                SelectStatement or MergeStatement).ToList();
-            if (dml.Count == 0)
+                SelectStatement or MergeStatement or
+                IfStatement or WhileStatement or BeginEndBlockStatement or TryCatchStatement).ToList();
+            if (walkable.Count == 0)
                 continue;
 
             var innerCtx = new WalkContext { Db = db, TableColumns = tableColumns };
-            AstWalker.Walk(dml, new List<Condition>(), innerCtx, depth: 0);
+            AstWalker.Walk(walkable, new List<Condition>(), innerCtx, depth: 0);
 
-            // Inherit the EXEC step's condition context so these resolved steps
-            // appear in the same branch of the control flow as their EXEC.
-            var resolved = innerCtx.FlowLinks.Select(inner => inner with
-            {
-                ConditionType = fl.ConditionType,
-                ConditionText = fl.ConditionText,
-                ConditionPath = fl.ConditionPath,
-                ConditionKeys = fl.ConditionKeys,
-                NestingLevel = fl.NestingLevel,
-            }).ToList();
+            // Condition context: a step the inner walk left UNCONDITIONAL (top-level DML
+            // in the executed string) inherits the EXEC's own branch so it lands in the
+            // right place in the outer control flow - unchanged behaviour. A step the
+            // inner walk already placed under a reconstructed IF/WHILE keeps that
+            // condition (overwriting it would erase the "IF EXISTS(...)" guard the
+            // dynamic SQL itself carried).
+            var resolved = innerCtx.FlowLinks.Select(inner => inner.ConditionType == "UNCONDITIONAL"
+                ? inner with
+                {
+                    ConditionType = fl.ConditionType,
+                    ConditionText = fl.ConditionText,
+                    ConditionPath = fl.ConditionPath,
+                    ConditionKeys = fl.ConditionKeys,
+                    NestingLevel = fl.NestingLevel,
+                }
+                : inner).ToList();
 
             if (resolved.Count > 0)
                 toInsert.Add((i, resolved));
