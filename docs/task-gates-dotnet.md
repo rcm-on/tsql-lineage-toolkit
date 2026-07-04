@@ -210,6 +210,46 @@ tests/gates de los pasos 0-1 no modificados.
 - **Salida:** gate WWI (14/14 · 12/12 · 6/6, 0 discrepancias) reproducido desde
   `dotnet test`.
 
+**CERRADO (2026-07-04) — verificado, no narrado:**
+
+1. **`tests/TSqlParser.Tests/ViewLineageOracleTests.cs`** (nuevo): combina
+   `[Trait("Category","Oracle")]` con `[Theory]`/`MemberData` por base de datos
+   (WideWorldImporters, AdventureWorks2019). Pipeline in-process real:
+   `ObjectExtractor.Run` (extrae las vistas del `ground-truth.csv` vía
+   `sys.sql_modules`) más `TableSchemaExtractor.RunAll` (DDL de tablas base) →
+   `InputAnalyzer.Analyze` → `GraphExporter.Build(includeColumns:true)` — mismo
+   camino que `extract --tables` más el pipeline principal, sin atajos.
+   Servidor configurable por `TSQLPARSER_SQL_SERVER` (default
+   `localhost\SQLEXPRESS`).
+2. **Hallazgo al portar:** `crosscheck.mjs` lee `edges_out` del nodestore (donde
+   `NodeStoreExporter.OwnerOf` ya resuelve la propiedad de una arista al
+   `SqlObject` a través del prefijo `<objId>#stepN`). El test C# no pasa por el
+   nodestore — replica esa misma regla de propiedad directamente sobre
+   `graph.Relationships` (helper `OwnedBy`, equivalente a `nodeId == objId` o
+   `nodeId` empezando por `objId` seguido de `#`). Verificado a mano contra el
+   grafo real de `Website.Customers` y `HumanResources.vEmployee` antes de fijar
+   el test: out=14/18, src=24/30, tbl=6/9 — coincide exactamente con
+   `ground-truth.csv` en ambos.
+3. **El gap de columnas de salida descrito en `eval/view-lineage/README.md`
+   (0/14 modeladas) ya no reproduce** — `HAS_COLUMN`/`BuildViewLineage` sí
+   dispara hoy para las vistas reales de WWI; el README quedó desactualizado
+   (no se toca en esta tarea, es doc de otro hallazgo cerrado en otro momento).
+4. **Un gap nuevo, real y no introducido por esta tarea:**
+   `AdventureWorks2019.Sales.vSalesPersonSalesByFiscalYears` usa `PIVOT` sobre
+   una tabla derivada; `ViewColumnLineage` no la camina → mide out=0/src=0 en
+   vez de 7/13. Documentado y excluido de la comparación estricta
+   (`KnownGaps` en el test, con comentario) en vez de forzarlo o de tocar
+   `src/TSqlParser` (invariante 1). El resto de AdventureWorks (19/20 vistas)
+   y las 3 de WWI cuadran exactas.
+5. **Prueba de mutación:** `ground-truth.csv` de `Website.Customers` cambiado
+   temporalmente `out_cols 14→999`; `dotnet test --filter
+   FullyQualifiedName~ViewLineageOracleTests` → falla con `out_cols
+   esperado=999 obtenido=14`. Revertido; suite completa vuelta a verde.
+6. **Verificado:** `dotnet test --filter Category!=Oracle` → 105/105 (esta
+   clase no corre, tal como se espera sin marcar `Category`). `dotnet test`
+   sin filtro (con SQL Server disponible) → 107/107, ~36 s (dominado por las 2
+   llamadas Oracle: extracción en vivo de 3+20 vistas y sus tablas base).
+
 ### 4. CI (GitHub Actions)
 
 - Job rápido en cada push: build + `dotnet test --filter Category!=Oracle`
