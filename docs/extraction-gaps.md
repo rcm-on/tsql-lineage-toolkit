@@ -159,3 +159,30 @@ queda en `""` cuando no (ver `index.json.howto.exec_resolution`, `NodeStoreExpor
   endurecido de `<= 17` a `== 0`). Los 17 `CREATE TRIGGER` resueltos NO añaden tablas nuevas
   (siguen siendo las mismas 17, el riesgo de "tabla 18ª oculta" ya estaba cerrado por 5.1);
   aportan el detalle de columnas/lógica de cada trigger, antes opaco.
+
+## 6. Triggers: `inserted`/`deleted` emitidos como tablas fantasma (GAP REAL, medido 2026-07-04)
+
+- **Cómo se encontró:** primera pasada del pipeline sobre **AdventureWorks2019
+  COMPLETA** (51 objetos + 71 tablas vía `extract --tables`, 0 errores de parseo)
+  cruzada contra el oráculo `sys.sql_expression_dependencies` (152 pares
+  objeto→dependencia). Comparador ad-hoc (scratchpad `aw-gap-detector.mjs`).
+- **Resultado global:** RECALL a nivel objeto→dependencia = **152/152 (100%)** —
+  ningún par del oráculo falta en el grafo. El hueco está en la otra dirección:
+- **Comportamiento real:** 10 pares SOBRAN, todos con la misma forma: los cuerpos
+  de los 9 triggers DML de AW (`Person.iuPerson`, `Production.iWorkOrder`,
+  `Purchasing.uPurchaseOrderDetail`, `Sales.iduSalesOrderDetail`, …) referencian
+  las pseudo-tablas `inserted`/`deleted` y el extractor las materializa como
+  nodos `:Table` reales (`READS_FROM` a "inserted"/"deleted").
+- **Esperado:** `inserted`/`deleted` dentro de un trigger son filas virtuales de
+  la tabla del `ON` — deberían resolverse a esa tabla base (exactamente como ya
+  hace el fix de `MERGE ... OUTPUT INTO`, que mapea inserted/deleted al target
+  del MERGE) o, como mínimo, no emitir un `:Table` fantasma compartido que
+  contamina el impacto (cualquier análisis "quién lee inserted" mezcla todos los
+  triggers de la BD entre sí).
+- **Severidad:** media — no pierde dependencias (el ON ya enlaza trigger↔tabla),
+  pero ensucia el grafo con 2 tablas fantasma globales y desvía el lineage de
+  columna de los triggers hacia ellas.
+- **Nota de alcance:** el oráculo es a nivel TABLA y por nombre; este cruce no
+  mide recall de columna (eso es la métrica A2, pendiente). El gap de PIVOT
+  (1 vista AW) encontrado por el gate Oracle del Paso 3 es independiente y ya
+  está documentado allí.
