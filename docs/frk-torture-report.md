@@ -437,3 +437,34 @@ prevalece esta sección donde contradiga a lo anterior.
    techo esperable del análisis estático), H4 (corchetes, cosmético), la
    validación de rendimiento (44K líneas / ~1,9 s, 0 errores de parseo — dato
    titular para el benchmark público) y la sección de "no medido".
+
+---
+
+**Tarea (a) RESUELTA (2026-07-04):** guarda `IsTempOrVariable` unificada en dos
+caminos de `GraphExporter.cs` que se la saltaban:
+  - **`ASSIGNED_FROM`** (`SELECT @var = Col FROM #temp`): no tenía guarda alguna
+    → creaba un nodo `:Table` fantasma por cada temp leído hacia una variable.
+    Origen de **los 11** fantasmas del corpus (`#StatementsToRun4FRKVersionCheck,
+    #ai_prompts, #ai_providers, #checkversion, #checkversion_allsort,
+    #configuration, #p, #PerfmonStats, #FileListParameters, #Headers,
+    #SplitLogBackups`). Se añade `if (IsTempOrVariable(va.SourceTable)) continue;`.
+  - **Nombres de temp con corchetes** (`INSERT INTO [#BlitzResults]`): `IsTempOrVariable`
+    solo miraba `StartsWith('#')`, así que `[#...]` (identificador citado que emite
+    ScriptDom) se colaba por la rama principal `WRITES_TO` (nodo `:Table` #12 +
+    26 `WRITES_TO`). Se robustece `IsTempOrVariable` para normalizar (des-bracketar,
+    último segmento de `tempdb..#x`) antes de comprobar `#`/`@`; ahora esos writes
+    entran en `tempOrigin` (puente) en vez de materializar un temp.
+
+  Verificación FRK (`input_final.json` → `graph_refixed.json`, binario nuevo,
+  `--columns`): nodos `:Table` temporales **12 → 0** (los 11 + `[#BlitzResults]`);
+  nodos `:Table` reales **126 → 126** (sin degradar), `READS_FROM` **619 → 619**
+  (sin degradar). Deltas trazables 1:1 a la retirada de temps: `WRITES_TO` 43→17
+  (−26, todos a `[#BlitzResults]`), `WRITES_COLUMN` 194→36 (−158, columnas de temp),
+  `ASSIGNED_FROM` 106→35 (−71, orígenes temp), `DERIVES_FROM` 224→193 (−31, target
+  en temp), `WORKFLOW_WRITES_TO` 7→6, `:Column` 262→204 (−58, columnas de temp).
+
+  Suite **113/113** (`--filter "Category!=Oracle"`; incluye
+  `TableVariable_IsNotEmittedAsTable`, `InsertSelect_ThroughTempTable_Bridges…`
+  intactos + el nuevo `TempTablePolicy_NoTempTableNodeFromAnyPath`),
+  `BadPracticesGateTests` 1/1, `eval/community-edge-cases/run.mjs` OK. Tarea (b)
+  (puente a través de `#temp` para el SQL dinámico reconstruido) sigue pendiente.

@@ -858,6 +858,48 @@ public class LineageTests
     }
 
     [Fact]
+    public void TempTablePolicy_NoTempTableNodeFromAnyPath()
+    {
+        // Exercises every path that used to leak a phantom #temp :Table node:
+        //   1. bracketed temp target [#Staging]  -> the [#BlitzResults] main-branch leak
+        //   2. SELECT ... INTO ##Global          -> global-temp write target
+        //   3. SELECT @var = Col FROM #Staging    -> the ASSIGNED_FROM leak (11 FRK ghosts)
+        // ...while confirming the *real* tables joined in (ExtraReads) are still graphed.
+        var sql = """
+            CREATE PROCEDURE dbo.TempPolicyProc
+            AS
+            BEGIN
+                CREATE TABLE #Staging (Id INT, Name NVARCHAR(50));
+
+                INSERT INTO [#Staging] (Id, Name)
+                SELECT s.Id, s.Name FROM dbo.RealSource AS s
+                JOIN dbo.RealPartner AS p ON s.Id = p.Id;
+
+                SELECT g.Id, g.Name INTO ##GlobalDump
+                FROM #Staging AS g JOIN dbo.RealPartner2 AS q ON g.Id = q.Id;
+
+                DECLARE @Cnt INT;
+                SELECT @Cnt = Id FROM #Staging WHERE Name = N'x';
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        // No :Table node may carry a temp name, in any (bracketed / global) spelling.
+        static bool IsTempName(string n) => n.TrimStart('[', ' ').StartsWith('#');
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
+            IsTempName((string)n.Properties["name"]));
+
+        // The real JOIN partners read alongside the temp writes must still surface -
+        // the guard removes phantom temps, it must not swallow real reads.
+        Assert.NotNull(FindNode(graph, n => n.Labels.Contains("Table") &&
+            (string)n.Properties["name"] == "dbo.RealPartner"));
+        Assert.NotNull(FindNode(graph, n => n.Labels.Contains("Table") &&
+            (string)n.Properties["name"] == "dbo.RealPartner2"));
+        Assert.NotNull(FindRel(graph, "READS_FROM",
+            r => r.EndNodeId.EndsWith(":table:dbo.realpartner", StringComparison.OrdinalIgnoreCase)));
+    }
+
+    [Fact]
     public void SelectFromAnalyzedView_BridgesToViewsRealBaseTable()
     {
         var viewSql = """
