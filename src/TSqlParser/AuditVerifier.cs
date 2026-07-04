@@ -97,6 +97,44 @@ internal static class AuditVerifier
         if (root.TryGetProperty("impact", out var imp) && imp.ValueKind != JsonValueKind.Object)
             failures.Add("audit_report.json 'impact' is not an object");
 
+        // 7. change_map.json (Capa 6) must exist with a workflows array whose
+        // entries carry entry/entry_type/paths, and an impact object (P7 of
+        // docs/task-change-map.md).
+        var changeMapPath = Path.Combine(nodeStoreDir, "change_map.json");
+        if (!File.Exists(changeMapPath))
+        {
+            failures.Add($"change_map.json not found at {changeMapPath}");
+        }
+        else
+        {
+            try
+            {
+                var cm = JsonDocument.Parse(File.ReadAllText(changeMapPath)).RootElement;
+                if (!cm.TryGetProperty("workflows", out var cmWf) || cmWf.ValueKind != JsonValueKind.Array)
+                {
+                    failures.Add("change_map.json missing 'workflows' array");
+                }
+                else
+                {
+                    foreach (var w in cmWf.EnumerateArray())
+                    {
+                        if (!w.TryGetProperty("entry", out _) || !w.TryGetProperty("entry_type", out _) ||
+                            !w.TryGetProperty("paths", out var p) || p.ValueKind != JsonValueKind.Array)
+                        {
+                            failures.Add("change_map.json workflow entry missing entry/entry_type/paths");
+                            break;
+                        }
+                    }
+                }
+                if (!cm.TryGetProperty("impact", out var cmImp) || cmImp.ValueKind != JsonValueKind.Object)
+                    failures.Add("change_map.json missing 'impact' object");
+            }
+            catch (JsonException ex)
+            {
+                failures.Add($"cannot parse change_map.json: {ex.Message}");
+            }
+        }
+
         if (failures.Count == 0)
         {
             Console.WriteLine($"[verify-audit] OK -> {auditPath}");
