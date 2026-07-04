@@ -126,6 +126,7 @@ public static class NodeStoreExporter
         public required string ManifestJson { get; init; }
         public required string IndexJson { get; init; }
         public required string AuditJson { get; init; }
+        public required string ChangeMapJson { get; init; }
         public required Stats Stats { get; init; }
     }
 
@@ -294,6 +295,7 @@ public static class NodeStoreExporter
         File.WriteAllText(Path.Combine(outDir, "manifest.json"), build.ManifestJson, Encoding.UTF8);
         File.WriteAllText(Path.Combine(outDir, "index.json"), build.IndexJson, Encoding.UTF8);
         File.WriteAllText(Path.Combine(outDir, "audit_report.json"), build.AuditJson, Encoding.UTF8);
+        File.WriteAllText(Path.Combine(outDir, "change_map.json"), build.ChangeMapJson, Encoding.UTF8);
 
         return new UpdateStats
         {
@@ -355,6 +357,7 @@ public static class NodeStoreExporter
         File.WriteAllText(Path.Combine(outDir, "manifest.json"), build.ManifestJson, Encoding.UTF8);
         File.WriteAllText(Path.Combine(outDir, "index.json"), build.IndexJson, Encoding.UTF8);
         File.WriteAllText(Path.Combine(outDir, "audit_report.json"), build.AuditJson, Encoding.UTF8);
+        File.WriteAllText(Path.Combine(outDir, "change_map.json"), build.ChangeMapJson, Encoding.UTF8);
     }
 
     /// <summary>
@@ -1016,6 +1019,13 @@ public static class NodeStoreExporter
         // objects is wrong because a single upstream change shifts every entry.
         var auditJson = AuditExporter.Generate(graph, lineageCache, jsonOptions);
 
+        // ── Capa 6: change_map.json ──────────────────────────────────────────
+        // Precomputed workflows (entry-point CALLS paths with per-hop conditions)
+        // + per-object impact closure (via_calls / via_data). Like audit_report,
+        // always rebuilt in full: a single object change can reshape paths and
+        // closures store-wide. Spec: docs/task-change-map.md (Tarea J P1-P7).
+        var changeMapJson = ChangeMapExporter.Generate(graph, lineageCache, jsonOptions);
+
         return new BuildResult
         {
             ObjectFiles = objectFiles,
@@ -1024,6 +1034,7 @@ public static class NodeStoreExporter
             ManifestJson = manifestJson,
             IndexJson = indexJson,
             AuditJson = auditJson,
+            ChangeMapJson = changeMapJson,
             Stats = stats,
         };
     }
