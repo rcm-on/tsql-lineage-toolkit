@@ -291,6 +291,16 @@ public static class GraphExporter
                     if (varId == null)
                         continue;
 
+                    // "SELECT @var = Col FROM #temp/@tableVar": the source is transient and
+                    // must NOT be materialized as a :Table node (same policy the WRITES_TO /
+                    // DERIVES_FROM / FILTERS_ON branches already enforce). Without this guard
+                    // every "SELECT @x = c FROM #staging" minted a phantom #staging :Table -
+                    // the 11 FRK ghost temp tables all came in through here. Bridging a
+                    // variable back through a temp is a separate (task-b) concern; here we
+                    // just keep the Table graph free of transient nodes.
+                    if (IsTempOrVariable(va.SourceTable))
+                        continue;
+
                     var (srcTableId, srcTableName) = GetOrCreateTable(graph, tableIds, db, va.SourceTable);
                     foreach (var srcCol in va.SourceColumns)
                     {
@@ -1599,7 +1609,20 @@ public static class GraphExporter
     }
 
     /// <summary>True for a table variable ("@T") or local/global temp table ("#T"/"##T") reference - never emitted as a :Table node, so the Table graph only contains real persisted tables/views.</summary>
-    private static bool IsTempOrVariable(string target) => target.StartsWith('#') || target.StartsWith('@');
+    /// <remarks>
+    /// Normalizes first so bracketed ("[#BlitzResults]") and qualified ("tempdb..#Foo",
+    /// "[tempdb]..[#Foo]") forms - which ScriptDom emits for quoted identifiers - are still
+    /// recognized. A raw StartsWith('#') misses "[#..." entirely, which was letting bracketed
+    /// temp writes leak a phantom :Table node (and skip the tempOrigin bridge).
+    /// </remarks>
+    private static bool IsTempOrVariable(string target)
+    {
+        var t = NormalizeRef(target);          // strips [ ] and lowercases
+        var lastDot = t.LastIndexOf('.');      // last segment of a qualified name (tempdb..#x)
+        if (lastDot >= 0)
+            t = t[(lastDot + 1)..];
+        return t.StartsWith('#') || t.StartsWith('@');
+    }
 
     /// <summary>
     /// Detects cross-database table references (3-part names like "OtherDb.dbo.Table").
