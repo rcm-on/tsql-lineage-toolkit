@@ -543,3 +543,284 @@ alimentan tempOrigin") ya no aplicaba tras la tarea (a) — los `FlowLink` que i
   `DynamicInsert_WrappedInIf_WriteToRealTable_IsCaptured`,
   `DynamicInsert_RuntimeVariableSource_InventsNoLineage`; los de (a) intactos),
   `eval/community-edge-cases/run.mjs` OK.
+
+---
+
+## Recall contra oráculo DMV (FRK instalado)
+
+Medición pura, cero cambios de motor. Réplica exacta de la metodología usada con
+AdventureWorks2019: oráculo = `sys.sql_expression_dependencies` de una instancia
+SQL Server real con el kit instalado; candidato = grafo del toolkit para los
+mismos 11 ficheros, con el binario ya actualizado (Tareas (a) y (b) incluidas).
+Todo el trabajo en `C:\temp\frk-oracle\` (nada en el repo).
+
+### Metodología
+
+1. `CREATE DATABASE FRKOracle` en `localhost\SQLEXPRESS` (recreada desde cero).
+2. Instalación uno a uno de los 11 `sp_*.sql` de `C:\temp\frk-torture\repo` vía
+   `sqlcmd -S "localhost\SQLEXPRESS" -E -C -d FRKOracle -i <fichero> -b`.
+3. Oráculo: filas de `sys.sql_expression_dependencies` donde el objeto
+   referenciador es `P/V/FN/IF/TF/TR` y `referenced_id IS NOT NULL` (excluye
+   explícitamente lo que el propio SQL Server no resuelve estáticamente: DMVs
+   `sys.*`, referencias cross-db, métodos XML, alias sin resolver — desglosado
+   más abajo).
+4. Candidato: `from-sql FRKOracle C:\temp\frk-oracle\input.json <11 ficheros>`
+   → `TSqlParser.dll C:\temp\frk-oracle\input.json C:\temp\frk-oracle\graph.json
+   --columns`. Pares candidato = `READS_FROM`/`WRITES_TO`/`TARGETS`/`CALLS`
+   rollup desde `Step` al `SqlObject` propietario (recortando el sufijo
+   `#stepN` del id), normalizados a `schema.objeto` en minúsculas sin
+   corchetes, sin autorreferencias.
+5. Comparación con `C:\temp\frk-oracle\compare.mjs` (Node, sin dependencias):
+   `FALTAN` = oráculo − candidato, `SOBRAN` = candidato − oráculo, `RECALL` =
+   `|oráculo ∩ candidato| / |oráculo|`. Los pares `SOBRAN` se separan en
+   "vía SQL dinámico reconstruido" (step de origen con `is_dynamic_sql=true`
+   o, para los steps *inyectados* al puentear DML dentro del texto dinámico,
+   `line_no==1` — marca de que ese step no tiene línea real en el fichero,
+   se ancla al `EXEC` que lo originó) vs. "estático".
+
+### Instalación (paso 1)
+
+**11/11 instalados sin error** (`C:\temp\frk-oracle\install_log.txt`,
+`exit_code=0` en los 11): `sp_Blitz`, `sp_BlitzAnalysis`, `sp_BlitzBackups`,
+`sp_BlitzCache`, `sp_BlitzFirst`, `sp_BlitzIndex`, `sp_BlitzLock`,
+`sp_BlitzWho`, `sp_DatabaseRestore`, `sp_ineachdb`, `sp_kill`. Verificado
+también por catálogo (`sys.objects` en `FRKOracle`): los 11
+`SQL_STORED_PROCEDURE` presentes. **0 fallos de instalación.** La base
+`FRKOracle` queda creada en `localhost\SQLEXPRESS` (no se elimina).
+
+### El oráculo es casi vacío para este corpus (hallazgo central de esta sección)
+
+`sys.sql_expression_dependencies` sobre los 11 procs instalados devuelve
+**111 filas de dependencia en total**, de las cuales **solo 1 tiene
+`referenced_id IS NOT NULL`**:
+
+```
+proc_name          |total_deps|null_id_deps
+sp_Blitz            |20        |19
+sp_BlitzCache        |43        |43
+sp_BlitzFirst        |12        |12
+sp_BlitzIndex        |5         |5
+sp_BlitzLock         |24        |24
+sp_DatabaseRestore   |4         |4
+sp_ineachdb          |1         |1
+sp_kill              |2         |2
+(sp_BlitzAnalysis, sp_BlitzBackups, sp_BlitzWho: 0 filas de dependencia)
+```
+
+El único par resuelto: **`dbo.sp_blitz|dbo.sp_ineachdb`** (la llamada estática
+ya identificada en el análisis original, H3). Las 110 filas restantes quedan
+excluidas por el propio motor de dependencias de SQL Server, no por nuestro
+filtro (`C:\temp\frk-oracle\null_id_deps.txt` tiene el detalle fila a fila):
+
+```
+ambiguous_xml_methods|same_db_sys_dmv|cross_db|bare_alias|total
+58                    |8              |18      |24        |110
+```
+
+- **~58/110 (53%)**: llamadas a métodos XQuery (`.exist()`, `.query()`) que
+  la DMV reporta como pseudo-dependencias con `is_ambiguous=1` — artefacto
+  conocido de esa vista de catálogo, no dependencias de tabla reales
+  (ejemplos: `c.exist`, `fn.exist`, `n.exist`, `cg.query`, `mg.query`).
+- **~24/110**: alias de tabla sin resolver (`br`, `r`, `b`, `bbcp`, `p`, …) —
+  el propio motor de dependencias de SQL Server tampoco los enlaza a la tabla
+  real cuando no puede hacerlo sin ambigüedad.
+- **~18/110**: referencias cross-database (`msdb.dbo.sysjobs`,
+  `master.sys.databases`, `model.sys.objects`, …). Documentado por
+  Microsoft: `sys.sql_expression_dependencies` no rastrea de forma fiable
+  dependencias entre bases de datos.
+- **~8/110**: DMVs `sys.*` en la propia base (`sysjobactivity`, `backupset`,
+  `restorehistory`, etc., referenciadas sin prefijo de base) — tampoco
+  reciben `referenced_id`.
+
+**Para un kit dominado por SQL dinámico, DMVs y referencias cross-db como
+FRK, el oráculo DMV nativo de SQL Server casi no tiene nada que ofrecer**: 1
+dependencia resoluble de 111 posibles (0.9%). Es el mismo fenómeno que la
+auditoría detectó en el grafo del toolkit (SQL dinámico invisible al análisis
+estático), pero le ocurre —de forma independiente— al motor de dependencias
+nativo de SQL Server. No es un artefacto del toolkit: es una propiedad del
+corpus, y condiciona todo lo que sigue.
+
+### Candidato (grafo del toolkit)
+
+```
+$ dotnet TSqlParser.dll from-sql FRKOracle C:/temp/frk-oracle/input.json <11 ficheros>
+Wrote 11 objects from 11 file(s) to C:/temp/frk-oracle/input.json
+
+$ dotnet TSqlParser.dll C:/temp/frk-oracle/input.json C:/temp/frk-oracle/graph.json --columns
+Analyzed 11 objects (11 ok, 0 parse errors)
+Graph: 5710 nodes, 16928 relationships -> C:/temp/frk-oracle/graph.json
+```
+
+Conteos clave del grafo (`READS_FROM` 632, `WRITES_TO` 22, `DERIVES_FROM` 388,
+`CALLS` 1) coinciden con los números post-Tarea(b) de la sección anterior:
+este binario ya incluye tanto la guarda `#temp` unificada (a) como el puente
+de DML dinámico reconstruido bajo `IF`/`WHILE`/`BEGIN...END` (b).
+
+Pares candidato tras rollup owner→referencia (`READS_FROM`+`WRITES_TO`+
+`TARGETS`+`CALLS`, sin autorreferencias): **203**.
+
+### Comparación (`compare.mjs`, salida completa)
+
+```
+=== ORACULO ===
+pares oraculo (referenced_id NOT NULL, sin autorreferencia): 1
+dbo.sp_blitz|dbo.sp_ineachdb
+
+=== CANDIDATO (toolkit) ===
+pares candidato: 203
+
+=== INTERSECCION === 1
+dbo.sp_blitz|dbo.sp_ineachdb
+
+=== FALTAN (en oraculo, no en candidato) === 0
+
+=== SOBRAN total (en candidato, no en oraculo) === 202
+  de los cuales via SQL dinamico reconstruido: 61
+  de los cuales via SQL estatico (no visto por el oraculo por otro motivo): 141
+
+=== RECALL === 100.0% (1/1)
+```
+
+**FALTAN: 0.** El único par que el oráculo pudo resolver, el toolkit lo
+encuentra, vía la arista `CALLS FRKOracle::dbo.sp_Blitz ->
+FRKOracle::dbo.sp_ineachdb` (`kind:"EXEC"`) y también vía `TARGETS` desde los
+pasos `EXEC dbo.sp_ineachdb`. No hay ningún hueco que reportar contra este
+oráculo, porque el oráculo casi no tiene contenido con el que contrastar —
+**recall=100% aquí es un dato trivialmente cierto y trivialmente poco
+informativo**, no una validación de cobertura real: con un solo par exigible,
+"recall perfecto" no distingue un extractor completo de uno que solo detecta
+la única llamada estática del corpus.
+
+**SOBRAN: 202**, partido en dos grupos bien diferenciados:
+
+**(1) 61 pares vía SQL dinámico reconstruido — ganancia real, verificada
+contra el fuente.** Son lecturas/escrituras que el toolkit reconstruye a
+partir de `EXEC(@sql)`/`sp_executesql` y que la DMV de SQL Server nunca podría
+ver aunque quisiera (el propio motor de SQL Server no analiza el contenido de
+un `NVARCHAR` en tiempo de creación del procedimiento). Muestra de 3,
+verificadas línea a línea contra el fichero fuente:
+
+  1. `dbo.sp_blitzlock|msdb.dbo.sysjobs` — `sp_BlitzLock.sql:2170-2190`:
+     ```sql
+     IF (@Azure = 0 AND @RDS = 0 AND @CanReadMSDB = 1)
+     BEGIN
+         SET @StringToExecute = N'
+             UPDATE aj SET aj.job_name = j.name, aj.step_name = s.step_name
+             FROM msdb.dbo.sysjobs AS j
+             JOIN msdb.dbo.sysjobsteps AS s ON j.job_id = s.job_id
+             JOIN #agent_job AS aj ON aj.job_id_guid = j.job_id AND aj.step_id = s.step_id
+             OPTION(RECOMPILE);';
+         EXECUTE sys.sp_executesql @StringToExecute;
+     END;
+     ```
+     El toolkit reconstruye el texto y emite `READS_FROM msdb.dbo.sysjobs`
+     (step `sp_BlitzLock#step138`, `condition_path` conserva la guarda
+     `IF (@Azure = 0 AND @RDS = 0 AND @CanReadMSDB = 1)`).
+
+  2. `dbo.sp_blitz|sys.dm_exec_query_stats` — `sp_Blitz.sql:8218-8224`:
+     ```sql
+     SET @StringToExecute = 'WITH queries (...) AS
+       (SELECT TOP 20 qs.[sql_handle], ... FROM sys.dm_exec_query_stats qs ...)
+       INSERT INTO #dm_exec_query_stats (...) SELECT ... FROM queries qs ...';
+     EXECUTE(@StringToExecute);
+     ```
+     Reconstruido y emitido como `READS_FROM sys.dm_exec_query_stats`
+     (`sp_Blitz#step967`, bajo la guarda `IF @CheckProcedureCacheFilter =
+     'CPU' OR @CheckProcedureCacheFilter IS NULL`).
+
+  3. `dbo.sp_blitzfirst|dbatools.dbo.blitzfirst` — el salto final de la
+     Tarea (b): `IF EXISTS (SELECT * FROM [DBAtools].INFORMATION_SCHEMA.SCHEMATA
+     WHERE QUOTENAME(SCHEMA_NAME) = '[dbo]') ... INSERT [DBAtools].[dbo].[BlitzFirst]
+     ... SELECT ... FROM #BlitzFirstResults` — capturado como `WRITES_TO
+     dbatools.dbo.blitzfirst` (step `sp_BlitzFirst#step15`, `line_no=1`
+     porque es un step *inyectado* al desenvolver el DML dinámico anidado en
+     el `IF`, no una línea real del fichero — comportamiento esperado y
+     documentado de la Tarea (b)).
+
+  Los 61 pares se reparten: `sp_Blitz` 32, `sp_BlitzFirst` 14, `sp_BlitzCache`
+  5, `sp_BlitzWho` 3, `sp_BlitzIndex` 3, `sp_BlitzLock` 2, `sp_BlitzAnalysis`
+  y `sp_BlitzBackups` 1 cada uno (no coinciden 1:1 con las 32/... de la tabla
+  original de `dynamic_sql_calls` porque aquí se cuentan pares únicos
+  owner→referencia tras rollup, no aristas).
+
+**(2) 141 pares estáticos, prácticamente todos DMVs/objetos cross-db reales
+que la DMV de SQL Server tampoco cataloga (misma causa que en la sección
+anterior: cross-db no soportado por `sys.sql_expression_dependencies`, DMVs
+sin `referenced_id`).** Ejemplos: `dbo.sp_blitzfirst|sys.dm_exec_requests`,
+`dbo.sp_blitzlock|msdb.dbo.sysjobs` (la variante *estática*, en otro punto del
+mismo proc), `dbo.sp_blitz|master.sys.databases`. **No es ruido**: es lineage
+real y correcto que el propio SQL Server tampoco deja registrado en su
+catálogo — el toolkit ve más que la DMV nativa para el mismo código.
+
+Dentro de este grupo, **5 pares (16 aristas) sí son un defecto real de
+extracción**, no ganancia: alias de tabla capturados como si fueran el nombre
+de la tabla, en la forma `UPDATE <alias> SET ... FROM <tabla_real> AS
+<alias>` / `DELETE <alias> FROM <tabla_real> AS <alias>`:
+`dbo.sp_blitzcache|b`, `dbo.sp_blitzcache|p`, `dbo.sp_blitzfirst|ws`,
+`dbo.sp_databaserestore|fl`, `dbo.sp_kill|t`. Verificado contra el fuente en
+los 5 casos:
+
+```sql
+-- sp_BlitzCache.sql:3224
+UPDATE b
+SET     compile_timeout = 1
+FROM    #statements s
+JOIN ##BlitzCacheProcs b ON ...
+-- toolkit emite WRITES_TO "b", no WRITES_TO ##BlitzCacheProcs
+
+-- sp_DatabaseRestore.sql:1389
+DELETE fl
+FROM @FileList AS fl
+WHERE fl.BackupPath + fl.BackupFile <= @LogLastNameInMsdbAS
+-- toolkit emite WRITES_TO "fl", no WRITES_TO @FileList
+
+-- sp_kill.sql:576
+UPDATE t
+SET Reason = N'Lead blocker: blocking ' + ...
+-- misma forma, alias "t"
+```
+
+El extractor de `UPDATE`/`DELETE ... FROM <tabla> AS <alias>` toma el alias
+literal del `UPDATE alias`/`DELETE alias` en vez de resolverlo contra el alias
+declarado en la cláusula `FROM`. Hueco de motor pequeño y bien acotado (16
+aristas de 16928, 0.09% del grafo), no corregido (fuera de alcance de esta
+tarea de medición), documentado aquí con repro mínimo para quien retome el
+motor.
+
+### Titular honesto
+
+- El oráculo DMV nativo de SQL Server **no sirve para medir recall en FRK**:
+  resuelve 1 de 111 dependencias posibles (0.9%) porque el kit está construido
+  sobre SQL dinámico, DMVs y objetos cross-database — exactamente las tres
+  cosas que `sys.sql_expression_dependencies` no rastrea de forma fiable, con
+  o sin toolkit de por medio. "Recall=100%" contra este oráculo no certifica
+  completitud del extractor; certifica que el oráculo casi no tiene preguntas
+  que hacer (0 FALTAN sobre un universo de 1 par).
+- El toolkit ve objetivamente más que la DMV nativa para el mismo código: 202
+  pares adicionales. De esos, **61 (30%) son ganancia verificada del puente
+  de SQL dinámico** (Tareas (a)+(b) de esta misma sesión de auditoría, ya
+  resueltas) — reconstruido y contrastado contra el fuente en 3 muestras. Los
+  141 restantes son en su inmensa mayoría DMVs/cross-db reales que el propio
+  SQL Server tampoco cataloga, salvo 5 pares (16 aristas) que sí son ruido: un
+  defecto puntual de resolución de alias en `UPDATE`/`DELETE ... FROM <tabla>
+  AS <alias>`.
+- **Conclusión metodológica para futuras medidas de recall**: el patrón
+  "oráculo DMV vs. grafo del toolkit" que funcionó bien en AdventureWorks2019
+  (SQL mayormente estático) deja de ser el instrumento correcto en corpus
+  dominados por SQL dinámico y DMVs como FRK — ahí el oráculo con señal real
+  sería un parser externo (p. ej. sqlglot) sobre el texto reconstruido del SQL
+  dinámico, no `sys.sql_expression_dependencies` (que en este corpus resuelve
+  menos del 1% de sus propias dependencias declaradas).
+
+### Artefactos
+
+- `C:\temp\frk-oracle\install_log.txt` — log completo de instalación (11/11 OK).
+- `C:\temp\frk-oracle\oracle_pairs.txt` — volcado del oráculo (1 fila).
+- `C:\temp\frk-oracle\null_id_deps.txt` — las 110 filas excluidas, con
+  `is_ambiguous` y nombres, para auditar la clasificación anterior.
+- `C:\temp\frk-oracle\input.json`, `graph.json` — grafo candidato completo.
+- `C:\temp\frk-oracle\compare.mjs`, `compare_result.json` — script de
+  comparación y su salida estructurada (oráculo, candidato, FALTAN, SOBRAN,
+  recall).
+- Base de datos `FRKOracle` en `localhost\SQLEXPRESS`: queda creada con los 11
+  procs instalados, para inspección posterior si se desea.

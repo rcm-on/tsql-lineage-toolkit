@@ -2,7 +2,7 @@
 // cableado de los componentes. Expuesto como SD.app.
 (function (SD) {
   const $ = s => document.querySelector(s);
-  let DATA = null, current = null, kindFilter = 'all', dynOnly = false, impactDepth = 3;
+  let DATA = null, NODESTORE = null, nodestoreQueue = [], current = null, kindFilter = 'all', dynOnly = false, impactDepth = 3;
   let schemaPinned = new Set();  // tables currently pinned in the Schema Explorer
 
   // Shared nav bar: always includes Overview, Risks, Derived inventory and Schema ORM.
@@ -14,6 +14,8 @@
       ${btn('risks',     '⚠ Riesgos',          'SD.app.openRisks()')}
       ${btn('inventory', '🧮 Derivados',        'SD.app.openInventory()')}
       ${btn('schema',    '📐 Esquema ORM',      'SD.app.openSchema()')}
+      ${NODESTORE && NODESTORE.model ? btn('workflows', '🔀 Workflows',  'SD.app.openWorkflows()') : ''}
+      ${NODESTORE && NODESTORE.audit ? btn('audit',     '📋 Auditoría',  'SD.app.openAudit()')     : ''}
     </div>`;
   }
 
@@ -128,6 +130,20 @@
 
   function schemaClear() { schemaPinned.clear(); openSchema(); }
 
+  function openWorkflows() {
+    current = null;
+    document.querySelectorAll('.item').forEach(e => e.classList.remove('sel'));
+    $('#main').innerHTML = navBar('workflows') + SD.components.WorkflowsView(NODESTORE.model, DATA);
+    $('#main').scrollTop = 0;
+  }
+
+  function openAudit() {
+    current = null;
+    document.querySelectorAll('.item').forEach(e => e.classList.remove('sel'));
+    $('#main').innerHTML = navBar('audit') + SD.components.AuditView(NODESTORE.audit, DATA);
+    $('#main').scrollTop = 0;
+  }
+
   // After Mermaid renders the erDiagram SVG, make entity nodes clickable:
   // clicking a table name in the diagram expands its FK neighbours.
   function attachSchemaClicks() {
@@ -163,14 +179,34 @@
     });
   }
 
+  // Carga un fichero de nodestore (model.json / audit_report.json) ya parseado
+  // y re-renderiza la vista actual para actualizar el nav con las nuevas pestañas.
+  function loadAux(raw) {
+    NODESTORE = NODESTORE || {};
+    if (Array.isArray(raw.workflows))        NODESTORE.model = raw;
+    else if (raw.hotspots || raw.blind_spots) NODESTORE.audit = raw;
+    // Re-render: actualiza el nav (añade pestañas) sin perder la vista actual
+    if (!current)            openOverview();
+    else if (current === 'schema') openSchema();
+    else                     openObject(current);
+  }
+
   function load(text, fileName) {
     let raw;
     try { raw = JSON.parse(text.replace(/^﻿/, '')); }   // quita BOM si lo trae
     catch (e) { alert('JSON inválido: ' + e.message); return; }
-    let db;
+    // Auto-detección: ficheros de nodestore se reconocen por sus claves raíz
+    if (Array.isArray(raw.workflows) || raw.hotspots || raw.blind_spots) {
+      if (!DATA) { nodestoreQueue.push(raw); return; }  // llegan antes que el graph: encolar
+      loadAux(raw);
+      return;
+    }
+    // Fichero principal (graph_full.json)
     try { DATA = SD.shape(raw, null); }
     catch (e) { alert(e.message); return; }
-    db = DATA.database;
+    NODESTORE = null;
+    nodestoreQueue.splice(0).forEach(loadAux);  // aplicar los que llegaron antes
+    const db = DATA.database;
     $('#subtitle').textContent = `${DATA.objects.length} objetos · ${DATA.tables.length} tablas · ${db}`;
     $('#search').disabled = false;
     document.body.classList.add('loaded');
@@ -201,6 +237,10 @@
         load(text, 'demo/graph_full.json');
         const banner = $('#demo-banner');
         if (banner) banner.hidden = false;
+        // Intenta cargar también los ficheros de nodestore del demo (silencioso si no existen)
+        ['demo/model.json', 'demo/audit_report.json'].forEach(path =>
+          fetch(path).then(r => r.ok ? r.json() : Promise.reject()).then(raw => loadAux(raw)).catch(() => {})
+        );
       })
       .catch(() => {});
   }
@@ -221,12 +261,12 @@
   function init() {
     applyTheme(localStorage.getItem('sd-theme') === 'light');
     $('#theme-toggle').addEventListener('click', toggleTheme);
-    $('#file').addEventListener('change', e => readFile(e.target.files[0]));
+    $('#file').addEventListener('change', e => [...e.target.files].forEach(readFile));
     $('#search').addEventListener('input', e => renderSidebar(e.target.value));
     const dz = $('#drop');
     ['dragover', 'dragenter'].forEach(ev => document.addEventListener(ev, e => { e.preventDefault(); dz && dz.classList.add('hot'); }));
     ['dragleave'].forEach(ev => document.addEventListener(ev, e => { if (e.target === dz) dz.classList.remove('hot'); }));
-    document.addEventListener('drop', e => { e.preventDefault(); dz && dz.classList.remove('hot'); readFile(e.dataTransfer.files[0]); });
+    document.addEventListener('drop', e => { e.preventDefault(); dz && dz.classList.remove('hot'); [...e.dataTransfer.files].forEach(readFile); });
     const uploadOwn = $('#demo-upload-own');
     if (uploadOwn) uploadOwn.addEventListener('click', e => {
       e.preventDefault();
@@ -236,7 +276,8 @@
     tryLoadDemo();
   }
 
-  SD.app = { init, load, openObject, openOverview, openRisks, openInventory, openSchema, setFilter,
+  SD.app = { init, load, openObject, openOverview, openRisks, openInventory, openSchema,
+             openWorkflows, openAudit, setFilter,
              schemaAdd, schemaRemove, schemaExpand, schemaClear, setImpactDepth };
   document.addEventListener('DOMContentLoaded', init);
 })(window.SD = window.SD || {});

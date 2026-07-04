@@ -721,5 +721,139 @@
     `;
   }
 
-  SD.components = { Sidebar, Overview, ObjectView, TableView, FlowTree, FlowChartMermaid, DataFlowMermaid, Summary, RisksView, SchemaView, InventoryView, buildErDiagram };
+  // ── WORKFLOWS ─────────────────────────────────────────────────────────────────
+  // Muestra las cadenas de llamada desde puntos de entrada (model.json .workflows).
+  function WorkflowsView(model, DATA) {
+    const workflows = (model && model.workflows) || [];
+    if (!workflows.length)
+      return `<h2>🔀 Workflows</h2><p class="muted">No se detectaron cadenas de llamada (ningún procedimiento de entrada llama a otros).</p>`;
+
+    const makeChip = name =>
+      DATA && DATA.byName[name]
+        ? `<span class="chip" onclick="SD.app.openObject('${esc(name)}')">${esc(name)}</span>`
+        : `<span class="chip muted">${esc(name)}</span>`;
+
+    const wfHtml = workflows.map((wf, i) => {
+      const pathsHtml = (wf.paths || []).map((path, j) => {
+        const hops = path.hops || [];
+        if (!hops.length) return '';
+        const nodes = [hops[0].from, ...hops.map(h => h.to)];
+        const lastHop = hops[hops.length - 1];
+        const cycleNote = lastHop.cycle_back_to
+          ? ` <span class="b trg" title="Ciclo: vuelve a ${esc(lastHop.cycle_back_to)}">↻</span>` : '';
+        const chain = nodes.map(makeChip).join('<span class="wf-arrow">→</span>');
+        return `<div class="wf-path"><span class="muted wf-idx">#${j + 1}</span>${chain}${cycleNote}</div>`;
+      }).join('');
+
+      const entryLink = DATA && DATA.byName[wf.entry_name]
+        ? `<a href="#" onclick="SD.app.openObject('${esc(wf.entry_name)}');return false">${esc(wf.entry_name)}</a>`
+        : `<b>${esc(wf.entry_name)}</b>`;
+      const typeBadge = wf.entry_type ? ` <span class="b cc">${esc(wf.entry_type)}</span>` : '';
+      const pathCount = (wf.paths || []).length;
+
+      return `<details class="wf-entry" ${i < 5 ? 'open' : ''}>
+        <summary>${entryLink}${typeBadge} <span class="muted" style="font-size:11px">${pathCount} camino(s)</span></summary>
+        <div class="wf-paths">${pathsHtml || '<span class="muted">sin caminos</span>'}</div>
+      </details>`;
+    }).join('');
+
+    return `
+      <h2>🔀 Workflows</h2>
+      <p class="muted"><b>${workflows.length}</b> punto(s) de entrada detectado(s). Máx. 30 caminos por entrada, 10 saltos de profundidad. Haz clic en cualquier nombre para navegar al objeto.</p>
+      ${wfHtml}
+    `;
+  }
+
+  // ── AUDITORÍA ─────────────────────────────────────────────────────────────────
+  // Muestra el contenido de audit_report.json: hotspots, blind spots, patrones de riesgo.
+  function AuditView(audit, DATA) {
+    if (!audit) return `<h2>📋 Auditoría</h2><p class="muted">Sin datos de auditoría.</p>`;
+    const s   = audit.summary          || {};
+    const lc  = audit.lineage_coverage || {};
+    const hs  = audit.hotspots         || [];
+    const bs  = audit.blind_spots      || [];
+    const ot  = audit.orphan_tables    || [];
+    const rp  = audit.risk_patterns    || [];
+    const imp = audit.impact           ? Object.keys(audit.impact).length : 0;
+    const byType = s.by_type || {};
+
+    const typeChips = Object.entries(byType).map(([t, n]) =>
+      `<span class="chip">${esc(t)}: <b>${n}</b></span>`).join('');
+    const covPct = lc.coverage_pct != null ? Math.round(lc.coverage_pct) : '?';
+    const covColor = typeof lc.coverage_pct === 'number'
+      ? (lc.coverage_pct >= 70 ? 'var(--ok)' : lc.coverage_pct >= 40 ? 'var(--warn)' : 'var(--chip-w)') : '';
+
+    const objLink = name =>
+      DATA && DATA.byName[name]
+        ? `<a href="#" onclick="SD.app.openObject('${esc(name)}');return false">${esc(name)}</a>`
+        : esc(name);
+
+    const hsTable = hs.length ? `<table class="t">
+      <tr><th>Objeto</th><th>Tipo</th><th>Score</th><th>Grado</th><th>Escribe a</th><th>Lee de</th><th>CC</th></tr>
+      ${hs.slice(0, 25).map(h => `<tr>
+        <td>${objLink(h.name)}</td>
+        <td><span class="b cc">${esc(h.type || '')}</span></td>
+        <td><b>${h.score}</b></td>
+        <td>${h.degree}</td>
+        <td>${(h.writes_tables || []).length}</td>
+        <td>${(h.reads_tables  || []).length}</td>
+        <td>${h.cyclomatic_complexity || 0}</td>
+      </tr>`).join('')}
+    </table>` : '<span class="muted">Sin hotspots.</span>';
+
+    const bsTable = bs.length ? `<table class="t">
+      <tr><th>Objeto</th><th>Tipo</th><th>SQL din. sin resolver</th></tr>
+      ${bs.map(b => `<tr><td>${objLink(b.name)}</td><td><span class="b cc">${esc(b.type || '')}</span></td><td>${b.unresolved_dynamic_sql_steps || 0}</td></tr>`).join('')}
+    </table>` : '<span class="muted">Sin objetos aislados.</span>';
+
+    const otTable = ot.length ? `<table class="t">
+      <tr><th>Tabla</th></tr>
+      ${ot.map(t => `<tr><td>${objLink(t.name)}</td></tr>`).join('')}
+    </table>` : '<span class="muted">Sin tablas sin referencias.</span>';
+
+    const sevMap = { critical: 's-crit', high: 's-high', medium: 's-med' };
+    const rpTable = rp.length ? `<table class="t risks">
+      <tr><th>Sev.</th><th>Patrón</th><th>Objetos</th></tr>
+      ${rp.map(r => {
+        const cls = sevMap[r.severity] || '';
+        const objs = (r.objects || []);
+        const affected = objs.slice(0, 8).map(objLink).join(', ');
+        const more = objs.length > 8 ? ` <span class="muted">+${objs.length - 8} más</span>` : '';
+        return `<tr class="${cls}">
+          <td><span class="sev ${cls}">${esc(r.severity || '')}</span></td>
+          <td>${esc(r.pattern || '')}</td>
+          <td>${affected}${more}</td>
+        </tr>`;
+      }).join('')}
+    </table>` : '<span class="muted">Sin patrones de riesgo detectados.</span>';
+
+    return `
+      <h2>📋 Auditoría</h2>
+      <div class="cards">
+        <div class="card"><div class="n">${s.objects || 0}</div><div class="l">Objetos</div></div>
+        <div class="card"><div class="n">${s.tables  || 0}</div><div class="l">Tablas</div></div>
+        <div class="card"><div class="n">${hs.length}</div><div class="l">Hotspots</div></div>
+        <div class="card"><div class="n">${bs.length}</div><div class="l">Sin referencias</div></div>
+        <div class="card"><div class="n">${imp}</div><div class="l">Con impacto</div></div>
+        <div class="card"><div class="n" ${covColor ? `style="color:${covColor}"` : ''}>${covPct}%</div><div class="l">Cobertura lineage</div></div>
+      </div>
+      <div class="audit-types">${typeChips}</div>
+
+      <h3>Hotspots — objetos más conectados (${hs.length})</h3>
+      ${hsTable}
+
+      <h3>Sin referencias — aislados o solo SQL dinámico (${bs.length})</h3>
+      ${bsTable}
+
+      <h3>Tablas sin escritores ni lectores (${ot.length})</h3>
+      ${otTable}
+
+      <h3>Patrones de riesgo (${rp.length})</h3>
+      ${rpTable}
+
+      ${audit.generated_at ? `<p class="muted audit-ts">Generado: ${esc(audit.generated_at)}</p>` : ''}
+    `;
+  }
+
+  SD.components = { Sidebar, Overview, ObjectView, TableView, FlowTree, FlowChartMermaid, DataFlowMermaid, Summary, RisksView, SchemaView, InventoryView, buildErDiagram, WorkflowsView, AuditView };
 })(window.SD = window.SD || {});
