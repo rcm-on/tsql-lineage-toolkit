@@ -52,7 +52,9 @@ public static class SqlAnalyzer
 
         var dbParts = name.Split("::", 2);
         var db = dbParts.Length == 2 ? dbParts[0] : "";
-        var ctx = new WalkContext { Db = db, TableColumns = tableColumns };
+        // For a DML trigger, capture the table it fires ON so AstWalker can resolve the
+        // inserted/deleted pseudo-tables to it (instead of emitting phantom :Table nodes).
+        var ctx = new WalkContext { Db = db, TableColumns = tableColumns, TriggerOnTable = FindTriggerOnTable(topStatements) };
 
         var statementList = FindBodyStatementList(topStatements);
 
@@ -214,6 +216,22 @@ public static class SqlAnalyzer
             .Distinct()
             .ToList();
         return new TriggerCreationInfo(name, onTable, ct.TriggerType.ToString(), events, lineNo);
+    }
+
+    /// <summary>
+    /// The real table a CREATE/ALTER TRIGGER fires ON (its TriggerObject), or null if the
+    /// object being analyzed isn't a DML trigger. Both CreateTriggerStatement and
+    /// AlterTriggerStatement derive from TriggerStatementBody, which carries TriggerObject.
+    /// </summary>
+    private static string? FindTriggerOnTable(IList<TSqlStatement> topStatements)
+    {
+        foreach (var stmt in topStatements)
+            if (stmt is TriggerStatementBody { TriggerObject.Name: { } onName })
+            {
+                var on = SqlText.Generate(onName);
+                return on.Length > 0 ? on : null;
+            }
+        return null;
     }
 
     private static string DetectObjectType(IList<TSqlStatement> topStatements)

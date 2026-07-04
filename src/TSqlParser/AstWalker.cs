@@ -15,8 +15,24 @@ public static class AstWalker
 {
     public static void Walk(IList<TSqlStatement> statements, List<Condition> condStack, WalkContext ctx, int depth, HashSet<string>? cteNames = null, Dictionary<string, List<(string Alias, string Table)>>? cteBaseTables = null)
     {
+        // Only the top-level call for a trigger body seeds the pseudo-tables (nested
+        // Walk recursions inherit the already-seeded maps). "inserted"/"deleted" behave
+        // exactly like CTEs whose sole base table is the ON table: CollectTableRefs
+        // substitutes them to it (so reads/writes and column qualifiers resolve to the
+        // real table) and IsCte keeps them from ever surfacing as a real :Table node.
+        var seedTrigger = cteNames == null && ctx.TriggerOnTable is { Length: > 0 };
+
         cteNames ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         cteBaseTables ??= new Dictionary<string, List<(string Alias, string Table)>>(StringComparer.OrdinalIgnoreCase);
+
+        if (seedTrigger)
+        {
+            var onTable = ctx.TriggerOnTable!;
+            cteNames.Add("inserted");
+            cteNames.Add("deleted");
+            cteBaseTables["inserted"] = new List<(string Alias, string Table)> { ("inserted", onTable) };
+            cteBaseTables["deleted"] = new List<(string Alias, string Table)> { ("deleted", onTable) };
+        }
 
         foreach (var stmt in statements)
         {
@@ -957,6 +973,15 @@ public static class AstWalker
     {
         switch (tref)
         {
+            case NamedTableReference ntr when ntr.SchemaObject.Identifiers.Count == 1
+                    && IsTriggerPseudoTable(ntr.SchemaObject.BaseIdentifier.Value, cteBaseTables, out var pseudoOnTable):
+                // "inserted"/"deleted" inside a trigger body: resolve to the ON table, but
+                // keep the reference's own alias (if any) so a later "i.Col"/"d.Col" still
+                // resolves - unlike a plain CTE substitution, which would drop the alias.
+                var pseudoEntry = (ntr.Alias?.Value ?? ntr.SchemaObject.BaseIdentifier.Value, pseudoOnTable);
+                if (!result.Contains(pseudoEntry))
+                    result.Add(pseudoEntry);
+                break;
             case NamedTableReference ntr when IsCte(ntr.SchemaObject, cteNames):
                 if (cteBaseTables.TryGetValue(ntr.SchemaObject.BaseIdentifier.Value, out var baseTables))
                     foreach (var bt in baseTables)
@@ -1930,6 +1955,24 @@ public static class AstWalker
     /// <summary>True if a (possibly schema-qualified) name is a single-part identifier matching a registered CTE alias.</summary>
     private static bool IsCte(SchemaObjectName name, HashSet<string> cteNames) =>
         name.Identifiers.Count == 1 && cteNames.Contains(name.BaseIdentifier.Value);
+
+    /// <summary>
+    /// True if <paramref name="name"/> is the trigger pseudo-table "inserted"/"deleted"
+    /// seeded into <paramref name="cteBaseTables"/> for the trigger body being walked,
+    /// yielding the real ON table it resolves to. Only ever true inside a trigger -
+    /// nothing seeds these names for any other object, so non-trigger walks are unchanged.
+    /// </summary>
+    private static bool IsTriggerPseudoTable(string name, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables, out string onTable)
+    {
+        onTable = "";
+        if ((name.Equals("inserted", StringComparison.OrdinalIgnoreCase) || name.Equals("deleted", StringComparison.OrdinalIgnoreCase))
+            && cteBaseTables.TryGetValue(name, out var bases) && bases.Count == 1)
+        {
+            onTable = bases[0].Table;
+            return true;
+        }
+        return false;
+    }
 
     /// <summary>
     /// Looks up the full column list of <paramref name="tableName"/> (a "schema.table"
