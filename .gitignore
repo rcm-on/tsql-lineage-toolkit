@@ -38,3 +38,7 @@ test-results/
 # Ficheros generados por el sistema operativo
 .DS_Store
 Thumbs.db
+
+# Backups de bases de datos de ejemplo (Microsoft): superan el límite de 100 MB
+# de GitHub y son descargables/restaurables; nunca deben versionarse.
+database/*.bak
