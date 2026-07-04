@@ -1,0 +1,8 @@
+{
+  "case": "dynamic-sql-complex",
+  "files": ["dynamic-sql/quotename-case-coalesce.sql"],
+  "derives_from": [],
+  "reads_from": [
+    { "source": "CommunityCasesDB::dbo.usp_BuildDynamicTriggerName#step2", "target": "CommunityCasesDB:table:orders", "properties": { "action_type": "SELECT", "table": "[Orders]" } }
+  ]
+}

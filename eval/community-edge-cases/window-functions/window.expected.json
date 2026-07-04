@@ -1,0 +1,15 @@
+{
+  "case": "window",
+  "files": ["window-functions/window.sql"],
+  "derives_from": [
+    { "from": "CommunityCasesDB:table:dbo.vrunningtotal:column:CustomerID", "to": "CommunityCasesDB:table:dbo.sales:column:CustomerID", "logic": "CustomerID" },
+    { "from": "CommunityCasesDB:table:dbo.vrunningtotal:column:OrderDate", "to": "CommunityCasesDB:table:dbo.sales:column:OrderDate", "logic": "OrderDate" },
+    { "from": "CommunityCasesDB:table:dbo.vrunningtotal:column:Amount", "to": "CommunityCasesDB:table:dbo.sales:column:Amount", "logic": "Amount" },
+    { "from": "CommunityCasesDB:table:dbo.vrunningtotal:column:RunningTotal", "to": "CommunityCasesDB:table:dbo.sales:column:Amount", "logic": "SUM(Amount) OVER (PARTITION BY CustomerID ORDER BY OrderDate ROWS UNBOUNDED PRECEDING)" },
+    { "from": "CommunityCasesDB:table:dbo.vrunningtotal:column:RunningTotal", "to": "CommunityCasesDB:table:dbo.sales:column:CustomerID", "logic": "SUM(Amount) OVER (PARTITION BY CustomerID ORDER BY OrderDate ROWS UNBOUNDED PRECEDING)" },
+    { "from": "CommunityCasesDB:table:dbo.vrunningtotal:column:RunningTotal", "to": "CommunityCasesDB:table:dbo.sales:column:OrderDate", "logic": "SUM(Amount) OVER (PARTITION BY CustomerID ORDER BY OrderDate ROWS UNBOUNDED PRECEDING)" }
+  ],
+  "reads_from": [
+    { "source": "CommunityCasesDB::dbo.vRunningTotal#step0", "target": "CommunityCasesDB:table:dbo.sales", "properties": { "action_type": "SELECT", "table": "dbo.Sales" } }
+  ]
+}

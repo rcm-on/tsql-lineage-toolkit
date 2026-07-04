@@ -1,0 +1,12 @@
+{
+  "case": "union-view",
+  "files": ["set-ops/union-view.sql"],
+  "derives_from": [
+    { "from": "CommunityCasesDB:table:dbo.vunion:column:a", "to": "CommunityCasesDB:table:dbo.t1:column:a", "logic": "a" },
+    { "from": "CommunityCasesDB:table:dbo.vunion:column:a", "to": "CommunityCasesDB:table:dbo.t2:column:b", "logic": "b" }
+  ],
+  "reads_from": [
+    { "source": "CommunityCasesDB::dbo.vUnion#step0", "target": "CommunityCasesDB:table:dbo.t1", "properties": { "action_type": "SELECT", "table": "dbo.t1" } },
+    { "source": "CommunityCasesDB::dbo.vUnion#step1", "target": "CommunityCasesDB:table:dbo.t2", "properties": { "action_type": "SELECT", "table": "dbo.t2" } }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "case": "merge",
+  "files": ["dml-advanced/merge.sql"],
+  "derives_from": [
+    { "from": "CommunityCasesDB:table:dbo.targetproducts:column:Price", "to": "CommunityCasesDB:table:dbo.sourceproducts:column:Price", "logic": "s.Price" },
+    { "from": "CommunityCasesDB:table:dbo.targetproducts:column:Id", "to": "CommunityCasesDB:table:dbo.sourceproducts:column:Id", "logic": "s.Id" },
+    { "from": "CommunityCasesDB:table:dbo.targetproducts:column:Price", "to": "CommunityCasesDB:table:dbo.sourceproducts:column:Price", "logic": "s.Price" }
+  ],
+  "reads_from": [
+    { "source": "CommunityCasesDB::dbo.usp_Sync#step0", "target": "CommunityCasesDB:table:dbo.sourceproducts", "properties": { "action_type": "MERGE", "table": "dbo.SourceProducts", "via": "JOIN" } }
+  ]
+}

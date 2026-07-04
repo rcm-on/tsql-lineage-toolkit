@@ -1,0 +1,12 @@
+{
+  "case": "recursive-cte",
+  "files": ["cte-recursive/recursive-cte.sql"],
+  "derives_from": [
+    { "from": "CommunityCasesDB:table:dbo.vorgchart:column:EmployeeID", "to": "CommunityCasesDB:table:dbo.employees:column:EmployeeID", "logic": "EmployeeID" },
+    { "from": "CommunityCasesDB:table:dbo.vorgchart:column:ManagerID", "to": "CommunityCasesDB:table:dbo.employees:column:ManagerID", "logic": "ManagerID" },
+    { "from": "CommunityCasesDB:table:dbo.vorgchart:column:Lvl", "to": "CommunityCasesDB:table:dbo.employees:column:Lvl", "logic": "Lvl" }
+  ],
+  "reads_from": [
+    { "source": "CommunityCasesDB::dbo.vOrgChart#step0", "target": "CommunityCasesDB:table:dbo.employees", "properties": { "action_type": "SELECT", "table": "dbo.Employees" } }
+  ]
+}

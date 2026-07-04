@@ -1,3 +1,10 @@
+// DEPRECADO (2026-07-03, paso 2 de docs/task-gates-dotnet.md): este runner solo
+// regenera out/*/graph_full.json y sale !=0 si el pipeline crashea - nunca
+// comparó aristas. El gate real ahora es
+// tests/TSqlParser.Tests/CommunityEdgeCaseGateTests.cs (dotnet test, in-process,
+// compara DERIVES_FROM/READS_FROM contra *.expected.json de cada caso). Se
+// conserva sin borrar (regenera el corpus out/ para inspección manual) hasta que
+// nada dependa de él.
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import path from 'path';
