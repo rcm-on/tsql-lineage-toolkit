@@ -468,3 +468,78 @@ caminos de `GraphExporter.cs` que se la saltaban:
   intactos + el nuevo `TempTablePolicy_NoTempTableNodeFromAnyPath`),
   `BadPracticesGateTests` 1/1, `eval/community-edge-cases/run.mjs` OK. Tarea (b)
   (puente a través de `#temp` para el SQL dinámico reconstruido) sigue pendiente.
+
+---
+
+**Tarea (b) RESUELTA (2026-07-04), FRK DERIVES_FROM 193→388 (+195; único 81→161,
++80 aristas semánticas nuevas, 0 perdidas):** el puente `tempOrigin`/`ResolveTransient`
+**ya atravesaba** el SQL dinámico reconstruido para DML plano (verificado con repro:
+`SET @sql=N'INSERT INTO #staging … SELECT … FROM dbo.RealSource'; EXEC(@sql); INSERT
+INTO dbo.RealTarget … SELECT … FROM #staging` produce `DERIVES_FROM RealTarget.* →
+RealSource.* via=#staging`, idéntico al estático, sin nodo `:Table` para `#staging`;
+igual para dinámico→dinámico). La premisa del audit ("los steps inyectados no
+alimentan tempOrigin") ya no aplicaba tras la tarea (a) — los `FlowLink` que inyecta
+`ResolveDynamicSqlLinks` sí entran en el bucle de `tempOrigin`.
+
+  **El hueco real y único que sí bloqueaba el puente:** `ResolveDynamicSqlLinks`
+  filtraba el texto reconstruido a **DML de nivel superior** (`stmts.Where(s is
+  InsertStatement or …)`), así que todo DML **envuelto en control de flujo**
+  (`IF <guarda> INSERT …`, `WHILE`, `BEGIN…END`) se descartaba entero — y esa es la
+  forma dominante en FRK. Fix mínimo en `src/TSqlParser/SqlAnalyzer.cs`: incluir
+  `IfStatement/WhileStatement/BeginEndBlockStatement/TryCatchStatement` en el conjunto
+  que se pasa a `AstWalker.Walk` (que ya sabe descender esos bloques y anclar la
+  condición reconstruida al DML anidado). Único ajuste adicional: los steps que el
+  walk interno deja `UNCONDITIONAL` heredan la rama del `EXEC` (comportamiento previo);
+  los que el walk ya colocó bajo un `IF` reconstruido **conservan** su condición (no se
+  sobreescribe la guarda `IF EXISTS(...)` que traía el propio dinámico). No se tocó
+  `Models.cs`, `AstWalker.cs`, `GraphExporter.cs` ni la guarda de (a).
+
+  **Verificación FRK (`input_final.json` → `graph_bridge.json`, binario nuevo,
+  `--columns`):**
+  - `DERIVES_FROM` **193 → 388** total (único **81 → 161**, +80 nuevas, **0 perdidas**);
+    las **80** aristas nuevas son **todas** puenteadas por temp (`via_transient`),
+    ninguna directa; targets = DMVs reales (`sys.dm_exec_sessions` 12, `sys.sysprocesses`
+    12, `sys.dm_exec_query_stats` 8, `sys.master_files` 4, …).
+  - `WRITES_TO` **17 → 22** (+5, **todas** a `[DBAtools].[dbo].[BlitzFirst]`, la tabla
+    de salida persistente real, desde el `IF EXISTS(…) INSERT`/`DELETE` reconstruido —
+    escrituras que antes se perdían enteras).
+  - `READS_FROM` **619 → 632** (+13), `WRITES_COLUMN` 36→66, `READS_COLUMN` 86→105.
+  - Nodos `:Table` temporales **0 → 0** (guarda de (a) intacta).
+
+  **3 aristas nuevas muestreadas (reales, SQL de origen citado en `sp_BlitzFirst.sql`):**
+  1. `DBAtools.dbo.BlitzFirst.DatabaseID` ← `sys.master_files.database_id`
+     `via=#BlitzFirstResults → #FileStats → #MasterFiles` (cadena de **4 saltos**):
+     `#MasterFiles` ← `sys.master_files` (dinámico, línea 1077); `#FileStats` ←
+     `#MasterFiles` (`INNER JOIN #MasterFiles`, líneas 1480/1499); `#BlitzFirstResults`
+     ← `#FileStats` (línea 1546); y el salto final `INSERT [DBAtools].[dbo].[BlitzFirst]
+     … SELECT … FROM #BlitzFirstResults` **envuelto en `IF EXISTS(SELECT * FROM
+     [DBAtools].INFORMATION_SCHEMA.SCHEMATA …)`** — este último es el que solo se
+     extrae con el fix (antes se caía y dejaba la cadena sin cerrar).
+  2. `DBAtools.dbo.BlitzFirst.DatabaseID` ← `sys.dm_exec_sessions.database_id`
+     `via=#BlitzFirstResults`: la DMV llena `#BlitzFirstResults` (dinámico) y este
+     desemboca en la tabla persistente por el mismo salto `IF`-envuelto.
+  3. Familia de escritores dinámicos `INSERT INTO #BlitzFirstResults … SELECT … FROM
+     <DMV>` (p. ej. línea 3469, `tempdb.sys.dm_db_index_operational_stats`) que ahora
+     puentean hasta la tabla persistente por el mismo mecanismo.
+
+  **Límite honesto documentado:** el gran salto NO viene de nuevos pipelines
+  `#temp→tabla real` con `INSERT…SELECT` posicional (FRK casi no los tiene: sus lecturas
+  de `#temp` son vía `JOIN`/subconsulta correlada/`NOT IN`, sin derivación posicional
+  columna-a-columna, y sus escrituras dinámicas a `#BlitzResults` son `SELECT
+  <constantes>` sin tabla origen → nada que puentear, y así **debe** ser). El +80 viene
+  de **desbloquear el salto de escritura final envuelto en `IF`** (`IF EXISTS(…) INSERT
+  <tabla persistente> … FROM #temp`), que cerraba cadenas DMV→#temp→#temp→persistente
+  ya presentes pero antes truncadas. El puente en sí ya funcionaba; lo que faltaba era
+  extraer el DML dinámico bajo control de flujo.
+
+  **Fail-closed preservado:** un `EXEC(@sql)` cuyo `@sql` se arma con un valor de
+  runtime (`… FROM ' + QUOTENAME(@tableName)`) no se reconstruye (`DynamicSqlText`
+  vacío) → 0 DML inyectado, 0 puente, 0 nodo temp (test
+  `DynamicInsert_RuntimeVariableSource_InventsNoLineage`).
+
+  Suite **117/117** (`--filter "Category!=Oracle"`; +4 tests nuevos en `LineageTests.cs`:
+  `DynamicInsert_ThroughTempTable_BridgesToRealSourceLikeStatic`,
+  `DynamicInsert_WrappedInIf_ThroughTempTable_StillBridges`,
+  `DynamicInsert_WrappedInIf_WriteToRealTable_IsCaptured`,
+  `DynamicInsert_RuntimeVariableSource_InventsNoLineage`; los de (a) intactos),
+  `eval/community-edge-cases/run.mjs` OK.
