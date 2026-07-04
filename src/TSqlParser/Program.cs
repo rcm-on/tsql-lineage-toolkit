@@ -28,7 +28,6 @@
 
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using TSqlParser;
 
 var positional = args.Where(a => !a.StartsWith("--")).ToList();
@@ -126,7 +125,7 @@ if (positional.Count >= 1 && positional[0] == "report")
         Console.Error.WriteLine("Usage: TSqlParser report <input.json> [nombre-objeto]");
         return 1;
     }
-    var (repResults, repTables) = AnalyzeInput(positional[1]);
+    var (repResults, repTables) = InputAnalyzer.Analyze(positional[1]);
     if (positional.Count >= 3)
     {
         var needle = positional[2];
@@ -228,7 +227,7 @@ if (positional.Count >= 1 && positional[0] == "update-nodestore")
         Console.Error.WriteLine("Usage: TSqlParser update-nodestore <input.json> <store_dir.nodes> [--columns]");
         return 1;
     }
-    var (updResults, updTableSchemas) = AnalyzeInput(positional[1]);
+    var (updResults, updTableSchemas) = InputAnalyzer.Analyze(positional[1]);
     var updGraph = GraphExporter.Build(updResults, includeColumns, updTableSchemas);
     var updDb = updResults.Select(o => o.ObjectName.Split("::", 2)).FirstOrDefault(p => p.Length == 2)?[0] ?? "";
     var updJsonOptions = new JsonSerializerOptions
@@ -266,7 +265,7 @@ var jsonOptions = new JsonSerializerOptions
     Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
 };
 
-var (results, tableSchemas) = AnalyzeInput(inputPath);
+var (results, tableSchemas) = InputAnalyzer.Analyze(inputPath);
 
 if (workflowsOutputPath != null)
     File.WriteAllText(workflowsOutputPath, JsonSerializer.Serialize(results, jsonOptions), Encoding.UTF8);
@@ -339,77 +338,3 @@ if (tableSchemas.Count > 0)
 }
 Console.WriteLine($"Graph: {graph.Nodes.Count} nodes, {graph.Relationships.Count} relationships -> {graphOutputPath}");
 return 0;
-
-// Two-pass analysis of an input.json (shared by the default graph build and the
-// "report" command): CREATE TABLE definitions first (so their column lists are
-// available to expand "SELECT *"), then procedures/functions/triggers.
-(List<ObjectResult> Results, List<TableSchemaResult> TableSchemas) AnalyzeInput(string path)
-{
-    var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-    var sources = JsonSerializer.Deserialize<List<SourceObject>>(File.ReadAllText(path), opts)
-        ?? throw new InvalidDataException("Could not parse input JSON");
-
-    var createTableRegex = new Regex(@"^\s*CREATE\s+TABLE\b", RegexOptions.IgnoreCase);
-
-    var schemas = new List<TableSchemaResult>();
-    var objectSources = new List<SourceObject>();
-    foreach (var src in sources)
-    {
-        // Route on the FIRST real statement, ignoring leading comments/whitespace:
-        // a header comment before CREATE TABLE must not misroute the file to object
-        // analysis (which would lose its PK and turn its reads/writes into TARGETS
-        // edges instead of READS_FROM/WRITES_TO).
-        if (createTableRegex.IsMatch(StripLeadingComments(src.Sql)))
-            schemas.Add(TableAnalyzer.AnalyzeTable(src.Name, src.Sql));
-        else
-            objectSources.Add(src);
-    }
-
-    var cols = new Dictionary<string, List<string>>();
-    foreach (var schema in schemas)
-    {
-        if (schema.Error != null)
-            continue;
-        var parts = schema.ObjectName.Split("::", 2);
-        if (parts.Length != 2)
-            continue;
-        cols[$"{parts[0]}::{SqlText.NormalizeRef(parts[1])}"] = schema.Columns.Select(c => c.Name).ToList();
-    }
-
-    var objResults = new List<ObjectResult>();
-    foreach (var src in objectSources)
-        objResults.Add(SqlAnalyzer.AnalyzeObject(src.Name, src.Sql, cols));
-
-    return (objResults, schemas);
-}
-
-// Drops leading whitespace, "--" line comments and "/* */" block comments so the
-// CREATE-TABLE router sees the first real token. Returns "" if the input is only
-// comments/whitespace.
-static string StripLeadingComments(string sql)
-{
-    int i = 0;
-    while (i < sql.Length)
-    {
-        if (char.IsWhiteSpace(sql[i])) { i++; continue; }
-
-        if (sql[i] == '-' && i + 1 < sql.Length && sql[i + 1] == '-')
-        {
-            int nl = sql.IndexOf('\n', i + 2);
-            if (nl < 0) return "";
-            i = nl + 1;
-            continue;
-        }
-
-        if (sql[i] == '/' && i + 1 < sql.Length && sql[i + 1] == '*')
-        {
-            int end = sql.IndexOf("*/", i + 2, StringComparison.Ordinal);
-            if (end < 0) return "";
-            i = end + 2;
-            continue;
-        }
-
-        break;
-    }
-    return i == 0 ? sql : sql.Substring(i);
-}
