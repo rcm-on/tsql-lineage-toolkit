@@ -552,6 +552,60 @@ public class LineageTests
     }
 
     [Fact]
+    public void Trigger_InsertedDeleted_ResolveToOnTable_NoPhantomTables()
+    {
+        // Regression for extraction-gaps.md §6: inside a DML trigger, the pseudo-tables
+        // inserted/deleted are virtual row sets of the ON table - they must resolve to it
+        // (reads and column lineage) and must never surface as their own :Table/:Column
+        // nodes. Aliased (i/d) to also exercise alias-preserving resolution.
+        var sql = """
+            CREATE TRIGGER dbo.TR_Orders_Audit ON dbo.Orders
+            AFTER UPDATE
+            AS
+            BEGIN
+                INSERT INTO dbo.OrderAudit (OrderId, OldStatus, NewStatus)
+                SELECT i.OrderId, d.Status, i.Status
+                FROM inserted AS i
+                INNER JOIN deleted AS d ON i.OrderId = d.OrderId;
+            END
+            """;
+        var graph = BuildGraph(sql, objectName: "dbo.TR_Orders_Audit");
+
+        // No phantom "inserted"/"deleted" nodes at all - neither :Table nor :Column.
+        static string Plain(object name) => ((string)name).Replace("[", "").Replace("]", "").ToLowerInvariant();
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
+            (Plain(n.Properties["name"]) == "inserted" || Plain(n.Properties["name"]) == "deleted"));
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Column") &&
+            (Plain(n.Properties["table"]) == "inserted" || Plain(n.Properties["table"]) == "deleted"));
+
+        // The trigger reads its ON table (via inserted/deleted) and writes the audit table.
+        var orders = FindNode(graph, n => n.Labels.Contains("Table") && Plain(n.Properties["name"]) == "dbo.orders");
+        var audit = FindNode(graph, n => n.Labels.Contains("Table") && Plain(n.Properties["name"]) == "dbo.orderaudit");
+        Assert.NotNull(orders);
+        Assert.NotNull(audit);
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == orders!.Id));
+        Assert.NotNull(FindRel(graph, "WRITES_TO", r => r.EndNodeId == audit!.Id));
+
+        // Column lineage flows to the ON table's columns, not to any pseudo-table:
+        // OldStatus/NewStatus both derive from dbo.Orders.Status (via deleted/inserted),
+        // OrderId derives from dbo.Orders.OrderId.
+        var statusOrders = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.orders" && (string)n.Properties["name"] == "Status");
+        var idOrders = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.orders" && (string)n.Properties["name"] == "OrderId");
+        var oldStatus = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.orderaudit" && (string)n.Properties["name"] == "OldStatus");
+        var newStatus = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.orderaudit" && (string)n.Properties["name"] == "NewStatus");
+        var idAudit = FindNode(graph, n => n.Labels.Contains("Column") && (string)n.Properties["table"] == "dbo.orderaudit" && (string)n.Properties["name"] == "OrderId");
+        Assert.NotNull(statusOrders);
+        Assert.NotNull(idOrders);
+        Assert.NotNull(oldStatus);
+        Assert.NotNull(newStatus);
+        Assert.NotNull(idAudit);
+
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == oldStatus!.Id && r.EndNodeId == statusOrders!.Id));
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == newStatus!.Id && r.EndNodeId == statusOrders!.Id));
+        Assert.NotNull(FindRel(graph, "DERIVES_FROM", r => r.StartNodeId == idAudit!.Id && r.EndNodeId == idOrders!.Id));
+    }
+
+    [Fact]
     public void Update_FiltersOnWhereColumn()
     {
         var sql = """

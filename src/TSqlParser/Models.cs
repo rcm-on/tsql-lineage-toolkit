@@ -181,6 +181,17 @@ public class WalkContext
     public string Db { get; init; } = "";
 
     /// <summary>
+    /// When the object being walked is a DML TRIGGER, the real table it fires ON
+    /// (e.g. "Person.Person"). Inside a trigger body the pseudo-tables
+    /// <c>inserted</c>/<c>deleted</c> are virtual row sets of this table, so the
+    /// walker seeds them as pseudo-CTEs resolving here - reads/writes and column
+    /// lineage land on the ON table and no phantom "inserted"/"deleted" :Table node
+    /// is ever emitted (mirrors the MERGE ... OUTPUT INTO handling). Null/empty for
+    /// every non-trigger object, so their behavior is unchanged.
+    /// </summary>
+    public string? TriggerOnTable { get; init; }
+
+    /// <summary>
     /// Optional "{Database}::{schema.table}" (normalized, lowercase) -> column names,
     /// built from CREATE TABLE definitions (TableAnalyzer). Used to expand "SELECT *"
     /// and column-list-less INSERTs into their real column lists.
