@@ -35,8 +35,8 @@ T-SQL, tres preguntas que hoy están dispersas en la suite de tests, en
 | `UPDATE` auto-referencia (no crea self-loop) | sí | `UpdateSetSelfReference_DoesNotCreateSelfLoop` | corpus | ✅ |
 | `UPDATE` `WHERE` → `CONDITIONED_BY`/`FiltersOn` | sí | `Update_FiltersOnWhereColumn` | corpus | ✅ |
 | `MERGE` lectura de target+source (nivel tabla) | sí | `ReadsFrom_MergeCapturesSourceAndTarget`, `Merge_WritesToTarget` | DMVs | ✅ |
-| `MERGE` `WHEN MATCHED UPDATE` / `WHEN NOT MATCHED INSERT` (columna) | sí | — *(cubierto en `eval/community-edge-cases`)* | DMVs + a mano | 🟡 validado por corpus, falta test unitario |
-| `MERGE` `OUTPUT INTO` (vía `inserted`/`deleted`) | sí (fix reciente) | — | a mano | 🟡 arreglado; **sin test unitario que lo fije** |
+| `MERGE` `WHEN MATCHED UPDATE` / `WHEN NOT MATCHED INSERT` (columna) | sí | `CommunityEdgeCaseGateTests.Corpus_MatchesExpectedEdges(merge)` | DMVs + corpus | ✅ fijado por test 2026-07-03 |
+| `MERGE` `OUTPUT INTO` (vía `inserted`/`deleted`) | sí (fix reciente) | `CommunityEdgeCaseGateTests.Corpus_MatchesExpectedEdges(merge-with-output)` | corpus | ✅ fijado por test 2026-07-03 |
 | `DELETE ... FROM alias` (resuelve alias→tabla real) | sí | `DeleteFromAlias_ResolvesToRealTable` | corpus | ✅ |
 | `TRUNCATE` → `WRITES_TO` | sí | `Truncate_WritesToTarget` | corpus | ✅ |
 
@@ -57,9 +57,9 @@ T-SQL, tres preguntas que hoy están dispersas en la suite de tests, en
 
 | Construcción | ¿Extrae? | Test | Oráculo | Estado |
 |---|---|---|---|---|
-| `UNION` en cuerpo de **VISTA** (deriva de cada rama) | sí (fix) | — *(en `eval/community-edge-cases/set-ops`)* | sqlglot | 🟡 arreglado; **sin test unitario** (cf. §1 UNION en DML sigue 🟡) |
+| `UNION` en cuerpo de **VISTA** (deriva de cada rama) | sí (fix) | `CommunityEdgeCaseGateTests.Corpus_MatchesExpectedEdges(union-view)` | sqlglot + corpus | ✅ fijado por test 2026-07-03 (cf. §1 UNION en DML sigue 🟡) |
 | CTE no recursiva | sí | `CteAlias_IsNotEmittedAsTable` | corpus | ✅ |
-| CTE **recursiva** (lineage desde tabla base) | sí (fix) | — | DMVs | 🟡 base OK; **columna calculada (`Level`) → fantasma** (limitación conocida) |
+| CTE **recursiva** (lineage desde tabla base) | sí (fix) | `CommunityEdgeCaseGateTests.Corpus_MatchesExpectedEdges(recursive-cte)` | DMVs + corpus | ✅ fijado por test 2026-07-03; **columna calculada (`Lvl`) → fantasma** sigue siendo limitación conocida (documentada en el `expected.json`) |
 | VISTA: columnas de salida como nodos `DERIVES_FROM` | sí | `View_OutputColumnDerivesFromBaseColumns` | SQL Server (`sys.columns`) | ✅ gate WWI verde |
 | Puente `SELECT ... FROM <vista>` → tablas base (`via_view`) | sí | `SelectFromAnalyzedView_BridgesToViewsRealBaseTable` | SQL Server | ✅ |
 
@@ -106,10 +106,12 @@ T-SQL, tres preguntas que hoy están dispersas en la suite de tests, en
 ## Lectura del auditor
 
 - **Núcleo DML + vistas + esquema: sólido y validado** (✅ dominantes en §1-§5).
-- **Deuda de test (🟡 sin test unitario):** MERGE OUTPUT, UNION en vista, CTE recursiva,
-  constraints `:BusinessRule`. Funcionan y están validados por corpus, pero **no hay
-  red de regresión unitaria** — un refactor (eje B) podría romperlos en silencio.
-  → *Acción A1.1: subir estos 4 de "validado por corpus" a "fijado por test".*
+- **Deuda de test (🟡 sin test unitario) — CERRADA 2026-07-03 para 3 de 4:** MERGE
+  `WHEN MATCHED`/`OUTPUT INTO`, UNION en vista y CTE recursiva ahora tienen red de
+  regresión unitaria (`CommunityEdgeCaseGateTests`, `[Theory]` in-process contra
+  `expected.json` con aristas concretas — paso 2 de `docs/task-gates-dotnet.md`).
+  Queda pendiente solo constraints `:BusinessRule` (fuera del corpus de
+  community-edge-cases; no tocado por esta tarea).
 - **Gaps reales acotados:** PIVOT y XQuery (frontera de alcance honesta; decisión de
   negocio si entran).
 - **Riesgo desconocido (❓):** OPENJSON, APPLY+TVF, sinónimos, UDF/TVF, triggers.

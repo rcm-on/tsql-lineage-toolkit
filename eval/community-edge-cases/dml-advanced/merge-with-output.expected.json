@@ -1,0 +1,15 @@
+{
+  "case": "merge-with-output",
+  "files": ["dml-advanced/merge-with-output.sql"],
+  "derives_from": [
+    { "from": "CommunityCasesDB:table:dbo.productmergelog:column:OldPrice", "to": "CommunityCasesDB:table:dbo.targetproducts:column:Price", "logic": "deleted.Price" },
+    { "from": "CommunityCasesDB:table:dbo.productmergelog:column:NewPrice", "to": "CommunityCasesDB:table:dbo.targetproducts:column:Price", "logic": "inserted.Price" },
+    { "from": "CommunityCasesDB:table:dbo.targetproducts:column:Price", "to": "CommunityCasesDB:table:dbo.sourceproducts:column:Price", "logic": "s.Price" },
+    { "from": "CommunityCasesDB:table:dbo.targetproducts:column:Id", "to": "CommunityCasesDB:table:dbo.sourceproducts:column:Id", "logic": "s.Id" },
+    { "from": "CommunityCasesDB:table:dbo.targetproducts:column:Price", "to": "CommunityCasesDB:table:dbo.sourceproducts:column:Price", "logic": "s.Price" }
+  ],
+  "reads_from": [
+    { "source": "CommunityCasesDB::dbo.usp_SyncProducts#step0", "target": "CommunityCasesDB:table:dbo.targetproducts", "properties": { "action_type": "OUTPUT", "table": "dbo.TargetProducts", "via": "JOIN" } },
+    { "source": "CommunityCasesDB::dbo.usp_SyncProducts#step1", "target": "CommunityCasesDB:table:dbo.sourceproducts", "properties": { "action_type": "MERGE", "table": "dbo.SourceProducts", "via": "JOIN" } }
+  ]
+}

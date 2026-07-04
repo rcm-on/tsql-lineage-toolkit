@@ -1,0 +1,25 @@
+{
+  "case": "lineage-chain",
+  "files": [
+    "lineage-chain/01-base-table.sql",
+    "lineage-chain/02-view-level1.sql",
+    "lineage-chain/03-view-level2.sql",
+    "lineage-chain/04-view-level3.sql"
+  ],
+  "derives_from": [
+    { "from": "CommunityCasesDB:table:dbo.vordersenriched:column:OrderID", "to": "CommunityCasesDB:table:dbo.orders:column:OrderID", "logic": "OrderID" },
+    { "from": "CommunityCasesDB:table:dbo.vordersenriched:column:CustomerID", "to": "CommunityCasesDB:table:dbo.orders:column:CustomerID", "logic": "CustomerID" },
+    { "from": "CommunityCasesDB:table:dbo.vordersenriched:column:NetAmount", "to": "CommunityCasesDB:table:dbo.orders:column:Amount", "logic": "Amount" },
+    { "from": "CommunityCasesDB:table:dbo.vordersenriched:column:OrderDate", "to": "CommunityCasesDB:table:dbo.orders:column:OrderDate", "logic": "OrderDate" },
+    { "from": "CommunityCasesDB:table:dbo.vorderssummary:column:OrderID", "to": "CommunityCasesDB:table:dbo.vordersenriched:column:OrderID", "logic": "OrderID" },
+    { "from": "CommunityCasesDB:table:dbo.vorderssummary:column:TotalAmount", "to": "CommunityCasesDB:table:dbo.vordersenriched:column:NetAmount", "logic": "NetAmount" },
+    { "from": "CommunityCasesDB:table:dbo.vorderssummary:column:OrderDate", "to": "CommunityCasesDB:table:dbo.vordersenriched:column:OrderDate", "logic": "OrderDate" },
+    { "from": "CommunityCasesDB:table:dbo.vordersreport:column:OrderID", "to": "CommunityCasesDB:table:dbo.vorderssummary:column:OrderID", "logic": "OrderID" },
+    { "from": "CommunityCasesDB:table:dbo.vordersreport:column:ReportedAmount", "to": "CommunityCasesDB:table:dbo.vorderssummary:column:TotalAmount", "logic": "TotalAmount" }
+  ],
+  "reads_from": [
+    { "source": "CommunityCasesDB::dbo.vOrdersEnriched#step0", "target": "CommunityCasesDB:table:dbo.orders", "properties": { "action_type": "SELECT", "table": "dbo.Orders" } },
+    { "source": "CommunityCasesDB::dbo.vOrdersSummary#step0", "target": "CommunityCasesDB:table:dbo.orders", "properties": { "action_type": "SELECT", "table": "dbo.Orders", "via_view": "CommunityCasesDB::dbo.vOrdersEnriched" } },
+    { "source": "CommunityCasesDB::dbo.vOrdersReport#step0", "target": "CommunityCasesDB:table:dbo.vordersenriched", "properties": { "action_type": "SELECT", "table": "dbo.vOrdersEnriched", "via_view": "CommunityCasesDB::dbo.vOrdersSummary" } }
+  ]
+}
