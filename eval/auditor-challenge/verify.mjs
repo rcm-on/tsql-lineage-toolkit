@@ -1,4 +1,12 @@
 #!/usr/bin/env node
+// DEPRECADO (2026-07-04, paso 3-extensión de docs/task-gates-dotnet.md): este
+// script sigue funcionando tal cual (no se ha tocado su lógica) pero el gate
+// real ahora es tests/TSqlParser.Tests/AuditorChallengeGateTests.cs (dotnet
+// test, in-process, misma comprobación exacta contra un nodestore WWI
+// regenerado con [Trait("Category","Oracle")]). Se conserva sin borrar como
+// guardia de paridad JS↔C# (correrlo a mano contra un nodestore regenerado
+// detecta divergencia entre ambos motores) hasta que nada dependa de él.
+//
 // Regresión ejecutable del ejercicio de auditoría cruzada (docs/auditor-challenge.md).
 // Las conclusiones de docs/claude-audit-report.md y docs/gemini-audit-report.md sobre
 // DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad (WWI) eran afirmaciones en prosa

@@ -250,6 +250,28 @@ tests/gates de los pasos 0-1 no modificados.
    sin filtro (con SQL Server disponible) → 107/107, ~36 s (dominado por las 2
    llamadas Oracle: extracción en vivo de 3+20 vistas y sus tablas base).
 
+**Extensión (2026-07-04) — `eval/auditor-challenge/verify.mjs` portado:**
+`tests/TSqlParser.Tests/AuditorChallengeGateTests.cs` (nuevo, mismo trait
+`Category=Oracle`) regenera el nodestore COMPLETO de WideWorldImporters
+in-process (`ObjectExtractor.Run` sin filtro de objeto/like, para tener el
+grafo de llamadas/escrituras entero, no solo un puñado de vistas) y verifica
+las mismas 4 comprobaciones que `verify.mjs`: `cyclomatic_complexity==19` y
+`unresolved_dynamic_sql_steps==0/34` de
+`DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad`, sus 17 tablas
+`WRITES_TO` exactas (vía `nav.json`) y el impacto en `lineage_path.json` de
+`Website.Customers` (14/14), `Website.Suppliers` (12/12) y
+`Website.VehicleTemperatures` (0/6, caso negativo). Prueba de mutación
+(`cyclomatic_complexity` esperado 19→999) → falla con
+`cyclomatic_complexity esperado=999 (snapshot WWI) obtenido=19`; revertida.
+`dotnet test --filter Category=Oracle` → 3/3 (los 2 de `ViewLineageOracleTests`
+más este). `dotnet test --filter Category!=Oracle` → 113/113, ninguno de esta
+clase ejecutado. Paridad JS↔C# verificada: `node
+eval/auditor-challenge/verify.mjs` corrido a mano contra un nodestore WWI
+regenerado con el CLI (`extract --tables` + `--columns --nodestore`) imprime
+`TODOS OK` con los mismos números exactos que el test C# midió. `verify.mjs`
+no se borra ni se modifica en su lógica (solo nota de deprecación al
+principio, mismo patrón que `eval/community-edge-cases/run.mjs`).
+
 ### 4. CI (GitHub Actions)
 
 - Job rápido en cada push: build + `dotnet test --filter Category!=Oracle`
