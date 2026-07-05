@@ -70,12 +70,12 @@ namespace TSqlParser.Tests.ChatGpt
                 {
                     ObjectResult res = null;
                     try { res = SqlAnalyzer.AnalyzeObject($"{Db}::{Path.GetFileName(f)}::{m.Key}", m.Value); }
-                    catch (Exception ex) { Assert.True(false, $"Analyzer threw on {f} mutation {m.Key}: {ex}"); }
+                    catch (Exception ex) { Assert.Fail($"Analyzer threw on {f} mutation {m.Key}: {ex}"); }
                     Assert.NotNull(res);
 
                     GraphPayload g = null;
                     try { g = GraphExporter.Build(new List<ObjectResult> { res }, includeColumns: true); }
-                    catch (Exception ex) { Assert.True(false, $"GraphExporter threw on {f} mutation {m.Key}: {ex}"); }
+                    catch (Exception ex) { Assert.Fail($"GraphExporter threw on {f} mutation {m.Key}: {ex}"); }
                     Assert.NotNull(g);
 
                     var options = new JsonSerializerOptions { WriteIndented = true };
