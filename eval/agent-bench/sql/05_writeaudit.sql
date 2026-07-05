@@ -1,0 +1,1 @@
+CREATE PROCEDURE dbo.WriteAudit @msg NVARCHAR(200) AS BEGIN INSERT INTO dbo.AuditLog (Msg) VALUES (@msg); END
