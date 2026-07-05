@@ -993,7 +993,7 @@ public static class GraphExporter
             var (db, _) = SplitName(r.ObjectName);
             foreach (var trig in r.CreatedTriggers)
             {
-                var plain = trig.TriggerName.Replace("[", "").Replace("]", "").Trim();
+                var plain = SqlText.StripBrackets(trig.TriggerName);
                 if (plain.Length == 0)
                     continue;
                 var triggerId = $"{db}::{plain}";
@@ -1021,7 +1021,7 @@ public static class GraphExporter
                     // Trigger -[:ON]-> the table whose INSERT/UPDATE/DELETE fires it.
                     // De-bracket so the Table node's `name` is clean "Schema.Table" and
                     // dedups with the same table however another step referenced it.
-                    var onTableRaw = trig.OnTable.Replace("[", "").Replace("]", "").Trim();
+                    var onTableRaw = SqlText.StripBrackets(trig.OnTable);
                     var (onTableId, _) = GetOrCreateTable(graph, tableIds, db, onTableRaw);
                     graph.Relationships.Add(new GraphRel
                     {
@@ -1189,7 +1189,10 @@ public static class GraphExporter
                     Properties = new Dictionary<string, object>
                     {
                         ["database"] = db,
-                        ["name"] = plain,
+                        // De-bracket for display; NormalizeRef (via tableKey) already
+                        // strips brackets for the id, but also lowercases, which would
+                        // clobber casing in the display name.
+                        ["name"] = SqlText.StripBrackets(plain),
                     },
                 });
             }
@@ -1526,7 +1529,9 @@ public static class GraphExporter
                 Properties = new Dictionary<string, object>
                 {
                     ["database"] = db,
-                    ["name"] = tableName,
+                    // De-bracket for display (NormalizeRef, used for tableKey/id, also
+                    // lowercases - wrong for a display name's casing).
+                    ["name"] = SqlText.StripBrackets(tableName),
                 },
             });
         }

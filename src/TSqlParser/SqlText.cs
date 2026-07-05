@@ -22,4 +22,12 @@ public static class SqlText
     /// <summary>Strips brackets/whitespace and lowercases so "[Schema].[Table]" matches "schema.table".</summary>
     public static string NormalizeRef(string raw) =>
         Regex.Replace(raw, @"[\[\]]", "").Trim().ToLowerInvariant();
+
+    /// <summary>
+    /// Strips brackets/whitespace but preserves casing - for display-facing name
+    /// properties (e.g. a :Table node's "name") where NormalizeRef's lowercasing
+    /// would be wrong. "[DBAtools].[dbo].[BlitzFirst]" -> "DBAtools.dbo.BlitzFirst".
+    /// </summary>
+    public static string StripBrackets(string raw) =>
+        Regex.Replace(raw, @"[\[\]]", "").Trim();
 }
