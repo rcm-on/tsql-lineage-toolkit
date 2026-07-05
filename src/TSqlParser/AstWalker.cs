@@ -2022,8 +2022,15 @@ public static class AstWalker
 
     /// <summary>
     /// Searches a FROM clause's table references (recursing into JOINs) for a
-    /// NamedTableReference aliased as <paramref name="alias"/>, and returns its
-    /// real table name ("" if it's itself a CTE). Null if no such alias is found.
+    /// table aliased as <paramref name="alias"/>, and returns its real name so the
+    /// bare alias of an "UPDATE alias ... FROM real AS alias" / "DELETE alias FROM
+    /// real AS alias" is never mistaken for a table. Resolves:
+    ///   - a NamedTableReference to its base/#temp/##global name ("" if it's a CTE);
+    ///   - a VariableTableReference (table variable "@t AS alias") to its @name, so
+    ///     it flows through the same temp/variable guard as a direct write to it and
+    ///     never surfaces as a :Table node.
+    /// Recurses through every JoinTableReference (INNER/LEFT/CROSS and comma joins).
+    /// Null when no alias matches, so the caller keeps its current behavior.
     /// </summary>
     private static string? ResolveAlias(string alias, IList<TableReference> refs, HashSet<string> cteNames)
     {
@@ -2033,8 +2040,10 @@ public static class AstWalker
             {
                 case NamedTableReference ntr when string.Equals(ntr.Alias?.Value, alias, StringComparison.OrdinalIgnoreCase):
                     return IsCte(ntr.SchemaObject, cteNames) ? "" : SqlText.Generate(ntr.SchemaObject);
-                case QualifiedJoin qj:
-                    var found = ResolveAlias(alias, new[] { qj.FirstTableReference, qj.SecondTableReference }, cteNames);
+                case VariableTableReference vtr when string.Equals(vtr.Alias?.Value, alias, StringComparison.OrdinalIgnoreCase):
+                    return vtr.Variable?.Name ?? "";
+                case JoinTableReference jtr:
+                    var found = ResolveAlias(alias, new[] { jtr.FirstTableReference, jtr.SecondTableReference }, cteNames);
                     if (found != null)
                         return found;
                     break;
