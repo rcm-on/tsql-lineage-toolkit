@@ -1,0 +1,211 @@
+name: PR impact comment
+
+# Dogfoods `diff-change-map` (see docs/task-change-map-diff.md) on this repo's own
+# eval/bad-practices/sql corpus: generates the "before" store from the PR's
+# merge-base with the base branch and the "after" store from the PR head, diffs
+# them, and posts/updates one PR comment with the summary + newly-affected list.
+# See docs/task-pr-impact-action.md for the full rationale (corpus choice,
+# report-only decision, and how a downstream SQL repo adapts this file).
+
+on:
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr-impact:
+    name: Lineage impact diff (dogfood corpus)
+    runs-on: windows-latest
+    steps:
+      - name: Checkout PR head (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build TSqlParser (Release, once)
+        run: dotnet build src/TSqlParser/TSqlParser.csproj -c Release
+
+      - name: Locate merge-base with base branch
+        id: mergebase
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch origin "${{ github.event.pull_request.base.ref }}" --quiet
+          sha="$(git merge-base HEAD "origin/${{ github.event.pull_request.base.ref }}")"
+          echo "Merge-base with ${{ github.event.pull_request.base.ref }}: $sha"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+      - name: Add worktree for merge-base commit
+        shell: bash
+        run: git worktree add "$RUNNER_TEMP/pr-impact-base" "${{ steps.mergebase.outputs.sha }}"
+
+      - name: Generate BEFORE store (merge-base)
+        shell: bash
+        run: |
+          set -euo pipefail
+          dll="$(pwd)/src/TSqlParser/bin/Release/net10.0/TSqlParser.dll"
+          corpus="$RUNNER_TEMP/pr-impact-base/eval/bad-practices/sql"
+          out="$(pwd)/pr-impact/before"
+          mkdir -p "$out"
+          dotnet "$dll" from-sql PrDogfood "$out/input.json" "$corpus"/*.sql
+          dotnet "$dll" "$out/input.json" "$out/graph.json" --columns --nodestore
+
+      - name: Generate AFTER store (PR head)
+        shell: bash
+        run: |
+          set -euo pipefail
+          dll="$(pwd)/src/TSqlParser/bin/Release/net10.0/TSqlParser.dll"
+          corpus="$(pwd)/eval/bad-practices/sql"
+          out="$(pwd)/pr-impact/after"
+          mkdir -p "$out"
+          dotnet "$dll" from-sql PrDogfood "$out/input.json" "$corpus"/*.sql
+          dotnet "$dll" "$out/input.json" "$out/graph.json" --columns --nodestore
+
+      - name: Diff change maps
+        shell: bash
+        run: |
+          set -euo pipefail
+          dll="$(pwd)/src/TSqlParser/bin/Release/net10.0/TSqlParser.dll"
+          # v1 is report-only: no --fail-on-new-impact here. The CLI already
+          # supports it as a CI gate (exit 2 on new impact) - see
+          # docs/task-pr-impact-action.md for turning it on downstream.
+          dotnet "$dll" diff-change-map \
+            "$(pwd)/pr-impact/before/graph.nodes" \
+            "$(pwd)/pr-impact/after/graph.nodes" \
+            "$(pwd)/pr-impact/diff.json"
+
+      - name: Remove worktree
+        if: always()
+        shell: bash
+        run: git worktree remove "$RUNNER_TEMP/pr-impact-base" --force 2>/dev/null || true
+
+      - name: Upload diff artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-impact-diff
+          path: pr-impact/diff.json
+
+      - name: Comment PR with impact summary
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // Same hidden marker identifies "our" comment across pushes so we
+            // update it in place instead of stacking a new one every run.
+            const MARKER = '<!-- pr-impact-comment:v1 -->';
+            const CORPUS = 'eval/bad-practices/sql';
+            const DATABASE = 'PrDogfood';
+
+            const diffPath = path.join(process.cwd(), 'pr-impact', 'diff.json');
+            // The CLI writes UTF-8 with a BOM; strip it before JSON.parse (Node
+            // does not skip a leading BOM automatically).
+            const raw = fs.readFileSync(diffPath, 'utf8').replace(/^\uFEFF/, '');
+            const diff = JSON.parse(raw);
+
+            function renderComment(diff) {
+              const changed = diff.summary.changed;
+              const newlyAffectedTotal = diff.summary.newly_affected_total;
+              const riskNote = diff.summary.risk_note;
+              const objectsAdded = diff.objects_added || [];
+              const objectsRemoved = diff.objects_removed || [];
+
+              const isEmpty = changed === 0 && newlyAffectedTotal === 0 &&
+                objectsAdded.length === 0 && objectsRemoved.length === 0;
+
+              if (isEmpty) {
+                return [
+                  MARKER,
+                  '## Lineage impact report (dogfood corpus)',
+                  '',
+                  `No lineage-visible changes detected in \`${CORPUS}\` between base and head.`,
+                  '',
+                ].join('\n');
+              }
+
+              const lines = [];
+              lines.push(MARKER);
+              lines.push('## Lineage impact report (dogfood corpus)');
+              lines.push('');
+              lines.push(`- Corpus: \`${CORPUS}\` (database \`${DATABASE}\`)`);
+              lines.push(`- Objects changed: **${changed}**`);
+              lines.push(`- Newly affected downstream objects: **${newlyAffectedTotal}**`);
+              if (riskNote) lines.push(`- Risk note: ${riskNote}`);
+              if (objectsAdded.length) lines.push(`- Objects added: ${objectsAdded.join(', ')}`);
+              if (objectsRemoved.length) lines.push(`- Objects removed: ${objectsRemoved.join(', ')}`);
+              lines.push('');
+
+              const objIds = Object.keys(diff.impact_delta || {}).sort();
+              if (objIds.length > 0) {
+                lines.push('### Newly affected, per changed object');
+                lines.push('');
+                for (const id of objIds) {
+                  const entry = diff.impact_delta[id];
+                  lines.push(`**${id}**`);
+                  if (entry.newly_affected && entry.newly_affected.length > 0) {
+                    lines.push(`- newly affected: ${entry.newly_affected.join(', ')}`);
+                  }
+                  for (const vd of entry.via_data_added || []) {
+                    lines.push(`  - writes now reach \`${vd.table}\` -> ${vd.consumers.join(', ')}`);
+                  }
+                  for (const vc of entry.via_calls_added || []) {
+                    lines.push(`  - new call reaches \`${vc.object}\` (depth ${vc.depth}${vc.conditional ? ', conditional' : ''})`);
+                  }
+                  lines.push('');
+                }
+              }
+
+              const wfDelta = diff.workflows_delta || {};
+              const wfAdded = wfDelta.added || [];
+              const wfRemoved = wfDelta.removed || [];
+              const wfReshaped = wfDelta.reshaped || [];
+              if (wfAdded.length + wfRemoved.length + wfReshaped.length > 0) {
+                lines.push('### Workflows delta');
+                lines.push('');
+                if (wfAdded.length) lines.push(`- added: ${wfAdded.join(', ')}`);
+                if (wfRemoved.length) lines.push(`- removed: ${wfRemoved.join(', ')}`);
+                for (const r of wfReshaped) lines.push(`- reshaped: ${r.entry} (${r.paths_before} -> ${r.paths_after} paths)`);
+                lines.push('');
+              }
+
+              lines.push('_Full diff JSON is attached as the `pr-impact-diff` workflow artifact._');
+              lines.push('');
+              lines.push('_v1 is report-only; the CLI supports `--fail-on-new-impact` to gate CI on new impact (not enabled here yet - see docs/task-pr-impact-action.md)._');
+
+              return lines.join('\n');
+            }
+
+            const body = renderComment(diff);
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            const existing = comments.find(c => c.body && c.body.includes(MARKER));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
