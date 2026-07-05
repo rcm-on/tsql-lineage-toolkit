@@ -272,6 +272,112 @@ public class LineageTests
         Assert.NotNull(FindRel(graph, "WRITES_TO", r => r.EndNodeId == target!.Id));
     }
 
+    // The following four tests pin the "UPDATE alias ... FROM real AS alias" /
+    // "DELETE alias FROM real AS alias" resolution documented in
+    // docs/frk-torture-report.md (sp_BlitzCache/sp_DatabaseRestore/sp_kill): the
+    // bare alias from the UPDATE/DELETE must be resolved against the FROM clause to
+    // the real target, and never leak out as a phantom :Table node named "b"/"fl"/"t".
+    // (The plain real-table JOIN form is already covered by
+    // UpdateFromAlias_ResolvesToRealTable / DeleteFromAlias_ResolvesToRealTable above.)
+
+    [Fact]
+    public void UpdateFromAliasedGlobalTemp_ResolvesToGlobalTemp_NoAliasNode()
+    {
+        // sp_BlitzCache.sql:3224 shape: UPDATE <alias> ... FROM #temp JOIN ##global <alias>.
+        // The alias "b" must resolve to ##BlitzCacheProcs, which - like any #/##
+        // temp - is not emitted as a real :Table node; the alias "b" must not be either.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                UPDATE b
+                SET b.compile_timeout = 1
+                FROM #statements s
+                JOIN ##BlitzCacheProcs b ON b.Id = s.Id
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        Assert.Null(FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "b"));
+        // ## globals follow the same temp guard as # locals: no real :Table node.
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).Contains("BlitzCacheProcs", StringComparison.OrdinalIgnoreCase));
+        // Consequently there is no WRITES_TO pointing at a phantom alias/global-temp node.
+        Assert.DoesNotContain(graph.Relationships, r => r.Type == "WRITES_TO" &&
+            (string)graph.Nodes.First(n => n.Id == r.EndNodeId).Properties["name"] == "b");
+    }
+
+    [Fact]
+    public void DeleteFromAliasedTableVariable_FollowsTableVariableConvention_NoAliasNode()
+    {
+        // sp_DatabaseRestore.sql:1389 shape: DELETE <alias> FROM @tablevar AS <alias>.
+        // Table variables never become :Table nodes (see TableVariable_IsNotEmittedAsTable),
+        // so resolving "fl" -> @FileList must follow that same rule: no "fl" node, no
+        // "@FileList" node, and no WRITES_TO edge for either.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                DECLARE @FileList TABLE (BackupPath NVARCHAR(255), BackupFile NVARCHAR(255))
+                DELETE fl
+                FROM @FileList AS fl
+                WHERE fl.BackupPath + fl.BackupFile <= 'z'
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        Assert.Null(FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "fl"));
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).Contains("FileList", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(graph.Relationships, r => r.Type == "WRITES_TO" &&
+            (string)graph.Nodes.First(n => n.Id == r.EndNodeId).Properties["name"] == "fl");
+    }
+
+    [Fact]
+    public void UpdateFromAliasedRealTable_JoinToTableVariable_ResolvesToRealTable()
+    {
+        // Mixed form: real table aliased, joined to a table variable - the UPDATE
+        // alias must still resolve to the real base table (WRITES_TO dbo.Target),
+        // and no phantom alias node appears.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                DECLARE @Ids TABLE (Id INT)
+                UPDATE t
+                SET t.Status = 'X'
+                FROM dbo.Target AS t
+                JOIN @Ids AS i ON i.Id = t.Id
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        Assert.Null(FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "t"));
+        var target = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Target");
+        Assert.NotNull(target);
+        Assert.NotNull(FindRel(graph, "WRITES_TO", r => r.EndNodeId == target!.Id));
+    }
+
+    [Fact]
+    public void UpdateRealTableWithoutFrom_Unchanged()
+    {
+        // Control: a plain "UPDATE dbo.T SET ..." with no FROM clause must be
+        // unaffected by the alias-resolution path and still write dbo.T directly.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                UPDATE dbo.T
+                SET Reason = 'Lead blocker'
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var target = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.T");
+        Assert.NotNull(target);
+        Assert.NotNull(FindRel(graph, "WRITES_TO", r => r.EndNodeId == target!.Id));
+    }
+
     [Fact]
     public void Synonym_ReadThroughSynonym_ResolvesToBaseTable()
     {
