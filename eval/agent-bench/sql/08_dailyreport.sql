@@ -1,0 +1,1 @@
+CREATE PROCEDURE dbo.DailyReport AS BEGIN SELECT Id, Msg FROM dbo.AuditLog; END

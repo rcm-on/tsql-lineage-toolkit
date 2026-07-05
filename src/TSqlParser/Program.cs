@@ -265,6 +265,26 @@ if (positional.Count >= 1 && positional[0] == "diff-change-map")
     return ChangeMapDiff.Run(positional[1], positional[2], positional[3], failOnNewImpact, diffJsonOptions);
 }
 
+// "bench-make <store_dir.nodes> <bench_dir>" / "bench-grade <bench_dir> <answers_dir>":
+// store-agnostic agent benchmark. bench-make derives six navigation cases (prompts +
+// expected answers) from any nodestore's own precomputed artifacts; bench-grade scores
+// one model's answers directory (answers/<model>/C*.json [+ run.json metadata]) and
+// writes a per-model scorecard under <bench_dir>/results/. See AgentBench /
+// eval/agent-bench/README.md.
+if (positional.Count >= 1 && positional[0] is "bench-make" or "bench-grade")
+{
+    if (positional.Count < 3)
+    {
+        Console.Error.WriteLine($"Usage: TSqlParser {positional[0]} {(positional[0] == "bench-make" ? "<store_dir.nodes> <bench_dir>" : "<bench_dir> <answers_dir>")}");
+        return 1;
+    }
+    var seedIdx = Array.IndexOf(args, "--seed");
+    var benchSeed = seedIdx >= 0 && seedIdx + 1 < args.Length && int.TryParse(args[seedIdx + 1], out var sv) ? sv : 0;
+    return positional[0] == "bench-make"
+        ? AgentBench.Make(positional[1], positional[2], benchSeed)
+        : AgentBench.Grade(positional[1], positional[2]);
+}
+
 if (positional.Count < 2)
 {
     Console.Error.WriteLine("Usage: TSqlParser <input.json> <output_graph.json> [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore] [--sqlite]");
@@ -275,6 +295,7 @@ if (positional.Count < 2)
     Console.Error.WriteLine("       TSqlParser extract-tables <graph.json> <input.json> [--server <server>]");
     Console.Error.WriteLine("       TSqlParser update-nodestore <input.json> <store_dir.nodes> [--columns]");
     Console.Error.WriteLine("       TSqlParser diff-change-map <store_before.nodes> <store_after.nodes> <output.json> [--fail-on-new-impact]");
+    Console.Error.WriteLine("       TSqlParser bench-make <store_dir.nodes> <bench_dir>  |  bench-grade <bench_dir> <answers_dir>");
     return 1;
 }
 

@@ -1,0 +1,1 @@
+CREATE PROCEDURE dbo.RecalcTotals AS BEGIN UPDATE o SET Total = v.OrderTotal FROM dbo.Orders o JOIN dbo.vCustomerOrders v ON v.CustomerName IS NOT NULL; IF EXISTS (SELECT 1 FROM dbo.AuditLog) EXEC dbo.WriteAudit @msg = N'recalc'; END
