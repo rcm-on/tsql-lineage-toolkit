@@ -62,6 +62,31 @@ public class NodeStoreUpdateTests : IDisposable
             .Select(f => Path.GetRelativePath(root, f).Replace('\\', '/'))
             .OrderBy(f => f, StringComparer.Ordinal);
 
+    [Fact]
+    public void IndexHowto_RoutesEveryPrecomputedArtifact()
+    {
+        // The howto is the agent's navigation contract: every precomputed answer
+        // (change_map for workflows/impact, audit_report for risk, lineage_path
+        // for columns) must be routed there, or agents fall back to walking the
+        // graph - the measured-expensive path (docs/nodestore-analysis.md Caso 4).
+        var store = NewTempDir();
+        NodeStoreExporter.Write(BuildGraph(("dbo.ProcA", ProcASql)), store, Db, JsonOptions);
+
+        var index = JsonDocument.Parse(File.ReadAllText(Path.Combine(store, "index.json"))).RootElement;
+        var howto = index.GetProperty("howto");
+        foreach (var key in new[]
+                 {
+                     "start", "call_chain", "corpus_report", "column_lineage",
+                     "workflows_and_impact", "business_rules", "risk_audit",
+                 })
+            Assert.True(howto.TryGetProperty(key, out _), $"howto is missing the '{key}' route");
+        Assert.Contains("change_map.json", howto.GetProperty("workflows_and_impact").GetString());
+
+        var entry = index.GetProperty("entry");
+        Assert.Equal("change_map.json", entry.GetProperty("change_map").GetString());
+        Assert.Equal("audit_report.json", entry.GetProperty("audit_report").GetString());
+    }
+
     /// <summary>index.json content with meta.generated_at removed, so two stores generated at different times can be compared.</summary>
     private static string NormalizedIndexJson(string path)
     {
