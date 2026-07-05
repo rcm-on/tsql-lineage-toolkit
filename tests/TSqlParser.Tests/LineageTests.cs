@@ -1134,6 +1134,26 @@ public class LineageTests
     }
 
     [Fact]
+    public void BracketedTableTarget_DisplayNameIsDebracketed()
+    {
+        // H4 (frk-torture-report.md): 9/138 :Table nodes in the FRK corpus kept
+        // T-SQL brackets in their display `name` (e.g. "[msdb].[dbo].[sysjobs]")
+        // while the rest were bracket-free ("msdb.dbo.sysjobs"). The node `id` was
+        // already normalized via NormalizeRef - only the display name leaked brackets.
+        var sql = """
+            CREATE PROCEDURE dbo.P
+            AS
+            INSERT INTO [msdb].[dbo].[sysjobs] (name) VALUES ('x')
+            """;
+        var graph = BuildGraph(sql);
+
+        Assert.NotNull(FindNode(graph, n => n.Labels.Contains("Table") &&
+            (string)n.Properties["name"] == "msdb.dbo.sysjobs"));
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).Contains('['));
+    }
+
+    [Fact]
     public void SelectFromAnalyzedView_BridgesToViewsRealBaseTable()
     {
         var viewSql = """
