@@ -242,6 +242,29 @@ if (positional.Count >= 1 && positional[0] == "update-nodestore")
     return 0;
 }
 
+// "diff-change-map <store_before.nodes> <store_after.nodes> <output.json> [--fail-on-new-impact]":
+// diffs two already-generated node stores into a change_map_diff.json (which objects
+// changed, what impact they gained/lost, whom they now reach). Reads ONLY manifest.json
+// (content_hash) + change_map.json from each store - no SQL re-analysis. With
+// --fail-on-new-impact, exits 2 when the diff surfaces new impact (an optional CI gate).
+// See ChangeMapDiff / docs/task-change-map-diff.md.
+if (positional.Count >= 1 && positional[0] == "diff-change-map")
+{
+    if (positional.Count < 4)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser diff-change-map <store_before.nodes> <store_after.nodes> <output.json> [--fail-on-new-impact]");
+        return 1;
+    }
+    var diffJsonOptions = new JsonSerializerOptions
+    {
+        WriteIndented = true,
+        PropertyNameCaseInsensitive = true,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+    };
+    var failOnNewImpact = args.Contains("--fail-on-new-impact");
+    return ChangeMapDiff.Run(positional[1], positional[2], positional[3], failOnNewImpact, diffJsonOptions);
+}
+
 if (positional.Count < 2)
 {
     Console.Error.WriteLine("Usage: TSqlParser <input.json> <output_graph.json> [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore] [--sqlite]");
@@ -251,6 +274,7 @@ if (positional.Count < 2)
     Console.Error.WriteLine("       TSqlParser validate <graph.json> [--server <server>]");
     Console.Error.WriteLine("       TSqlParser extract-tables <graph.json> <input.json> [--server <server>]");
     Console.Error.WriteLine("       TSqlParser update-nodestore <input.json> <store_dir.nodes> [--columns]");
+    Console.Error.WriteLine("       TSqlParser diff-change-map <store_before.nodes> <store_after.nodes> <output.json> [--fail-on-new-impact]");
     return 1;
 }
 
