@@ -22,7 +22,7 @@ namespace TSqlParser.Tests.ChatGpt
         public void RunAllSpecs_ValidateExpectedDerivations()
         {
             var baseDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "lineage_specs"));
-            if (!Directory.Exists(baseDir)) Assert.True(false, $"Specs directory not found: {baseDir}");
+            if (!Directory.Exists(baseDir)) Assert.Fail($"Specs directory not found: {baseDir}");
 
             foreach (var f in Directory.EnumerateFiles(baseDir, "*.json").OrderBy(x => x))
             {

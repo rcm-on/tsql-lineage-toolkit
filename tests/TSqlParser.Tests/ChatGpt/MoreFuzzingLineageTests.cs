@@ -54,7 +54,7 @@ namespace TSqlParser.Tests.ChatGpt
                 }
                 catch (Exception ex)
                 {
-                    Assert.True(false, $"Analyzer threw an exception on SQL:\n{sql}\n{ex}");
+                    Assert.Fail($"Analyzer threw an exception on SQL:\n{sql}\n{ex}");
                 }
 
                 Assert.NotNull(res);
@@ -76,11 +76,11 @@ namespace TSqlParser.Tests.ChatGpt
             foreach (var sql in variants)
             {
                 ObjectResult res = null;
-                try { res = Analyze(sql); } catch (Exception ex) { Assert.True(false, $"Analyzer threw: {ex}\nSQL: {sql}"); }
+                try { res = Analyze(sql); } catch (Exception ex) { Assert.Fail($"Analyzer threw: {ex}\nSQL: {sql}"); }
                 Assert.NotNull(res);
 
                 GraphPayload g = null;
-                try { g = GraphExporter.Build(new List<ObjectResult> { res }, includeColumns: true); } catch (Exception ex) { Assert.True(false, $"GraphExporter threw: {ex}\nSQL: {sql}"); }
+                try { g = GraphExporter.Build(new List<ObjectResult> { res }, includeColumns: true); } catch (Exception ex) { Assert.Fail($"GraphExporter threw: {ex}\nSQL: {sql}"); }
                 Assert.NotNull(g);
             }
         }

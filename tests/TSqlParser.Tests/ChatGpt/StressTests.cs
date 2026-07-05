@@ -31,9 +31,9 @@ namespace TSqlParser.Tests.ChatGpt
 
             var sql = sb.ToString();
             ObjectResult res = null;
-            try { res = Analyze(sql); } catch (Exception ex) { Assert.True(false, $"Analyzer threw: {ex}"); }
+            try { res = Analyze(sql); } catch (Exception ex) { Assert.Fail($"Analyzer threw: {ex}"); }
             Assert.NotNull(res);
-            try { var g = GraphExporter.Build(new List<ObjectResult> { res }, includeColumns: false); Assert.NotNull(g); } catch (Exception ex) { Assert.True(false, $"GraphExporter threw: {ex}"); }
+            try { var g = GraphExporter.Build(new List<ObjectResult> { res }, includeColumns: false); Assert.NotNull(g); } catch (Exception ex) { Assert.Fail($"GraphExporter threw: {ex}"); }
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace TSqlParser.Tests.ChatGpt
 
             var sql = $"CREATE PROCEDURE dbo.TestProc AS BEGIN SELECT * FROM {inner}; END";
             ObjectResult res = null;
-            try { res = Analyze(sql); } catch (Exception ex) { Assert.True(false, $"Analyzer threw: {ex}\nSQL: {sql}"); }
+            try { res = Analyze(sql); } catch (Exception ex) { Assert.Fail($"Analyzer threw: {ex}\nSQL: {sql}"); }
             Assert.NotNull(res);
         }
 
@@ -59,7 +59,7 @@ namespace TSqlParser.Tests.ChatGpt
             var sql = $"CREATE PROCEDURE dbo.TestProc AS BEGIN {body}; END";
 
             ObjectResult res = null;
-            try { res = Analyze(sql); } catch (Exception ex) { Assert.True(false, $"Analyzer threw: {ex}"); }
+            try { res = Analyze(sql); } catch (Exception ex) { Assert.Fail($"Analyzer threw: {ex}"); }
             Assert.NotNull(res);
         }
 
@@ -71,7 +71,7 @@ DECLARE @s nvarchar(max);
 SET @s = 'SELECT ' + QUOTENAME('Id') + ' FROM ' + @t + ' WHERE Col=''''''X'''''" + ";\nEXEC sp_executesql @s; END";
 
             ObjectResult res = null;
-            try { res = Analyze(sql); } catch (Exception ex) { Assert.True(false, $"Analyzer threw: {ex}"); }
+            try { res = Analyze(sql); } catch (Exception ex) { Assert.Fail($"Analyzer threw: {ex}"); }
             Assert.NotNull(res);
             Assert.True(res.DynamicSqlCount >= 0);
         }
@@ -105,9 +105,9 @@ SET @s = 'SELECT ' + QUOTENAME('Id') + ' FROM ' + @t + ' WHERE Col=''''''X'''''"
                 string text = null;
                 try { text = File.ReadAllText(f); } catch { continue; }
                 ObjectResult res = null;
-                try { res = Analyze(text, Path.GetFileName(f)); } catch (Exception ex) { Assert.True(false, $"Analyzer threw on {f}: {ex}"); }
+                try { res = Analyze(text, Path.GetFileName(f)); } catch (Exception ex) { Assert.Fail($"Analyzer threw on {f}: {ex}"); }
                 Assert.NotNull(res);
-                try { var g = GraphExporter.Build(new List<ObjectResult> { res }, includeColumns: false); Assert.NotNull(g); } catch (Exception ex) { Assert.True(false, $"GraphExporter threw on {f}: {ex}"); }
+                try { var g = GraphExporter.Build(new List<ObjectResult> { res }, includeColumns: false); Assert.NotNull(g); } catch (Exception ex) { Assert.Fail($"GraphExporter threw on {f}: {ex}"); }
             }
         }
     }
