@@ -163,6 +163,13 @@
         { "rule": "Tabla escrita pero nunca leída", "sev": "low", "cat": "Diseño" },
         { "rule": "Tabla totalmente anulable", "sev": "low", "cat": "Integridad" }
       ]
+    },
+    {
+      "component": "dbo.usp_RecalculateCustomerSpend",
+      "note": "Caso demo de la Action pr-impact: UPDATE masivo sin transacción ni TRY/CATCH.",
+      "expected": [
+        { "rule": "Escritura sin protección", "sev": "med", "cat": "Robustez" }
+      ]
     }
   ]
 }
