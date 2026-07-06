@@ -9,7 +9,7 @@ namespace TSqlParser.Tests;
 /// GraphExporter --columns -> RiskAnalyzer) y compara los hallazgos contra el
 /// ground-truth expected-findings.json, reportando FALTAN (falso negativo), SOBRAN
 /// (falso positivo) y desajustes de severidad/categoría - el equivalente xUnit de
-/// evaluate.mjs. Corpus actual: 38 hallazgos esperados en 24 componentes.
+/// evaluate.mjs. Corpus actual: 39 hallazgos esperados en 25 componentes.
 /// </summary>
 public class BadPracticesGateTests : IDisposable
 {
