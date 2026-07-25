@@ -35,6 +35,9 @@ npm-debug.log*
 playwright-report/
 test-results/
 
+# Documentos de trabajo interno (borradores, informes de auditoría, logs de agentes)
+notes/
+
 # Ficheros generados por el sistema operativo
 .DS_Store
 Thumbs.db
