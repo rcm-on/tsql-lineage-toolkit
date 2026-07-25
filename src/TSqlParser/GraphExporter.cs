@@ -979,7 +979,7 @@ public static class GraphExporter
 
         // ── :Trigger nodes for triggers an object CREATEs in its body (typically via
         // resolved dynamic SQL - see SqlAnalyzer.ExtractTriggerCreation). Modeled as
-        // first-class :SqlObject nodes (Gemini's design answer #2), deliberately DECOUPLED
+        // first-class :SqlObject nodes, deliberately DECOUPLED
         // from the creating proc: the proc CREATES the trigger, but the trigger's own body
         // runs later, when the base table is modified - so its writes must NOT be attributed
         // to the proc. This is the "what trigger, on whom, when" layer; the body's lineage is
