@@ -32,7 +32,9 @@ public static class TableAnalyzer
         }
 
         var script = (TSqlScript)fragment;
-        var cts = script.Batches.SelectMany(b => b.Statements).OfType<CreateTableStatement>().FirstOrDefault();
+        var finder = new CreateTableFinder();
+        script.Accept(finder);
+        var cts = finder.First;
         if (cts?.Definition == null)
         {
             result.Error = "not a CREATE TABLE statement";
@@ -139,6 +141,74 @@ public static class TableAnalyzer
         }
 
         return result;
+    }
+
+    /// <summary>
+    /// True when this script's job is to (possibly conditionally - e.g. the common
+    /// idempotent-install pattern "IF NOT EXISTS(...) BEGIN CREATE TABLE ... END",
+    /// as seen throughout Ola Hallengren's maintenance solution) create one table, so
+    /// InputAnalyzer's router can send it to AnalyzeTable instead of SqlAnalyzer.
+    /// Unlike a literal "^CREATE TABLE" text match, this parses the whole script and
+    /// walks every descendant fragment (TSqlFragmentVisitor recurses into IF/BEGIN...END
+    /// bodies automatically), so a CREATE TABLE nested inside a guard is still found.
+    /// False when the script also defines a procedure/function/trigger/view - those
+    /// must go through the object pipeline (their reads/writes need TARGETS/
+    /// READS_FROM/WRITES_TO edges, not a column schema) even on the rare chance they
+    /// also create a real (non-temp) table inline.
+    /// </summary>
+    public static bool LooksLikeTableScript(string? sql)
+    {
+        if (string.IsNullOrWhiteSpace(sql))
+            return false;
+
+        var parser = new TSql160Parser(initialQuotedIdentifiers: true);
+        using var reader = new StringReader(sql);
+        var fragment = parser.Parse(reader, out IList<ParseError> errors);
+        if (errors.Count > 0)
+            return false;
+
+        var finder = new CreateTableFinder();
+        fragment.Accept(finder);
+        return finder.First != null && !finder.HasObjectDefinition;
+    }
+
+    /// <summary>
+    /// Finds the first CREATE TABLE statement anywhere in a script - including one
+    /// nested inside an IF guard or BEGIN...END block, not just a top-level batch
+    /// statement - and flags whether the script also defines a procedure/function/
+    /// trigger/view (which routes it away from table-schema analysis entirely).
+    /// Every CREATE/ALTER/CREATE OR ALTER variant of each object kind is its own
+    /// concrete ScriptDom type (e.g. AlterProcedureStatement, CreateOrAlterViewStatement)
+    /// - overriding only the CREATE overload would miss the common Ola-Hallengren-style
+    /// "IF NOT EXISTS(...) EXEC(@sql) END; ALTER PROCEDURE ..." install pattern (the
+    /// literal CREATE never appears in the script; only ALTER does), which would then
+    /// misroute the procedure's own inline "CREATE TABLE #Temp (...)" as if the whole
+    /// file were a table schema. TSqlFragmentVisitor dispatches by the node's exact
+    /// compile-time type, not its base class, so all three variants must be listed for
+    /// every kind rather than relying on their common base (ProcedureStatementBody etc).
+    /// </summary>
+    private sealed class CreateTableFinder : TSqlFragmentVisitor
+    {
+        public CreateTableStatement? First { get; private set; }
+        public bool HasObjectDefinition { get; private set; }
+
+        public override void Visit(CreateTableStatement node) => First ??= node;
+
+        public override void Visit(CreateProcedureStatement node) => HasObjectDefinition = true;
+        public override void Visit(AlterProcedureStatement node) => HasObjectDefinition = true;
+        public override void Visit(CreateOrAlterProcedureStatement node) => HasObjectDefinition = true;
+
+        public override void Visit(CreateFunctionStatement node) => HasObjectDefinition = true;
+        public override void Visit(AlterFunctionStatement node) => HasObjectDefinition = true;
+        public override void Visit(CreateOrAlterFunctionStatement node) => HasObjectDefinition = true;
+
+        public override void Visit(CreateTriggerStatement node) => HasObjectDefinition = true;
+        public override void Visit(AlterTriggerStatement node) => HasObjectDefinition = true;
+        public override void Visit(CreateOrAlterTriggerStatement node) => HasObjectDefinition = true;
+
+        public override void Visit(CreateViewStatement node) => HasObjectDefinition = true;
+        public override void Visit(AlterViewStatement node) => HasObjectDefinition = true;
+        public override void Visit(CreateOrAlterViewStatement node) => HasObjectDefinition = true;
     }
 
     private static string LastIdentifier(MultiPartIdentifier ident) =>
