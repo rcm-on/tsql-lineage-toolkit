@@ -24,7 +24,7 @@ Este toolkit da una respuesta **determinista y consciente de la gramática**, co
 
 Esta única pantalla —el procedimiento `DeactivateTemporalTablesBeforeDataLoad` de WideWorldImporters— muestra lo que las herramientas de texto y las de catálogo dejan escapar:
 
-- **34 sentencias de SQL dinámico, resueltas y contadas.** El procedimiento construye su SQL en `@SQL` en tiempo de ejecución. Un `grep` cuenta **3** flujos (engañado por los `BEGIN`/`IF` que viven *dentro* de los strings generados); el AST cuenta los **34** reales y una anidación de **1** (correcta). Ese hueco, justo donde el análisis de texto falla, es el sentido de todo.
+- **34 sentencias de SQL dinámico, resueltas y contadas.** El procedimiento construye su SQL en `@SQL` en tiempo de ejecución y lo lanza con 34 `EXECUTE (@SQL)` — el AST cuenta **34**, y el fuente tiene exactamente 34. El contraste está en el flujo de control: un `grep` del cuerpo encuentra **52** tokens `IF`, pero **34 de ellos viven *dentro* de los strings que se están construyendo**; el AST reconoce los **18** reales y una anidación de **1**. Ese hueco, justo donde el análisis de texto falla, es el sentido de todo.
 - **Reglas de negocio y riesgos, no solo dependencias.** El objeto **escribe en 17 tablas distintas** ("hace demasiado, candidato a dividir"), **modifica datos sin transacción ni manejo de errores**, y ejecuta SQL dinámico ("revisar parametrización/permisos"). Riesgos de seguridad, robustez y mantenibilidad derivados del AST, con severidad.
 - **Flujos de control reales:** complejidad ciclomática 19, 18 flujos de control, 87 pasos — métricas del árbol de sintaxis, no del texto.
 - **El grafo de impacto:** a quién llama, quién le llama, y las tablas que toca con su operación (`ALTER`, `lee`, …). Incluso detecta que **crea triggers dinámicamente**.
@@ -74,12 +74,12 @@ Las gratuitas paran en el análisis de texto o de catálogo: **ninguna usa la gr
 
 No es solo WideWorldImporters. La corrección se contrasta contra **varios corpus con oráculo independiente**:
 
-- **Código fuente real (WWI):** `DeactivateTemporalTablesBeforeDataLoad` reporta **34 `EXEC` dinámicos** → el fuente tiene exactamente **34**; anidación **1** → correcta, mientras un grep reportaba **3**, engañado por los tokens *dentro* de los strings generados.
+- **Código fuente real (WWI):** `DeactivateTemporalTablesBeforeDataLoad` reporta **34** sentencias de SQL dinámico → el fuente tiene exactamente **34** `EXECUTE (@SQL)`. Y **18** flujos de control → los que quedan al descontar los **34** tokens `IF` que un grep encuentra *dentro* de los strings generados (52 en crudo).
 - **Malas prácticas (`eval/bad-practices/`):** un corpus de anti-patrones con `expected-findings.json` como oráculo — detección de SQL dinámico, escrituras sin transacción, complejidad, variables muertas.
 - **Construcciones complejas (`eval/community-edge-cases/`):** `MERGE`, CTEs recursivas, SQL dinámico, cursores — los casos que rompen a los parsers de texto.
 - **Lineage de columna (`eval/view-lineage/`):** contrastado contra **`sys.dm_sql_referenced_entities`** del propio SQL Server.
 
-Además de los corpus, **119 pruebas unitarias (xUnit)** cubren el parser. Todo corre como **gate en CI**: una regresión sale en rojo antes que en manos de un usuario.
+Además de los corpus, **136 pruebas unitarias (xUnit)** cubren el parser. Todo corre como **gate en CI**: una regresión sale en rojo antes que en manos de un usuario.
 
 ## Casos de uso — dónde aparece este problema
 
@@ -101,12 +101,21 @@ Ejecutado contra **WideWorldImporters** (base de datos de muestra de Microsoft),
 
 | Métrica | Valor |
 | --- | --- |
-| Objetos analizados | 47 procedimientos/funciones/vistas + 48 tablas |
+| Objetos extraídos de la base | 47 procedimientos/funciones/vistas + 48 tablas |
+| Objetos en el grafo | **64** (los 47 + **17 triggers creados en runtime** por SQL dinámico) |
+| Tablas en el grafo | **68** (las 48 + 15 del catálogo `sys.*` referenciado + 3 vistas + 2 tablas creadas en runtime) |
 | Nodos del grafo | 1.529 |
 | Relaciones | 4.151 |
 | Errores de parseo | **0** |
+| Claves ajenas contra `sys.foreign_keys` | **98 / 98** — 0 ausencias, 0 fantasmas |
+| Cadenas `EXEC` contra `sys.sql_expression_dependencies` | **12 / 12** — 0 ausencias |
+| Cobertura de lineage de columna | **32 / 32 columnas de salida (100%)** |
 
-*(Verificado en vivo contra `localhost\SQLEXPRESS` · WideWorldImporters.)*
+Las dos primeras filas son la razón de ser de la herramienta: la base **no tiene ningún trigger** en `sys.objects`, pero el análisis del AST descubre los **17** que `DeactivateTemporalTablesBeforeDataLoad` crea en tiempo de ejecución. Un inventario de catálogo se los pierde enteros.
+
+> Un nodo `Table` no es siempre una tabla base: una **vista** también recibe uno, para que un `SELECT col FROM vista` aguas abajo aterrice en el mismo nodo `Column` y el lineage no se corte al atravesarla.
+
+*(Corrida canónica del **2026-07-26** contra `.\SQLEXPRESS` · SQL Server 2025 (RTM-GDR) 17.0.1125.2 Express · commit `487e15c`. Salidas de consola literales, capturas y desglose completo en [`docs/corrida-canonica.md`](docs/corrida-canonica.md).)*
 
 ## Guía de uso
 
@@ -177,7 +186,7 @@ Resumen general, vista por objeto/tabla con flujo de control en **lenguaje natur
 
 ![Panel de riesgos: hallazgos por severidad y categoría con el detalle de cada regla](docs/readme-risks.png)
 
-El panel de riesgos clasifica cada hallazgo por **severidad** y **categoría**. Sobre WWI: **112 hallazgos** (1 crítico, 20 altos), con el detalle de la regla — desde una **inyección SQL** (dinámico construido desde datos de tabla) hasta escrituras sin transacción, complejidad excesiva o problemas de integridad. La auditoría de seguridad y calidad que normalmente requiere una herramienta de pago, en un panel.
+El panel de riesgos clasifica cada hallazgo por **severidad** y **categoría**. Sobre WWI: **110 hallazgos** (1 crítico, 20 altos, 43 medios, 46 bajos), con el detalle de la regla — desde una **inyección SQL** (el único crítico: `Configuration_ApplyColumnstoreIndexing` construye `@SQL` desde datos de `sys.indexes`) hasta escrituras sin transacción, complejidad excesiva o problemas de integridad. La auditoría de seguridad y calidad que normalmente requiere una herramienta de pago, en un panel.
 
 ## En tu CI/CD — un gate de impacto en cada PR
 
@@ -224,7 +233,7 @@ El `change_map_diff.json` queda como artefacto: qué objetos cambiaron y a quié
 
 ## Pruébalo contra tu base de datos
 
-Está probado contra una base de datos **real** —**WideWorldImporters sobre SQL Server 2025**— y sus construcciones más difíciles: **SQL dinámico** (`EXEC(@sql)`), **cursores**, **`MERGE`**, **tablas temporales**, **triggers creados en runtime** y anidación multinivel. Sale con 0 errores de parseo, y el lineage se contrasta contra oráculos independientes (`sys.dm_sql_referenced_entities`, planes de ejecución). La completitud es alta, pero no infinita.
+Está probado contra una base de datos **real** —**WideWorldImporters sobre SQL Server 2025 (17.0.1125.2, Express)**— y sus construcciones más difíciles: **SQL dinámico** (`EXEC(@sql)`), **cursores**, **`MERGE`**, **tablas temporales**, **triggers creados en runtime** y anidación multinivel. Sale con 0 errores de parseo, y el lineage se contrasta contra oráculos independientes (`sys.dm_sql_referenced_entities`, planes de ejecución). La completitud es alta, pero no infinita.
 
 Por eso la invitación es directa: **apúntalo a tu base de datos y pruébalo.** Si encuentras un objeto que no extrae bien —una tabla que se pierde, un lineage que se corta, un patrón raro—, **ábrelo como issue con el caso**. Cada release estrecha el hueco, y los casos reales son el mejor corpus. Trata la ausencia de una arista como "no detectada", no como "probado que no existe" — y cuéntanoslo para mejorarlo.
 

@@ -1,0 +1,698 @@
+Plan: Application_Configuration_ApplyAuditing.xml  (actual=False, procs=1)
+  Proc: Application.Configuration_ApplyAuditing
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [ASSIGN]
+    [BEGIN TRY]
+    [END TRY]
+    [BEGIN CATCH]
+    [PRINT]
+    [THROW]
+    [END CATCH]
+Plan: Application_Configuration_ApplyColumnstoreIndexing.xml  (actual=False, procs=1)
+  Proc: Application.Configuration_ApplyColumnstoreIndexing
+    [SET ON/OFF]
+    [SET ON/OFF]
+Plan: Application_Configuration_ApplyFullTextIndexing.xml  (actual=False, procs=1)
+  Proc: Application.Configuration_ApplyFullTextIndexing
+Plan: Application_Configuration_ApplyPartitioning.xml  (actual=False, procs=1)
+  Proc: Application.Configuration_ApplyPartitioning
+    [SET ON/OFF]
+    [SET ON/OFF]
+Plan: Application_Configuration_ApplyRowLevelSecurity.xml  (actual=False, procs=1)
+  Proc: Application.Configuration_ApplyRowLevelSecurity
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [BEGIN TRY]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [PRINT]
+    [END TRY]
+    [BEGIN CATCH]
+    [PRINT]
+    [PRINT]
+    [THROW]
+    [END CATCH]
+Plan: Application_Configuration_ConfigureForEnterpriseEdition.xml  (actual=False, procs=1)
+  Proc: Application.Configuration_ConfigureForEnterpriseEdition
+    [EXECUTE PROC]
+    [EXECUTE PROC]
+    [EXECUTE PROC]
+    [EXECUTE PROC]
+Plan: Application_Configuration_EnableInMemory.xml  (actual=False, procs=1)
+  Proc: Application.Configuration_EnableInMemory
+    [SET ON/OFF]
+    [SET ON/OFF]
+Plan: Application_Configuration_RemoveAuditing.xml  (actual=False, procs=1)
+  Proc: Application.Configuration_RemoveAuditing
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [ASSIGN]
+    [BEGIN TRY]
+    [END TRY]
+    [BEGIN CATCH]
+    [PRINT]
+    [THROW]
+    [END CATCH]
+Plan: Application_Configuration_RemoveRowLevelSecurity.xml  (actual=False, procs=1)
+  Proc: Application.Configuration_RemoveRowLevelSecurity
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [BEGIN TRY]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [PRINT]
+    [END TRY]
+    [BEGIN CATCH]
+    [PRINT]
+    [THROW]
+    [END CATCH]
+Plan: DataLoadSimulation_Configuration_RemoveDataLoadSimulationProcedures.xml  (actual=False, procs=1)
+  Proc: DataLoadSimulation.Configuration_RemoveDataLoadSimulationProcedures
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+    [DROP OBJECT]
+Plan: DataLoadSimulation_DeactivateTemporalTablesBeforeDataLoad.xml  (actual=False, procs=1)
+  Proc: DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad
+    [SET ON/OFF]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ALTER TABLE]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [ASSIGN]
+    [EXECUTE STRING]
+    [ASSIGN]
+Plan: Integration_GetCityUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetCityUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [ASSIGN]
+    [ASSIGN]
+    [CREATE TABLE]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Application.Countries_Archive est=1  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.Countries est=1  (Clustered Index Scan)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Application.StateProvinces_Archive est=1  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.StateProvinces est=1  (Clustered Index Scan)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Application.Cities_Archive est=1  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.Cities est=1  (Clustered Index Scan)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [CREATE INDEX]
+    [UPDATE]
+      WRITE  tempdb.dbo.#CityChanges est=1  (Table Update)
+      READ   tempdb.dbo.#CityChanges est=1  (Table Scan)
+    [SELECT]
+      READ   tempdb.dbo.#CityChanges est=1  (Table Scan)
+    [DROP OBJECT]
+    [RETURN]
+Plan: Integration_GetCustomerUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetCustomerUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [ASSIGN]
+    [ASSIGN]
+    [CREATE TABLE]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Sales.BuyingGroups_Archive est=1  (Clustered Index Scan)
+      READ   WideWorldImporters.Sales.BuyingGroups est=1  (Clustered Index Scan)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Sales.CustomerCategories_Archive est=1  (Clustered Index Scan)
+      READ   WideWorldImporters.Sales.CustomerCategories est=1  (Clustered Index Scan)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Sales.Customers_Archive est=1  (Clustered Index Scan)
+      READ   WideWorldImporters.Sales.Customers est=5  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.Cities est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Application.StateProvinces est=1  (Clustered Index Seek)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [CREATE INDEX]
+    [UPDATE]
+      WRITE  tempdb.dbo.#CustomerChanges est=1  (Table Update)
+      READ   tempdb.dbo.#CustomerChanges est=1  (Table Scan)
+    [SELECT]
+      READ   tempdb.dbo.#CustomerChanges est=1  (Table Scan)
+    [DROP OBJECT]
+    [RETURN]
+Plan: Integration_GetEmployeeUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetEmployeeUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [ASSIGN]
+    [CREATE TABLE]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Application.People_Archive est=44  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.People est=20  (Index Seek)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [CREATE INDEX]
+    [UPDATE]
+      WRITE  tempdb.dbo.#EmployeeChanges est=1  (Table Update)
+      READ   tempdb.dbo.#EmployeeChanges est=1  (Table Scan)
+    [SELECT]
+      READ   tempdb.dbo.#EmployeeChanges est=1  (Table Scan)
+    [DROP OBJECT]
+    [RETURN]
+Plan: Integration_GetMovementUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetMovementUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [SELECT]
+      READ   WideWorldImporters.Warehouse.StockItemTransactions est=29848  (Clustered Index Scan)
+    [RETURN]
+Plan: Integration_GetOrderUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetOrderUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [SELECT]
+      READ   WideWorldImporters.Warehouse.PackageTypes est=14  (Index Scan)
+      READ   WideWorldImporters.Sales.Customers est=663  (Index Scan)
+      READ   WideWorldImporters.Application.Cities est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Application.StateProvinces est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Sales.Orders est=73595  (Clustered Index Scan)
+      READ   WideWorldImporters.Sales.OrderLines est=231412  (Clustered Index Scan)
+    [RETURN]
+Plan: Integration_GetPaymentMethodUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetPaymentMethodUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [ASSIGN]
+    [CREATE TABLE]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Application.PaymentMethods_Archive est=1  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.PaymentMethods est=1  (Clustered Index Scan)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [CREATE INDEX]
+    [UPDATE]
+      WRITE  tempdb.dbo.#PaymentMethodChanges est=1  (Table Update)
+      READ   tempdb.dbo.#PaymentMethodChanges est=1  (Table Scan)
+    [SELECT]
+      READ   tempdb.dbo.#PaymentMethodChanges est=1  (Table Scan)
+    [DROP OBJECT]
+    [RETURN]
+Plan: Integration_GetPurchaseUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetPurchaseUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [SELECT]
+      READ   WideWorldImporters.Purchasing.PurchaseOrders est=2074  (Clustered Index Scan)
+      READ   WideWorldImporters.Warehouse.StockItems est=227  (Clustered Index Scan)
+      READ   WideWorldImporters.Warehouse.PackageTypes est=14  (Index Scan)
+      READ   WideWorldImporters.Purchasing.PurchaseOrderLines est=8367  (Clustered Index Scan)
+    [RETURN]
+Plan: Integration_GetSaleUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetSaleUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [SELECT]
+      READ   WideWorldImporters.Warehouse.PackageTypes est=14  (Index Scan)
+      READ   WideWorldImporters.Warehouse.StockItems est=227  (Clustered Index Scan)
+      READ   WideWorldImporters.Sales.Customers est=663  (Index Scan)
+      READ   WideWorldImporters.Application.Cities est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Application.StateProvinces est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Sales.Invoices est=70510  (Clustered Index Scan)
+      READ   WideWorldImporters.Sales.InvoiceLines est=228265  (Clustered Index Scan)
+    [RETURN]
+Plan: Integration_GetStockHoldingUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetStockHoldingUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [SELECT]
+      READ   WideWorldImporters.Warehouse.StockItemHoldings est=227  (Clustered Index Scan)
+    [RETURN]
+Plan: Integration_GetStockItemUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetStockItemUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [ASSIGN]
+    [CREATE TABLE]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Warehouse.StockItems_Archive est=223  (Clustered Index Scan)
+      READ   WideWorldImporters.Warehouse.StockItems est=227  (Clustered Index Scan)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [CREATE INDEX]
+    [UPDATE]
+      WRITE  tempdb.dbo.#StockItemChanges est=1  (Table Update)
+      READ   tempdb.dbo.#StockItemChanges est=1  (Table Scan)
+    [SELECT]
+      READ   tempdb.dbo.#StockItemChanges est=1  (Table Scan)
+    [DROP OBJECT]
+    [RETURN]
+Plan: Integration_GetSupplierUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetSupplierUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [ASSIGN]
+    [ASSIGN]
+    [CREATE TABLE]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Purchasing.SupplierCategories_Archive est=1  (Clustered Index Scan)
+      READ   WideWorldImporters.Purchasing.SupplierCategories est=1  (Clustered Index Scan)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Purchasing.Suppliers_Archive est=1  (Clustered Index Scan)
+      READ   WideWorldImporters.Purchasing.Suppliers est=1  (Clustered Index Scan)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [CREATE INDEX]
+    [UPDATE]
+      WRITE  tempdb.dbo.#SupplierChanges est=1  (Table Update)
+      READ   tempdb.dbo.#SupplierChanges est=1  (Table Scan)
+    [SELECT]
+      READ   tempdb.dbo.#SupplierChanges est=1  (Table Scan)
+    [DROP OBJECT]
+    [RETURN]
+Plan: Integration_GetTransactionTypeUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetTransactionTypeUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [ASSIGN]
+    [CREATE TABLE]
+    [DECLARE CURSOR]
+      READ   WideWorldImporters.Application.TransactionTypes_Archive est=1  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.TransactionTypes est=1  (Clustered Index Scan)
+    [OPEN CURSOR]
+    [FETCH CURSOR]
+    [CLOSE CURSOR]
+    [DEALLOCATE CURSOR]
+    [CREATE INDEX]
+    [UPDATE]
+      WRITE  tempdb.dbo.#TransactionTypeChanges est=1  (Table Update)
+      READ   tempdb.dbo.#TransactionTypeChanges est=1  (Table Scan)
+    [SELECT]
+      READ   tempdb.dbo.#TransactionTypeChanges est=1  (Table Scan)
+    [DROP OBJECT]
+    [RETURN]
+Plan: Integration_GetTransactionUpdates.xml  (actual=False, procs=1)
+  Proc: Integration.GetTransactionUpdates
+    [SET ON/OFF]
+    [SET ON/OFF]
+    [SELECT]
+      READ   WideWorldImporters.Sales.CustomerTransactions est=12820  (Clustered Index Scan)
+      READ   WideWorldImporters.Sales.Invoices est=70510  (Index Scan)
+      READ   WideWorldImporters.Purchasing.SupplierTransactions est=307  (Clustered Index Scan)
+    [RETURN]
+Plan: Sequences_ReseedAllSequences.xml  (actual=False, procs=1)
+  Proc: Sequences.ReseedAllSequences
+    [SET ON/OFF]
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+    [EXECUTE PROC]
+      READ   DM_DB_SEQUENCES est=1  (Table-valued function)
+      READ   tempdb.dbo.#CurrentValue est=1  (Table Scan)
+Plan: Website_Customers.xml  (actual=False, procs=1)
+  Proc: <ad-hoc>
+    [SELECT]
+      READ   WideWorldImporters.Application.DeliveryMethods est=10  (Index Scan)
+      READ   WideWorldImporters.Sales.BuyingGroups est=2  (Index Scan)
+      READ   WideWorldImporters.Application.People est=1111  (Index Scan)
+      READ   WideWorldImporters.Sales.CustomerCategories est=8  (Index Scan)
+      READ   WideWorldImporters.Sales.Customers est=663  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.Cities est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Application.StateProvinces est=1  (Clustered Index Seek)
+Plan: Website_SearchForCustomers.xml  (actual=False, procs=1)
+  Proc: Website.SearchForCustomers
+    [JSON SELECT]
+      READ   WideWorldImporters.Sales.Customers est=663  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.Cities est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Application.StateProvinces est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Application.People est=1  (Clustered Index Seek)
+Plan: Website_SearchForPeople.xml  (actual=False, procs=1)
+  Proc: Website.SearchForPeople
+    [JSON SELECT]
+      READ   WideWorldImporters.Application.People est=10  (Index Scan)
+      READ   WideWorldImporters.Sales.Customers est=663  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.Cities est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Application.StateProvinces est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Purchasing.Suppliers est=13  (Clustered Index Scan)
+Plan: Website_SearchForStockItems.xml  (actual=False, procs=1)
+  Proc: Website.SearchForStockItems
+    [JSON SELECT]
+      READ   WideWorldImporters.Warehouse.StockItems est=227  (Clustered Index Scan)
+Plan: Website_SearchForStockItemsByTags.xml  (actual=False, procs=1)
+  Proc: Website.SearchForStockItemsByTags
+    [JSON SELECT]
+      READ   WideWorldImporters.Warehouse.StockItems est=227  (Clustered Index Scan)
+Plan: Website_SearchForSuppliers.xml  (actual=False, procs=1)
+  Proc: Website.SearchForSuppliers
+    [JSON SELECT]
+      READ   WideWorldImporters.Purchasing.Suppliers est=13  (Index Scan)
+      READ   WideWorldImporters.Application.Cities est=1  (Clustered Index Seek)
+      READ   WideWorldImporters.Application.People est=1  (Clustered Index Seek)
+Plan: Website_Suppliers.xml  (actual=False, procs=1)
+  Proc: <ad-hoc>
+    [SELECT]
+      READ   WideWorldImporters.Purchasing.Suppliers est=13  (Clustered Index Scan)
+      READ   WideWorldImporters.Purchasing.SupplierCategories est=9  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.People est=1111  (Index Scan)
+      READ   WideWorldImporters.Application.DeliveryMethods est=10  (Clustered Index Scan)
+      READ   WideWorldImporters.Application.Cities est=1  (Clustered Index Seek)
+Plan: Website_VehicleTemperatures.xml  (actual=False, procs=1)
+  Proc: <ad-hoc>
+    [SELECT]
+      READ   WideWorldImporters.Warehouse.VehicleTemperatures est=65998  (Table Scan)
+Plans: 33  Procs matched: 30  Confirmed: 60  Discovered: 79 -> ../../out/graph_enriched.json

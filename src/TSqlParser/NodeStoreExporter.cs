@@ -61,6 +61,8 @@ public static class NodeStoreExporter
         "USES_VARIABLE", "TARGETS", "WRITES_TO", "READS_FROM", "READS_COLUMN", "WRITES_COLUMN",
         "FILTERS_ON", "DERIVES_FROM", "CONDITIONED_BY", "NESTED_IN", "GOVERNS", "CALLS", "AFFECTS", "HAS_COLUMN", "FK_TO", "REFERENCES",
         "BELONGS_TO", "WORKFLOW_WRITES_TO", "CONTAINS", "HAS_RULE", "CONSTRAINS",
+        // Dynamic-trigger layer: a proc CREATES a trigger, the trigger fires ON a table.
+        "CREATES", "ON",
     };
 
     // Structural edges fully represented by an object's "owned" lists already

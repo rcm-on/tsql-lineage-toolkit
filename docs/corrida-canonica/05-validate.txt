@@ -1,0 +1,11 @@
+FK_TO edges in graph: 81
+CALLS edges in graph: 12
+
+=== WideWorldImporters ===
+
+FK relationships in DB restricted to tables present in graph: 81
+  In DB but missing from graph: 0
+  In graph but not in DB (within scope): 0
+
+CALLS (EXEC) relationships in DB restricted to analyzed objects: 12
+  In DB but missing from graph: 0
