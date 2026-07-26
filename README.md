@@ -99,7 +99,7 @@ Y contra corpus con oráculo propio:
 - **Construcciones complejas (`eval/community-edge-cases/`):** `MERGE`, CTEs recursivas, SQL dinámico, cursores.
 - **Lineage de columna (`eval/view-lineage/`):** contrastado contra `sys.dm_sql_referenced_entities`.
 
-Además, **145 pruebas unitarias (xUnit)** cubren el parser, como gate en CI.
+Además, **145 pruebas unitarias (xUnit)** cubren el parser. **142 corren como gate en CI**; las 3 restantes son de categoría `Oracle` —contrastan contra un SQL Server vivo con WideWorldImporters y AdventureWorks2019— y hoy solo se ejecutan en local: un runner de GitHub no tiene instancia con esas bases restauradas, y el conector usa autenticación integrada de Windows, que un contenedor de SQL Server no admite. Está documentado en `.github/workflows/ci.yml`, no silenciado.
 
 > **Qué encontró esa validación.** Correr los corpus nuevos destapó **seis defectos** en el propio motor, cuatro ya corregidos —entre ellos uno grave: con cierto patrón de `UPDATE` la identidad de una tabla se partía en dos nodos y *"¿quién escribe aquí?"* devolvía cero teniendo tres escritores. El detalle, con la reproducción de cada uno, está en [`docs/corpus-multibase.md`](docs/corpus-multibase.md). Se publica porque un fallo encontrado y documentado dice más de la fiabilidad de una herramienta que una tabla en verde.
 

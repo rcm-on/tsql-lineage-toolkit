@@ -107,8 +107,9 @@ jobs:
             const DATABASE = 'PrDogfood';
 
             const diffPath = path.join(process.cwd(), 'pr-impact', 'diff.json');
-            // The CLI writes UTF-8 with a BOM; strip it before JSON.parse (Node
-            // does not skip a leading BOM automatically).
+            // The CLI now writes UTF-8 *without* a BOM (see Utf8Io), but artifacts
+            // produced by older builds still carry one and Node does not skip it,
+            // so keep stripping it defensively.
             const raw = fs.readFileSync(diffPath, 'utf8').replace(/^\uFEFF/, '');
             const diff = JSON.parse(raw);
 
