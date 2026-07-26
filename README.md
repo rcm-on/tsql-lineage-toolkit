@@ -10,7 +10,7 @@
 
 Antes de renombrar una columna, borrar una tabla o refactorizar un procedimiento de 2.000 líneas, necesitas **una respuesta en la que confiar: ¿qué depende de esto?** Las vías habituales no la dan bien:
 
-- **`sys.sql_expression_dependencies`** es notoriamente incompleto: se pierde el SQL dinámico, la resolución diferida de nombres y las referencias cross-database.
+- **`sys.sql_expression_dependencies`** acierta en lo que ve —lo hemos contrastado, 12/12 y 22/22 en dos bases— pero es **ciego al SQL dinámico**: no ve un objeto que se crea en runtime ni una tabla que solo aparece dentro de un `EXEC(@sql)`.
 - **Grep / búsqueda de texto** no distingue un `IF` real de uno dentro de un string `@sql` que se está construyendo, ni sigue una columna a través de un `INSERT ... SELECT`.
 - **Un LLM leyendo el código** es no determinista: pregunta dos veces, dos respuestas — descalificado para una migración que tienes que firmar.
 
@@ -72,14 +72,36 @@ Las gratuitas paran en el análisis de texto o de catálogo: **ninguna usa la gr
 
 ### Validado contra SQL real (y contra oráculos)
 
-No es solo WideWorldImporters. La corrección se contrasta contra **varios corpus con oráculo independiente**:
+No es solo WideWorldImporters. Se ejecuta contra **cuatro corpus**, dos de ellos código de producción escrito por terceros:
+
+| Corpus | Qué es | Entrada | Objetos | Errores de parseo | Tiempo |
+| --- | --- | ---: | ---: | :---: | ---: |
+| WideWorldImporters | muestra OLTP de Microsoft, base viva | 0,35 MB | 47 → 64 | **0** | 1,7 s |
+| AdventureWorks2019 | muestra clásica, base viva | 0,13 MB | 52 | **0** | 1,5 s |
+| [SQL Server Maintenance Solution](https://github.com/olahallengren/sql-server-maintenance-solution) | Ola Hallengren, producción | 0,52 MB | 7 | **0** | 1,7 s |
+| [First Responder Kit](https://github.com/BrentOzarULTD/SQL-Server-First-Responder-Kit) | Brent Ozar, producción | 2,29 MB | 12 | **0** | 4,0 s |
+
+`sp_Blitz` es un **único procedimiento de 480 KB** — 10.659 líneas, complejidad ciclomática **706**, 1.229 pasos. Se procesa sin un error de parseo. De 0,35 MB a 2,29 MB (6,5×) el tiempo solo sube 2,4× : el coste marginal es de **~1,2 s por MB** de T-SQL.
+
+**Contrastado contra el catálogo de SQL Server** en las dos bases vivas, con `validate`:
+
+| | WideWorldImporters | AdventureWorks2019 |
+| --- | :---: | :---: |
+| Claves ajenas vs `sys.foreign_keys` | **98 / 98** | **90 / 90** |
+| Cadenas `EXEC` vs `sys.sql_expression_dependencies` | **12 / 12** | **22 / 22** |
+| Ausencias / aristas fantasma | 0 / 0 | 0 / 0 |
+| Cobertura de lineage de columna | 32 / 32 (100%) | 251 / 251 (100%) |
+
+Y contra corpus con oráculo propio:
 
 - **Código fuente real (WWI):** `DeactivateTemporalTablesBeforeDataLoad` reporta **34** sentencias de SQL dinámico → el fuente tiene exactamente **34** `EXECUTE (@SQL)`. Y **18** flujos de control → los que quedan al descontar los **34** tokens `IF` que un grep encuentra *dentro* de los strings generados (52 en crudo).
-- **Malas prácticas (`eval/bad-practices/`):** un corpus de anti-patrones con `expected-findings.json` como oráculo — detección de SQL dinámico, escrituras sin transacción, complejidad, variables muertas.
-- **Construcciones complejas (`eval/community-edge-cases/`):** `MERGE`, CTEs recursivas, SQL dinámico, cursores — los casos que rompen a los parsers de texto.
-- **Lineage de columna (`eval/view-lineage/`):** contrastado contra **`sys.dm_sql_referenced_entities`** del propio SQL Server.
+- **Malas prácticas (`eval/bad-practices/`):** un corpus de anti-patrones con `expected-findings.json` como oráculo.
+- **Construcciones complejas (`eval/community-edge-cases/`):** `MERGE`, CTEs recursivas, SQL dinámico, cursores.
+- **Lineage de columna (`eval/view-lineage/`):** contrastado contra `sys.dm_sql_referenced_entities`.
 
-Además de los corpus, **136 pruebas unitarias (xUnit)** cubren el parser. Todo corre como **gate en CI**: una regresión sale en rojo antes que en manos de un usuario.
+Además, **145 pruebas unitarias (xUnit)** cubren el parser, como gate en CI.
+
+> **Qué encontró esa validación.** Correr los corpus nuevos destapó **seis defectos** en el propio motor, cuatro ya corregidos —entre ellos uno grave: con cierto patrón de `UPDATE` la identidad de una tabla se partía en dos nodos y *"¿quién escribe aquí?"* devolvía cero teniendo tres escritores. El detalle, con la reproducción de cada uno, está en [`docs/corpus-multibase.md`](docs/corpus-multibase.md). Se publica porque un fallo encontrado y documentado dice más de la fiabilidad de una herramienta que una tabla en verde.
 
 ## Casos de uso — dónde aparece este problema
 
@@ -227,9 +249,11 @@ El `change_map_diff.json` queda como artefacto: qué objetos cambiaron y a quié
 
 - **Solo SQL Server / T-SQL** (`ScriptDom`); otros dialectos quedan fuera.
 - **Guarda el lineage analizado, no el fuente.** Pregunta "¿qué depende de X?", no "muéstrame el T-SQL de X".
-- **El SQL dinámico se resuelve solo hasta donde es reconstruible estáticamente**; si `@sql` se arma con valores invisibles al análisis, el paso se marca como dinámico, no se adivina.
+- **El SQL dinámico se resuelve solo hasta donde es reconstruible estáticamente.** Cuando el destino depende de un parámetro de entrada —el caso típico es `QUOTENAME(@DatabaseName)` para atacar otra base— no hay forma de saberlo sin ejecutar, y el paso se marca como no resuelto en vez de adivinar un destino falso. **Cuánto pesa esto en código real: en el First Responder Kit, 164 de 241 pasos dinámicos (el 68%) quedan sin resolver.** El motor lo cuenta objeto a objeto en `unresolved_dynamic_sql_steps`, así que sabes exactamente de cuánto no te puedes fiar. En WideWorldImporters, en cambio, se resuelven los 34 de 34.
 - **Sin scoring de confianza todavía**: una arista cierta y una inferida se ven igual (planificado).
 - **Completitud alta, no total**: la ausencia de una arista es "no detectada", no "probado que no existe".
+- **Te da el mapa de dependencias, no el plan de migración.** Responde qué depende de qué; la semántica, la calidad del dato y las reglas de negocio siguen siendo trabajo tuyo.
+- **Probado a la escala de estos cuatro corpus** (el mayor: 2,3 MB, 12 objetos, un procedimiento de 10.659 líneas). No hay todavía medición sobre una base de miles de procedimientos.
 
 ## Pruébalo contra tu base de datos
 
