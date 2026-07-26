@@ -509,10 +509,20 @@ La rama `docs/corrida-canonica` sale de `master` y contiene **todo**: el arreglo
 del `#3`, los artefactos regenerados, las 5 capturas y esta documentación. No
 queda ningún paso de código pendiente.
 
-Lo único que no se pudo hacer desde aquí: **copiar las 4 imágenes al blog**, cuyo
-repositorio (`quartz/`) no está en esta máquina. Están renombradas y listas en
-[`blog-labs-tsql/`](blog-labs-tsql/) (§4).
+**El blog también está hecho**, en
+`C:\Users\Mon-Pc\OneDrive\Projects\rcm-on\quarz-blog`:
 
-Y queda el trabajo de texto en el artículo del blog, que es donde vive la
-contradicción original: cita 1.398/3.476 y "47 objetos" junto a una captura que
-muestra 64.
+- Las 4 capturas copiadas a `quartz/static/labs/tsql/`.
+- `content/02 Laboratorios/tsql-lineage-toolkit.md`: cifras de los pasos 1, 2 y 3
+  corregidas, añadida la explicación del 47 vs 64 justo donde estaba la
+  contradicción con la captura, el paso `validate` contra el catálogo y la nota
+  honesta sobre planes estimados.
+- `content/04 Arquitectura IA/datos-navegables-para-agentes.md`: **tenía las mismas
+  cifras viejas** (1.398/3.476, "21 KB", "76 veces", "3,8 segundos"). Era una
+  **cuarta** fuente que nadie había contado. Corregida.
+- `private/linkedin/tsql-lineage-toolkit/texto-post.md`: cifras corregidas y
+  reenfocado sobre los 17 triggers invisibles y el 98/98 contra el catálogo.
+- `private/PENDIENTE-tsql-cifras.md`: cerrado, con el resumen de la causa.
+
+Queda **una sola cosa**: regenerar `private/linkedin/tsql-lineage-toolkit/imagen.png`
+con `_generador/imagen.template.py`; sus tres tarjetas llevan cifras viejas.
