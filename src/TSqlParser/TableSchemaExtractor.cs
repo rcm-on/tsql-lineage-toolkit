@@ -74,7 +74,7 @@ public static class TableSchemaExtractor
         }
 
         existing.AddRange(newEntries);
-        File.WriteAllText(inputPath, JsonSerializer.Serialize(existing, jsonOptions), Encoding.UTF8);
+        Utf8Io.WriteAllText(inputPath, JsonSerializer.Serialize(existing, jsonOptions));
         Console.WriteLine($"\nAppended {newEntries.Count} table definitions to {inputPath}");
         return 0;
     }
@@ -137,7 +137,7 @@ public static class TableSchemaExtractor
         }
 
         existing.AddRange(newEntries);
-        File.WriteAllText(inputPath, JsonSerializer.Serialize(existing, jsonOptions), Encoding.UTF8);
+        Utf8Io.WriteAllText(inputPath, JsonSerializer.Serialize(existing, jsonOptions));
         Console.WriteLine($"\nAppended {newEntries.Count} table definitions to {inputPath}");
         return 0;
     }

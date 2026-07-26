@@ -202,11 +202,11 @@ public static class AgentBench
             else AddSkipped(cases, "C6", "call_condition", "no conditional hop with condition_text");
         }
 
-        File.WriteAllText(Path.Combine(benchDir, "cases.json"), JsonSerializer.Serialize(new Dictionary<string, object>
+        Utf8Io.WriteAllText(Path.Combine(benchDir, "cases.json"), JsonSerializer.Serialize(new Dictionary<string, object>
         {
             ["seed"] = seed,
             ["cases"] = cases,
-        }, Pretty), Encoding.UTF8);
+        }, Pretty));
         var made = cases.Count(c => c["skipped"] is false);
         Console.WriteLine($"bench-make: {made} case(s) generated, {cases.Count - made} skipped (seed {seed}) -> {benchDir}");
         foreach (var c in cases)
@@ -241,8 +241,8 @@ public static class AgentBench
 
             Save/return it as the answer for case {id}.
             """;
-        File.WriteAllText(Path.Combine(benchDir, "cases", $"{id}.prompt.md"), prompt, Encoding.UTF8);
-        File.WriteAllText(Path.Combine(benchDir, "expected", $"{id}.json"), JsonSerializer.Serialize(expected, Pretty), Encoding.UTF8);
+        Utf8Io.WriteAllText(Path.Combine(benchDir, "cases", $"{id}.prompt.md"), prompt);
+        Utf8Io.WriteAllText(Path.Combine(benchDir, "expected", $"{id}.json"), JsonSerializer.Serialize(expected, Pretty));
         cases.Add(new Dictionary<string, object?>
         {
             ["id"] = id,
@@ -332,7 +332,7 @@ public static class AgentBench
             catch (JsonException) { runMeta = "(run.json invalid)"; }
         Directory.CreateDirectory(Path.Combine(benchDir, "results"));
         var resultPath = Path.Combine(benchDir, "results", $"{new DirectoryInfo(answersDir).Name}.json");
-        File.WriteAllText(resultPath, JsonSerializer.Serialize(new Dictionary<string, object?>
+        Utf8Io.WriteAllText(resultPath, JsonSerializer.Serialize(new Dictionary<string, object?>
         {
             ["answers_dir"] = new DirectoryInfo(answersDir).Name,
             ["seed"] = casesDoc.RootElement.TryGetProperty("seed", out var sd) ? sd.GetInt32() : 0,
@@ -341,7 +341,7 @@ public static class AgentBench
             ["graded"] = graded,
             ["skipped"] = skip,
             ["per_case"] = perCase,
-        }, Pretty), Encoding.UTF8);
+        }, Pretty));
         Console.WriteLine($"  scorecard -> {resultPath}");
 
         return fail == 0 ? 0 : 2;

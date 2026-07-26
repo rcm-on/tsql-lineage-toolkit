@@ -345,12 +345,21 @@ internal static class AuditExporter
         int colsTotal = allOutputColIds.Count;
         int colsWithLineage = allOutputColIds.Count(c => lineageCache.TryGetValue(c, out var lc) && lc.Depth > 0);
 
-        var lineageCoverage = new Dictionary<string, object>
+        // colsTotal == 0 means there is no output-column surface to measure at all
+        // (e.g. a corpus of procedures with no output columns, as seen with the
+        // First Responder Kit) - reporting that as coverage_pct: 100 would read as
+        // "everything is covered" when really nothing was there to cover. We report
+        // coverage_pct: null ("not applicable / nothing measured") instead of a
+        // number, and add "measured" so an automated consumer can tell "no surface"
+        // (measured: false) apart from "full coverage" (measured: true, pct: 100)
+        // without having to special-case columns_total == 0 itself.
+        var lineageCoverage = new Dictionary<string, object?>
         {
             ["objects_with_output_columns"] = outputColsMap.Count,
             ["columns_total"] = colsTotal,
             ["columns_with_lineage"] = colsWithLineage,
-            ["coverage_pct"] = colsTotal > 0 ? Math.Round(colsWithLineage * 100.0 / colsTotal, 1) : 100.0,
+            ["coverage_pct"] = colsTotal > 0 ? Math.Round(colsWithLineage * 100.0 / colsTotal, 1) : null,
+            ["measured"] = colsTotal > 0,
         };
 
         // ── 6. risk_patterns ─────────────────────────────────────────────

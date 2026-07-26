@@ -65,7 +65,7 @@ WHERE o.type IN ('P', 'FN', 'IF', 'TF', 'TR', 'V')";
             PropertyNameCaseInsensitive = true,
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         };
-        File.WriteAllText(outputPath, JsonSerializer.Serialize(entries, jsonOptions));
+        Utf8Io.WriteAllText(outputPath, JsonSerializer.Serialize(entries, jsonOptions));
 
         Console.WriteLine($"Wrote {entries.Count} objects from {database} to {outputPath}");
         return 0;

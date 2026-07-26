@@ -186,7 +186,7 @@ if (positional.Count >= 1 && positional[0] == "enrich-from-plans")
     }
 
     var enrichStats = PlanEnricher.Enrich(enrichGraph, plans);
-    File.WriteAllText(positional[2], JsonSerializer.Serialize(enrichGraph, enrichJsonOpts), Encoding.UTF8);
+    Utf8Io.WriteAllText(positional[2], JsonSerializer.Serialize(enrichGraph, enrichJsonOpts));
     Console.WriteLine($"Plans: {enrichStats.PlansProcessed}  Procs matched: {enrichStats.ProcsMatched}  " +
                       $"Confirmed: {enrichStats.RelationshipsConfirmed}  Discovered: {enrichStats.RelationshipsDiscovered} -> {positional[2]}");
     return 0;
@@ -313,10 +313,10 @@ var jsonOptions = new JsonSerializerOptions
 var (results, tableSchemas) = InputAnalyzer.Analyze(inputPath);
 
 if (workflowsOutputPath != null)
-    File.WriteAllText(workflowsOutputPath, JsonSerializer.Serialize(results, jsonOptions), Encoding.UTF8);
+    Utf8Io.WriteAllText(workflowsOutputPath, JsonSerializer.Serialize(results, jsonOptions));
 
 var graph = GraphExporter.Build(results, includeColumns, tableSchemas);
-File.WriteAllText(graphOutputPath, JsonSerializer.Serialize(graph, jsonOptions), Encoding.UTF8);
+Utf8Io.WriteAllText(graphOutputPath, JsonSerializer.Serialize(graph, jsonOptions));
 
 // --graphify: also emit the flat { meta, stats, nodes, edges } shape that
 // src/exporter.py produces, so the same graph loads into Graphify (which can
@@ -329,7 +329,7 @@ if (emitGraphify)
     var graphifyPath = graphOutputPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
         ? graphOutputPath[..^5] + ".graphify.json"
         : graphOutputPath + ".graphify.json";
-    File.WriteAllText(graphifyPath, JsonSerializer.Serialize(graphify, jsonOptions), Encoding.UTF8);
+    Utf8Io.WriteAllText(graphifyPath, JsonSerializer.Serialize(graphify, jsonOptions));
     Console.WriteLine($"Graphify: {graphify.Nodes.Count} nodes, {graphify.Edges.Count} edges -> {graphifyPath}");
 }
 
@@ -340,7 +340,7 @@ if (emitGraphml)
     var graphmlPath = graphOutputPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
         ? graphOutputPath[..^5] + ".graphml"
         : graphOutputPath + ".graphml";
-    File.WriteAllText(graphmlPath, GraphMlExporter.ToGraphMl(graph), Encoding.UTF8);
+    Utf8Io.WriteAllText(graphmlPath, GraphMlExporter.ToGraphMl(graph));
     Console.WriteLine($"GraphML: {graph.Nodes.Count} nodes, {graph.Relationships.Count} edges -> {graphmlPath}");
 }
 

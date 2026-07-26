@@ -216,12 +216,12 @@ public static class NodeStoreExporter
 
             var fullPath = Path.Combine(outDir, entry.ObjectFile);
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
-            File.WriteAllText(fullPath, build.ObjectFiles[entry.ObjectFile], Encoding.UTF8);
+            Utf8Io.WriteAllText(fullPath, build.ObjectFiles[entry.ObjectFile]);
 
             // nav.json is derived from the same object, so it changes iff the
             // object did - rewrite it in lockstep when the content_hash moves.
             if (!string.IsNullOrEmpty(entry.NavFile) && build.ObjectFiles.TryGetValue(entry.NavFile, out var navJson))
-                File.WriteAllText(Path.Combine(outDir, entry.NavFile), navJson, Encoding.UTF8);
+                Utf8Io.WriteAllText(Path.Combine(outDir, entry.NavFile), navJson);
             objectsWritten++;
         }
 
@@ -250,7 +250,7 @@ public static class NodeStoreExporter
             if (build.ObjectFiles.TryGetValue(lpRelPath, out var lpJson))
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(lpFullPath)!);
-                File.WriteAllText(lpFullPath, lpJson, Encoding.UTF8);
+                Utf8Io.WriteAllText(lpFullPath, lpJson);
             }
             else if (File.Exists(lpFullPath))
             {
@@ -271,7 +271,7 @@ public static class NodeStoreExporter
             }
 
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
-            File.WriteAllText(fullPath, json, Encoding.UTF8);
+            Utf8Io.WriteAllText(fullPath, json);
             sharedWritten++;
         }
 
@@ -293,11 +293,11 @@ public static class NodeStoreExporter
         }
 
         // ── always refresh the small top-level files ────────────────────────
-        File.WriteAllText(Path.Combine(outDir, "model.json"), build.ModelJson, Encoding.UTF8);
-        File.WriteAllText(Path.Combine(outDir, "manifest.json"), build.ManifestJson, Encoding.UTF8);
-        File.WriteAllText(Path.Combine(outDir, "index.json"), build.IndexJson, Encoding.UTF8);
-        File.WriteAllText(Path.Combine(outDir, "audit_report.json"), build.AuditJson, Encoding.UTF8);
-        File.WriteAllText(Path.Combine(outDir, "change_map.json"), build.ChangeMapJson, Encoding.UTF8);
+        Utf8Io.WriteAllText(Path.Combine(outDir, "model.json"), build.ModelJson);
+        Utf8Io.WriteAllText(Path.Combine(outDir, "manifest.json"), build.ManifestJson);
+        Utf8Io.WriteAllText(Path.Combine(outDir, "index.json"), build.IndexJson);
+        Utf8Io.WriteAllText(Path.Combine(outDir, "audit_report.json"), build.AuditJson);
+        Utf8Io.WriteAllText(Path.Combine(outDir, "change_map.json"), build.ChangeMapJson);
 
         return new UpdateStats
         {
@@ -345,21 +345,21 @@ public static class NodeStoreExporter
         {
             var fullPath = Path.Combine(outDir, relPath);
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
-            File.WriteAllText(fullPath, json, Encoding.UTF8);
+            Utf8Io.WriteAllText(fullPath, json);
         }
 
         foreach (var (relPath, json) in build.SharedFiles)
         {
             var fullPath = Path.Combine(outDir, relPath);
             Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
-            File.WriteAllText(fullPath, json, Encoding.UTF8);
+            Utf8Io.WriteAllText(fullPath, json);
         }
 
-        File.WriteAllText(Path.Combine(outDir, "model.json"), build.ModelJson, Encoding.UTF8);
-        File.WriteAllText(Path.Combine(outDir, "manifest.json"), build.ManifestJson, Encoding.UTF8);
-        File.WriteAllText(Path.Combine(outDir, "index.json"), build.IndexJson, Encoding.UTF8);
-        File.WriteAllText(Path.Combine(outDir, "audit_report.json"), build.AuditJson, Encoding.UTF8);
-        File.WriteAllText(Path.Combine(outDir, "change_map.json"), build.ChangeMapJson, Encoding.UTF8);
+        Utf8Io.WriteAllText(Path.Combine(outDir, "model.json"), build.ModelJson);
+        Utf8Io.WriteAllText(Path.Combine(outDir, "manifest.json"), build.ManifestJson);
+        Utf8Io.WriteAllText(Path.Combine(outDir, "index.json"), build.IndexJson);
+        Utf8Io.WriteAllText(Path.Combine(outDir, "audit_report.json"), build.AuditJson);
+        Utf8Io.WriteAllText(Path.Combine(outDir, "change_map.json"), build.ChangeMapJson);
     }
 
     /// <summary>

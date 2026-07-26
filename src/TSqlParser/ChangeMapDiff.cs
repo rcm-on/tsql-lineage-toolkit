@@ -157,7 +157,7 @@ public static class ChangeMapDiff
         // Output is written for both the plain run and the --fail-on-new-impact
         // gate (the gate only changes the exit code, not the artifact).
         Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(outPath))!);
-        File.WriteAllText(outPath, JsonSerializer.Serialize(doc, jsonOptions), Encoding.UTF8);
+        Utf8Io.WriteAllText(outPath, JsonSerializer.Serialize(doc, jsonOptions));
 
         // --fail-on-new-impact: exit 2 on any new impact (new reach, a new call
         // edge, a new write, or a brand-new object); otherwise 0. Plain runs exit 0.

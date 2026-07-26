@@ -40,9 +40,13 @@ internal static class AuditVerifier
             }
         }
 
-        // 2. lineage_coverage.coverage_pct must be in [0, 100]
+        // 2. lineage_coverage.coverage_pct must be in [0, 100] when there is a
+        // surface to measure. When columns_total == 0, coverage_pct is JSON null
+        // ("nothing to measure", not "100% covered") and measured is false - skip
+        // the range check rather than call GetDouble() on a null element.
         if (root.TryGetProperty("lineage_coverage", out var lc) &&
-            lc.TryGetProperty("coverage_pct", out var pct))
+            lc.TryGetProperty("coverage_pct", out var pct) &&
+            pct.ValueKind != JsonValueKind.Null)
         {
             var p = pct.GetDouble();
             if (p < 0 || p > 100)
