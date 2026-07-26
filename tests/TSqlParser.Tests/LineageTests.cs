@@ -712,6 +712,57 @@ public class LineageTests
     }
 
     [Fact]
+    public void DatabaseDdlTrigger_ParsesAndWritesGenerateEdges()
+    {
+        // Regression for the "DDL database triggers never extracted" gap: a
+        // CREATE TRIGGER ... ON DATABASE (parent_class = 0 in sys.triggers) has no
+        // schema_id and no row in sys.objects, so ObjectExtractor's original query
+        // (JOIN sys.objects/sys.schemas) silently dropped it - and any table it wrote
+        // to (e.g. AdventureWorks2019's dbo.DatabaseLog, fed by ddlDatabaseTriggerLog)
+        // then showed up as a false "orphan table". Mirrors the real
+        // ddlDatabaseTriggerLog trigger from AdventureWorks2019. ObjectExtractor now
+        // files these under the synthetic pseudo-schema "$database" (see
+        // ObjectExtractor.cs); this test exercises the parsing/lineage side using
+        // that same "Database::$database.name" shape, independent of a live server.
+        var sql = """
+            CREATE TRIGGER [ddlDatabaseTriggerLog] ON DATABASE
+            FOR DDL_DATABASE_LEVEL_EVENTS AS
+            BEGIN
+                SET NOCOUNT ON;
+                DECLARE @data XML;
+                DECLARE @eventType sysname;
+                SET @data = EVENTDATA();
+                SET @eventType = @data.value('(/EVENT_INSTANCE/EventType)[1]', 'sysname');
+                INSERT dbo.DatabaseLog
+                    (PostTime, DatabaseUser, Event, [Schema], [Object], TSQL, XmlEvent)
+                    VALUES
+                    (GETDATE(), USER_NAME(), @eventType, '', '', '', @data);
+            END
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::$database.ddlDatabaseTriggerLog", sql);
+        Assert.Null(result.Error);
+        Assert.Equal("TRIGGER", result.ObjectType);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { result });
+
+        // The trigger's own SqlObject node exists and was filed under the
+        // "$database" pseudo-schema, not misclassified into "dbo".
+        var trigObject = FindNode(graph, n => n.Labels.Contains("SqlObject") &&
+            (string)n.Properties["name"] == "ddlDatabaseTriggerLog");
+        Assert.NotNull(trigObject);
+        Assert.Equal("$database", (string)trigObject!.Properties["schema"]);
+
+        // Its INSERT still surfaces as a real WRITES_TO edge onto dbo.DatabaseLog -
+        // this is the edge that makes AdventureWorks2019's dbo.DatabaseLog stop
+        // looking like an orphan table once the trigger is actually extracted.
+        var databaseLog = FindNode(graph, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).Replace("[", "").Replace("]", "").ToLowerInvariant() == "dbo.databaselog");
+        Assert.NotNull(databaseLog);
+        Assert.NotNull(FindRel(graph, "WRITES_TO",
+            r => r.StartNodeId == $"{result.ObjectName}#step0" && r.EndNodeId == databaseLog!.Id));
+    }
+
+    [Fact]
     public void Update_FiltersOnWhereColumn()
     {
         var sql = """
