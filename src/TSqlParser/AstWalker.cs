@@ -173,7 +173,7 @@ public static class AstWalker
 
                 case UpdateStatement upd:
                     {
-                        var updTarget = TargetName(upd.UpdateSpecification?.Target, cteNames, upd.UpdateSpecification?.FromClause);
+                        var updTarget = TargetName(upd.UpdateSpecification?.Target, cteNames, upd.UpdateSpecification?.FromClause, cteBaseTables);
                         var updColumns = UpdateColumns(upd);
                         List<TableColumnRef>? updExtraReads = null;
                         var updFrom = upd.UpdateSpecification?.FromClause;
@@ -196,7 +196,7 @@ public static class AstWalker
 
                 case DeleteStatement del:
                     {
-                        var delTarget = TargetName(del.DeleteSpecification?.Target, cteNames, del.DeleteSpecification?.FromClause);
+                        var delTarget = TargetName(del.DeleteSpecification?.Target, cteNames, del.DeleteSpecification?.FromClause, cteBaseTables);
                         List<TableColumnRef>? delExtraReads = null;
 
                         // "DELETE t FROM TargetTable t JOIN Other o ON ...": Other is read
@@ -1998,7 +1998,8 @@ public static class AstWalker
     /// when fromClause is given and Target is a single-part identifier, it's
     /// resolved against that FROM clause's table aliases first.
     /// </summary>
-    private static string TargetName(TableReference? target, HashSet<string> cteNames, FromClause? fromClause = null)
+    private static string TargetName(TableReference? target, HashSet<string> cteNames, FromClause? fromClause = null,
+        Dictionary<string, List<(string Alias, string Table)>>? cteBaseTables = null)
     {
         // INSERT/UPDATE into a table variable: @TableVar
         if (target is VariableTableReference vtr)
@@ -2012,7 +2013,8 @@ public static class AstWalker
 
         if (ntr.SchemaObject.Identifiers.Count == 1 && fromClause != null)
         {
-            var resolved = ResolveAlias(ntr.SchemaObject.BaseIdentifier.Value, fromClause.TableReferences, cteNames);
+            var resolved = ResolveAlias(ntr.SchemaObject.BaseIdentifier.Value, fromClause.TableReferences, cteNames,
+                cteBaseTables ?? new Dictionary<string, List<(string Alias, string Table)>>(StringComparer.OrdinalIgnoreCase));
             if (resolved != null)
                 return resolved;
         }
@@ -2030,9 +2032,19 @@ public static class AstWalker
     ///     it flows through the same temp/variable guard as a direct write to it and
     ///     never surfaces as a :Table node.
     /// Recurses through every JoinTableReference (INNER/LEFT/CROSS and comma joins).
+    /// Also resolves a QueryDerivedTable ("(SELECT ... FROM RealTable) AS alias") whose
+    /// alias matches: an UPDATE/DELETE target is only updatable through a derived table
+    /// when that derived table ultimately reads exactly one real base table (Ola
+    /// Hallengren's "UPDATE QueueDatabase SET ... FROM (SELECT TOP 1 ... FROM
+    /// dbo.QueueDatabase ...) QueueDatabase" is exactly this shape) - so when the derived
+    /// table flattens (via CollectTableRefsInto, same logic a FROM clause partner read
+    /// already uses) to a single distinct table, that table is the real target; ambiguous
+    /// (0 or 2+ tables, e.g. a join inside the derived table) falls through to null so the
+    /// caller keeps its current fallback instead of guessing.
     /// Null when no alias matches, so the caller keeps its current behavior.
     /// </summary>
-    private static string? ResolveAlias(string alias, IList<TableReference> refs, HashSet<string> cteNames)
+    private static string? ResolveAlias(string alias, IList<TableReference> refs, HashSet<string> cteNames,
+        Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
     {
         foreach (var tref in refs)
         {
@@ -2042,8 +2054,16 @@ public static class AstWalker
                     return IsCte(ntr.SchemaObject, cteNames) ? "" : SqlText.Generate(ntr.SchemaObject);
                 case VariableTableReference vtr when string.Equals(vtr.Alias?.Value, alias, StringComparison.OrdinalIgnoreCase):
                     return vtr.Variable?.Name ?? "";
+                case QueryDerivedTable qdt when string.Equals(qdt.Alias?.Value, alias, StringComparison.OrdinalIgnoreCase):
+                    var innerRefs = new List<(string Alias, string Table)>();
+                    CollectTableRefsInto(qdt, cteNames, cteBaseTables, innerRefs);
+                    var distinctTables = innerRefs.Select(r => r.Table)
+                        .Where(t => t.Length > 0)
+                        .Distinct(StringComparer.OrdinalIgnoreCase)
+                        .ToList();
+                    return distinctTables.Count == 1 ? distinctTables[0] : null;
                 case JoinTableReference jtr:
-                    var found = ResolveAlias(alias, new[] { jtr.FirstTableReference, jtr.SecondTableReference }, cteNames);
+                    var found = ResolveAlias(alias, new[] { jtr.FirstTableReference, jtr.SecondTableReference }, cteNames, cteBaseTables);
                     if (found != null)
                         return found;
                     break;

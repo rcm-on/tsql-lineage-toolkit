@@ -26,8 +26,14 @@ public static class InputAnalyzer
             // Route on the FIRST real statement, ignoring leading comments/whitespace:
             // a header comment before CREATE TABLE must not misroute the file to object
             // analysis (which would lose its PK and turn its reads/writes into TARGETS
-            // edges instead of READS_FROM/WRITES_TO).
-            if (CreateTableRegex.IsMatch(StripLeadingComments(src.Sql)))
+            // edges instead of READS_FROM/WRITES_TO). The regex is a cheap fast path for
+            // the common bare "CREATE TABLE ..." case; TableAnalyzer.LooksLikeTableScript
+            // additionally catches the idempotent-install pattern "IF NOT EXISTS(...)
+            // BEGIN CREATE TABLE ... END" (Ola Hallengren's CommandLog/Queue/QueueDatabase
+            // all ship this way), which the regex alone would misroute to SqlAnalyzer -
+            // and then to object_type=UNKNOWN, with the table never registered so an
+            // unqualified reference elsewhere can't be normalized against it.
+            if (CreateTableRegex.IsMatch(StripLeadingComments(src.Sql)) || TableAnalyzer.LooksLikeTableScript(src.Sql))
                 schemas.Add(TableAnalyzer.AnalyzeTable(src.Name, src.Sql));
             else
                 objectSources.Add(src);

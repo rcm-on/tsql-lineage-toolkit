@@ -153,14 +153,23 @@ public static class GraphExporter
         var columnIds = new Dictionary<(string tableId, string column), string>();
         var nestedRelSeen = new HashSet<(string child, string parent)>();
 
+        // Maps (db, unqualified short name) -> the one qualified name ("dbo.Foo")
+        // registered under it, so an unqualified reference ("Foo") that later shows up
+        // in a step (e.g. "SELECT * FROM Foo", or an UPDATE target the AST couldn't
+        // fully qualify) resolves to the SAME :Table node as "dbo.Foo" instead of
+        // minting a twin - see GetOrCreateTable. A null value means the short name is
+        // ambiguous (two distinct qualified tables share it, e.g. "dbo.Foo" and
+        // "archive.Foo"), which disables the shortcut rather than guessing wrong.
+        var tableShortNames = new Dictionary<(string db, string shortName), string?>();
+
         // ── Table schemas (CREATE TABLE): always emit Table nodes + FK_TO edges
         // (useful for ER-diagram lineage without --columns). Column nodes and
         // HAS_COLUMN / REFERENCES are added only when includeColumns is true.
         if (tableSchemas is { Count: > 0 })
-            BuildTableSchemas(graph, tableSchemas, tableIds, columnIds, includeColumns);
+            BuildTableSchemas(graph, tableSchemas, tableIds, tableShortNames, columnIds, includeColumns);
 
         if (includeColumns)
-            BuildViewLineage(graph, results, tableIds, columnIds);
+            BuildViewLineage(graph, results, tableIds, tableShortNames, columnIds);
 
         foreach (var r in results)
         {
@@ -301,7 +310,7 @@ public static class GraphExporter
                     if (IsTempOrVariable(va.SourceTable))
                         continue;
 
-                    var (srcTableId, srcTableName) = GetOrCreateTable(graph, tableIds, db, va.SourceTable);
+                    var (srcTableId, srcTableName) = GetOrCreateTable(graph, tableIds, tableShortNames,db, va.SourceTable);
                     foreach (var srcCol in va.SourceColumns)
                     {
                         var srcColId = GetOrCreateColumn(graph, columnIds, srcTableId, srcTableName, srcCol);
@@ -429,7 +438,7 @@ public static class GraphExporter
                         if (IsTempOrVariable(extra.Table))
                             continue;
 
-                        var (extraTableId, extraTableName) = GetOrCreateTable(graph, tableIds, db, extra.Table);
+                        var (extraTableId, extraTableName) = GetOrCreateTable(graph, tableIds, tableShortNames,db, extra.Table);
                         var (isExtraCrossDb, extraTargetDb) = DetectCrossDb(extra.Table, db);
                         var extraRelProps = new Dictionary<string, object>
                         {
@@ -495,7 +504,7 @@ public static class GraphExporter
                         var seenViewTables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                         foreach (var (baseTable, baseCol) in viewBases)
                         {
-                            var (baseTableId, baseTableName) = GetOrCreateTable(graph, tableIds, viewDb, baseTable);
+                            var (baseTableId, baseTableName) = GetOrCreateTable(graph, tableIds, tableShortNames,viewDb, baseTable);
                             if (seenViewTables.Add(baseTable))
                             {
                                 graph.Relationships.Add(new GraphRel
@@ -526,7 +535,7 @@ public static class GraphExporter
                 }
                 else if (fl.ConsequenceTarget.Length > 0 && fl.ConsequenceType is "INSERT" or "UPDATE" or "DELETE" or "MERGE" or "SELECT" or "ALTER" or "TRUNCATE" or "OUTPUT" && !IsTempOrVariable(fl.ConsequenceTarget))
                 {
-                    var (tableId, tableName) = GetOrCreateTable(graph, tableIds, db, fl.ConsequenceTarget);
+                    var (tableId, tableName) = GetOrCreateTable(graph, tableIds, tableShortNames,db, fl.ConsequenceTarget);
                     var relType = fl.ConsequenceType is "SELECT" ? "READS_FROM" : "WRITES_TO";
                     var (isCrossDb, targetDbName) = DetectCrossDb(fl.ConsequenceTarget, db);
                     var relProps = new Dictionary<string, object>
@@ -591,7 +600,7 @@ public static class GraphExporter
                                     if (IsTempOrVariable(filterCol.Table))
                                         continue;
 
-                                    var (filterTableId, filterTableName) = GetOrCreateTable(graph, tableIds, db, filterCol.Table);
+                                    var (filterTableId, filterTableName) = GetOrCreateTable(graph, tableIds, tableShortNames,db, filterCol.Table);
                                     foreach (var filterColName in filterCol.Columns)
                                     {
                                         var filterColId = GetOrCreateColumn(graph, columnIds, filterTableId, filterTableName, filterColName);
@@ -632,7 +641,7 @@ public static class GraphExporter
                                 {
                                     foreach (var origin in ResolveTransient(deriv.SourceTable, srcCol, new List<string>(), 0))
                                     {
-                                        var (origTableId, origTableName) = GetOrCreateTable(graph, tableIds, db, origin.Table);
+                                        var (origTableId, origTableName) = GetOrCreateTable(graph, tableIds, tableShortNames,db, origin.Table);
                                         var origColId = GetOrCreateColumn(graph, columnIds, origTableId, origTableName, origin.Column);
                                         var transientProps = new Dictionary<string, object>
                                         {
@@ -657,7 +666,7 @@ public static class GraphExporter
                                 continue;
                             }
 
-                            var (srcTableId, srcTableName) = GetOrCreateTable(graph, tableIds, db, deriv.SourceTable);
+                            var (srcTableId, srcTableName) = GetOrCreateTable(graph, tableIds, tableShortNames,db, deriv.SourceTable);
                             foreach (var srcCol in deriv.SourceColumns)
                             {
                                 var srcColId = GetOrCreateColumn(graph, columnIds, srcTableId, srcTableName, srcCol);
@@ -705,7 +714,7 @@ public static class GraphExporter
                         if (IsTempOrVariable(filterCol.Table))
                             continue;
 
-                        var (filterTableId, filterTableName) = GetOrCreateTable(graph, tableIds, db, filterCol.Table);
+                        var (filterTableId, filterTableName) = GetOrCreateTable(graph, tableIds, tableShortNames,db, filterCol.Table);
                         foreach (var colName in filterCol.Columns)
                         {
                             var colId = GetOrCreateColumn(graph, columnIds, filterTableId, filterTableName, colName);
@@ -1022,7 +1031,7 @@ public static class GraphExporter
                     // De-bracket so the Table node's `name` is clean "Schema.Table" and
                     // dedups with the same table however another step referenced it.
                     var onTableRaw = SqlText.StripBrackets(trig.OnTable);
-                    var (onTableId, _) = GetOrCreateTable(graph, tableIds, db, onTableRaw);
+                    var (onTableId, _) = GetOrCreateTable(graph, tableIds, tableShortNames,db, onTableRaw);
                     graph.Relationships.Add(new GraphRel
                     {
                         Type = "ON",
@@ -1055,7 +1064,7 @@ public static class GraphExporter
         // Redirect every edge (and column) referencing a synonym's table node onto the
         // base object's table node, drop the now-orphan synonym node, and record the
         // alias as a documentary ALIAS_OF edge from the synonym's SqlObject.
-        ResolveSynonyms(graph, results, tableIds);
+        ResolveSynonyms(graph, results, tableIds, tableShortNames);
 
         // Promote the SQL containment hierarchy (Database -> Schema -> Object/Table)
         // to real nodes, so "everything in schema Sales" / "impact across this database"
@@ -1168,6 +1177,7 @@ public static class GraphExporter
         GraphPayload graph,
         List<TableSchemaResult> tableSchemas,
         Dictionary<(string db, string name), string> tableIds,
+        Dictionary<(string db, string shortName), string?> tableShortNames,
         Dictionary<(string tableId, string column), string> columnIds,
         bool includeColumns)
     {
@@ -1182,6 +1192,7 @@ public static class GraphExporter
             {
                 tableId = $"{db}:table:{tableKey.Item2}";
                 tableIds[tableKey] = tableId;
+                RegisterShortName(tableShortNames, db, tableKey.Item2);
                 graph.Nodes.Add(new GraphNode
                 {
                     Id = tableId,
@@ -1375,6 +1386,7 @@ public static class GraphExporter
     /// </summary>
     private static void BuildViewLineage(GraphPayload graph, List<ObjectResult> results,
         Dictionary<(string db, string name), string> tableIds,
+        Dictionary<(string db, string shortName), string?> tableShortNames,
         Dictionary<(string tableId, string column), string> columnIds)
     {
         foreach (var r in results)
@@ -1383,7 +1395,7 @@ public static class GraphExporter
                 continue;
 
             var (db, plain) = SplitName(r.ObjectName);
-            var (viewTableId, viewTableName) = GetOrCreateTable(graph, tableIds, db, plain);
+            var (viewTableId, viewTableName) = GetOrCreateTable(graph, tableIds, tableShortNames,db, plain);
 
             // The view's output columns keep the table-scheme id (":table:<view>:column:<c>")
             // so a downstream "SELECT c FROM <view>" reader's READS_COLUMN lands on the
@@ -1407,7 +1419,7 @@ public static class GraphExporter
                         StartNodeId = r.ObjectName,
                         EndNodeId = outColId,
                     });
-                var (srcTableId, srcTableName) = GetOrCreateTable(graph, tableIds, db, deriv.SourceTable);
+                var (srcTableId, srcTableName) = GetOrCreateTable(graph, tableIds, tableShortNames,db, deriv.SourceTable);
                 foreach (var srcCol in deriv.SourceColumns)
                 {
                     var srcColId = GetOrCreateColumn(graph, columnIds, srcTableId, srcTableName, srcCol);
@@ -1449,7 +1461,8 @@ public static class GraphExporter
     /// synonym's SqlObject to the base table for documentation. Identical edges created by
     /// the redirect are de-duplicated. No-op when there are no synonyms.
     /// </summary>
-    private static void ResolveSynonyms(GraphPayload graph, List<ObjectResult> results, Dictionary<(string db, string name), string> tableIds)
+    private static void ResolveSynonyms(GraphPayload graph, List<ObjectResult> results, Dictionary<(string db, string name), string> tableIds,
+        Dictionary<(string db, string shortName), string?> tableShortNames)
     {
         var synonyms = results.Where(r => r.ObjectType == "SYNONYM" && r.SynonymTarget.Length > 0).ToList();
         if (synonyms.Count == 0)
@@ -1464,7 +1477,7 @@ public static class GraphExporter
         {
             var (synDb, synPlain) = SplitName(syn.ObjectName);
             var synTableId = $"{synDb}:table:{NormalizeRef(synPlain)}";
-            var (baseTableId, _) = GetOrCreateTable(graph, tableIds, synDb, syn.SynonymTarget);
+            var (baseTableId, _) = GetOrCreateTable(graph, tableIds, tableShortNames,synDb, syn.SynonymTarget);
             if (synTableId == baseTableId || tableRemap.ContainsKey(synTableId))
                 continue;
             tableRemap[synTableId] = baseTableId;
@@ -1515,11 +1528,31 @@ public static class GraphExporter
             (n.Id.IndexOf(":column:", StringComparison.Ordinal) is var ci && ci > 0 && tableRemap.ContainsKey(n.Id.Substring(0, ci))));
     }
 
-    private static (string tableId, string tableName) GetOrCreateTable(GraphPayload graph, Dictionary<(string db, string name), string> tableIds, string db, string tableName)
+    private static (string tableId, string tableName) GetOrCreateTable(
+        GraphPayload graph,
+        Dictionary<(string db, string name), string> tableIds,
+        Dictionary<(string db, string shortName), string?> tableShortNames,
+        string db, string tableName)
     {
-        var tableKey = (db, NormalizeRef(tableName));
+        var normalized = NormalizeRef(tableName);
+        var tableKey = (db, normalized);
         if (!tableIds.TryGetValue(tableKey, out var tableId))
         {
+            // Unqualified reference ("QueueDatabase") that matches exactly one already-
+            // known qualified table ("dbo.QueueDatabase" - registered via its CREATE
+            // TABLE schema, or a prior qualified reference elsewhere in this same run):
+            // resolve to that table's existing node instead of minting a same-table
+            // twin that silently splits its READS_FROM/WRITES_TO edges across two
+            // :Table nodes (the false negative this method exists to prevent).
+            if (!normalized.Contains('.') &&
+                tableShortNames.TryGetValue((db, normalized), out var qualifiedName) &&
+                qualifiedName != null &&
+                tableIds.TryGetValue((db, qualifiedName), out var existingId))
+            {
+                tableIds[tableKey] = existingId;
+                return (existingId, qualifiedName);
+            }
+
             tableId = $"{db}:table:{tableKey.Item2}";
             tableIds[tableKey] = tableId;
             graph.Nodes.Add(new GraphNode
@@ -1534,8 +1567,34 @@ public static class GraphExporter
                     ["name"] = SqlText.StripBrackets(tableName),
                 },
             });
+            RegisterShortName(tableShortNames, db, normalized);
         }
         return (tableId, tableKey.Item2);
+    }
+
+    /// <summary>
+    /// Indexes a newly-registered qualified table ("dbo.Foo") under its bare short name
+    /// ("Foo") so a later unqualified reference can find it (see GetOrCreateTable). If a
+    /// *different* qualified table already claims that short name (e.g. "dbo.Foo" and
+    /// "archive.Foo" both registered), the short name is marked ambiguous (null) so the
+    /// shortcut is disabled rather than guessing which one an unqualified reference means.
+    /// A bare table name with no schema segment ("Foo" itself, never seen qualified)
+    /// registers as its own short name - harmless no-op for the lookup.
+    /// </summary>
+    private static void RegisterShortName(Dictionary<(string db, string shortName), string?> tableShortNames, string db, string normalizedName)
+    {
+        var dot = normalizedName.LastIndexOf('.');
+        var shortName = dot >= 0 ? normalizedName[(dot + 1)..] : normalizedName;
+        var shortKey = (db, shortName);
+        if (tableShortNames.TryGetValue(shortKey, out var existing))
+        {
+            if (existing != null && existing != normalizedName)
+                tableShortNames[shortKey] = null;
+        }
+        else
+        {
+            tableShortNames[shortKey] = normalizedName;
+        }
     }
 
     /// <summary>Returns the (possibly newly-created) :Column node "tableId:column:colName", de-duplicated via columnIds, with HAS_COLUMN linked to its table.</summary>
