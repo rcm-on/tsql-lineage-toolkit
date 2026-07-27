@@ -685,6 +685,8 @@ public static class AstWalker
         IReadOnlyList<TableColumnRef>? extraReads = null,
         IReadOnlyList<TableColumnRef>? filterColumnsOverride = null,
         IReadOnlyList<string>? filterOpKindsOverride = null,
+        string? filterTextOverride = null,
+        string? filterKindOverride = null,
         string detail = "",
         string dynamicSqlText = "",
         bool selectStar = false)
@@ -707,6 +709,8 @@ public static class AstWalker
         var filterColumns = filterColumnsOverride;
         var nestedTableRefs = new List<(string Alias, string Table)>();
         List<string> filterOpKinds = (filterOpKindsOverride ?? Array.Empty<string>()).ToList();
+        string filterText = filterTextOverride ?? "";
+        string filterKind = filterKindOverride ?? "";
         if (filterColumns == null && cteNames != null && cteBaseTables != null)
         {
             // UPDATE/DELETE without an explicit FROM clause has no FromClause to walk -
@@ -722,7 +726,7 @@ public static class AstWalker
                 DeleteStatement del2 when TargetName(del2.DeleteSpecification?.Target, cteNames) is { Length: > 0 } tn => new List<(string Alias, string Table)> { ("", tn) },
                 _ => new List<(string Alias, string Table)>(),
             };
-            (filterColumns, nestedTableRefs, filterOpKinds) = ExtractFilterColumns(stmt, currentTableRefs, cteNames, cteBaseTables);
+            (filterColumns, nestedTableRefs, filterOpKinds, filterText, filterKind) = ExtractFilterColumns(stmt, currentTableRefs, cteNames, cteBaseTables);
         }
 
         // A nested EXISTS/IN/scalar-comparison subquery's own table (e.g.
@@ -746,7 +750,9 @@ public static class AstWalker
             FilterOpKinds: filterOpKinds,
             Detail: detail,
             DynamicSqlText: dynamicSqlText,
-            SelectStar: selectStar
+            SelectStar: selectStar,
+            FilterText: filterText,
+            FilterKind: filterKind
         ));
     }
 
@@ -758,7 +764,7 @@ public static class AstWalker
     /// Only SELECT/UPDATE/DELETE have a WhereClause; other statement kinds (INSERT,
     /// MERGE's ON clause, EXEC, ...) simply yield no filter columns here.
     /// </summary>
-    private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs, List<string> FilterOpKinds) ExtractFilterColumns(
+    private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs, List<string> FilterOpKinds, string FilterText, string FilterKind) ExtractFilterColumns(
         TSqlStatement stmt, List<(string Alias, string Table)> tableRefs, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
     {
         WhereClause? whereClause = stmt switch
@@ -795,7 +801,7 @@ public static class AstWalker
     /// in before resolving, and returned separately so the caller (AddLink) can also
     /// add a READS_FROM for those tables, not just FILTERS_ON.
     /// </summary>
-    private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs, List<string> FilterOpKinds) ExtractFilterColumnsCore(
+    private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs, List<string> FilterOpKinds, string FilterText, string FilterKind) ExtractFilterColumnsCore(
         WhereClause? whereClause, IList<TableReference> fromTableReferences, List<(string Alias, string Table)> tableRefs,
         HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
     {
@@ -843,7 +849,20 @@ public static class AstWalker
         if (primaryCols.Count > 0 && tableRefs.Count > 0)
             result.Add(new TableColumnRef(tableRefs[0].Table, primaryCols));
         result.AddRange(extras);
-        return (result, nestedTableRefs, opKinds.ToList());
+
+        // WHERE-only text/classification - deliberately excludes the JOIN ON
+        // predicates folded into filterRefs/opKinds above, so a step's :BusinessRule
+        // (see GraphExporter) reflects only its actual WHERE condition, not the
+        // join's key-matching predicate. A step with a JOIN but no WHERE therefore
+        // never manufactures a rule.
+        var filterText = whereClause?.SearchCondition != null
+            ? SqlText.Truncate(SqlText.Generate(whereClause.SearchCondition), 300)
+            : "";
+        var filterKind = whereClause?.SearchCondition != null
+            ? FilterRuleClassifier.Classify(whereClause.SearchCondition)
+            : "";
+
+        return (result, nestedTableRefs, opKinds.ToList(), filterText, filterKind);
     }
 
     /// <summary>
@@ -1747,7 +1766,7 @@ public static class AstWalker
         var (selColumns, extras) = SplitColumnsByTable(refs, tableRefs);
         var extraReads = BuildExtraReads(tableRefs, extras, skipFirst: true);
 
-        var (filterColumns, nestedTableRefs, filterOpKinds) = ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables);
+        var (filterColumns, nestedTableRefs, filterOpKinds, filterText, filterKind) = ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables);
         if (nestedTableRefs.Count > 0)
             foreach (var (_, nestedTable) in nestedTableRefs)
                 if (!extraReads.Any(e => string.Equals(e.Table, nestedTable, StringComparison.OrdinalIgnoreCase)))
@@ -1755,7 +1774,8 @@ public static class AstWalker
 
         AddLink(ctx, condStack, "SELECT", target, stmt, cteNames, cteBaseTables,
             columns: selColumns, extraReads: extraReads, filterColumnsOverride: filterColumns,
-            filterOpKindsOverride: filterOpKinds, detail: $"→ {varName}");
+            filterOpKindsOverride: filterOpKinds, filterTextOverride: filterText,
+            filterKindOverride: filterKind, detail: $"→ {varName}");
     }
 
     /// <summary>

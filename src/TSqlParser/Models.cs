@@ -60,6 +60,24 @@ public record VariableInfo(string Name, string Type, string Default);
 /// which rows are touched". Empty when there's no WHERE/JOIN condition, or none
 /// of its columns could be attributed to a known table.
 /// </param>
+/// <param name="FilterText">
+/// Raw text of this step's own WHERE clause (WHERE only - not the JOIN ON
+/// predicates also folded into FilterColumns), truncated like ConditionText.
+/// Empty when the statement has no WhereClause (INSERT, MERGE's ON, a step with
+/// only a JOIN condition, etc.) - GraphExporter uses emptiness here, not
+/// FilterColumns emptiness, to decide whether a WHERE-derived :BusinessRule node
+/// is warranted, so a plain JOIN with no WHERE never manufactures a rule out of
+/// its key-matching ON clause.
+/// </param>
+/// <param name="FilterKind">
+/// <see cref="FilterRuleClassifier"/>'s verdict on FilterText: "domain_filter"
+/// (compares a column to a literal/state - business logic), "key_lookup"
+/// (compares to a parameter/system value - row addressing, not a rule), or
+/// "mixed"/"" when both shapes appear or none could be classified. Never used to
+/// drop data - always a property alongside the full FilterText/FilterColumns, so
+/// a consumer can choose to ignore key_lookup rules without the data having been
+/// discarded upstream.
+/// </param>
 public record FlowLinkInfo(
     string ConditionType, string ConditionText,
     string ConsequenceType, string ConsequenceTarget,
@@ -75,7 +93,9 @@ public record FlowLinkInfo(
     IReadOnlyList<string>? FilterOpKinds = null,
     string Detail = "",
     string DynamicSqlText = "",
-    bool SelectStar = false)
+    bool SelectStar = false,
+    string FilterText = "",
+    string FilterKind = "")
 {
     public IReadOnlyList<string> DynamicSqlVars { get; init; } = DynamicSqlVars ?? Array.Empty<string>();
     public IReadOnlyList<string> ConditionPath { get; init; } = ConditionPath ?? Array.Empty<string>();
