@@ -167,7 +167,32 @@ public static class AstWalker
                         var (lineage, insExtraReads) = InsertSelectLineage(ins, insColumns, cteNames, cteBaseTables);
                         ProcessOutputClause(ins.InsertSpecification?.OutputIntoClause, insTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
 
-                        AddLink(ctx, condStack, "INSERT", insTarget, stmt, cteNames, cteBaseTables, columns: insColumns, columnLineage: lineage, extraReads: insExtraReads);
+                        // "INSERT INTO T (...) EXEC [@var | proc] ...": the insert source
+                        // is itself an EXEC (proc call or dynamic SQL via sp_executesql),
+                        // not a SELECT/VALUES list - ScriptDom models this as an
+                        // ExecuteInsertSource, so it never reaches the ExecuteStatement
+                        // case below. Without this, the EXEC half (dynamic-SQL detection,
+                        // the CALLS edge for a literal proc name, dynamic_sql text feeding
+                        // ResolveDynamicSqlLinks) was silently dropped - only the INSERT
+                        // target survived.
+                        if (ins.InsertSpecification?.InsertSource is ExecuteInsertSource execSrc)
+                        {
+                            var insEntity = execSrc.Execute?.ExecutableEntity;
+                            var (insExecTarget, insIsDynamic, insDynamicVars) = ExecTarget(insEntity);
+                            var insDynText = insIsDynamic ? ResolveExecLiteral(insEntity, ctx) : "";
+                            AddLink(ctx, condStack, "INSERT", insTarget, stmt, cteNames, cteBaseTables,
+                                insIsDynamic ? insDynamicVars : null,
+                                columns: insColumns, columnLineage: lineage, extraReads: insExtraReads,
+                                dynamicSqlText: insDynText);
+                            if (!insIsDynamic && insExecTarget.Length > 0)
+                                ctx.ExecCalls.Add(insExecTarget);
+                            if (insIsDynamic)
+                                ctx.DynamicSqlCount++;
+                        }
+                        else
+                        {
+                            AddLink(ctx, condStack, "INSERT", insTarget, stmt, cteNames, cteBaseTables, columns: insColumns, columnLineage: lineage, extraReads: insExtraReads);
+                        }
                     }
                     break;
 
@@ -245,12 +270,13 @@ public static class AstWalker
 
                 case ExecuteStatement exec:
                     {
-                        var (target, isDynamic, dynamicVars) = ExecTarget(exec);
+                        var execEntity = exec.ExecuteSpecification?.ExecutableEntity;
+                        var (target, isDynamic, dynamicVars) = ExecTarget(execEntity);
                         // When the executed string reconstructs to a pure literal, surface
                         // *what* it runs (e.g. "CREATE PARTITION FUNCTION ..."). Kept FULL here;
                         // SqlAnalyzer.ResolveDynamicSqlLinks re-parses it for the inner DML's
                         // lineage, and the display copy is truncated later in GraphExporter.
-                        var dynText = isDynamic ? ResolveExecLiteral(exec, ctx) : "";
+                        var dynText = isDynamic ? ResolveExecLiteral(execEntity, ctx) : "";
                         AddLink(ctx, condStack, "EXEC", target, stmt, cteNames, cteBaseTables, isDynamic ? dynamicVars : null, dynamicSqlText: dynText);
                         if (!isDynamic && target.Length > 0)
                             ctx.ExecCalls.Add(target);
@@ -1826,9 +1852,8 @@ public static class AstWalker
     /// dynamic SQL longer than the display cap. The display cap (200) is applied downstream, at
     /// the point the value becomes the descriptive "dynamic_sql" node property (GraphExporter).
     /// </summary>
-    private static string ResolveExecLiteral(ExecuteStatement exec, WalkContext ctx)
+    private static string ResolveExecLiteral(ExecutableEntity? entity, WalkContext ctx)
     {
-        var entity = exec.ExecuteSpecification?.ExecutableEntity;
         string? sql = entity switch
         {
             // EXEC('...' + @x + ...): concatenate the string list.
@@ -2086,9 +2111,15 @@ public static class AstWalker
         _ => "",
     };
 
-    private static (string target, bool isDynamic, List<string> dynamicVars) ExecTarget(ExecuteStatement exec)
+    /// <summary>
+    /// Classifies the executed entity of an EXEC ("EXECUTE ...") or an INSERT's
+    /// EXEC-as-source ("INSERT INTO T EXEC ..."). Takes the ExecutableEntity directly
+    /// (rather than the enclosing ExecuteStatement) so both call sites - a real
+    /// ExecuteStatement and an InsertStatement's ExecuteInsertSource - share the exact
+    /// same classification logic instead of duplicating/drifting it.
+    /// </summary>
+    private static (string target, bool isDynamic, List<string> dynamicVars) ExecTarget(ExecutableEntity? entity)
     {
-        var entity = exec.ExecuteSpecification?.ExecutableEntity;
         switch (entity)
         {
             // EXEC sp_executesql @sql [, @params, ...]: a system proc that itself runs
