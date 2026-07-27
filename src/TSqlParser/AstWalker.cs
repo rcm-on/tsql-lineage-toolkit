@@ -1050,11 +1050,93 @@ public static class AstWalker
             case UnpivotedTableReference unpvt:
                 CollectTableRefsInto(unpvt.TableReference, cteNames, cteBaseTables, result);
                 break;
-            // TVFs, pivots, derived tables with a non-QuerySpecification body, etc.:
-            // no alias->table mapping is possible, so columns qualified with their
-            // alias simply won't resolve below.
+            case SchemaObjectFunctionTableReference fn when fn.SchemaObject != null && IsCatalogSchema(fn.SchemaObject):
+                // "FROM sys.dm_io_virtual_file_stats(...)", "JOIN sys.dm_os_volume_stats(...)":
+                // a catalog table-valued function (sys.dm_*/sys.fn_*). It is never an analyzed
+                // SqlObject (there's no CREATE FUNCTION for it in any corpus), so unlike a
+                // user-defined TVF - already surfaced via a CALLS edge, see
+                // FunctionCallCollector/GraphExporter, and deliberately NOT added here to avoid
+                // a twin :Table node for the same object - it would otherwise vanish from the
+                // lineage entirely. Registering it as a plain table reference routes it through
+                // the normal READS_FROM/GetOrCreateTable machinery, same as "sys.databases".
+                // Columns stay unresolved: the function is opaque, exactly like any other TVF.
+                result.Add((fn.Alias?.Value ?? fn.SchemaObject.BaseIdentifier?.Value ?? "", SqlText.Generate(fn.SchemaObject)));
+                break;
+            case OpenJsonTableReference ojtr when !IsColumnShreddedElsewhere(ojtr):
+                // "FROM OPENJSON(@json[, path]) WITH (col type 'path', ...)": a virtual
+                // table shredded from a scalar expression (a parameter/variable/local
+                // expression - NOT a schema object, so there's no catalog entry to look up).
+                // Registered as a symbolic pseudo-table named after the shredded expression
+                // (e.g. "OPENJSON(@FullSensorDataArray)") purely so it plugs into the existing
+                // single-table column-attribution shortcut (SplitColumnsByTable): an unqualified
+                // "SELECT VehicleRegistration FROM OPENJSON(...) WITH (...)" then resolves
+                // VehicleRegistration as a real read of this pseudo-table - giving INSERT...
+                // SELECT genuine column lineage without parsing the WITH clause at all (the
+                // WITH-declared name IS the column name the outer query selects unqualified).
+                // The WITH clause's JSON path/type info itself is NOT surfaced - out of scope,
+                // see the fix's writeup. Skipped (via IsColumnShreddedElsewhere) when the
+                // shredded expression is itself a "alias.column" - that shape is already
+                // resolved to its real base table/column by BuildXmlApplyMap below; adding a
+                // pseudo-table here too would double up the read with a symbolic twin.
+                result.Add((ojtr.Alias?.Value ?? "", $"OPENJSON({SqlText.Generate(ojtr.Variable)})"));
+                break;
+            case GlobalFunctionTableReference gftr when gftr.Name != null:
+                // STRING_SPLIT(...) and other built-ins with no schema object at all
+                // (GENERATE_SERIES, etc.): same reasoning as OPENJSON above - a symbolic
+                // pseudo-table keyed by the call text, so the reference at least participates
+                // in READS_FROM/column-attribution instead of vanishing outright.
+                result.Add((gftr.Alias?.Value ?? "", $"{gftr.Name.Value}({string.Join(", ", gftr.Parameters.Select(SqlText.Generate))})"));
+                break;
+            case OpenQueryTableReference oqtr when oqtr.LinkedServer != null:
+                // OPENQUERY(LinkedServer, 'SELECT ...'): the query text runs on a remote
+                // server whose schema was never analyzed here - parsing it and minting local
+                // :Table nodes for whatever names it happens to mention would risk silently
+                // conflating a remote object with a same-named local one (worse than silence).
+                // Register only the linked-server identity - symbolic, not a claim about a
+                // real object - so the reference isn't fully invisible either.
+                result.Add((oqtr.Alias?.Value ?? "", $"OPENQUERY({oqtr.LinkedServer.Value})"));
+                break;
+            case OpenRowsetTableReference { Object: { } orObj } orTr:
+                // OPENROWSET(provider, connString, database.schema.object): the 3rd argument
+                // is a genuine (remote) schema-qualified object - ScriptDom parses it into
+                // .Object instead of .Query. Treated exactly like a catalog TVF: real
+                // identity, flows through the normal GetOrCreateTable machinery.
+                result.Add((orTr.Alias?.Value ?? orObj.BaseIdentifier?.Value ?? "", SqlText.Generate(orObj)));
+                break;
+            // Left unregistered, deliberately:
+            //  - OpenRowsetTableReference with a literal query string (the ad hoc
+            //    "provider, connString, 'SELECT ...'" form, .Query populated instead of
+            //    .Object): opaque remote SQL text, same misattribution risk as an
+            //    unresolved OPENQUERY above.
+            //  - BulkOpenRowset (OPENROWSET(BULK 'file.csv', ...)): points at a file, not a
+            //    database object - no catalog identity exists to attach a node to.
+            //  - User-defined TVFs (SchemaObjectFunctionTableReference outside "sys"),
+            //    pivots/derived tables with a non-QuerySpecification body, etc.: no
+            //    alias->table mapping is possible, so columns qualified with their alias
+            //    simply won't resolve below. User-defined TVFs still reach the graph as a
+            //    CALLS edge (object-level, via FunctionCallCollector) - see the case above.
         }
     }
+
+    /// <summary>
+    /// True when an OPENJSON(...) call's shredded expression is itself an "alias.column"
+    /// reference (e.g. "OPENJSON(t.JsonCol)") - that shape is already resolved to its real
+    /// base table/column by BuildXmlApplyMap (used for both XML .nodes() and this OPENJSON
+    /// form), so CollectTableRefsInto skips adding a symbolic OPENJSON(...) pseudo-table for
+    /// it - only OPENJSON calls shredding a parameter/variable/other expression (no known
+    /// base column to defer to) get the pseudo-table fallback.
+    /// </summary>
+    private static bool IsColumnShreddedElsewhere(OpenJsonTableReference ojtr) =>
+        ojtr.Variable is ColumnReferenceExpression { MultiPartIdentifier.Identifiers.Count: >= 1 };
+
+    /// <summary>
+    /// True if a (possibly multi-part) schema object name lives in the "sys" catalog schema
+    /// (e.g. "sys.dm_io_virtual_file_stats", "somedb.sys.dm_exec_sql_text") - used to route
+    /// catalog table-valued functions through READS_FROM (see CollectTableRefsInto) instead of
+    /// the CALLS edge used for user-defined ones, since they are never analyzed SqlObjects.
+    /// </summary>
+    private static bool IsCatalogSchema(SchemaObjectName name) =>
+        name.SchemaIdentifier != null && name.SchemaIdentifier.Value.Equals("sys", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Maps each CROSS/OUTER APPLY ...nodes() alias to the base XML column it shreds, so
