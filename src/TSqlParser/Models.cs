@@ -171,6 +171,16 @@ public class WalkContext
     /// Lets a dynamic EXEC snapshot exactly what literal SQL it runs at that point.
     /// </summary>
     public Dictionary<string, string> ResolvedVars { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// PROTOTYPE (dynsql-placeholder): @parameter names substituted via a placeholder
+    /// identifier token anywhere in this object's body (see AstWalker.ResolveLiteral's
+    /// QUOTENAME case) - accumulates across the whole walk, not cleared per-statement.
+    /// Not itself consumed downstream: the placeholder token travels embedded in the
+    /// reconstructed SQL text (ResolvedVars / DynamicSqlText) and is detected there by
+    /// GraphExporter when it builds the edge. Kept on the context for diagnostics/testability.
+    /// </summary>
+    public HashSet<string> DynamicSqlPlaceholderParams { get; } = new(StringComparer.OrdinalIgnoreCase);
     public bool SawTryCatch;
     public bool HasTransaction;
     public bool HasCursor;

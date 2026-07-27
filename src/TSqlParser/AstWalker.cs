@@ -13,6 +13,16 @@ namespace TSqlParser;
 /// </summary>
 public static class AstWalker
 {
+    /// <summary>
+    /// PROTOTYPE (dynsql-placeholder): marker wrapping a @parameter name when it
+    /// substitutes for an unresolvable identifier inside QUOTENAME(...) (see
+    /// ResolveLiteral's QUOTENAME case). Uses guillemets so it can never collide with a
+    /// real identifier character T-SQL allows, and is easy to detect downstream
+    /// (GraphExporter) via a simple Contains/regex check on the reconstructed name.
+    /// </summary>
+    internal const string PlaceholderPrefix = "«param:";
+    internal const string PlaceholderSuffix = "»";
+
     public static void Walk(IList<TSqlStatement> statements, List<Condition> condStack, WalkContext ctx, int depth, HashSet<string>? cteNames = null, Dictionary<string, List<(string Alias, string Table)>>? cteBaseTables = null)
     {
         // Only the top-level call for a trigger body seeds the pseudo-tables (nested
@@ -1698,7 +1708,32 @@ public static class AstWalker
             {
                 var inner = ResolveLiteral(fc.Parameters[0], ctx);
                 if (inner == null)
-                    return null;
+                {
+                    // PROTOTYPE (dynsql-placeholder): QUOTENAME(@x) couldn't resolve @x to a
+                    // literal (e.g. @x is an input parameter, never a SET literal - the
+                    // sp_BlitzIndex shape: "... + QUOTENAME(@DatabaseName) + '.[sys].[objects]'").
+                    // QUOTENAME's presence is a syntactic guarantee that this position is an
+                    // IDENTIFIER, not a clause - so instead of bailing the whole dynamic SQL to
+                    // unresolved, substitute a placeholder identifier token for @x. This loses
+                    // the concrete identifier (we never learn which database @x names at
+                    // static-analysis time) but keeps the surrounding SQL parseable, so the
+                    // real table/columns/operation still get extracted. Downstream
+                    // (GraphExporter) detects this token in the reconstructed target name and
+                    // marks the resulting edge as inferred (confidence < 1.0, bound_to the
+                    // param, database_unknown) - never indistinguishable from a certain edge.
+                    // Restricted to a BARE variable reference: QUOTENAME(@a + @b) or
+                    // QUOTENAME(some_func(@a)) has no single param to bind the inference to,
+                    // so those still fail closed (return null) as before.
+                    if (fc.Parameters[0] is VariableReference placeholderVar)
+                    {
+                        ctx.DynamicSqlPlaceholderParams.Add(placeholderVar.Name);
+                        inner = PlaceholderPrefix + placeholderVar.Name + PlaceholderSuffix;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
                 var quote = fc.Parameters.Count == 2 ? ResolveLiteral(fc.Parameters[1], ctx) : "[";
                 return quote switch
                 {
