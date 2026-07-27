@@ -152,6 +152,11 @@ public static class GraphExporter
         var tableIds = new Dictionary<(string db, string name), string>();
         var columnIds = new Dictionary<(string tableId, string column), string>();
         var nestedRelSeen = new HashSet<(string child, string parent)>();
+        // WHERE-derived :BusinessRule nodes (see the FilterText block below) - separate
+        // id namespace/cache from ruleIds (which holds the IF/WHILE :Rule/GOVERNS chain)
+        // so the two never collide even if text happens to match.
+        var whereRuleIds = new Dictionary<(string db, string text), string>();
+        var whereConstrainsSeen = new HashSet<(string ruleId, string colId)>();
 
         // Maps (db, unqualified short name) -> the one qualified name ("dbo.Foo")
         // registered under it, so an unqualified reference ("Foo") that later shows up
@@ -727,6 +732,76 @@ public static class GraphExporter
                                 EndNodeId = colId,
                                 Properties = filtersProps,
                             });
+                        }
+                    }
+                }
+
+                // WHERE-derived :BusinessRule: this step's own WHERE clause (not the
+                // JOIN ON predicates also folded into FilterColumns - FilterText is
+                // WHERE-only, see its doc comment on FlowLinkInfo) captured as a
+                // first-class rule, the same node shape as the DDL CHECK/DEFAULT/UNIQUE
+                // :BusinessRule nodes emitted in EmitTableSchemas (HAS_RULE from the
+                // owner, CONSTRAINS from the rule to each governed column) - so
+                // AuditExporter's business_rules count picks both sources up uniformly
+                // with no changes needed there. Deliberately NOT the :Rule/GOVERNS pair
+                // used for IF/WHILE below: a WHERE qualifies one step, it doesn't branch
+                // the flowchart the way GOVERNS does, so reusing that edge would show a
+                // false decision point. Gated on FilterText (not FilterColumns) being
+                // non-empty so a step with only a JOIN and no WHERE never manufactures a
+                // rule out of the join's key-matching predicate.
+                if (includeColumns && fl.FilterText.Length > 0 && fl.FilterColumns.Count > 0)
+                {
+                    var whereRuleKey = (db, fl.FilterText);
+                    if (!whereRuleIds.TryGetValue(whereRuleKey, out var whereRuleId))
+                    {
+                        var affectedTables = fl.FilterColumns
+                            .Where(fc => !IsTempOrVariable(fc.Table))
+                            .Select(fc => GetOrCreateTable(graph, tableIds, tableShortNames, db, fc.Table).tableName)
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .ToList();
+
+                        whereRuleId = $"{db}:bizrule:where:{StableHash(fl.FilterText)}";
+                        whereRuleIds[whereRuleKey] = whereRuleId;
+                        graph.Nodes.Add(new GraphNode
+                        {
+                            Id = whereRuleId,
+                            Labels = new List<string> { "BusinessRule" },
+                            Properties = new Dictionary<string, object>
+                            {
+                                ["kind"] = "WHERE",
+                                ["expression"] = fl.FilterText,
+                                // domain_filter | key_lookup | mixed (FilterRuleClassifier) -
+                                // never used to drop the rule, just to let a consumer skip
+                                // key_lookup rules if it wants only genuine domain logic.
+                                ["filter_kind"] = fl.FilterKind,
+                                ["tables"] = affectedTables,
+                            },
+                        });
+                    }
+
+                    graph.Relationships.Add(new GraphRel
+                    {
+                        Type = "HAS_RULE",
+                        StartNodeId = stepId,
+                        EndNodeId = whereRuleId,
+                    });
+
+                    foreach (var filterCol in fl.FilterColumns)
+                    {
+                        if (IsTempOrVariable(filterCol.Table))
+                            continue;
+
+                        var (whereTableId, whereTableName) = GetOrCreateTable(graph, tableIds, tableShortNames, db, filterCol.Table);
+                        foreach (var colName in filterCol.Columns)
+                        {
+                            var colId = GetOrCreateColumn(graph, columnIds, whereTableId, whereTableName, colName);
+                            if (whereConstrainsSeen.Add((whereRuleId, colId)))
+                                graph.Relationships.Add(new GraphRel
+                                {
+                                    Type = "CONSTRAINS",
+                                    StartNodeId = whereRuleId,
+                                    EndNodeId = colId,
+                                });
                         }
                     }
                 }

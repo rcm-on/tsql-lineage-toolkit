@@ -2219,4 +2219,119 @@ public class LineageTests
         AssertRule("DEFAULT", "Qty");
         AssertRule("UNIQUE", "Sku");
     }
+
+    // WHERE-as-business-rule: a step's own WHERE clause (JOIN ON predicates are
+    // deliberately excluded - see FlowLinkInfo.FilterText) becomes a :BusinessRule
+    // node, HAS_RULE from the Step, CONSTRAINS to each column it restricts - the
+    // same node shape as the DDL CHECK/DEFAULT/UNIQUE rules above, but sourced
+    // from a query predicate instead of a table definition.
+
+    [Fact]
+    public void WherePredicate_ProducesBusinessRuleNodeWithTextAndConstrains()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                SELECT Id FROM dbo.Source WHERE IsActive = 1
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var step = FindNode(graph, n => n.Labels.Contains("Step") && (string)n.Properties["action"] == "SELECT");
+        Assert.NotNull(step);
+
+        var rule = FindNode(graph, n => n.Labels.Contains("BusinessRule") && (string)n.Properties["kind"] == "WHERE");
+        Assert.NotNull(rule);
+        Assert.Equal("IsActive = 1", (string)rule!.Properties["expression"]);
+        Assert.Equal("domain_filter", (string)rule.Properties["filter_kind"]);
+
+        Assert.NotNull(FindRel(graph, "HAS_RULE", r => r.StartNodeId == step!.Id && r.EndNodeId == rule.Id));
+
+        var isActiveCol = FindNode(graph, n => n.Labels.Contains("Column") &&
+            (string)n.Properties["table"] == "dbo.source" && (string)n.Properties["name"] == "IsActive");
+        Assert.NotNull(isActiveCol);
+        Assert.NotNull(FindRel(graph, "CONSTRAINS", r => r.StartNodeId == rule.Id && r.EndNodeId == isActiveCol!.Id));
+    }
+
+    [Fact]
+    public void WherePredicate_OverJoin_RegistersBothAffectedTables()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                SELECT o.Id FROM dbo.Orders AS o
+                JOIN dbo.Customers AS c ON o.CustomerId = c.Id
+                WHERE o.Status = 'X' AND c.IsActive = 1
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var rule = FindNode(graph, n => n.Labels.Contains("BusinessRule") && (string)n.Properties["kind"] == "WHERE");
+        Assert.NotNull(rule);
+
+        var tables = (List<string>)rule!.Properties["tables"];
+        Assert.Contains("dbo.orders", tables);
+        Assert.Contains("dbo.customers", tables);
+
+        var statusCol = FindNode(graph, n => n.Labels.Contains("Column") &&
+            (string)n.Properties["table"] == "dbo.orders" && (string)n.Properties["name"] == "Status");
+        var activeCol = FindNode(graph, n => n.Labels.Contains("Column") &&
+            (string)n.Properties["table"] == "dbo.customers" && (string)n.Properties["name"] == "IsActive");
+        Assert.NotNull(statusCol);
+        Assert.NotNull(activeCol);
+        Assert.NotNull(FindRel(graph, "CONSTRAINS", r => r.StartNodeId == rule.Id && r.EndNodeId == statusCol!.Id));
+        Assert.NotNull(FindRel(graph, "CONSTRAINS", r => r.StartNodeId == rule.Id && r.EndNodeId == activeCol!.Id));
+    }
+
+    [Fact]
+    public void WherePredicate_ColumnEqualsParameter_ClassifiedAsKeyLookup()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+                @ID INT
+            AS
+            BEGIN
+                SELECT Id FROM dbo.Source WHERE ID = @ID
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var rule = FindNode(graph, n => n.Labels.Contains("BusinessRule") && (string)n.Properties["kind"] == "WHERE");
+        Assert.NotNull(rule);
+        Assert.Equal("key_lookup", (string)rule!.Properties["filter_kind"]);
+        Assert.NotEqual("domain_filter", (string)rule.Properties["filter_kind"]);
+    }
+
+    [Fact]
+    public void WherePredicate_DoesNotAffectGovernsEdgeCount()
+    {
+        // Control: adding WHERE-derived CONSTRAINS/HAS_RULE must not touch the
+        // IF/WHILE :Rule/GOVERNS flowchart machinery - GOVERNS count before and
+        // after a WHERE-bearing step is unchanged, and no GOVERNS edge ever
+        // targets the WHERE :BusinessRule node.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                IF @@TRANCOUNT = 0
+                BEGIN
+                    SELECT Id FROM dbo.Source WHERE IsActive = 1
+                END
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var governsEdges = graph.Relationships.Where(r => r.Type == "GOVERNS").ToList();
+        Assert.Single(governsEdges);
+
+        var ifRule = FindNode(graph, n => n.Labels.Contains("Rule") && n.Labels.Contains("IF"));
+        Assert.NotNull(ifRule);
+        Assert.Equal(ifRule!.Id, governsEdges[0].StartNodeId);
+
+        var whereRule = FindNode(graph, n => n.Labels.Contains("BusinessRule") && (string)n.Properties["kind"] == "WHERE");
+        Assert.NotNull(whereRule);
+        Assert.DoesNotContain(governsEdges, r => r.EndNodeId == whereRule!.Id || r.StartNodeId == whereRule!.Id);
+    }
 }
