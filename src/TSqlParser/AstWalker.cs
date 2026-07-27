@@ -286,8 +286,48 @@ public static class AstWalker
                     break;
 
                 case ThrowStatement:
-                case RaiseErrorStatement:
                     AddLink(ctx, condStack, "THROW", "", stmt);
+                    break;
+
+                case RaiseErrorStatement res:
+                    // RAISERROR's severity (2nd parameter) decides whether this is a real
+                    // error (breaks flow, can be caught by TRY/CATCH) or just an
+                    // informational message to the client - severity <= 10 is
+                    // informational per T-SQL semantics (RAISERROR(..., 10, 1) WITH NOWAIT
+                    // is the standard idiom for progress messages, e.g. Ola Hallengren's
+                    // maintenance scripts). Only a literal integer severity can be
+                    // classified statically; a variable/expression severity (e.g.
+                    // RAISERROR(@msg, @sev, 1)) fails closed as THROW, since it may resolve
+                    // to a real error at runtime and silently downgrading it to PRINT would
+                    // reintroduce a false negative.
+                    var isInformational = res.SecondParameter is IntegerLiteral sevLit
+                        && int.TryParse(sevLit.Value, out var severity)
+                        && severity <= 10;
+                    AddLink(ctx, condStack, isInformational ? "PRINT" : "THROW", "", stmt);
+                    break;
+
+                case PrintStatement:
+                    // PRINT never breaks flow and never throws - it's the direct
+                    // informational counterpart to RAISERROR(..., <=10, ...) above, so it
+                    // shares the same "PRINT" action name rather than inventing a second
+                    // synonym for "informational output".
+                    AddLink(ctx, condStack, "PRINT", "", stmt);
+                    break;
+
+                case BreakStatement:
+                    AddLink(ctx, condStack, "BREAK", "", stmt);
+                    break;
+
+                case ContinueStatement:
+                    AddLink(ctx, condStack, "CONTINUE", "", stmt);
+                    break;
+
+                case GoToStatement gts:
+                    AddLink(ctx, condStack, "GOTO", gts.LabelName?.Value ?? "", stmt);
+                    break;
+
+                case WaitForStatement:
+                    AddLink(ctx, condStack, "WAITFOR", "", stmt);
                     break;
 
                 case SelectStatement sel:

@@ -1665,8 +1665,8 @@ public static class GraphExporter
             "TRUNCATE" => "Cleanup",
             "ALTER" or "CREATE_TABLE" or "CREATE_INDEX" or "DROP_TABLE" => "Maintenance",
             "BEGIN_TRAN" or "COMMIT_TRAN" or "ROLLBACK" => "Transaction",
-            "THROW" or "RAISERROR" => "Notification",
-            "RETURN" => "Control",
+            "THROW" or "PRINT" => "Notification",
+            "RETURN" or "BREAK" or "CONTINUE" or "GOTO" or "WAITFOR" => "Control",
             "OPEN_CURSOR" or "FETCH" or "CLOSE_CURSOR" or "DEALLOCATE" or "DECLARE_CURSOR" => "Cursor",
             _ => "Operation"
         };
