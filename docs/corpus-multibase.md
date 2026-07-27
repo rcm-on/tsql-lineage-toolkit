@@ -205,7 +205,7 @@ esas variantes, el router lo habría clasificado como *tabla*. Se detectó porqu
 Resultado: `report` pasa de "Tablas (CREATE TABLE): 0" a **3**, y los tres scripts
 dejan de contarse como objetos programables.
 
-## 4. MEDIO — Subdetección de SQL dinámico ejecutado vía variable
+## 4. MEDIO — Subdetección de SQL dinámico ejecutado vía variable (ABIERTO)
 
 **Dónde:** Ola Hallengren.
 
@@ -217,7 +217,43 @@ apariciones y solo 8 se marcan `is_dynamic_sql`; en `DatabaseIntegrityCheck.sql`
 pero menos repeticiones, el conteo cuadra exacto.
 
 Apunta a que el detector se pierde en bucles o ramas anidadas con muchas
-repeticiones del mismo patrón.
+repeticiones del mismo patrón. **Hipótesis sin confirmar.**
+
+**Estado: abierto.** Se empezó en la rama `fix/dynamic-exec-var` (commit `d613706`)
+y quedó **a medias, sin pruebas y sin verificar** — cambios sueltos en
+`AstWalker.cs`, sin compilar siquiera. Está commiteado y etiquetado como WIP para
+poder retomarlo, **no para integrarlo**.
+
+---
+
+# Pendiente: prototipo de resolución por placeholder
+
+Idea para atacar el 68% sin resolver de la sección siguiente: sustituir
+`QUOTENAME(@param)` por un **placeholder de identificador** para que la cadena
+parsee, y quedarse con todo lo demás (tabla, columnas, operación), perdiendo solo
+la identidad de la base:
+
+```sql
+'… FROM ' + QUOTENAME(@DatabaseName) + '.[sys].[objects]'
+        →   SELECT … FROM [«param:@DatabaseName»].[sys].[objects]
+```
+
+Funciona porque **`QUOTENAME()` es una garantía sintáctica de posición de
+identificador** — su razón de existir es producir un nombre entre corchetes. Donde
+no haya esa garantía (una variable que aporta una cláusula entera), no se sustituye
+y se falla cerrado como hoy.
+
+**Requisito innegociable:** la arista resultante debe marcarse como **inferida**,
+reutilizando la convención `confidence` que ya usa `PlanEnricher`. Sin esa marca se
+cambia un falso negativo por un falso positivo, que es peor: destruye la propiedad
+de que cuando el grafo afirma algo, es cierto. Esta función sería el primer
+consumidor real del *scoring de confianza* que el README lista como limitación
+pendiente.
+
+**Estado: abierto.** Empezado en `feat/dynsql-placeholder` (commit `2a410fb`),
+interrumpido a medias y **sin verificar**. Control de no-regresión para cuando se
+retome: en WideWorldImporters los 34 pasos dinámicos deben seguir resolviéndose
+**34/34 y con aristas ciertas, no inferidas**.
 
 ## 5. BAJO — BOM UTF-8 inconsistente entre los dos caminos de entrada
 
