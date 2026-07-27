@@ -535,6 +535,81 @@ public class LineageTests
         Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == source!.Id));
     }
 
+    /// <summary>
+    /// Same false negative as the INSERT...SELECT UNION one, reached through a
+    /// different path: CollectTableRefsInto's QueryDerivedTable case used to require
+    /// the derived table's body to be a single QuerySpecification, so
+    /// "MERGE ... USING (SELECT ... UNION ALL SELECT ...) AS s" silently dropped every
+    /// table inside the derived table (both union branches), leaving MERGE with only
+    /// its target and no source read at all. Fixed by routing QueryDerivedTable through
+    /// QueryFromClauses (which already descends BinaryQueryExpression/
+    /// QueryParenthesisExpression) instead of pattern-matching QuerySpecification directly.
+    /// </summary>
+    [Fact]
+    public void Merge_UsingDerivedTableWithUnion_ReadsBothBranches()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                MERGE INTO dbo.Target AS t
+                USING (
+                    SELECT Id, Val FROM dbo.Source1
+                    UNION ALL
+                    SELECT Id, Val FROM dbo.Source2
+                ) AS s ON t.Id = s.Id
+                WHEN MATCHED THEN UPDATE SET t.Val = s.Val
+                WHEN NOT MATCHED THEN INSERT (Id, Val) VALUES (s.Id, s.Val);
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var target = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Target");
+        var source1 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source1");
+        var source2 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source2");
+        Assert.NotNull(target);
+        Assert.NotNull(source1);
+        Assert.NotNull(source2);
+        Assert.NotNull(FindRel(graph, "WRITES_TO", r => r.EndNodeId == target!.Id));
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == source1!.Id));
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == source2!.Id));
+    }
+
+    /// <summary>
+    /// Same gap under UPDATE ... FROM (a derived table with a UNION body used as the
+    /// join partner): before the QueryDerivedTable fix, dbo.Source1/dbo.Source2 were
+    /// both invisible - only dbo.Target's WRITES_TO edge survived.
+    /// </summary>
+    [Fact]
+    public void Update_FromDerivedTableWithUnion_ReadsBothBranches()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                UPDATE t
+                SET t.Val = s.Val
+                FROM dbo.Target t
+                JOIN (
+                    SELECT Id, Val FROM dbo.Source1
+                    UNION ALL
+                    SELECT Id, Val FROM dbo.Source2
+                ) AS s ON t.Id = s.Id;
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var target = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Target");
+        var source1 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source1");
+        var source2 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source2");
+        Assert.NotNull(target);
+        Assert.NotNull(source1);
+        Assert.NotNull(source2);
+        Assert.NotNull(FindRel(graph, "WRITES_TO", r => r.EndNodeId == target!.Id));
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == source1!.Id));
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == source2!.Id));
+    }
+
     [Fact]
     public void Truncate_WritesToTarget()
     {
@@ -1487,13 +1562,18 @@ public class LineageTests
     }
 
     /// <summary>
-    /// Documents a known limitation: InsertSelectLineage requires the INSERT source
-    /// to be a single QuerySpecification, so "SELECT ... UNION ALL SELECT ..." (a
-    /// BinaryQueryExpression) produces no DERIVES_FROM edges for either branch -
-    /// the WRITES_TO/WRITES_COLUMN edges for the target are unaffected.
+    /// Regression for the "INSERT ... SELECT ... UNION ALL SELECT ..." false negative:
+    /// InsertSelectLineage used to require the INSERT source to be a single
+    /// QuerySpecification, so a BinaryQueryExpression source (UNION/EXCEPT/INTERSECT)
+    /// silently dropped *every* source read for the whole statement - not just the
+    /// second branch's. Table-level READS_FROM for both branches must now survive;
+    /// column-level DERIVES_FROM is intentionally still not attempted for a UNION
+    /// source (a branch's projected expression can't be attributed to a single insert
+    /// column across differing branches), so WRITES_TO/WRITES_COLUMN on the target are
+    /// unaffected and no DERIVES_FROM edges are produced.
     /// </summary>
     [Fact]
-    public void InsertSelectWithUnion_ProducesNoColumnLineage()
+    public void InsertSelectWithUnionAll_ReadsBothBranches()
     {
         var sql = """
             CREATE PROCEDURE dbo.TestProc
@@ -1508,10 +1588,111 @@ public class LineageTests
         var graph = BuildGraph(sql);
 
         var target = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Target");
+        var source1 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source1");
+        var source2 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source2");
         Assert.NotNull(target);
-        Assert.NotNull(FindRel(graph, "WRITES_TO", r => r.EndNodeId == target.Id));
+        Assert.NotNull(source1);
+        Assert.NotNull(source2);
 
+        var writesTo = FindRel(graph, "WRITES_TO", r => r.EndNodeId == target.Id);
+        Assert.NotNull(writesTo);
+
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.StartNodeId == writesTo!.StartNodeId && r.EndNodeId == source1.Id));
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.StartNodeId == writesTo!.StartNodeId && r.EndNodeId == source2.Id));
+
+        // Column-level lineage across UNION branches remains out of scope on purpose.
         Assert.DoesNotContain(graph.Relationships, r => r.Type == "DERIVES_FROM");
+    }
+
+    /// <summary>
+    /// Same false negative, but through EXCEPT (INTERSECT shares the same
+    /// BinaryQueryExpression AST node, so this covers both). Also nests one branch in
+    /// parentheses to exercise QueryParenthesisExpression, the other node type
+    /// QueryFromClauses descends through.
+    /// </summary>
+    [Fact]
+    public void InsertSelectWithExcept_ReadsBothBranches()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                INSERT INTO dbo.Target (Col1)
+                SELECT Col1 FROM dbo.Source1
+                EXCEPT
+                (SELECT Col1 FROM dbo.Source2)
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var target = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Target");
+        var source1 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source1");
+        var source2 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source2");
+        Assert.NotNull(target);
+        Assert.NotNull(source1);
+        Assert.NotNull(source2);
+
+        var writesTo = FindRel(graph, "WRITES_TO", r => r.EndNodeId == target.Id);
+        Assert.NotNull(writesTo);
+
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.StartNodeId == writesTo!.StartNodeId && r.EndNodeId == source1.Id));
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.StartNodeId == writesTo!.StartNodeId && r.EndNodeId == source2.Id));
+    }
+
+    /// <summary>
+    /// Control: a plain "INSERT ... SELECT ... FROM T" (no set operation) must keep
+    /// producing its existing column-level DERIVES_FROM lineage - the UNION/EXCEPT
+    /// branch added above must not affect the single-QuerySpecification path at all.
+    /// </summary>
+    [Fact]
+    public void InsertSelectWithoutUnion_StillGetsColumnLineage()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                INSERT INTO dbo.Target (Col1)
+                SELECT Col1 FROM dbo.Source1
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var target = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Target");
+        var source1 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source1");
+        Assert.NotNull(target);
+        Assert.NotNull(source1);
+
+        var writesTo = FindRel(graph, "WRITES_TO", r => r.EndNodeId == target.Id);
+        Assert.NotNull(writesTo);
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.StartNodeId == writesTo!.StartNodeId && r.EndNodeId == source1.Id));
+        Assert.Contains(graph.Relationships, r => r.Type == "DERIVES_FROM");
+    }
+
+    /// <summary>
+    /// Control: a top-level "SELECT ... UNION ALL SELECT ..." (no INSERT) must keep
+    /// reading both branches, exactly as before this fix - only the INSERT-source path
+    /// (InsertSelectLineage) had the gap; the SelectStatement path already handled this.
+    /// </summary>
+    [Fact]
+    public void BareSelectWithUnionAll_StillReadsBothBranches()
+    {
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                SELECT Col1 FROM dbo.Source1
+                UNION ALL
+                SELECT Col1 FROM dbo.Source2
+            END
+            """;
+        var graph = BuildGraph(sql);
+
+        var source1 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source1");
+        var source2 = FindNode(graph, n => n.Labels.Contains("Table") && (string)n.Properties["name"] == "dbo.Source2");
+        Assert.NotNull(source1);
+        Assert.NotNull(source2);
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == source1.Id));
+        Assert.NotNull(FindRel(graph, "READS_FROM", r => r.EndNodeId == source2.Id));
     }
 
     [Fact]

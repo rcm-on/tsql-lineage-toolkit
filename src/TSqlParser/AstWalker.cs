@@ -1030,9 +1030,17 @@ public static class AstWalker
                 CollectTableRefsInto(uqj.FirstTableReference, cteNames, cteBaseTables, result);
                 CollectTableRefsInto(uqj.SecondTableReference, cteNames, cteBaseTables, result);
                 break;
-            case QueryDerivedTable { QueryExpression: QuerySpecification { FromClause: not null } innerQs }:
-                foreach (var innerTref in innerQs.FromClause.TableReferences)
-                    CollectTableRefsInto(innerTref, cteNames, cteBaseTables, result);
+            case QueryDerivedTable qdt:
+                // "(SELECT ... FROM T) alias": handled directly below via QueryFromClauses,
+                // which also descends through a UNION/EXCEPT/INTERSECT (BinaryQueryExpression)
+                // or parenthesized body - "(SELECT ... UNION ALL SELECT ...) alias" used to
+                // match nothing here (only a bare QuerySpecification body did), silently
+                // dropping every table in the derived table. Same underlying gap as the one
+                // fixed in InsertSelectLineage below, just reached through FROM/USING instead
+                // of an INSERT's SELECT source.
+                foreach (var innerFrom in QueryFromClauses(qdt.QueryExpression))
+                    foreach (var innerTref in innerFrom.TableReferences)
+                        CollectTableRefsInto(innerTref, cteNames, cteBaseTables, result);
                 break;
             case PivotedTableReference pvt:
                 // "(subquery) PIVOT (...) AS p": the pivot wraps an inner table reference
@@ -1246,7 +1254,35 @@ public static class AstWalker
     {
         var empty = (new List<ColumnDerivation>(), new List<TableColumnRef>());
 
-        if (ins.InsertSpecification?.InsertSource is not SelectInsertSource { Select: QuerySpecification qs })
+        if (ins.InsertSpecification?.InsertSource is not SelectInsertSource insSrc)
+            return empty;
+
+        // "INSERT ... SELECT ... UNION ALL SELECT ..." (also EXCEPT/INTERSECT and
+        // parenthesized nesting): insSrc.Select is a BinaryQueryExpression /
+        // QueryParenthesisExpression, not a single QuerySpecification, so the
+        // QuerySpecification-only branch below never ran and every source read across
+        // the whole statement was silently dropped - not just the second branch's.
+        // Mirrors the fix for the same shape under SelectStatement (see the
+        // BinaryQueryExpression/QueryParenthesisExpression case a few hundred lines up):
+        // walk every branch's FROM via QueryFromClauses and union their table refs.
+        // Column-level lineage isn't attempted here (a UNION's branches can each
+        // project different expressions into the same insert column, and attributing
+        // one expression per column across branches isn't well-defined) - only the
+        // table-level READS_FROM reads are recovered, which is what was actually lost.
+        if (insSrc.Select is BinaryQueryExpression or QueryParenthesisExpression)
+        {
+            var branchRefs = new List<(string Alias, string Table)>();
+            foreach (var branchFrom in QueryFromClauses(insSrc.Select))
+                foreach (var r in CollectTableRefs(branchFrom, cteNames, cteBaseTables))
+                    if (!branchRefs.Contains(r))
+                        branchRefs.Add(r);
+            if (branchRefs.Count == 0)
+                return empty;
+            var unionExtraReads = BuildExtraReads(branchRefs, new List<TableColumnRef>(), skipFirst: false);
+            return (new List<ColumnDerivation>(), unionExtraReads);
+        }
+
+        if (insSrc.Select is not QuerySpecification qs)
             return empty;
 
         if (qs.FromClause == null || qs.FromClause.TableReferences.Count == 0)
