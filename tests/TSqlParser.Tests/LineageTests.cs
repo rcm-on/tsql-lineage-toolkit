@@ -1247,12 +1247,17 @@ public class LineageTests
     }
 
     [Fact]
-    public void DynamicInsert_RuntimeVariableSource_InventsNoLineage()
+    public void DynamicInsert_QuotenameWrappedRuntimeVariable_ProducesInferredReadLineage()
     {
-        // The executed string is assembled from a runtime value (@tableName), so it can
-        // never be reconstructed to a literal: DynamicSqlText stays empty, no inner DML
-        // is parsed, and NO bridge/read/write may be invented. Fails closed - the whole
-        // point of only ever bridging reconstructed literals.
+        // PROTOTYPE (dynsql-placeholder), superseding the old "InventsNoLineage" contract
+        // for this exact shape: @tableName is a runtime value (never a literal SET), but it
+        // is wrapped in QUOTENAME(...) - a syntactic guarantee that this position is an
+        // IDENTIFIER, not a clause. AstWalker.ResolveLiteral now substitutes a placeholder
+        // identifier token for it instead of bailing the whole dynamic SQL to unresolved, so
+        // the executed string DOES reconstruct (with the placeholder embedded) and the real
+        // read - "some table" - is recovered. The concrete table name is genuinely unknown,
+        // so the resulting edge must be INFERRED (confidence < 1.0), never indistinguishable
+        // from a certain edge - see the READS_FROM assertions below.
         var sql = """
             CREATE PROCEDURE dbo.TestProc
                 @tableName SYSNAME
@@ -1267,19 +1272,125 @@ public class LineageTests
         var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.TestProc", sql);
         Assert.Null(result.Error);
 
-        // Nothing was reconstructed, so the EXEC step carries no resolved DML text.
+        // The QUOTENAME-wrapped runtime variable now reconstructs (with the placeholder
+        // token embedded), unlike a bare/clause-contributing runtime variable (see
+        // DynamicSql_ClauseContributingVariable_NeverSubstituted below).
+        var exec = result.FlowLinks.FirstOrDefault(fl => fl.ConsequenceType == "EXEC");
+        Assert.NotNull(exec);
+        Assert.NotEqual("", exec!.DynamicSqlText);
+        Assert.Contains("«param:@tableName»", exec.DynamicSqlText);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { result }, includeColumns: true);
+
+        // The recovered read is marked INFERRED, bound to @tableName, never certain.
+        var inferredRead = Assert.Single(graph.Relationships, r => r.Type == "READS_FROM" &&
+            r.EndNodeId.Contains("param:", StringComparison.OrdinalIgnoreCase));
+        Assert.Equal(true, inferredRead.Properties["inferred"]);
+        Assert.Equal("@tableName", inferredRead.Properties["bound_to"]);
+        Assert.True((double)inferredRead.Properties["confidence"] < 1.0);
+
+        // #staging is still never materialized as a :Table node (unrelated temp-table
+        // policy, unaffected by this prototype) - the WRITES_TO to it stays un-graphed.
+        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).Contains("staging", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void DynamicSql_ClauseContributingVariable_NeverSubstituted()
+    {
+        // PROTOTYPE (dynsql-placeholder) control case: @whereClause is concatenated
+        // directly (NOT wrapped in QUOTENAME) and contributes an entire clause, not an
+        // identifier - QUOTENAME's syntactic guarantee doesn't apply, so this must keep
+        // failing closed exactly like before: DynamicSqlText stays empty, nothing invented.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+                @whereClause NVARCHAR(200)
+            AS
+            BEGIN
+                DECLARE @sql NVARCHAR(MAX) = N'SELECT Id FROM dbo.Orders WHERE 1=1'
+                SET @sql = @sql + @whereClause
+                EXEC(@sql)
+            END
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.TestProc", sql);
+        Assert.Null(result.Error);
+
         var exec = result.FlowLinks.FirstOrDefault(fl => fl.ConsequenceType == "EXEC");
         Assert.NotNull(exec);
         Assert.Equal("", exec!.DynamicSqlText);
 
         var graph = GraphExporter.Build(new List<ObjectResult> { result }, includeColumns: true);
+        Assert.DoesNotContain(graph.Relationships, r => r.Type is "READS_FROM" or "WRITES_TO");
+    }
 
-        // No bridge may be invented: #staging was never populated by a known source.
-        Assert.DoesNotContain(graph.Relationships, r => r.Type == "DERIVES_FROM" &&
-            r.EndNodeId.EndsWith(":table:dbo.realsource:column:Id", StringComparison.OrdinalIgnoreCase));
-        // And still no phantom temp node.
-        Assert.DoesNotContain(graph.Nodes, n => n.Labels.Contains("Table") &&
-            ((string)n.Properties["name"]).Contains("staging", StringComparison.OrdinalIgnoreCase));
+    [Fact]
+    public void DynamicSql_QuotenameDatabasePlaceholder_ExtractsRealTableAsInferredEdge()
+    {
+        // PROTOTYPE (dynsql-placeholder): the sp_BlitzIndex shape (First Responder Kit)
+        // that motivated this change - the target DATABASE comes from an input parameter,
+        // never a literal, so QUOTENAME(@DatabaseName) can't resolve. Substituting a
+        // placeholder for it keeps the rest parseable, recovering the real table
+        // (sys.objects), while the edge is clearly marked inferred/bound to the parameter/
+        // database-unknown, reusing PlanEnricher's "confidence" convention (1.0 there means
+        // plan-confirmed; <1.0 here means partially resolved statically).
+        var sql = """
+            CREATE PROCEDURE dbo.sp_BlitzIndexLike
+                @DatabaseName SYSNAME,
+                @TableName_IN SYSNAME,
+                @Rowcount INT OUTPUT
+            AS
+            BEGIN
+                DECLARE @dsql NVARCHAR(MAX)
+                DECLARE @params NVARCHAR(MAX) = N'@TableName_IN SYSNAME, @RowcountOUT INT OUTPUT'
+                SET @dsql = N'SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+                     SELECT @RowcountOUT = COUNT(1) FROM ' + QUOTENAME(@DatabaseName) + N'.[sys].[objects]
+                     WHERE [name] = @TableName_IN AND [type] IN (''U'',''V'') OPTION (RECOMPILE);'
+                EXEC sp_executesql @dsql, @params, @TableName_IN = @TableName_IN, @RowcountOUT = @Rowcount OUTPUT
+            END
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.sp_BlitzIndexLike", sql);
+        Assert.Null(result.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { result }, includeColumns: true);
+
+        // The real table (sys.objects) is recovered even though the database is unknown.
+        var tableNode = Assert.Single(graph.Nodes, n => n.Labels.Contains("Table") &&
+            ((string)n.Properties["name"]).EndsWith("sys.objects", StringComparison.OrdinalIgnoreCase));
+
+        var rel = Assert.Single(graph.Relationships, r => r.Type == "READS_FROM" && r.EndNodeId == tableNode.Id);
+        Assert.Equal(true, rel.Properties["inferred"]);
+        Assert.Equal("@DatabaseName", rel.Properties["bound_to"]);
+        Assert.Equal(true, rel.Properties["database_unknown"]);
+        Assert.True((double)rel.Properties["confidence"] < 1.0);
+    }
+
+    [Fact]
+    public void DynamicSql_FullyResolvableDynamicSql_StaysCertain_NotInferred()
+    {
+        // PROTOTYPE (dynsql-placeholder) non-regression: a dynamic SQL with NO parameters
+        // involved (every piece is a literal SET, same shape WWI's
+        // DeactivateTemporalTablesBeforeDataLoad uses) must keep producing a CERTAIN edge -
+        // no "inferred"/"confidence"/"bound_to" markers at all - because nothing was
+        // substituted; QUOTENAME resolved its inner literal directly.
+        var sql = """
+            CREATE PROCEDURE dbo.TestProc
+            AS
+            BEGIN
+                DECLARE @Schema SYSNAME = N'dbo'
+                DECLARE @Table SYSNAME = N'Orders'
+                DECLARE @sql NVARCHAR(MAX) = N'SELECT Id FROM ' + QUOTENAME(@Schema) + N'.' + QUOTENAME(@Table)
+                EXEC (@sql)
+            END
+            """;
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.TestProc", sql);
+        Assert.Null(result.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { result }, includeColumns: true);
+        var rel = Assert.Single(graph.Relationships, r => r.Type == "READS_FROM" &&
+            r.EndNodeId.EndsWith(":table:dbo.orders", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain("inferred", rel.Properties.Keys);
+        Assert.DoesNotContain("bound_to", rel.Properties.Keys);
+        Assert.DoesNotContain("confidence", rel.Properties.Keys);
     }
 
     [Fact]

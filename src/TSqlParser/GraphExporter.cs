@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace TSqlParser;
 
@@ -434,6 +435,7 @@ public static class GraphExporter
                             extraRelProps["source_database"] = db;
                             extraRelProps["target_database"] = extraTargetDb;
                         }
+                        MarkIfDynamicPlaceholder(extraRelProps, extra.Table);
                         graph.Relationships.Add(new GraphRel
                         {
                             Type = "READS_FROM",
@@ -542,6 +544,7 @@ public static class GraphExporter
                         relProps["source_database"] = db;
                         relProps["target_database"] = targetDbName;
                     }
+                    MarkIfDynamicPlaceholder(relProps, fl.ConsequenceTarget);
                     graph.Relationships.Add(new GraphRel
                     {
                         Type = relType,
@@ -1716,6 +1719,42 @@ public static class GraphExporter
 
     /// <summary>Strips brackets/whitespace so "[Schema].[Object]" matches "Schema.Object".</summary>
     private static string NormalizeRef(string raw) => SqlText.NormalizeRef(raw);
+
+    /// <summary>
+    /// PROTOTYPE (dynsql-placeholder): matches the "«param:@Name»" token AstWalker
+    /// substitutes for an unresolvable identifier wrapped in QUOTENAME(...) (see
+    /// ResolveLiteral). Detected here, at edge-construction time, so a table/schema/db
+    /// name reconstructed through this substitution never produces an edge that looks as
+    /// certain as one built from real static text.
+    /// </summary>
+    private static readonly Regex DynamicSqlPlaceholderPattern = new(@"«param:(@\w+)»", RegexOptions.Compiled);
+
+    /// <summary>
+    /// PROTOTYPE (dynsql-placeholder): if <paramref name="reconstructedName"/> (a table
+    /// name reconstructed from resolved dynamic SQL) contains the placeholder token,
+    /// marks <paramref name="relProps"/> as an INFERRED edge rather than a certain one:
+    /// confidence &lt; 1.0 (reusing PlanEnricher's confidence property - 1.0 there means
+    /// "confirmed by execution plan"; here, &lt;1.0 means "partially resolved statically"),
+    /// an explicit inferred flag, the @parameter the missing identifier is bound to, and -
+    /// when the placeholder sits in the position a 3-part name reserves for the database -
+    /// an explicit database_unknown flag. No-op (relProps untouched) when the name carries
+    /// no placeholder, i.e. every edge NOT produced by this substitution keeps its current,
+    /// unmarked (certain) shape.
+    /// </summary>
+    private static void MarkIfDynamicPlaceholder(Dictionary<string, object> relProps, string reconstructedName)
+    {
+        var match = DynamicSqlPlaceholderPattern.Match(reconstructedName);
+        if (!match.Success)
+            return;
+
+        relProps["inferred"] = true;
+        relProps["confidence"] = 0.5;
+        relProps["bound_to"] = match.Groups[1].Value;
+
+        var rawParts = reconstructedName.Split('.');
+        if (rawParts.Length >= 3 && DynamicSqlPlaceholderPattern.IsMatch(rawParts[0]))
+            relProps["database_unknown"] = true;
+    }
 
     /// <summary>
     /// Short, stable (cross-process, cross-run) hash for Rule node ids. Unlike
