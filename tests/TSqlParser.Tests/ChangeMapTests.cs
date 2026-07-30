@@ -130,6 +130,65 @@ public class ChangeMapTests : IDisposable
     }
 
     [Fact]
+    public void DirectRecursion_IsEntryPointAndViaCallsIsNotEmpty()
+    {
+        // A procedure that only calls itself has no *external* caller, so it must
+        // still be treated as a workflow entry point, and its impact.via_calls must
+        // list the self-recursion instead of coming back empty (which would make it
+        // look like it never calls anything at all - the original bug).
+        var cm = Generate(BuildGraph(
+            ("dbo.RecursivoDirecto",
+             "CREATE PROCEDURE dbo.RecursivoDirecto @n INT AS BEGIN DECLARE @m INT = @n - 1; IF @n > 0 EXEC dbo.RecursivoDirecto @n = @m; END")));
+
+        var entries = cm.GetProperty("workflows").EnumerateArray()
+            .Select(w => w.GetProperty("entry_name").GetString()).ToList();
+        Assert.Equal(new[] { "dbo.RecursivoDirecto" }, entries);
+
+        var hops = WorkflowOf(cm, "dbo.RecursivoDirecto").GetProperty("paths")[0].GetProperty("hops").EnumerateArray().ToList();
+        Assert.Single(hops);
+        Assert.EndsWith("dbo.RecursivoDirecto", hops[0].GetProperty("cycle_back_to").GetString());
+
+        var viaCalls = ImpactOf(cm, "dbo.RecursivoDirecto").GetProperty("via_calls").EnumerateArray().ToList();
+        Assert.NotEmpty(viaCalls);
+        var self = Assert.Single(viaCalls);
+        Assert.Equal("dbo.RecursivoDirecto", self.GetProperty("object").GetString());
+        Assert.True(self.TryGetProperty("cycle_entry", out var ce) && ce.GetBoolean());
+    }
+
+    [Fact]
+    public void MutualRecursion_StillWorksAfterSelfCallFix()
+    {
+        // Control: the A<->B cycle (already covered by Cycle_PathIsCutAndViaCallsMarksCycleEntry
+        // in spirit) must be unaffected by making self-calls real CALLS edges.
+        var cm = Generate(BuildGraph(
+            ("dbo.MutuoA", "CREATE PROCEDURE dbo.MutuoA @n INT AS BEGIN DECLARE @m INT = @n - 1; IF @n > 0 EXEC dbo.MutuoB @n = @m; END"),
+            ("dbo.MutuoB", "CREATE PROCEDURE dbo.MutuoB @n INT AS BEGIN DECLARE @m INT = @n - 1; IF @n > 0 EXEC dbo.MutuoA @n = @m; END")));
+
+        // Neither has in-degree 0 (each is called by the other), so v1's workflow
+        // entry-point detection (external, non-recursive callers only) finds none -
+        // that's pre-existing behavior for 2-node cycles, unchanged by this fix.
+        Assert.Empty(cm.GetProperty("workflows").EnumerateArray());
+
+        var viaCallsA = ImpactOf(cm, "dbo.MutuoA").GetProperty("via_calls").EnumerateArray().ToList();
+        var b = viaCallsA.Single(v => v.GetProperty("object").GetString() == "dbo.MutuoB");
+        Assert.Equal(1, b.GetProperty("depth").GetInt32());
+        var backToA = viaCallsA.Single(v => v.GetProperty("object").GetString() == "dbo.MutuoA");
+        Assert.True(backToA.TryGetProperty("cycle_entry", out var ce) && ce.GetBoolean());
+    }
+
+    [Fact(Timeout = 10_000)]
+    public async Task DirectRecursion_ChangeMapGenerationTerminates()
+    {
+        // If the self-call fix regressed cycle protection, this hangs instead of
+        // failing - the xUnit timeout is the actual assertion here.
+        var cm = Generate(BuildGraph(
+            ("dbo.RecursivoDirecto",
+             "CREATE PROCEDURE dbo.RecursivoDirecto @n INT AS BEGIN DECLARE @m INT = @n - 1; IF @n > 0 EXEC dbo.RecursivoDirecto @n = @m; END")));
+
+        Assert.NotEmpty(cm.GetProperty("workflows").EnumerateArray());
+    }
+
+    [Fact]
     public void ViaData_WrittenTableListsItsReaders()
     {
         var cm = Generate(BuildGraph(

@@ -1031,6 +1031,71 @@ public class LineageTests
     }
 
     [Fact]
+    public void ExecCall_DirectRecursion_ProducesSelfCallsEdge()
+    {
+        // A procedure that EXECs itself must produce a CALLS self-loop, not be
+        // silently filtered out - otherwise it reads as a leaf that calls nobody,
+        // hiding real recursion (hierarchy walks, BOM explosion, org-chart traversal).
+        var sql = """
+            CREATE PROCEDURE dbo.RecursivoDirecto @n INT
+            AS
+            BEGIN
+                DECLARE @m INT = @n - 1;
+                IF @n > 0
+                BEGIN
+                    INSERT INTO dbo.Log (n) VALUES (@n);
+                    EXEC dbo.RecursivoDirecto @n = @m;
+                END
+            END
+            """;
+
+        var result = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.RecursivoDirecto", sql);
+        Assert.Null(result.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { result });
+
+        Assert.NotNull(FindRel(graph, "CALLS",
+            r => r.StartNodeId == $"{Db}::dbo.RecursivoDirecto" && r.EndNodeId == $"{Db}::dbo.RecursivoDirecto"));
+    }
+
+    [Fact]
+    public void ExecCall_MutualRecursion_StillProducesBothCallsEdges()
+    {
+        // Control: A <-> B mutual recursion must keep working exactly as before -
+        // the self-call fix must not regress the 2-node cycle.
+        var sqlA = """
+            CREATE PROCEDURE dbo.MutuoA @n INT
+            AS
+            BEGIN
+                DECLARE @m INT = @n - 1;
+                IF @n > 0 EXEC dbo.MutuoB @n = @m;
+                SELECT x FROM dbo.TablaA;
+            END
+            """;
+        var sqlB = """
+            CREATE PROCEDURE dbo.MutuoB @n INT
+            AS
+            BEGIN
+                DECLARE @m INT = @n - 1;
+                IF @n > 0 EXEC dbo.MutuoA @n = @m;
+                INSERT INTO dbo.TablaB (y) SELECT y FROM dbo.TablaA;
+            END
+            """;
+
+        var resultA = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.MutuoA", sqlA);
+        var resultB = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.MutuoB", sqlB);
+        Assert.Null(resultA.Error);
+        Assert.Null(resultB.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { resultA, resultB });
+
+        Assert.NotNull(FindRel(graph, "CALLS",
+            r => r.StartNodeId == $"{Db}::dbo.MutuoA" && r.EndNodeId == $"{Db}::dbo.MutuoB"));
+        Assert.NotNull(FindRel(graph, "CALLS",
+            r => r.StartNodeId == $"{Db}::dbo.MutuoB" && r.EndNodeId == $"{Db}::dbo.MutuoA"));
+    }
+
+    [Fact]
     public void ExecCall_CrossDatabase_ResolvesToCalleeAndTagsCrossDb()
     {
         const string otherDb = "OtherDb";

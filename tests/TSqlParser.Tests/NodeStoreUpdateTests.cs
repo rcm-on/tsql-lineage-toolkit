@@ -106,6 +106,32 @@ public class NodeStoreUpdateTests : IDisposable
         return JsonSerializer.Serialize(dict, JsonOptions);
     }
 
+    [Fact(Timeout = 10_000)]
+    public async Task DirectRecursion_IsWorkflowEntryPointAndNodeStoreWriteTerminates()
+    {
+        // A procedure that only EXECs itself has no external caller, so model.json's
+        // in-degree-0 entry-point detection must still pick it up (a self-call must
+        // not be mistaken for "something else calls me"), and NodeStoreExporter.Write
+        // must terminate instead of looping forever walking the CALLS self-edge - the
+        // xUnit Timeout is the real assertion for the second part.
+        const string recursiveSql =
+            "CREATE PROCEDURE dbo.RecursivoDirecto @n INT AS BEGIN DECLARE @m INT = @n - 1; IF @n > 0 EXEC dbo.RecursivoDirecto @n = @m; END";
+        var graph = BuildGraph(("dbo.RecursivoDirecto", recursiveSql));
+        var store = NewTempDir();
+
+        NodeStoreExporter.Write(graph, store, Db, JsonOptions);
+
+        var model = JsonDocument.Parse(File.ReadAllText(Path.Combine(store, "model.json"))).RootElement;
+        var workflows = model.GetProperty("workflows").EnumerateArray().ToList();
+        var entry = Assert.Single(workflows);
+        Assert.Equal("dbo.RecursivoDirecto", entry.GetProperty("entry_name").GetString());
+
+        var paths = entry.GetProperty("paths").EnumerateArray().ToList();
+        Assert.Single(paths);
+        var hop = paths[0].GetProperty("hops")[0];
+        Assert.Equal("TestDb::dbo.RecursivoDirecto", hop.GetProperty("cycle_back_to").GetString());
+    }
+
     [Fact]
     public void Update_NoChange_LeavesAllFilesUnchanged()
     {
