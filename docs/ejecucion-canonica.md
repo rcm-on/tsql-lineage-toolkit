@@ -1,4 +1,4 @@
-# Corrida canónica — WideWorldImporters
+# Ejecución canónica — WideWorldImporters
 
 Ejecución de referencia del T-SQL Lineage Toolkit. **Todas las cifras del README,
 del artículo del blog y del post de LinkedIn deben salir de aquí.** Si un dato no
@@ -8,7 +8,7 @@ aparece en este documento, no está medido.
 |---|---|
 | **Fecha** | 2026-07-26 |
 | **Commit** | `e9eba57` = **`master`**, la rama desde la que se publica |
-| **Rama de trabajo** | `docs/corrida-canonica` (creada desde `master`) |
+| **Rama de trabajo** | `docs/ejecucion-canonica` (creada desde `master`) |
 | **Instancia** | `PC-Mon\SQLEXPRESS` (indicada como `.\SQLEXPRESS`) |
 | **SQL Server** | Microsoft SQL Server 2025 (RTM-GDR) (KB5102333) — 17.0.1125.2 (X64), Express Edition (64-bit) on Windows 10 Home 10.0 (Build 26200) |
 | **Base de datos** | WideWorldImporters |
@@ -31,7 +31,7 @@ aparece en este documento, no está medido.
 
 ## 1. Por qué el artículo dice 47 y el dashboard dice 64
 
-**No son dos corridas distintas: son dos escalas de conteo sobre la misma corrida.**
+**No son dos ejecuciones distintas: son dos escalas de conteo sobre la misma ejecución.**
 Ninguna de las dos está mal; lo que faltaba era decir cuál es cuál.
 
 Contra el catálogo de la instancia (medido con `sqlcmd`, 2026-07-26):
@@ -75,7 +75,7 @@ desglosados (medido sobre `graph_full.db`):
 | `Warehouse.ColdRoomTemperatures_Backup` y `Warehouse.VehicleTemperatures_Backup`, creadas en runtime | 2 |
 | **Total** | **68** |
 
-**Conclusión: la corrida buena es la de abajo, y hay que citar la escala.**
+**Conclusión: la ejecución buena es la de abajo, y hay que citar la escala.**
 "47 procedimientos/funciones/vistas + 48 tablas extraídos" y "64 objetos · 68 tablas
 en el grafo" son ambas correctas y describen cosas distintas. Lo que no vale es
 mezclarlas en el mismo párrafo, que es justo lo que hace hoy el artículo.
@@ -152,7 +152,7 @@ Appended 48 table definitions to ../../input.json
 ### 2.2 Construcción del grafo
 
 Se emiten **todos** los formatos en una sola pasada, para que no quede en `out/`
-ningún artefacto de otra corrida (ver §6.5):
+ningún artefacto de otra ejecución (ver §6.5):
 
 ```bash
 dotnet run -- ../../input.json ../../out/graph_full.json ../../out/workflows_full.json \
@@ -176,7 +176,7 @@ Los cinco formatos dan **1529 / 4151**.
 dotnet test
 ```
 
-Línea final (log completo en [`corrida-canonica/03-dotnet-test.txt`](corrida-canonica/03-dotnet-test.txt)):
+Línea final (log completo en [`ejecucion-canonica/03-dotnet-test.txt`](ejecucion-canonica/03-dotnet-test.txt)):
 
 ```
 Correctas! - Con error:     0, Superado:   136, Omitido:     0, Total:   136, Duración: 41 s - TSqlParser.Tests.dll (net10.0)
@@ -192,7 +192,7 @@ varios casos.
 dotnet run -- enrich-from-plans ../../out/graph_full.json ../../out/graph_enriched.json <33 planes .xml>
 ```
 
-Línea final (log completo en [`corrida-canonica/04-enrich-from-plans.txt`](corrida-canonica/04-enrich-from-plans.txt)):
+Línea final (log completo en [`ejecucion-canonica/04-enrich-from-plans.txt`](ejecucion-canonica/04-enrich-from-plans.txt)):
 
 ```
 Plans: 33  Procs matched: 30  Confirmed: 60  Discovered: 79 -> ../../out/graph_enriched.json
@@ -246,7 +246,7 @@ CALLS (EXEC) relationships in DB restricted to analyzed objects: 12
 ```
 
 **Cero ausencias y cero aristas fantasma, en ambos sentidos.** Es el resultado más
-fuerte de toda la corrida y el que conviene citar: no es "detectamos mucho", es
+fuerte de toda la ejecución y el que conviene citar: no es "detectamos mucho", es
 "detectamos exactamente lo que hay".
 
 Sobre el 81 frente a los **98** `FK_TO` de las stats: no es una discrepancia.
@@ -373,7 +373,7 @@ SQL dinámico construido desde datos de tabla).
 
 **Pantalla de impacto** (`readme-impact.png`), para
 `DataLoadSimulation.DeactivateTemporalTablesBeforeDataLoad` — todas las
-afirmaciones del README quedan confirmadas en la corrida canónica:
+afirmaciones del README quedan confirmadas en la ejecución canónica:
 
 | Métrica | Valor |
 |---|---:|
@@ -431,7 +431,7 @@ commit anterior; la segunda, de código sin commitear.
 
 ## 6. Incidencias detectadas
 
-### Arregladas en esta corrida
+### Arregladas en esta ejecución
 
 **#3 — `model.json` no declaraba `CREATES` ni `ON`.** El propio `index.json` lo
 denunciaba: `"unknown_edge_types": ["CREATES", "ON"]`, 17 aristas cada uno, justo
@@ -446,7 +446,7 @@ que las capturas siguen siendo válidas. Ahora `index.json` dice
 **#5 — artefactos huérfanos en `out/`.** `graph_full.graphify.json` y
 `workflows_full.json` eran del 20/06/2026 y no los producía ningún comando
 documentado: quien los abriera veía cifras que no cuadraban con el README — el
-mismo fallo que este encargo venía a eliminar. La corrida canónica emite ahora
+mismo fallo que este encargo venía a eliminar. La ejecución canónica emite ahora
 **todos** los formatos en una sola pasada (`--graphify` + tercer argumento
 posicional), y los cinco dan 1529/4151.
 
@@ -485,7 +485,7 @@ duplicados: son los mismos ids compartidos por ambos nodos.
 ## 7. Reproducir
 
 ```bash
-git worktree add ../canon docs/corrida-canonica   # rama creada desde master
+git worktree add ../canon docs/ejecucion-canonica   # rama creada desde master
 cd ../canon/src/TSqlParser
 
 dotnet run -- extract WideWorldImporters ../../input.json --server .\SQLEXPRESS --tables
@@ -499,13 +499,13 @@ cd ../.. && dotnet test
 cd dashboard/e2e && node shots-readme.js && node shots-diagrams.js
 ```
 
-Logs completos sin editar en [`corrida-canonica/`](corrida-canonica/).
+Logs completos sin editar en [`ejecucion-canonica/`](ejecucion-canonica/).
 
 ---
 
 ## 8. Estado de publicación
 
-La rama `docs/corrida-canonica` sale de `master` y contiene **todo**: el arreglo
+La rama `docs/ejecucion-canonica` sale de `master` y contiene **todo**: el arreglo
 del `#3`, los artefactos regenerados, las 5 capturas y esta documentación. No
 queda ningún paso de código pendiente.
 

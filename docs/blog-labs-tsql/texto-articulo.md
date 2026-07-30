@@ -1,7 +1,7 @@
 # Texto para el artículo y para LinkedIn
 
-Redactado a partir de la corrida canónica del 2026-07-26
-([`docs/corrida-canonica.md`](../corrida-canonica.md)). **Ninguna cifra de aquí
+Redactado a partir de la ejecución canónica del 2026-07-26
+([`docs/ejecucion-canonica.md`](../ejecucion-canonica.md)). **Ninguna cifra de aquí
 está estimada**: todas salen de esa ejecución o del catálogo de SQL Server.
 
 ---
@@ -10,7 +10,7 @@ está estimada**: todas salen de esa ejecución o del catálogo de SQL Server.
 
 | Donde dice | Debe decir | Por qué |
 |---|---|---|
-| 1.398 nodos | **1.529** | la corrida de la que salió es de un commit anterior |
+| 1.398 nodos | **1.529** | la ejecución de la que salió es de un commit anterior |
 | 3.476 relaciones | **4.151** | íd. |
 | "47 objetos" junto a una captura que muestra 64 | ver §2 — hay que distinguir las dos escalas | es la contradicción que ve el lector |
 | 69 tablas (pie de captura) | **68** | la captura vieja salía de código sin commitear |

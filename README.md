@@ -137,7 +137,7 @@ Las dos primeras filas son la razón de ser de la herramienta: la base **no tien
 
 > Un nodo `Table` no es siempre una tabla base: una **vista** también recibe uno, para que un `SELECT col FROM vista` aguas abajo aterrice en el mismo nodo `Column` y el lineage no se corte al atravesarla.
 
-*(Corrida canónica del **2026-07-26** contra `.\SQLEXPRESS` · SQL Server 2025 (RTM-GDR) 17.0.1125.2 Express · commit `487e15c`. Salidas de consola literales, capturas y desglose completo en [`docs/corrida-canonica.md`](docs/corrida-canonica.md).)*
+*(Ejecución canónica del **2026-07-26** contra `.\SQLEXPRESS` · SQL Server 2025 (RTM-GDR) 17.0.1125.2 Express · commit `487e15c`. Salidas de consola literales, capturas y desglose completo en [`docs/ejecucion-canonica.md`](docs/ejecucion-canonica.md).)*
 
 ## Guía de uso
 

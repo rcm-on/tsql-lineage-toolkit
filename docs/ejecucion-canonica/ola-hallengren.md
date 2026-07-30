@@ -1,7 +1,7 @@
-# Corrida del T-SQL Lineage Toolkit contra Ola Hallengren SQL Server Maintenance Solution
+# Ejecución del T-SQL Lineage Toolkit contra Ola Hallengren SQL Server Maintenance Solution
 
 Fecha: 2026-07-26
-Rama del toolkit: `docs/corrida-canonica` (worktree ya existente reutilizado en `C:\temp\canon-master`, compila limpio: 0 errores, 0 advertencias).
+Rama del toolkit: `docs/ejecucion-canonica` (worktree ya existente reutilizado en `C:\temp\canon-master`, compila limpio: 0 errores, 0 advertencias).
 Corpus: https://github.com/olahallengren/sql-server-maintenance-solution (clonado `--depth 1` en `C:\temp\corpus-ola-src`, licencia MIT).
 
 Ficheros incluidos (7): `DatabaseBackup.sql`, `IndexOptimize.sql`, `DatabaseIntegrityCheck.sql`, `CommandExecute.sql`, `CommandLog.sql`, `Queue.sql`, `QueueDatabase.sql`.

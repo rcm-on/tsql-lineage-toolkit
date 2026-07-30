@@ -8,7 +8,7 @@ namespace TSqlParser.Tests;
 /// be classified as THROW; PRINT is its own tracked action instead of vanishing
 /// silently; and an IF/WHILE branch whose only consequence is a PRINT/informational
 /// RAISERROR must still produce a Rule + governed Step, instead of disappearing
-/// from the flowchart entirely. See docs/corrida-canonica for the real-world cases
+/// from the flowchart entirely. See docs/ejecucion-canonica for the real-world cases
 /// (Ola Hallengren's dbo.CommandExecute, WideWorldImporters'
 /// Website.RecordVehicleTemperature) that motivated this.
 /// </summary>

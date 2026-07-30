@@ -1,9 +1,9 @@
-# Corrida del T-SQL Lineage Toolkit contra AdventureWorks2019
+# Ejecución del T-SQL Lineage Toolkit contra AdventureWorks2019
 
 - Fecha: 2026-07-26
 - Instancia: `.\SQLEXPRESS`
-- Worktree usado: `C:\temp\corpus-aw` (rama `docs/corrida-aw`, creada desde `docs/corrida-canonica` porque esa rama
-  ya estaba ocupada por el worktree `C:\temp\canon-master`, que resultó contener una corrida previa de
+- Worktree usado: `C:\temp\corpus-aw` (rama `docs/ejecución-aw`, creada desde `docs/ejecucion-canonica` porque esa rama
+  ya estaba ocupada por el worktree `C:\temp\canon-master`, que resultó contener una ejecución previa de
   WideWorldImporters — no se tocó).
 - El árbol principal (`feature/parser-general`) no se tocó, tal como se pidió.
 
@@ -247,7 +247,7 @@ CALLS (EXEC) relationships in DB restricted to analyzed objects: 22
 4. **`orphan_edges`, `unknown_edge_types`, `unknown_labels` todos en 0/vacío.** El vocabulario cerrado de
    tipos de nodo/arista se respeta completamente; no hay aristas fantasma ni fugas de vocabulario.
 
-5. **0 errores de parseo** en los 51 objetos con código y las 71 tablas — corrida perfectamente limpia en
+5. **0 errores de parseo** en los 51 objetos con código y las 71 tablas — ejecución perfectamente limpia en
    ese eje.
 
 6. **Cobertura de lineage de columna: 251/251 (100%)** en los 19 objetos que producen output columns
@@ -259,7 +259,7 @@ CALLS (EXEC) relationships in DB restricted to analyzed objects: 22
 
 ## Comparación con WideWorldImporters
 
-| Métrica | WWI (referencia) | AdventureWorks2019 (esta corrida) |
+| Métrica | WWI (referencia) | AdventureWorks2019 (esta ejecución) |
 |---|---|---|
 | Objetos de entrada | 47 | 51 |
 | Tablas de entrada | 48 | 71 |
@@ -277,7 +277,7 @@ CALLS (EXEC) relationships in DB restricted to analyzed objects: 22
 **Lectura**: AdventureWorks2019 tiene menos nodos/aristas totales que WWI a pesar de tener más tablas
 (90 vs 68) y más objetos con código (51 vs 47/64, según se cuente), porque WWI tiene módulos con lógica
 más profunda (más steps/variables por objeto) mientras que muchos objetos de AdventureWorks son triggers
-de auditoría/pequeños procedimientos y funciones escalares cortas. El dato más relevante de esta corrida
+de auditoría/pequeños procedimientos y funciones escalares cortas. El dato más relevante de esta ejecución
 frente a WWI es el de los **triggers**: es la primera vez que el corpus de referencia tiene triggers reales,
 y el toolkit los captura bien en el caso de triggers de tabla (10/10, con score de hotspot correcto y
 lineage de escritura correcto), pero **queda al descubierto que los triggers DDL de base de datos

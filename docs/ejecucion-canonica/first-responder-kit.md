@@ -1,7 +1,7 @@
 # T-SQL Lineage Toolkit contra SQL Server First Responder Kit (Brent Ozar)
 
 Fecha: 2026-07-26
-Entorno: worktree `C:\Temp\canon-master` (branch `docs/corrida-canonica`, commit `3a85c9b`), motor SIN tocar.
+Entorno: worktree `C:\Temp\canon-master` (branch `docs/ejecucion-canonica`, commit `3a85c9b`), motor SIN tocar.
 Fuente FRK: `C:\temp\corpus-frk-src` (clon `--depth 1` de BrentOzarULTD/SQL-Server-First-Responder-Kit, no copiado al repo del toolkit).
 
 ## Resumen ejecutivo
@@ -225,7 +225,7 @@ de entrada): el motor lo resuelve al texto completo y genera lineage normal.
 `graph_full.json`, y todos los ficheros del NodeStore (`manifest.json`, `index.json`, `model.json`,
 `audit_report.json`, `change_map.json`, `objects/*/object.json`) se escriben con BOM UTF-8
 (`EF BB BF`). `input.json` (la entrada intermedia de `from-sql`) NO lleva BOM. Consecuencia real
-comprobada en esta misma corrida: `json.load()` de Python falla con
+comprobada en esta misma ejecución: `json.load()` de Python falla con
 `Unexpected UTF-8 BOM (decode using utf-8-sig)` si no se especifica `encoding='utf-8-sig'` explícitamente.
 Node.js/`JSON.parse` normalmente tolera el BOM al leer como string, pero cualquier consumidor que use un
 parser estricto (Python estándar, algunas herramientas de CI) tropezará. Es un detalle menor de

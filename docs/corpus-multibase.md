@@ -1,4 +1,4 @@
-# Corrida multi-corpus — 2026-07-26
+# Ejecución multi-corpus — 2026-07-26
 
 Cuatro corpus, para responder dos preguntas que WideWorldImporters sola no puede
 responder: **¿aguanta código real y feo?** y **¿el lineage sigue siendo correcto
@@ -149,7 +149,7 @@ una consulta aparte.
 tiene quien le escriba — ese trigger. Falso huérfano.
 
 **Nota:** este fallo era *estructuralmente indetectable* con WideWorldImporters,
-que tiene 0 triggers en catálogo. Ha salido en la primera corrida contra la
+que tiene 0 triggers en catálogo. Ha salido en la primera ejecución contra la
 segunda base.
 
 **ARREGLADO** (rama `fix/ddl-triggers`). Se añade una consulta a `sys.triggers` con
