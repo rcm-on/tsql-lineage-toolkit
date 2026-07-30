@@ -417,16 +417,29 @@ public static class AstWalker
                     }
                     // Top-level set operation (UNION/EXCEPT/INTERSECT) or a parenthesized
                     // query: the branch above only covers a single QuerySpecification, so
-                    // its source reads were dropped. Walk each branch's FROM for its reads.
+                    // its source reads were dropped. Walk each branch's FROM for its reads -
+                    // and (via FlattenQuerySpecifications, which also exposes the branch's own
+                    // QuerySpecification rather than just its FromClause) that branch's own
+                    // WHERE, previously dropped the same way a CTE branch's WHERE was: AddLink's
+                    // own auto-detect only looks at qs.WhereClause for a plain
+                    // "SelectStatement { QueryExpression: QuerySpecification }", never for one
+                    // branch of a BinaryQueryExpression, so "SELECT ... WHERE X UNION SELECT ...
+                    // WHERE Y" produced zero FILTERS_ON for either X or Y.
                     else if (sel.QueryExpression is BinaryQueryExpression or QueryParenthesisExpression)
                     {
-                        foreach (var setFrom in QueryFromClauses(sel.QueryExpression))
+                        foreach (var setQs in FlattenQuerySpecifications(sel.QueryExpression))
                         {
-                            var setRefs = CollectTableRefs(setFrom, cteNames, cteBaseTables);
+                            if (setQs.FromClause == null)
+                                continue;
+                            var setRefs = CollectTableRefs(setQs.FromClause, cteNames, cteBaseTables);
                             if (setRefs.Count == 0)
                                 continue;
                             var setExtra = BuildExtraReads(setRefs, new List<TableColumnRef>(), skipFirst: true);
-                            AddLink(ctx, condStack, "SELECT", setRefs[0].Table, stmt, cteNames, cteBaseTables, extraReads: setExtra);
+                            var (setFilterColumns, _, setFilterOpKinds, setFilterText, setFilterKind) =
+                                ExtractFilterColumnsCore(setQs.WhereClause, setQs.FromClause.TableReferences, setRefs, cteNames, cteBaseTables);
+                            AddLink(ctx, condStack, "SELECT", setRefs[0].Table, stmt, cteNames, cteBaseTables, extraReads: setExtra,
+                                filterColumnsOverride: setFilterColumns, filterOpKindsOverride: setFilterOpKinds,
+                                filterTextOverride: setFilterText, filterKindOverride: setFilterKind);
                         }
                     }
                     break;
@@ -493,6 +506,13 @@ public static class AstWalker
             // captured in the IF/WHILE cases.
             if (stmt is not (BeginEndBlockStatement or IfStatement or WhileStatement or TryCatchStatement))
                 EmitSubqueryReads(stmt, ctx, condStack, stmt, cteNames, cteBaseTables);
+
+            // A CTE body's own WHERE, emitted *after* the statement it belongs to so the
+            // statement keeps the lower step ordinal. Step ids are positional
+            // ("<object>#step<N>"), so emitting these first silently renumbered every
+            // later step - the community-edge-cases gate for recursive-cte caught it by
+            // reporting the expected READS_FROM on #step0 arriving on #step2 instead.
+            EmitCteFilterSteps(ctx, condStack, stmt, cteNames, cteBaseTables);
         }
     }
 
@@ -554,12 +574,7 @@ public static class AstWalker
     /// </summary>
     private static void CollectCteNames(TSqlStatement stmt, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
     {
-        WithCtesAndXmlNamespaces? ctes = stmt switch
-        {
-            SelectStatement sel => sel.WithCtesAndXmlNamespaces,
-            InsertStatement or UpdateStatement or DeleteStatement or MergeStatement => GetCtes(stmt),
-            _ => null,
-        };
+        var ctes = GetStatementCtes(stmt);
 
         if (ctes == null)
             return;
@@ -617,6 +632,141 @@ public static class AstWalker
 
     private static WithCtesAndXmlNamespaces? GetCtes(TSqlStatement stmt) =>
         stmt.GetType().GetProperty("WithCtesAndXmlNamespaces")?.GetValue(stmt) as WithCtesAndXmlNamespaces;
+
+    /// <summary>Shared "does this statement have a WITH ... AS (...) clause" lookup, used by both CollectCteNames and EmitCteFilterSteps.</summary>
+    private static WithCtesAndXmlNamespaces? GetStatementCtes(TSqlStatement stmt) => stmt switch
+    {
+        SelectStatement sel => sel.WithCtesAndXmlNamespaces,
+        InsertStatement or UpdateStatement or DeleteStatement or MergeStatement => GetCtes(stmt),
+        _ => null,
+    };
+
+    /// <summary>
+    /// Every QuerySpecification branch reachable from a query expression, descending
+    /// through UNION/EXCEPT/INTERSECT (BinaryQueryExpression) and parenthesized
+    /// queries - same traversal as QueryFromClauses, but yields the QuerySpecification
+    /// itself (not just its FromClause) so callers can also reach its WhereClause.
+    /// </summary>
+    private static IEnumerable<QuerySpecification> FlattenQuerySpecifications(QueryExpression? qe)
+    {
+        switch (qe)
+        {
+            case QuerySpecification qs:
+                yield return qs;
+                break;
+            case BinaryQueryExpression bqe:
+                foreach (var q in FlattenQuerySpecifications(bqe.FirstQueryExpression)) yield return q;
+                foreach (var q in FlattenQuerySpecifications(bqe.SecondQueryExpression)) yield return q;
+                break;
+            case QueryParenthesisExpression qpe:
+                foreach (var q in FlattenQuerySpecifications(qpe.QueryExpression)) yield return q;
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Aliases under which <paramref name="cteName"/> is joined back to itself inside
+    /// a FROM clause (recursive CTE member, e.g. "... JOIN r ON t.Padre = r.Id" inside
+    /// the definition of "r" itself). Walks JOIN structure the same way
+    /// CollectJoinExpressions does. Used only to re-attach the alias for filter-column
+    /// resolution - CollectTableRefs already substitutes the self-reference with the
+    /// CTE's base tables (for read tracking) but drops the alias itself, so a WHERE
+    /// like "r.Level &lt; 5" would otherwise be unresolvable.
+    /// </summary>
+    private static void CollectSelfRefAliases(TableReference tref, string cteName, List<string> aliases)
+    {
+        switch (tref)
+        {
+            case NamedTableReference ntr when ntr.SchemaObject.Identifiers.Count == 1
+                    && string.Equals(ntr.SchemaObject.BaseIdentifier.Value, cteName, StringComparison.OrdinalIgnoreCase):
+                aliases.Add(ntr.Alias?.Value ?? ntr.SchemaObject.BaseIdentifier.Value);
+                break;
+            case QualifiedJoin qj:
+                CollectSelfRefAliases(qj.FirstTableReference, cteName, aliases);
+                CollectSelfRefAliases(qj.SecondTableReference, cteName, aliases);
+                break;
+            case UnqualifiedJoin uqj:
+                CollectSelfRefAliases(uqj.FirstTableReference, cteName, aliases);
+                CollectSelfRefAliases(uqj.SecondTableReference, cteName, aliases);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Emits one extra "SELECT" step per branch of each CTE defined on this statement,
+    /// carrying just that branch's own WHERE (+ JOIN ON) filter columns/text.
+    /// Previously silently dropped: CollectCteNames only resolves a CTE to its base
+    /// tables for table-REFERENCE purposes (so "FROM c" elsewhere expands to c's real
+    /// tables); it never walked the CTE body's own WhereClause, so
+    /// "WITH c AS (SELECT ... WHERE X) SELECT ... FROM c" produced zero FILTERS_ON/
+    /// BusinessRule for X - and a UNION'd or recursive CTE body lost every branch's
+    /// WHERE, including a recursive CTE's stop condition.
+    ///
+    /// Runs exactly once per statement (called right after CollectCteNames, alongside
+    /// it, not from inside the branch-handling switch below) - so a CTE referenced
+    /// from several places later in the same statement (or several times across a
+    /// UNION) still only contributes its own filter once. It only ever walks the CTE's
+    /// OWN QueryExpression, never re-enters a *referenced* CTE's body, so there is no
+    /// risk of unbounded recursion through a chain of CTEs referencing each other.
+    ///
+    /// Recursive CTEs: the recursive member's WHERE often references the CTE's own
+    /// alias directly (the stop condition, e.g. "WHERE r.Level &lt; 5") rather than a
+    /// real base table/column. That predicate is still genuine domain logic - dropping
+    /// it silently (as before) would erase the "when does the recursion stop" rule,
+    /// which is exactly the fact that matters most for a recursive CTE. Rather than
+    /// leaving it unattributed OR (worse) silently mis-attributing it, "r" is mapped to
+    /// the CTE's own resolved base table (already computed by CollectCteNames, run just
+    /// before this): a reasoned, explicit choice - the stop condition genuinely
+    /// constrains how far the base table's rows get walked, even though "Level" itself
+    /// is a computed/aliased column rather than a literal column of that table.
+    /// </summary>
+    private static void EmitCteFilterSteps(WalkContext ctx, List<Condition> condStack, TSqlStatement stmt, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    {
+        var ctes = GetStatementCtes(stmt);
+        if (ctes == null)
+            return;
+
+        foreach (var cte in ctes.CommonTableExpressions)
+        {
+            var cteName = cte.ExpressionName.Value;
+            if (!cteBaseTables.TryGetValue(cteName, out var cteBases) || cteBases.Count == 0)
+                continue; // unresolvable CTE body - nothing to attribute a filter to
+
+            foreach (var qs in FlattenQuerySpecifications(cte.QueryExpression))
+            {
+                if (qs.FromClause == null)
+                    continue;
+
+                var tableRefs = CollectTableRefs(qs.FromClause, cteNames, cteBaseTables);
+
+                var selfAliases = new List<string>();
+                foreach (var tref in qs.FromClause.TableReferences)
+                    CollectSelfRefAliases(tref, cteName, selfAliases);
+                foreach (var alias in selfAliases.Distinct(StringComparer.OrdinalIgnoreCase))
+                    if (!tableRefs.Any(t => string.Equals(t.Alias, alias, StringComparison.OrdinalIgnoreCase)))
+                        tableRefs.Add((alias, cteBases[0].Table));
+
+                if (tableRefs.Count == 0)
+                    continue;
+
+                var (filterColumns, _, filterOpKinds, filterText, filterKind) =
+                    ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables);
+
+                if (filterColumns.Count == 0)
+                    continue; // nothing this branch contributes - don't manufacture an empty step
+
+                // Empty target on purpose. The statement that consumes the CTE already
+                // emits READS_FROM for its base tables - that is what cteBaseTables is
+                // for. Naming a target here re-declares the same read once per CTE
+                // branch: the community-edge-cases gate for recursive-cte caught exactly
+                // that, READS_FROM for dbo.Employees going from 1 to 3. This step exists
+                // only to carry the branch's own WHERE, which was dropped entirely.
+                AddLink(ctx, condStack, "SELECT", "", stmt, cteNames, cteBaseTables,
+                    filterColumnsOverride: filterColumns, filterOpKindsOverride: filterOpKinds,
+                    filterTextOverride: filterText, filterKindOverride: filterKind);
+            }
+        }
+    }
 
     /// <summary>
     /// Short subtype label for an ALTER TABLE statement (e.g. "DROP PERIOD",
