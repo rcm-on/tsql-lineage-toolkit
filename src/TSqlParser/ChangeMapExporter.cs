@@ -65,7 +65,11 @@ public static class ChangeMapExporter
             if (!seenCall.Add((r.StartNodeId, r.EndNodeId)))
                 continue;
             (callsOut.TryGetValue(r.StartNodeId, out var l) ? l : callsOut[r.StartNodeId] = new()).Add(r.EndNodeId);
-            callsInCount[r.EndNodeId] = callsInCount.GetValueOrDefault(r.EndNodeId) + 1;
+            // A self-call (direct recursion) must not count as "someone calls me" for
+            // entry-point detection below - an object recursing into itself with no
+            // external caller is still an entry point of its own workflow.
+            if (r.StartNodeId != r.EndNodeId)
+                callsInCount[r.EndNodeId] = callsInCount.GetValueOrDefault(r.EndNodeId) + 1;
         }
 
         // ── Step ownership and step->callee TARGETS (for hop conditionality) ─
@@ -184,7 +188,35 @@ public static class ChangeMapExporter
                     return;
                 foreach (var callee in callees)
                 {
-                    if (onPath.Contains(callee) || callee == root)
+                    if (callee == root)
+                    {
+                        // Direct/indirect recursion back to root itself. Root is never
+                        // added to entryOf/result by the normal path (it's the DFS seed,
+                        // not a "callee"), so without this the whole via_calls closure
+                        // would be silently empty for a directly-recursive object even
+                        // though it demonstrably calls something (itself). List it once,
+                        // flagged as a cycle back to the root.
+                        if (entryOf.TryGetValue(callee, out var prior))
+                        {
+                            prior["cycle_entry"] = true;
+                        }
+                        else
+                        {
+                            var (conditionalSelf, conditionSelf, _) = HopInfo(node, callee);
+                            var selfEntry = new Dictionary<string, object?>
+                            {
+                                ["object"] = PlainName(callee),
+                                ["depth"] = depth,
+                                ["conditional"] = conditionalSelf,
+                                ["condition_text"] = conditionSelf,
+                                ["cycle_entry"] = true,
+                            };
+                            entryOf[callee] = selfEntry;
+                            result.Add(selfEntry);
+                        }
+                        continue;
+                    }
+                    if (onPath.Contains(callee))
                     {
                         // Back-edge: first recurrence of an already-listed node (P4).
                         if (entryOf.TryGetValue(callee, out var prior))

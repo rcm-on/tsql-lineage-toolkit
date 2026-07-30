@@ -911,7 +911,12 @@ public static class NodeStoreExporter
             if (!callsOutAdj.TryGetValue(from, out var tgts))
                 callsOutAdj[from] = tgts = [];
             tgts.Add(to);
-            callsHasIncoming.Add(to);
+            // A self-call (direct recursion) doesn't count as "has an external
+            // caller" - an object that only calls itself is still its own entry
+            // point and must appear in entryPoints below, not be swallowed as if
+            // something else called it.
+            if (from != to)
+                callsHasIncoming.Add(to);
         }
 
         var entryPoints = procFuncIds

@@ -875,7 +875,13 @@ public static class GraphExporter
             foreach (var callee in r.ExecCalls)
             {
                 var (calleeDb, calleePlain, isCrossDbCall) = ResolveCalleeKey(callee, db);
-                if (byPlainName.TryGetValue((calleeDb, calleePlain), out var calleeId) && calleeId != r.ObjectName)
+                // caller == callee (direct recursion) is a legitimate CALLS edge, not
+                // noise: an object recursing into itself still "calls" itself and must
+                // show up in via_calls/workflows, or it reads as a leaf that calls
+                // nobody. The mutual-recursion cycle (A->B->A) already proves every
+                // downstream traversal (AFFECTS BFS, change_map, nodestore workflows)
+                // is cycle-safe, so there is no reason to special-case the 1-node cycle.
+                if (byPlainName.TryGetValue((calleeDb, calleePlain), out var calleeId))
                 {
                     var callProps = new Dictionary<string, object> { ["caller"] = r.ObjectName, ["callee"] = calleeId, ["kind"] = "EXEC" };
                     if (isCrossDbCall)
@@ -899,7 +905,8 @@ public static class GraphExporter
             foreach (var callee in r.FunctionCalls)
             {
                 var (calleeDb, calleePlain, isCrossDbCall) = ResolveCalleeKey(callee, db);
-                if (byPlainName.TryGetValue((calleeDb, calleePlain), out var calleeId) && calleeId != r.ObjectName)
+                // See the ExecCalls loop above: self-calls are real CALLS edges too.
+                if (byPlainName.TryGetValue((calleeDb, calleePlain), out var calleeId))
                 {
                     var callProps = new Dictionary<string, object> { ["caller"] = r.ObjectName, ["callee"] = calleeId, ["kind"] = "FUNCTION" };
                     if (isCrossDbCall)
