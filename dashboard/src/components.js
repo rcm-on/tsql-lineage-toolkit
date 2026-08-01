@@ -142,9 +142,16 @@
   }
 
   // Mermaid: limpia caracteres que rompen el parser dentro de `"label"` (comillas,
-  // pipes, brackets/llaves/ángulos, saltos de línea).
+  // pipes, brackets/llaves/ángulos, saltos de línea). Los operadores de
+  // comparación T-SQL (`<>`, `<=`, `>=`, `<`, `>`) se traducen primero a su
+  // símbolo Unicode: si no, el strip de ángulos se los come enteros y una
+  // condición real como `@Var <> 0` queda como "@Var  0", indistinguible de un
+  // valor sin comparar.
   function mmSanitize(s) {
-    return (s || '').replace(/[\r\n]+/g, ' ').replace(/["|{}\[\]<>]/g, '').trim();
+    return (s || '')
+      .replace(/<>/g, '≠').replace(/<=/g, '≤').replace(/>=/g, '≥')
+      .replace(/</g, '˂').replace(/>/g, '˃')
+      .replace(/[\r\n]+/g, ' ').replace(/["|{}\[\]]/g, '').trim();
   }
   function mmEsc(s) { return (s || '').replace(/"/g, "'"); }
   // Envuelve el texto en varias líneas (<br>) para que las cajas no crezcan a

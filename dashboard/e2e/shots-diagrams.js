@@ -31,9 +31,38 @@ async function shotDiagram(page, headingText, out) {
   }, headingText);
   const el = handle.asElement();
   if (!el) { console.log('✗ no diagram for', headingText); return false; }
-  await el.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(300);
+
+  // The layout scrolls internally (the content pane, not window/body/html),
+  // so `window.scrollTo` never touches the container that actually matters.
+  // Reset every scrollable ancestor's scrollTop to 0 directly.
+  const resetScroll = () => el.evaluate((node) => {
+    let e = node.parentElement;
+    while (e) {
+      if (e.scrollHeight > e.clientHeight + 2) e.scrollTop = 0;
+      e = e.parentElement;
+    }
+  });
+  await resetScroll();
+  await page.waitForTimeout(200);
+
+  // Chromium's element screenshot goes blank outside the current viewport for
+  // elements taller than it (e.g. a long flowchart with 15+ ranks): only the
+  // scrolled-into-view slice gets painted, the rest comes out empty. Grow the
+  // viewport to fully contain the element before capturing, then restore it —
+  // no scrolling/tiling needed, so the whole element gets painted. Must reset
+  // scroll again afterward: resizing a taller viewport can itself trigger the
+  // content pane to re-scroll to keep the previous focus point in view.
+  const box = await el.boundingBox();
+  const original = page.viewportSize();
+  const needsResize = box && (box.y + box.height + 50) > original.height;
+  if (needsResize) {
+    await page.setViewportSize({ width: original.width, height: Math.ceil(box.y + box.height + 50) });
+    await page.waitForTimeout(200);
+    await resetScroll();
+    await page.waitForTimeout(300);
+  }
   await el.screenshot({ path: out });
+  if (needsResize) await page.setViewportSize(original);
   console.log('✓', path.basename(out));
   return true;
 }

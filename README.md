@@ -44,9 +44,7 @@ La cadena de impacto se despliega **por niveles**, aguas arriba y aguas abajo, h
 
 Cada procedimiento se traduce a su **flujograma real** desde el AST — con sus **decisiones**, no un resumen. Aquí `Configuration_ApplyAuditing`: *¿existe ya `WWI_ServerAuditSpecification`?* → si no, lo crea con SQL dinámico (`EXEC ⚡`); *¿el servidor soporta especificaciones de auditoría?* → ramifica. Cada `IF` con sus ramas **sí/no** en lenguaje natural y la línea exacta. La lógica de negocio, con sus condiciones, legible sin abrir el `CREATE PROCEDURE`.
 
-## Comparación — qué hueco llena
-
-**vs. herramientas open source / gratuitas:**
+## Qué hueco llena
 
 | Herramienta | AST real | SQL dinámico | Lineage columna | Riesgos | Offline / agent-ready |
 | --- | :---: | :---: | :---: | :---: | :---: |
@@ -57,18 +55,7 @@ Cada procedimiento se traduce a su **flujograma real** desde el AST — con sus 
 | Apache Atlas | catálogo | ❌ | ❌ | ❌ | genérico |
 | dbt lineage | solo modelos dbt | ❌ | limitado | ❌ | ❌ |
 
-**vs. herramientas comerciales:**
-
-| Herramienta | Precio | AST T-SQL | SQL dinámico | Offline | Open source |
-| --- | :---: | :---: | :---: | :---: | :---: |
-| **Este toolkit** | **Gratis** | ✅ | ✅ | ✅ | ✅ |
-| Microsoft Purview | €€€ · Azure-only | ❌ catálogo | ❌ | ❌ | ❌ |
-| Octopai | €€€€ enterprise | ❌ | ❌ | ❌ | ❌ |
-| Informatica IDMC | €€€€€ enterprise | ❌ | ❌ | ❌ | ❌ |
-
-### El hueco que complementa
-
-Las gratuitas paran en el análisis de texto o de catálogo: **ninguna usa la gramática `ScriptDom` ni resuelve el `EXEC(@sql)` dinámico**, que es exactamente donde vive el riesgo. Las de pago sí razonan sobre metadatos, pero cuestan una fortuna, viven en cloud y **tampoco entran en el SQL dinámico ni dan lineage a columna con reglas de negocio**. Este toolkit ocupa el hueco intermedio: la profundidad de gramática de una comercial, gratis, offline y diffable — pensado para **complementar** tu SSMS, tu catálogo y tu CI, no para sustituirlos.
+El catálogo (`sys.sql_expression_dependencies`, Atlas, Purview) ve lo que está declarado en `sys.objects` y nada más: un trigger creado en runtime o una tabla que solo aparece dentro de un `EXEC(@sql)` no existen para él. Un grep o un regex (sqllineage) no distingue un `IF` real de un `IF` dentro de un string que se está construyendo. Este toolkit entiende el AST completo del procedimiento —lo que hace, no solo lo que declara— y por eso ve el SQL dinámico, las reglas de negocio en cada `WHERE` y el riesgo de seguridad en cada `@SQL` construido desde datos de tabla. Es lo que hace falta para responder con certeza "¿qué rompo?", no para sustituir tu catálogo ni tu CI: los complementa donde ellos no llegan.
 
 ### Validado contra SQL real (y contra oráculos)
 
