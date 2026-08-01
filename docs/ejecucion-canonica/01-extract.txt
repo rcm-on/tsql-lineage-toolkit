@@ -1,4 +1,4 @@
-Wrote 47 objects from WideWorldImporters to ../../input.json
+Wrote 47 objects from WideWorldImporters to ..\..\input.json
   + Application.Cities: ok
   + Application.Cities_Archive: ok
   + Application.Countries: ok
@@ -48,4 +48,4 @@ Wrote 47 objects from WideWorldImporters to ../../input.json
   + Warehouse.StockItemTransactions: ok
   + Warehouse.VehicleTemperatures: ok
 
-Appended 48 table definitions to ../../input.json
+Appended 48 table definitions to ..\..\input.json

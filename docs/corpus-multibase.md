@@ -1,43 +1,52 @@
-# Ejecución multi-corpus — 2026-07-26
+# Ejecución multi-corpus — 2026-07-26 (primera pasada), actualizada 2026-08-01
 
 Cuatro corpus, para responder dos preguntas que WideWorldImporters sola no puede
 responder: **¿aguanta código real y feo?** y **¿el lineage sigue siendo correcto
 fuera de una base de demostración?**
 
-Motor sin tocar (commit `3a85c9b`). Ninguna cifra de aquí está estimada.
+Ninguna cifra de aquí está estimada. La sección "Resultados" de más abajo es
+histórica (motor con solo los arreglos #1-#3 integrados, commit `3a85c9b`); se
+conserva porque documenta cómo se encontró y verificó cada bug. La tabla
+siguiente es la **vigente**: con los 12 arreglos ya integrados (commit `c9ccd56`,
+ver [`docs/ejecucion-canonica.md`](ejecucion-canonica.md)).
 
-## Resultados
+## Cifras actuales (12 arreglos, 2026-08-01)
 
-Cifras **después** de los arreglos descritos en la sección de hallazgos (los seis se
-encontraron con la primera pasada y cuatro se corrigieron; la tabla es de la
-segunda pasada, con el motor ya corregido):
-
-| Corpus | Entrada | Objetos | Nodos | Aristas | Errores de parseo | Segundos |
+| Corpus | Entrada | Objetos | Nodos | Aristas | Errores de parseo | Segundos* |
 |---|---|---|---|---|---|---|
-| WideWorldImporters | 0,35 MB · base viva | 47 → 64 | 1.529 | 4.151 | **0** | 1,69 |
-| AdventureWorks2019 | 0,13 MB · base viva | **52** | 1.128 | 2.862 | **0** | 1,51 |
-| Ola Hallengren | 0,52 MB · `from-sql` | 4 + 3 tablas | 2.262 | 6.726 | **0** | 1,71 |
-| First Responder Kit | 2,29 MB · `from-sql` | 12 | 5.679 | 16.858 | **0** | 3,99 |
+| WideWorldImporters | 0,35 MB · base viva | 47 → 64 | **1.593** | **4.382** | **0** | 3,40 |
+| AdventureWorks2019 | 0,13 MB · base viva | **52** | **1.166** | **3.050** | **0** | 2,87 |
+| Ola Hallengren | 0,52 MB · `from-sql` | 4 + 3 tablas | **2.339** | **7.013** | **0** | 3,03 |
+| First Responder Kit | 2,29 MB · `from-sql` | 11 + 1 tabla | **6.451** | **19.596** | **0** | 7,15 |
 
-Movimiento respecto a la primera pasada, y por qué:
+*Tiempos medidos con el binario `Release`, un corpus cada vez, invocado vía
+`dotnet <dll>` (arranque del proceso incluido) — metodología distinta a la de la
+primera pasada (más abajo), así que no son comparables punto a punto con
+aquellos; sí lo son entre sí, medidos todos en esta misma sesión.
 
-| Corpus | Antes | Ahora | Causa |
+**Escalado sub-lineal, reconfirmado:** de 0,35 MB a 2,29 MB (6,5×) el tiempo sube
+de 3,40 s a 7,15 s (2,1×). Con AdventureWorks2019 y FRK como los dos puntos más
+separados, el ajuste lineal da un suelo de arranque de ~2,6 s (incluye el
+proceso `dotnet`) y un coste marginal real de **~1,9 s por MB** de T-SQL.
+
+Movimiento respecto a la primera pasada (con solo #1-#3), y por qué **cada
+corpus se movió otra vez** al integrar los arreglos #4 y #6-#12:
+
+| Corpus | Tras #1-#3 (2026-07-26) | Tras los 12 (2026-08-01) | Causa principal del segundo movimiento |
 |---|---|---|---|
-| WideWorldImporters | 1.529 / 4.151 | **1.529 / 4.151** | **sin cambios** — ningún arreglo le aplica. Es el control de no-regresión |
-| AdventureWorks2019 | 1.120 / 2.840 | 1.128 / 2.862 | +1 objeto: el trigger DDL de base de datos que antes no se extraía (#2) |
-| Ola Hallengren | 2.254 / 6.515 | 2.262 / 6.726 | 3 tablas antes `UNKNOWN` ahora aportan columnas y claves (#3); sube más de lo que baja al fusionar el nodo gemelo (#1) |
-| First Responder Kit | 5.705 / 16.900 | **5.679 / 16.858** | **baja**: 126 → 125 tablas. El arreglo de identidad (#1) también fusionó un gemelo aquí, sin que nadie lo hubiera detectado |
+| WideWorldImporters | 1.529 / 4.151 | **1.593 / 4.382** | +19 nodos `BusinessRule` (#10/#11) + `Step` recuperados en CTE/`UNION` (#11) |
+| AdventureWorks2019 | 1.128 / 2.862 | **1.166 / 3.050** | mismas causas — vistas y CTEs con `WHERE` propio |
+| Ola Hallengren | 2.262 / 6.726 | **2.339 / 7.013** | ídem, más lecturas de `UNION` recuperadas en `IndexOptimize` (#7) |
+| First Responder Kit | 5.679 / 16.858 | **6.451 / 19.596** | el mayor salto: TVFs (`sys.dm_*`, `STRING_SPLIT`) antes invisibles ahora cuentan como fuente de lectura (#8), además de `BusinessRule` y `UNION` |
 
-Que WideWorldImporters no se mueva **ni un nodo** tras tres cambios de motor es el
-dato de control: confirma que los arreglos tocan solo lo que debían.
-
-Tiempos medidos **en serie**, un corpus cada vez, sin otros procesos compilando o
-analizando: medirlos en paralelo los habría inflado. Solo el paso de construcción
-del grafo (`--columns --sqlite --nodestore`), sin extracción ni capturas.
-
-**Escalado sub-lineal:** de 0,35 MB a 2,29 MB (6,5×) el tiempo solo pasa de 2,30 s
-a 4,63 s (2,0×). Hay un suelo fijo de arranque de ~2 s; el coste marginal real es
-de **~1,2 s por MB** de T-SQL.
+Que **ningún** corpus se quedara quieto ante los arreglos #4/#6-#12 no es una
+sorpresa ni una regresión: a diferencia de #1-#3 (específicos de un patrón que
+solo aparecía en Ola/AdventureWorks), estos nueve son arreglos **generales** del
+motor (TVFs, `UNION`, reglas de negocio, clasificación de `RAISERROR`,
+auto-recursión) que tocan construcciones presentes en los cuatro corpus. El
+control de no-regresión sigue siendo válido en su forma original: dentro de cada
+tanda de arreglos, los corpus no tocados por esa tanda no se movieron (ver la
+tabla histórica de más abajo para la comprobación fina de #1-#3).
 
 ## Validación contra el catálogo (solo las bases vivas)
 
@@ -60,18 +69,24 @@ veces más superficie de resolución de columnas, sin perder una.
 | Objeto más complejo | `DeactivateTemporalTables…` | `dbo.DatabaseBackup` | `dbo.sp_Blitz` |
 | Líneas | 706 | ~5.000 | **10.659** |
 | Complejidad ciclomática | 19 | 542 | **706** (37×) |
-| Pasos | 87 | 541 | **1.229** |
+| Pasos | 87 | 550 | **1.328** |
 | Anidación máxima | 1 | 7 | 9 |
 
-`sp_Blitz` es un **único procedimiento de 480 KB**. Se procesa sin fallo, sin
-excepción y sin artefacto truncado.
+`sp_Blitz` es un **único procedimiento de 478 KB**. Se procesa sin fallo, sin
+excepción y sin artefacto truncado. (Pasos de `DatabaseBackup` y `sp_Blitz`
+recontados el 2026-08-01 con los 12 arreglos: suben respecto a la primera
+pasada — 541 → 550 y 1.229 → 1.328 — porque los `Step` de `WHERE` dentro de
+`UNION`/CTE que antes se perdían ahora se cuentan, arreglo #11.)
 
 ---
 
 # Hallazgos
 
-Ordenados por gravedad. **Ninguno arreglado**: este encargo no toca el motor, y
-arreglarlos movería las cifras que se acaban de congelar.
+Ordenados por gravedad. En la primera pasada (2026-07-26) ninguno estaba
+arreglado todavía: el encargo de aquel día era solo medir y documentar, no
+tocar el motor. Desde entonces se integraron los 12 arreglos — **todos los de
+esta lista están ahora `ARREGLADO`**, incluidos el #4 y el #6, que quedaron
+abiertos en la primera pasada.
 
 ## 1. GRAVE — La identidad de una tabla se parte en dos nodos (ARREGLADO)
 
@@ -205,30 +220,123 @@ esas variantes, el router lo habría clasificado como *tabla*. Se detectó porqu
 Resultado: `report` pasa de "Tablas (CREATE TABLE): 0" a **3**, y los tres scripts
 dejan de contarse como objetos programables.
 
-## 4. MEDIO — Subdetección de SQL dinámico ejecutado vía variable (ABIERTO)
+## 4. MEDIO — Subdetección de SQL dinámico ejecutado vía variable (ARREGLADO)
 
 **Dónde:** Ola Hallengren.
 
 El patrón `EXECUTE @CurrentDatabase_sp_executesql @stmt = @CurrentCommand`
 (ejecución cross-database de `sp_executesql` a través de una variable que lleva el
-nombre completo) se detecta de forma incompleta: en `IndexOptimize.sql` hay ~19
-apariciones y solo 8 se marcan `is_dynamic_sql`; en `DatabaseIntegrityCheck.sql`,
+nombre completo) se detectaba de forma incompleta: en `IndexOptimize.sql` había ~19
+apariciones y solo 8 se marcaban `is_dynamic_sql`; en `DatabaseIntegrityCheck.sql`,
 5 frente a 3. En `DatabaseBackup.sql` y `CommandExecute.sql`, con el mismo patrón
-pero menos repeticiones, el conteo cuadra exacto.
+pero menos repeticiones, el conteo ya cuadraba.
 
-Apunta a que el detector se pierde en bucles o ramas anidadas con muchas
-repeticiones del mismo patrón. **Hipótesis sin confirmar.**
+**ARREGLADO** (commits `1b72779` y `30766ce`, rama `fix/dynamic-exec-var`). La
+causa real, dos capas por debajo de la hipótesis original: `sp_executesql`
+ejecutado a través de una variable no se reconocía como fuente de un `INSERT`
+(`ExecuteInsertSource`), así que el lado `EXEC` del `INSERT ... EXECUTE @var`
+desaparecía entero del lineage en vez de subdetectarse en bucles. No era un
+problema de bucles ni de ramas anidadas — esa hipótesis, igual que la de #1/#3,
+era razonable y era incorrecta.
 
-**Estado: abierto.** Se empezó en la rama `fix/dynamic-exec-var` (commit `d613706`)
-y quedó **a medias, sin pruebas y sin verificar** — cambios sueltos en
-`AstWalker.cs`, sin compilar siquiera. Está commiteado y etiquetado como WIP para
-poder retomarlo, **no para integrarlo**.
+---
+
+## 7. GRAVE — `INSERT ... SELECT` con `UNION`/`EXCEPT`/`INTERSECT` perdía todas las lecturas (ARREGLADO)
+
+**Dónde:** general del motor; se manifiesta en `IndexOptimize.sql` (Ola) y en
+varios procedimientos del FRK que arman su resultado combinando ramas.
+
+Cuando el origen de un `INSERT ... SELECT` (o de un `UPDATE`/`MERGE` con
+subconsulta derivada) era un `UNION`/`EXCEPT`/`INTERSECT`, el analizador solo
+recorría una de las ramas del operador de conjunto: las tablas leídas en las
+demás ramas desaparecían del lineage sin aviso — el mismo tipo de falso negativo
+silencioso que el #1, pero en un patrón distinto y mucho más común en SQL real.
+
+**ARREGLADO** (commit `21f0074`). El recorrido ahora aplana el árbol de
+`BinaryQueryExpression` (`UNION`/`EXCEPT`/`INTERSECT`, con o sin `ALL`) antes de
+extraer las tablas de origen, así que cada rama aporta sus lecturas.
+
+## 8. MEDIO — Funciones con valor de tabla invisibles para el lineage (ARREGLADO)
+
+**Dónde:** general; el FRK es donde más pesa (`sys.dm_*`, `STRING_SPLIT`,
+`OPENJSON`, `OPENQUERY`, `OPENROWSET` aparecen decenas de veces en `sp_Blitz*`).
+
+Una función con valor de tabla (TVF definida por el usuario, función de sistema
+tipo `sys.dm_exec_query_stats`, o una de las formas especiales `OPENJSON` /
+`STRING_SPLIT` / `OPENQUERY` / `OPENROWSET`) usada como fuente de un `FROM` no
+generaba arista `READS_FROM`: el objeto parecía no leer nada aunque su cuerpo
+dependiera enteramente de esas funciones.
+
+**ARREGLADO** (commit `0cb43ba`). Se reconoce cada una de esas formas como tabla
+de origen legítima y se emite su arista de lectura. Es la causa directa de que
+FRK pase de 5.679/16.858 a 6.451/19.596 nodos/aristas (§ Cifras actuales): la
+mayoría del salto son las lecturas de catálogo que antes se perdían.
+
+## 9. GRAVE — `RAISERROR` de severidad ≤10 clasificado como `THROW` (ARREGLADO)
+
+**Dónde:** general; pesa más cuanto más código T-SQL "a la antigua" tiene el
+corpus (Ola Hallengren y FRK usan `RAISERROR` como mecanismo de log/progreso, no
+solo de error).
+
+El clasificador de acciones trataba **todo** `RAISERROR` como si lanzara una
+excepción real (`THROW`), sin mirar la severidad. `RAISERROR('mensaje', 0, 1)`
+—severidad 0, puramente informativo, el equivalente T-SQL de un `PRINT`— se
+contaba como un fallo. Contra el corpus de producción esto generó **1.012 falsos
+positivos**: cada línea de log de `sp_BlitzIndex`/`sp_BlitzCache` aparecía como
+un camino de error.
+
+**ARREGLADO** (commit `99b0e14`). Ahora se distingue por severidad: `≤10` se
+clasifica como acción `PRINT` (informativa); `>10`, como `THROW` real. De paso
+se añadieron las acciones `BREAK`/`CONTINUE`/`GOTO`/`WAITFOR`, que tampoco se
+reconocían.
+
+## 10. MEDIO — El `WHERE` no se modelaba como regla de negocio (ARREGLADO)
+
+**Dónde:** general.
+
+El motor extraía qué se lee y qué se escribe, pero no las **condiciones** bajo
+las que ocurre: un `WHERE` no dejaba rastro propio en el grafo más allá de
+`FILTERS_ON`. Preguntas del tipo "¿qué reglas de negocio gobiernan esta tabla?"
+no tenían dónde aterrizar.
+
+**ARREGLADO** (commit `f4c4e0d`). Cada `WHERE` se modela ahora como un nodo
+`:BusinessRule`, con aristas `HAS_RULE` (desde el objeto) y `CONSTRAINS` (hacia
+la tabla/columna filtrada), y una propiedad `filter_kind`
+(`domain_filter`/`key_lookup`/`mixed`) para distinguir un filtro de negocio de
+un simple `WHERE id = @id`. Resultado medido en WWI: `summary.business_rules`
+pasa de 0 a **19** (ver `docs/ejecucion-canonica.md` §2.6).
+
+## 11. MEDIO — El `WHERE` dentro de una CTE o de una rama de `UNION` no se capturaba (ARREGLADO)
+
+**Dónde:** general; se combina con el #7 y el #10.
+
+El arreglo #10 cubría el `WHERE` de una sentencia de nivel superior, pero no el
+de un `SELECT` anidado dentro de una CTE, ni el de cada rama de un
+`UNION`/`EXCEPT`/`INTERSECT` — incluida la condición de parada de una CTE
+recursiva, que es precisamente el `WHERE` más importante de detectar (define
+cuándo termina la recursión).
+
+**ARREGLADO** (commit `d39c9d9`). El recorrido que busca predicados ahora entra
+en el cuerpo de cada CTE y en cada rama de un operador de conjunto. Es la otra
+causa (junto al #7) de que suban los `Step` en los cuatro corpus.
+
+## 12. BAJO — Una auto-llamada (recursión directa) no emitía arista `CALLS` (ARREGLADO)
+
+**Dónde:** general; se manifiesta en cualquier procedimiento que se llama a sí
+mismo (recursión directa, sin pasar por otro objeto intermedio).
+
+Un procedimiento que se invoca a sí mismo (`EXEC dbo.MiProc` dentro del propio
+`dbo.MiProc`) no generaba la arista `CALLS` hacia sí mismo: la cadena de
+llamadas mostraba el objeto como si no tuviera recursión, cuando sí la tiene.
+
+**ARREGLADO** (commit `d5b0e29`). El emisor de `CALLS` ya no descarta el caso en
+que origen y destino son el mismo objeto.
 
 ---
 
 # Pendiente: prototipo de resolución por placeholder
 
-Idea para atacar el 68% sin resolver de la sección siguiente: sustituir
+Idea para atacar el 71% sin resolver de la sección siguiente: sustituir
 `QUOTENAME(@param)` por un **placeholder de identificador** para que la cadena
 parsee, y quedarse con todo lo demás (tabla, columnas, operación), perdiendo solo
 la identidad de la base:
@@ -281,18 +389,26 @@ con `new UTF8Encoding(false)`: ahora hay una sola forma de escribir JSON en el m
 Verificado: 0 de 1.645 ficheros con BOM, y la lectura de artefactos antiguos *con*
 BOM sigue funcionando.
 
-## 6. BAJO — `lineage_coverage: 100%` sobre denominador cero
+## 6. BAJO — `lineage_coverage: 100%` sobre denominador cero (ARREGLADO)
 
-En el FRK, `audit_report.json` reporta `coverage_pct: 100` con
+En el FRK, `audit_report.json` reportaba `coverage_pct: 100` con
 `objects_with_output_columns: 0` y `columns_total: 0`. Un 0/0 presentado como
 100% es engañoso en un informe de auditoría.
+
+**ARREGLADO** (commit `d695a6a`, junto con el BOM del #5). `coverage_pct` ahora
+sale `null` cuando el denominador es cero, con un campo `measured: false`
+adicional para que un consumidor automático distinga "0% medido" de "no hay
+nada que medir". Reconfirmado en esta ejecución (2026-08-01): tanto Ola Hallengren
+como el FRK devuelven `"coverage_pct": null, "measured": false` — ninguno de los
+dos tiene columnas de salida catalogadas (ver "Lo que estos corpus NO
+demuestran").
 
 ---
 
 # No es un fallo: el límite honesto del SQL dinámico
 
-En el FRK, de **241 pasos de SQL dinámico detectados, 164 (68%) no se resuelven**
-a un destino literal. La causa, verificada en el fuente
+En el FRK, de **277 pasos de SQL dinámico catalog-driven detectados, 197 (71%)
+no se resuelven** a un destino literal. La causa, verificada en el fuente
 (`sp_BlitzIndex.sql:231-251`):
 
 ```sql
@@ -309,13 +425,13 @@ marca como no resuelto en vez de adivinar un destino falso — el comportamiento
 **Está bien resuelto, pero hay que decirlo en la documentación pública.** Hoy el
 artículo vende "resuelve el SQL dinámico" sin matiz. Lo cierto es: lo resuelve
 cuando el destino es reconstruible estáticamente; cuando depende de un parámetro,
-lo marca y lo cuenta. En un corpus real ese caso fue **el 68%**. Decirlo sube la
+lo marca y lo cuenta. En un corpus real ese caso fue **el 71%**. Decirlo sube la
 credibilidad, no la baja.
 
 # Lo que estos corpus NO demuestran
 
 Ola Hallengren y el First Responder Kit **leen DMVs `sys.*` y escriben en
-temporales**: apenas tocan tablas de usuario (`WRITES_TO` = 2 aristas en los 12
+temporales**: apenas tocan tablas de usuario (`WRITES_TO` = 2 aristas en los 11
 procedimientos del FRK), no tienen columnas de salida catalogadas, y **no hay
 catálogo propio contra el que validar**. Estresan el parser a lo bestia; **no
 ejercitan el lineage sobre un esquema real**. Esa parte la cubren WWI y

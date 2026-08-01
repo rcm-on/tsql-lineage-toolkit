@@ -1,6 +1,6 @@
-Graphify: 1529 nodes, 4151 edges -> ../../out/graph_full.graphify.json
-NodeStore: 64 objects, 754 shared nodes, 4151 edges -> ../../out/graph_full.nodes
-SQLite: 1529 nodes, 4151 edges (db=WideWorldImporters, project=WideWorldImporters) -> ../../out/graph_full.db
+Graphify: 1593 nodes, 4382 edges -> ..\..\out\graph_full.graphify.json
+NodeStore: 64 objects, 783 shared nodes, 4382 edges -> ..\..\out\graph_full.nodes
+SQLite: 1593 nodes, 4382 edges (db=WideWorldImporters, project=WideWorldImporters) -> ..\..\out\graph_full.db
 Analyzed 47 objects (47 ok, 0 parse errors)
 Analyzed 48 table schemas (48 ok, 0 errors)
-Graph: 1529 nodes, 4151 relationships -> ../../out/graph_full.json
+Graph: 1593 nodes, 4382 relationships -> ..\..\out\graph_full.json

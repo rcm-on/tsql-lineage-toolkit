@@ -76,12 +76,12 @@ No es solo WideWorldImporters. Se ejecuta contra **cuatro corpus**, dos de ellos
 
 | Corpus | Qué es | Entrada | Objetos | Errores de parseo | Tiempo |
 | --- | --- | ---: | ---: | :---: | ---: |
-| WideWorldImporters | muestra OLTP de Microsoft, base viva | 0,35 MB | 47 → 64 | **0** | 1,7 s |
-| AdventureWorks2019 | muestra clásica, base viva | 0,13 MB | 52 | **0** | 1,5 s |
-| [SQL Server Maintenance Solution](https://github.com/olahallengren/sql-server-maintenance-solution) | Ola Hallengren, producción | 0,52 MB | 7 | **0** | 1,7 s |
-| [First Responder Kit](https://github.com/BrentOzarULTD/SQL-Server-First-Responder-Kit) | Brent Ozar, producción | 2,29 MB | 11 + 1 tabla | **0** | 4,0 s |
+| WideWorldImporters | muestra OLTP de Microsoft, base viva | 0,35 MB | 47 → 64 | **0** | 3,4 s |
+| AdventureWorks2019 | muestra clásica, base viva | 0,13 MB | 52 | **0** | 2,9 s |
+| [SQL Server Maintenance Solution](https://github.com/olahallengren/sql-server-maintenance-solution) | Ola Hallengren, producción | 0,52 MB | 4 + 3 tablas | **0** | 3,0 s |
+| [First Responder Kit](https://github.com/BrentOzarULTD/SQL-Server-First-Responder-Kit) | Brent Ozar, producción | 2,29 MB | 11 + 1 tabla | **0** | 7,2 s |
 
-`sp_Blitz` es un **único procedimiento de 480 KB** — 10.659 líneas, complejidad ciclomática **706**, 1.229 pasos. Se procesa sin un error de parseo. De 0,35 MB a 2,29 MB (6,5×) el tiempo solo sube 2,4× : el coste marginal es de **~1,2 s por MB** de T-SQL.
+`sp_Blitz` es un **único procedimiento de 478 KB** — 10.659 líneas, complejidad ciclomática **706**, 1.328 pasos, anidación máxima 9. Se procesa sin un error de parseo. De 0,35 MB a 2,29 MB (6,5×) el tiempo sube de 3,4 s a 7,2 s (2,1×): el coste marginal es de **~1,9 s por MB** de T-SQL (tiempo de proceso `dotnet` completo, arranque incluido).
 
 **Contrastado contra el catálogo de SQL Server** en las dos bases vivas, con `validate`:
 
@@ -99,9 +99,9 @@ Y contra corpus con oráculo propio:
 - **Construcciones complejas (`eval/community-edge-cases/`):** `MERGE`, CTEs recursivas, SQL dinámico, cursores.
 - **Lineage de columna (`eval/view-lineage/`):** contrastado contra `sys.dm_sql_referenced_entities`.
 
-Además, **150 pruebas unitarias (xUnit)** cubren el parser. **147 corren como gate en CI**; las 3 restantes son de categoría `Oracle` —contrastan contra un SQL Server vivo con WideWorldImporters y AdventureWorks2019— y hoy solo se ejecutan en local: un runner de GitHub no tiene instancia con esas bases restauradas, y el conector usa autenticación integrada de Windows, que un contenedor de SQL Server no admite. Está documentado en `.github/workflows/ci.yml`, no silenciado.
+Además, **182 pruebas unitarias (xUnit)** cubren el parser. **179 corren como gate en CI**; las 3 restantes son de categoría `Oracle` —contrastan contra un SQL Server vivo con WideWorldImporters y AdventureWorks2019— y hoy solo se ejecutan en local: un runner de GitHub no tiene instancia con esas bases restauradas, y el conector usa autenticación integrada de Windows, que un contenedor de SQL Server no admite. Está documentado en `.github/workflows/ci.yml`, no silenciado.
 
-> **Qué encontró esa validación.** Correr los corpus nuevos destapó **seis defectos** en el propio motor, cuatro ya corregidos —entre ellos uno grave: con cierto patrón de `UPDATE` la identidad de una tabla se partía en dos nodos y *"¿quién escribe aquí?"* devolvía cero teniendo tres escritores. El detalle, con la reproducción de cada uno, está en [`docs/corpus-multibase.md`](docs/corpus-multibase.md). Se publica porque un fallo encontrado y documentado dice más de la fiabilidad de una herramienta que una tabla en verde.
+> **Qué encontró esa validación.** Correr los corpus nuevos destapó **doce defectos** en el propio motor, **todos corregidos** —entre ellos uno grave: con cierto patrón de `UPDATE` la identidad de una tabla se partía en dos nodos y *"¿quién escribe aquí?"* devolvía cero teniendo tres escritores. El detalle, con la reproducción de cada uno, está en [`docs/corpus-multibase.md`](docs/corpus-multibase.md). Se publica porque un fallo encontrado y documentado dice más de la fiabilidad de una herramienta que una tabla en verde.
 
 ## Casos de uso — dónde aparece este problema
 
@@ -125,19 +125,20 @@ Ejecutado contra **WideWorldImporters** (base de datos de muestra de Microsoft),
 | --- | --- |
 | Objetos extraídos de la base | 47 procedimientos/funciones/vistas + 48 tablas |
 | Objetos en el grafo | **64** (los 47 + **17 triggers creados en runtime** por SQL dinámico) |
-| Tablas en el grafo | **68** (las 48 + 15 del catálogo `sys.*` referenciado + 3 vistas + 2 tablas creadas en runtime) |
-| Nodos del grafo | 1.529 |
-| Relaciones | 4.151 |
+| Tablas en el grafo | **69** (las 48 + 15 del catálogo `sys.*` referenciado + 3 vistas + 2 tablas creadas en runtime + 1 pseudo-tabla `OPENJSON`) |
+| Nodos del grafo | 1.593 |
+| Relaciones | 4.382 |
 | Errores de parseo | **0** |
 | Claves ajenas contra `sys.foreign_keys` | **98 / 98** — 0 ausencias, 0 fantasmas |
 | Cadenas `EXEC` contra `sys.sql_expression_dependencies` | **12 / 12** — 0 ausencias |
 | Cobertura de lineage de columna | **32 / 32 columnas de salida (100%)** |
+| Reglas de negocio (`WHERE` modelado como `:BusinessRule`) | **19** (antes 0) |
 
 Las dos primeras filas son la razón de ser de la herramienta: la base **no tiene ningún trigger** en `sys.objects`, pero el análisis del AST descubre los **17** que `DeactivateTemporalTablesBeforeDataLoad` crea en tiempo de ejecución. Un inventario de catálogo se los pierde enteros.
 
 > Un nodo `Table` no es siempre una tabla base: una **vista** también recibe uno, para que un `SELECT col FROM vista` aguas abajo aterrice en el mismo nodo `Column` y el lineage no se corte al atravesarla.
 
-*(Ejecución canónica del **2026-07-26** contra `.\SQLEXPRESS` · SQL Server 2025 (RTM-GDR) 17.0.1125.2 Express · commit `487e15c`. Salidas de consola literales, capturas y desglose completo en [`docs/ejecucion-canonica.md`](docs/ejecucion-canonica.md).)*
+*(Ejecución canónica del **2026-08-01** contra `.\SQLEXPRESS` · SQL Server 2025 (RTM-GDR) 17.0.1125.2 Express · commit `c9ccd56`. Salidas de consola literales, capturas y desglose completo en [`docs/ejecucion-canonica.md`](docs/ejecucion-canonica.md).)*
 
 ## Guía de uso
 
@@ -208,7 +209,7 @@ Resumen general, vista por objeto/tabla con flujo de control en **lenguaje natur
 
 ![Panel de riesgos: hallazgos por severidad y categoría con el detalle de cada regla](docs/readme-risks.png)
 
-El panel de riesgos clasifica cada hallazgo por **severidad** y **categoría**. Sobre WWI: **110 hallazgos** (1 crítico, 20 altos, 43 medios, 46 bajos), con el detalle de la regla — desde una **inyección SQL** (el único crítico: `Configuration_ApplyColumnstoreIndexing` construye `@SQL` desde datos de `sys.indexes`) hasta escrituras sin transacción, complejidad excesiva o problemas de integridad. La auditoría de seguridad y calidad que normalmente requiere una herramienta de pago, en un panel.
+El panel de riesgos clasifica cada hallazgo por **severidad** y **categoría**. Sobre WWI: **112 hallazgos** (1 crítico, 20 altos, 44 medios, 47 bajos) — Integridad 40, Diseño 29, Mantenibilidad 18, Seguridad 13, Rendimiento 7, Robustez 5 —, con el detalle de la regla — desde una **inyección SQL** (el único crítico: `Configuration_ApplyColumnstoreIndexing` construye `@SQL` desde datos de `sys.indexes`) hasta escrituras sin transacción, complejidad excesiva o problemas de integridad. La auditoría de seguridad y calidad que normalmente requiere una herramienta de pago, en un panel.
 
 ## En tu CI/CD — un gate de impacto en cada PR
 
@@ -253,7 +254,7 @@ El `change_map_diff.json` queda como artefacto: qué objetos cambiaron y a quié
 - **Sin scoring de confianza todavía**: una arista cierta y una inferida se ven igual (planificado).
 - **Completitud alta, no total**: la ausencia de una arista es "no detectada", no "probado que no existe".
 - **Te da el mapa de dependencias, no el plan de migración.** Responde qué depende de qué; la semántica, la calidad del dato y las reglas de negocio siguen siendo trabajo tuyo.
-- **Probado a la escala de estos cuatro corpus** (el mayor: 2,3 MB, 12 objetos, un procedimiento de 10.659 líneas). No hay todavía medición sobre una base de miles de procedimientos.
+- **Probado a la escala de estos cuatro corpus** (el mayor: 2,3 MB, 11 objetos, un procedimiento de 10.659 líneas). No hay todavía medición sobre una base de miles de procedimientos.
 
 ## Pruébalo contra tu base de datos
 
