@@ -46,24 +46,12 @@ namespace TSqlParser;
 /// </summary>
 public static class NodeStoreExporter
 {
-    // Closed vocabularies, mirrored from GraphExporter. Emitted into index.json
-    // as the store's contract; anything outside them is flagged in stats rather
-    // than silently dropped, so a reader can rely on the type set.
-    public static readonly IReadOnlyList<string> KnownNodeLabels = new[]
-    {
-        "SqlObject", "Process", "Workflow", "Parameter", "Variable", "Step", "Action", "Table", "Column", "Rule",
-        "Database", "Schema", "BusinessRule",
-    };
+    // Closed vocabularies: single source of truth in Parser.Contracts.Vocab
+    // (shared with NetParser). Kept as aliases here so existing callers and the
+    // index.json contract are unchanged.
+    public static readonly IReadOnlyList<string> KnownNodeLabels = Vocab.KnownNodeLabels;
 
-    public static readonly IReadOnlyList<string> KnownEdgeTypes = new[]
-    {
-        "HAS_PARAMETER", "DECLARES", "ASSIGNED_FROM", "HAS_STEP", "ACTION", "BUILDS_SQL_FROM",
-        "USES_VARIABLE", "TARGETS", "WRITES_TO", "READS_FROM", "READS_COLUMN", "WRITES_COLUMN",
-        "FILTERS_ON", "DERIVES_FROM", "CONDITIONED_BY", "NESTED_IN", "GOVERNS", "CALLS", "AFFECTS", "HAS_COLUMN", "FK_TO", "REFERENCES",
-        "BELONGS_TO", "WORKFLOW_WRITES_TO", "CONTAINS", "HAS_RULE", "CONSTRAINS",
-        // Dynamic-trigger layer: a proc CREATES a trigger, the trigger fires ON a table.
-        "CREATES", "ON",
-    };
+    public static readonly IReadOnlyList<string> KnownEdgeTypes = Vocab.KnownEdgeTypes;
 
     // Structural edges fully represented by an object's "owned" lists already
     // (HAS_PARAMETER/DECLARES/HAS_STEP just say "this SqlObject has this Parameter/

@@ -1,0 +1,86 @@
+{
+  "database": "WideWorldImporters",
+  "edges": [
+    {
+      "app_file": "sample-app/SampleApp.Api/Services/OrderService.cs",
+      "app_method": "CreateOrders",
+      "target": "WideWorldImporters::Website.InsertCustomerOrders",
+      "kind": "proc",
+      "pattern": "SqlCommand+StoredProcedure",
+      "line": 24,
+      "expect": "EXTRACTED"
+    },
+    {
+      "app_file": "sample-app/SampleApp.Api/Services/OrderService.cs",
+      "app_method": "RecordColdRoomReading",
+      "target": "WideWorldImporters::Website.RecordColdRoomTemperatures",
+      "kind": "proc",
+      "pattern": "SqlCommand+StoredProcedure",
+      "line": 37,
+      "expect": "EXTRACTED"
+    },
+    {
+      "app_file": "sample-app/SampleApp.Api/Services/CustomerService.cs",
+      "app_method": "SearchCustomers",
+      "target": "WideWorldImporters::Website.SearchForCustomers",
+      "kind": "proc",
+      "pattern": "Dapper+StoredProcedure",
+      "line": 24,
+      "expect": "EXTRACTED"
+    },
+    {
+      "app_file": "sample-app/SampleApp.Api/Services/CustomerService.cs",
+      "app_method": "GetCustomersByPostalCode",
+      "target": "WideWorldImporters:table:sales.customers",
+      "kind": "table",
+      "pattern": "Dapper+InlineSQL",
+      "line": 33,
+      "expect": "EXTRACTED"
+    },
+    {
+      "app_file": "sample-app/SampleApp.Api/Services/ReportingService.cs",
+      "app_method": "GetOrderLines",
+      "target": "WideWorldImporters:table:sales.orderlines",
+      "kind": "table",
+      "pattern": "EFCore.SqlQueryRaw",
+      "line": 32,
+      "expect": "EXTRACTED"
+    },
+    {
+      "app_file": "sample-app/SampleApp.Api/Services/ReportingService.cs",
+      "app_method": "ApplyPaymentMethodUpdates",
+      "target": "WideWorldImporters::Integration.GetPaymentMethodUpdates",
+      "kind": "proc",
+      "pattern": "EFCore.ExecuteSqlRaw+EXEC",
+      "line": 40,
+      "expect": "EXTRACTED"
+    },
+    {
+      "app_file": "sample-app/SampleApp.Api/Services/DynamicService.cs",
+      "app_method": "RunIntegrationFeed",
+      "target": "WideWorldImporters::Integration.GetOrderUpdates",
+      "kind": "proc",
+      "pattern": "concatenación",
+      "line": 22,
+      "expect": "AMBIGUOUS"
+    },
+    {
+      "app_file": "sample-app/SampleApp.Api/Services/DynamicService.cs",
+      "app_method": "RunIntegrationFeed",
+      "target": "WideWorldImporters::Integration.GetSaleUpdates",
+      "kind": "proc",
+      "pattern": "concatenación",
+      "line": 22,
+      "expect": "AMBIGUOUS"
+    },
+    {
+      "app_file": "sample-app/SampleApp.Api/Services/DynamicService.cs",
+      "app_method": "RunIntegrationFeed",
+      "target": "WideWorldImporters::Integration.GetPurchaseUpdates",
+      "kind": "proc",
+      "pattern": "concatenación",
+      "line": 22,
+      "expect": "AMBIGUOUS"
+    }
+  ]
+}
