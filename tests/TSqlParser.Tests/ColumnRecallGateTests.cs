@@ -35,12 +35,29 @@ namespace TSqlParser.Tests;
 /// </summary>
 public class ColumnRecallGateTests
 {
-    // Suelos medidos sobre este corpus (2026-08-01, commit 14b0ca9). Bajar de aquí es una
-    // regresión. Son los valores exactos, no los redondeados que se imprimen en el informe:
-    // 3423/7786 = 43,96 %, 4959/7302 = 67,90 %, 3423/5892 = 58,10 %.
-    private const double MinStrictRecall = 0.4396;
-    private const double MinLooseRecall  = 0.6789;
-    private const double MinPrecision    = 0.5809;
+    /// <summary>
+    /// Aristas del grafo que cuentan como "este módulo referencia esta columna", para casar con
+    /// la semántica del oráculo: dm_sql_referenced_entities con minor_id &gt; 0 no distingue
+    /// lectura de escritura, reporta cualquier referencia a la columna. Omitir WRITES_COLUMN
+    /// (el error de la primera versión de este gate) descarta las columnas destino de todo
+    /// UPDATE ... SET y hunde la medida 20 puntos.
+    ///
+    /// CONSTRAINS, ASSIGNED_FROM, DERIVES_FROM y compañía se quedan FUERA a propósito: medido,
+    /// no suben el recall ni una décima y desploman la precisión (66,9 % -> 42,7 %). No son
+    /// referencias en el sentido del oráculo.
+    /// </summary>
+    private static readonly HashSet<string> ColumnRefEdges =
+        new(StringComparer.Ordinal) { "READS_COLUMN", "FILTERS_ON", "WRITES_COLUMN" };
+
+    // Suelos medidos sobre este corpus (2026-08-01). Bajar de aquí es una regresión. Se ponen
+    // truncados, no redondeados: el informe imprime 89,1 % pero el valor real es 0,890578, y
+    // un suelo de 0,8908 haría fallar al propio commit que lo mide.
+    //   estricto  5005/7786 = 0,642820
+    //   laxo      6503/7302 = 0,890578
+    //   precisión 5005/7480 = 0,669118
+    private const double MinStrictRecall = 0.6428;
+    private const double MinLooseRecall  = 0.8905;
+    private const double MinPrecision    = 0.6691;
 
     private static string EvalDir()
     {
@@ -103,7 +120,7 @@ public class ColumnRecallGateTests
         var refs = new HashSet<Ref>();
         foreach (var r in graph.Relationships)
         {
-            if (r.Type != "READS_COLUMN" && r.Type != "FILTERS_ON") continue;
+            if (!ColumnRefEdges.Contains(r.Type)) continue;
             if (!columns.TryGetValue(r.EndNodeId, out var col)) continue;
             var objId = owner.TryGetValue(r.StartNodeId, out var o) ? o : r.StartNodeId.Split("#step")[0];
             refs.Add(new Ref(ModuleOf(objId), col.Entity, col.Column));
