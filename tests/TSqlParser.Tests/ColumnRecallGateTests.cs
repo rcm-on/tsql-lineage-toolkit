@@ -24,8 +24,8 @@ namespace TSqlParser.Tests;
 ///     respaldada por el oráculo.
 ///
 /// OJO con la diferencia entre laxo y estricto. La primera lectura fue "el motor atribuye
-/// mal", y los datos la refutaron: de las 1918 pérdidas con la columna vista pero colgada de
-/// otra entidad, 1891 son oráculo=VISTA / motor=TABLA. El motor atraviesa la vista hasta las
+/// mal", y los datos la refutaron: de las 1983 pérdidas con la columna vista pero colgada de
+/// otra entidad, 1896 son oráculo=VISTA / motor=TABLA. El motor atraviesa la vista hasta las
 /// tablas base y la DMV se para en la vista. Son convenciones distintas, no un defecto, y
 /// para análisis de impacto la del motor es la útil. Por eso el recall estricto NO mide
 /// calidad: es un detector de cambios en esa convención. La medida de calidad es el laxo.
@@ -50,14 +50,14 @@ public class ColumnRecallGateTests
         new(StringComparer.Ordinal) { "READS_COLUMN", "FILTERS_ON", "WRITES_COLUMN" };
 
     // Suelos medidos sobre este corpus (2026-08-01). Bajar de aquí es una regresión. Se ponen
-    // truncados, no redondeados: el informe imprime 89,1 % pero el valor real es 0,890578, y
-    // un suelo de 0,8908 haría fallar al propio commit que lo mide.
-    //   estricto  5270/7786 = 0,676856
-    //   laxo      6797/7302 = 0,930841
-    //   precisión 5270/7816 = 0,674258
-    private const double MinStrictRecall = 0.6768;
-    private const double MinLooseRecall  = 0.9308;
-    private const double MinPrecision    = 0.6742;
+    // TRUNCADOS, no redondeados: el informe imprime un decimal y poner el suelo en el valor
+    // redondeado hace fallar al propio commit que lo mide (ya pasó dos veces).
+    //   estricto  0,681480
+    //   laxo      0,934538
+    //   precisión 0,675751
+    private const double MinStrictRecall = 0.6814;
+    private const double MinLooseRecall  = 0.9345;
+    private const double MinPrecision    = 0.6757;
 
     private static string EvalDir()
     {

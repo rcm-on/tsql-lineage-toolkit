@@ -415,12 +415,24 @@ public static class AstWalker
                         {
                             var refs = new List<(string? Qualifier, string Column)>();
                             foreach (var el in qs.SelectElements)
-                                if (el is SelectScalarExpression sse)
+                            {
+                                // SelectSetVariable es "SELECT @v = Col FROM t", la forma
+                                // canonica de leer una fila a variables. ScriptDom NO lo modela
+                                // como SelectScalarExpression, asi que mirar solo ese tipo
+                                // perdia la lista de seleccion entera: en el corpus DNN, 58
+                                // columnas en 24 modulos de las que el motor solo veia el WHERE.
+                                var expr = el switch
                                 {
-                                    var collector = new QualifiedColumnCollector();
-                                    sse.Expression.Accept(collector);
-                                    refs.AddRange(collector.Refs);
-                                }
+                                    SelectScalarExpression sse => sse.Expression,
+                                    SelectSetVariable ssv      => ssv.Expression,
+                                    _                          => null,
+                                };
+                                if (expr == null)
+                                    continue;
+                                var collector = new QualifiedColumnCollector();
+                                expr.Accept(collector);
+                                refs.AddRange(collector.Refs);
+                            }
                             List<TableColumnRef> extras;
                             (selColumns, extras) = SplitColumnsByTable(refs, tableRefs);
                             // CROSS/OUTER APPLY xmlcol.nodes() shreds an XML column: that
