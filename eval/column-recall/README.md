@@ -68,12 +68,12 @@ con las aristas `CALLS`: solo miraba las que faltaban, nunca las que sobraban.
 ### El recall estricto no mide calidad — cuidado con leerlo mal
 
 La primera lectura de la diferencia entre laxo y estricto fue "el motor atribuye
-mal la columna". Los datos la refutan. Clasificando las 2516 pérdidas:
+mal la columna". Los datos la refutan. Clasificando las 2419 pérdidas:
 
 | Categoría de pérdida | Cuántas |
 | --- | --- |
-| Columna vista, colgada de otra entidad | **1983 (79 %)** — y **1896 son oráculo=VISTA / motor=TABLA** |
-| Columna **no vista en absoluto** | 533 (21 %) — 326 de tablas, 190 de vistas |
+| Columna vista, colgada de otra entidad | **1966 (81 %)** — y **1896 son oráculo=VISTA / motor=TABLA** |
+| Columna **no vista en absoluto** | 453 (19 %) — 246 de tablas, 190 de vistas, 17 sin resolver |
 
 Caso testigo, `dbo.GetPortals`, que es `SELECT * FROM dbo.vw_Portals`: el motor
 atribuye a `vw_portals` **y además** a `portals`, `users` y `portallocalization`.
@@ -84,7 +84,7 @@ motor es la más útil: si alguien altera `Portals.PortalName`, quieres saber qu
 `GetPortals` se ve afectado aunque lea a través de una vista.
 
 Por tanto: **la cobertura real del motor es el recall laxo, y el punto ciego real
-son las 533 referencias que no ve.** El recall estricto sirve como detector de
+son las 453 referencias que no ve.** El recall estricto sirve como detector de
 cambios en la convención, no como nota.
 
 ## Línea base (2026-08-01)
@@ -104,7 +104,8 @@ columnas destino de todo `UPDATE ... SET` y hunde la medida 20 puntos. Añadir
 `CONSTRAINS`/`ASSIGNED_FROM`/`DERIVES_FROM` no sube el recall ni una décima y
 desploma la precisión al 42,7 %, así que se quedan fuera.
 
-El punto ciego restante son **425 referencias** que el motor no ve.
+El punto ciego restante son **453 referencias**: 246 de tablas, 190 de vistas
+y 17 de entidades no resueltas (temporales, CTE, alias).
 
 Recorrido de la cobertura: **67,9 % → 89,1 %** (contar `WRITES_COLUMN`) **→ 93,1 %**
 (expandir `SELECT alias.*`) **→ 93,5 %** (`SELECT @var = Col`) **→ 94,2 %**
