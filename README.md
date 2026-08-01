@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/rcm-on/tsql-lineage-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/rcm-on/tsql-lineage-toolkit/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![.NET](https://img.shields.io/badge/.NET-10-512BD4.svg)](https://dotnet.microsoft.com/)
 
-**Motor determinista de lineage e impacto para Microsoft SQL Server (T-SQL).** Apúntalo a tus procedimientos —desde un SQL Server vivo o desde ficheros `.sql`— y construye un mapa completo y consultable de *qué lee qué, qué escribe dónde y qué se rompe si lo cambias*. Hasta la columna. A través del SQL dinámico. Sin base de datos en marcha a la hora de consultar.
+**Motor determinista de lineage e impacto para Microsoft SQL Server (T-SQL).** Apúntalo a tus procedimientos —desde un SQL Server vivo o desde ficheros `.sql`— y construye un mapa consultable de *qué lee qué, qué escribe dónde y qué se rompe si lo cambias*. Hasta la columna. A través del SQL dinámico. Sin base de datos en marcha a la hora de consultar.
 
 > Construido para **SQL Server / T-SQL** con la gramática oficial `ScriptDom`. No es un parser SQL genérico: entiende código procedural T-SQL —cursores, `EXEC(@sql)` dinámico, `MERGE`, tablas temporales, anidación multinivel.
 
@@ -20,9 +20,9 @@ Este toolkit da una respuesta **determinista y consciente de la gramática**, co
 
 ![Pantalla de impacto del dashboard sobre WideWorldImporters](docs/readme-impact.png)
 
-### Lo que ves aquí y no verás con otra herramienta
+### Qué hay en esta pantalla
 
-Esta única pantalla —el procedimiento `DeactivateTemporalTablesBeforeDataLoad` de WideWorldImporters— muestra lo que las herramientas de texto y las de catálogo dejan escapar:
+El procedimiento `DeactivateTemporalTablesBeforeDataLoad` de WideWorldImporters. Todas las cifras que siguen son reproducibles contra el fuente y contra el grafo:
 
 - **34 sentencias de SQL dinámico, resueltas y contadas.** El procedimiento construye su SQL en `@SQL` en tiempo de ejecución y lo lanza con 34 `EXECUTE (@SQL)` — el AST cuenta **34**, y el fuente tiene exactamente 34. El contraste está en el flujo de control: un `grep` del cuerpo encuentra **52** tokens `IF`, pero **34 de ellos viven *dentro* de los strings que se están construyendo**; el AST reconoce los **18** reales y una anidación de **1**. Ese hueco, justo donde el análisis de texto falla, es el sentido de todo.
 - **Reglas de negocio y riesgos, no solo dependencias.** El objeto **escribe en 17 tablas distintas** ("hace demasiado, candidato a dividir"), **modifica datos sin transacción ni manejo de errores**, y ejecuta SQL dinámico ("revisar parametrización/permisos"). Riesgos de seguridad, robustez y mantenibilidad derivados del AST, con severidad.
@@ -36,7 +36,7 @@ Todo esto es offline, sin servidor, arrastrando un fichero al [dashboard](dashbo
 
 ![Cadena de impacto por niveles: un procedimiento, los que llama, y las tablas y vistas afectadas](docs/readme-impact-chain.png)
 
-La cadena de impacto se despliega **por niveles**, aguas arriba y aguas abajo, hasta la profundidad que elijas (1–5). Aquí `Configuration_ConfigureForEnterpriseEdition` → **Nivel +1**: los 4 procedimientos que ejecuta → **Nivel +2**: las tablas donde acaban insertando → **Nivel +3**: la vista que las lee. De un vistazo tienes el **radio de impacto completo**, no una lista plana: sabes a cuántos saltos está cada cosa de lo que vas a tocar.
+La cadena de impacto se despliega **por niveles**, aguas arriba y aguas abajo, hasta la profundidad que elijas (1–5). Aquí `Configuration_ConfigureForEnterpriseEdition` → **Nivel +1**: los 4 procedimientos que ejecuta → **Nivel +2**: las tablas donde acaban insertando → **Nivel +3**: la vista que las lee. De un vistazo tienes el radio de impacto por saltos, no una lista plana: sabes a cuántos saltos está cada cosa de lo que vas a tocar.
 
 ## El flujo de negocio, paso a paso
 
@@ -44,22 +44,22 @@ La cadena de impacto se despliega **por niveles**, aguas arriba y aguas abajo, h
 
 Cada procedimiento se traduce a su **flujograma real** desde el AST — con sus **decisiones**, no un resumen. Aquí `Configuration_ApplyAuditing`: *¿existe ya `WWI_ServerAuditSpecification`?* → si no, lo crea con SQL dinámico (`EXEC ⚡`); *¿el servidor soporta especificaciones de auditoría?* → ramifica. Cada `IF` con sus ramas **sí/no** en lenguaje natural y la línea exacta. La lógica de negocio, con sus condiciones, legible sin abrir el `CREATE PROCEDURE`.
 
-## Qué hueco llena
+## Qué es, y qué no es
 
-| Herramienta | AST real | SQL dinámico | Lineage columna | Riesgos | Offline / agent-ready |
-| --- | :---: | :---: | :---: | :---: | :---: |
-| **Este toolkit** | ScriptDom | ✅ | ✅ | ✅ | ✅ (NodeStore) |
-| `sys.sql_expression_dependencies` | ❌ catálogo | ❌ | ❌ | ❌ | — |
-| sqllineage (Python) | ❌ regex | ❌ | ❌ | ❌ | ❌ |
-| SQLGlot | ✅ multi-dialecto | ❌ | parcial | ❌ | ❌ |
-| Apache Atlas | catálogo | ❌ | ❌ | ❌ | genérico |
-| dbt lineage | solo modelos dbt | ❌ | limitado | ❌ | ❌ |
+Es una **herramienta de utilidad**, hecha por una persona, no un producto de gobierno del dato. No compite con Purview, Atlas ni con las suites comerciales de lineage, y no pretende sustituir a tu catálogo ni a tu CI.
 
-El catálogo (`sys.sql_expression_dependencies`, Atlas, Purview) ve lo que está declarado en `sys.objects` y nada más: un trigger creado en runtime o una tabla que solo aparece dentro de un `EXEC(@sql)` no existen para él. Un grep o un regex (sqllineage) no distingue un `IF` real de un `IF` dentro de un string que se está construyendo. Este toolkit entiende el AST completo del procedimiento —lo que hace, no solo lo que declara— y por eso ve el SQL dinámico, las reglas de negocio en cada `WHERE` y el riesgo de seguridad en cada `@SQL` construido desde datos de tabla. Es lo que hace falta para responder con certeza "¿qué rompo?", no para sustituir tu catálogo ni tu CI: los complementa donde ellos no llegan.
+**Dónde aporta algo:** el catálogo de SQL Server ve lo declarado en `sys.objects` y poco más — un trigger creado dentro de un `EXEC(@sql)` o una tabla que solo existe en un string construido en runtime no aparecen. Un grep no distingue un `IF` real de uno que vive dentro del `@SQL` que se está montando. Leer el AST completo del procedimiento sí ve esas cosas, y dejarlo en un fichero portable te permite consultarlo sin servidor.
+
+**Dónde no aporta, o directamente hay opciones mejores:**
+
+- **Es monodialecto.** Solo T-SQL. Si necesitas varios motores, [SQLGlot](https://github.com/tobymao/sqlglot) es más completo y más maduro — de hecho lo usamos **como oráculo** para validar nuestro propio lineage de columna (ver [`eval/sqlglot-oracle/`](eval/sqlglot-oracle/)).
+- **El lineage de columna no es completo.** 94,2 % de cobertura medida sobre corpus grande, con 67,8 % de precisión. Hay 453 referencias que no vemos, y están [documentadas](eval/column-recall/).
+- **No es gobierno del dato.** Sin catálogo, glosario, permisos, ni linaje entre sistemas.
+- **No hay soporte ni garantías.** Es MIT, se publica tal cual.
 
 ### Validado contra SQL real (y contra oráculos)
 
-No es solo WideWorldImporters. Se ejecuta contra **cuatro corpus**, dos de ellos código de producción escrito por terceros:
+No es solo WideWorldImporters. Se ejecuta contra **cinco corpus**, tres de ellos código de producción escrito por terceros:
 
 | Corpus | Qué es | Entrada | Objetos | Errores de parseo | Tiempo |
 | --- | --- | ---: | ---: | :---: | ---: |
@@ -67,6 +67,7 @@ No es solo WideWorldImporters. Se ejecuta contra **cuatro corpus**, dos de ellos
 | AdventureWorks2019 | muestra clásica, base viva | 0,13 MB | 52 | **0** | 2,9 s |
 | [SQL Server Maintenance Solution](https://github.com/olahallengren/sql-server-maintenance-solution) | Ola Hallengren, producción | 0,52 MB | 4 + 3 tablas | **0** | 3,0 s |
 | [First Responder Kit](https://github.com/BrentOzarULTD/SQL-Server-First-Responder-Kit) | Brent Ozar, producción | 2,29 MB | 11 + 1 tabla | **0** | 7,2 s |
+| [DNN Platform](https://github.com/dnnsoftware/Dnn.Platform) | CMS, ~20 años de T-SQL de producción | 0,68 MB | 739 + 128 tablas | **0** | — |
 
 `sp_Blitz` es un **único procedimiento de 478 KB** — 10.659 líneas, complejidad ciclomática **706**, 1.328 pasos, anidación máxima 9. Se procesa sin un error de parseo. De 0,35 MB a 2,29 MB (6,5×) el tiempo sube de 3,4 s a 7,2 s (2,1×): el coste marginal es de **~1,9 s por MB** de T-SQL (tiempo de proceso `dotnet` completo, arranque incluido).
 
@@ -74,10 +75,20 @@ No es solo WideWorldImporters. Se ejecuta contra **cuatro corpus**, dos de ellos
 
 | | WideWorldImporters | AdventureWorks2019 |
 | --- | :---: | :---: |
-| Claves ajenas vs `sys.foreign_keys` | **98 / 98** | **90 / 90** |
+| Claves ajenas vs `sys.foreign_keys` | **81 / 81** | **86 / 86** |
 | Cadenas `EXEC` vs `sys.sql_expression_dependencies` | **12 / 12** | **22 / 22** |
 | Ausencias / aristas fantasma | 0 / 0 | 0 / 0 |
-| Cobertura de lineage de columna | 32 / 32 (100%) | 251 / 251 (100%) |
+
+*Son las relaciones que caen dentro del alcance del grafo, que es lo que `validate` compara — no el total declarado en la base (98 y 90 claves ajenas respectivamente).*
+| Columnas de salida de vistas | 32 / 32 | 251 / 251 |
+
+> **Cuidado con leer esos 32/32 y 251/251 como "100 % de cobertura".** Son muestras
+> pequeñas y de una construcción concreta (columnas de salida de vistas). Medido
+> sobre un corpus grande de T-SQL de producción —679 procedimientos de DNN
+> Platform, **7.786** referencias de columna según `sys.dm_sql_referenced_entities`—
+> la cobertura real es del **94,2 %**, con una precisión del **67,8 %**. Quedan
+> **453 referencias que el motor no ve**. El detalle, el corpus y el gate que lo
+> mide están en [`eval/column-recall/`](eval/column-recall/).
 
 Y contra corpus con oráculo propio:
 
@@ -86,7 +97,7 @@ Y contra corpus con oráculo propio:
 - **Construcciones complejas (`eval/community-edge-cases/`):** `MERGE`, CTEs recursivas, SQL dinámico, cursores.
 - **Lineage de columna (`eval/view-lineage/`):** contrastado contra `sys.dm_sql_referenced_entities`.
 
-Además, **182 pruebas unitarias (xUnit)** cubren el parser. **179 corren como gate en CI**; las 3 restantes son de categoría `Oracle` —contrastan contra un SQL Server vivo con WideWorldImporters y AdventureWorks2019— y hoy solo se ejecutan en local: un runner de GitHub no tiene instancia con esas bases restauradas, y el conector usa autenticación integrada de Windows, que un contenedor de SQL Server no admite. Está documentado en `.github/workflows/ci.yml`, no silenciado.
+Además, **184 pruebas unitarias (xUnit)** cubren el parser. **181 corren como gate en CI**; las 3 restantes son de categoría `Oracle` —contrastan contra un SQL Server vivo con WideWorldImporters y AdventureWorks2019— y hoy solo se ejecutan en local: un runner de GitHub no tiene instancia con esas bases restauradas, y el conector usa autenticación integrada de Windows, que un contenedor de SQL Server no admite. Está documentado en `.github/workflows/ci.yml`, no silenciado.
 
 > **Qué encontró esa validación.** Correr los corpus nuevos destapó **doce defectos** en el propio motor, **todos corregidos** —entre ellos uno grave: con cierto patrón de `UPDATE` la identidad de una tabla se partía en dos nodos y *"¿quién escribe aquí?"* devolvía cero teniendo tres escritores. El detalle, con la reproducción de cada uno, está en [`docs/corpus-multibase.md`](docs/corpus-multibase.md). Se publica porque un fallo encontrado y documentado dice más de la fiabilidad de una herramienta que una tabla en verde.
 
@@ -94,7 +105,7 @@ Además, **182 pruebas unitarias (xUnit)** cubren el parser. **179 corren como g
 
 No sustituye a tu SSMS ni a tu CI: los **complementa** con la respuesta que ninguno te da rápido.
 
-- **Antes de renombrar o borrar una columna/tabla** — el radio de impacto completo (procs, vistas, columnas derivadas) en segundos, no leyendo 40 procedimientos a mano.
+- **Antes de renombrar o borrar una columna/tabla** — el radio de impacto (procs, vistas, columnas derivadas) en segundos, no leyendo 40 procedimientos a mano.
 - **Refactorizar un procedimiento heredado** — la **cadena de llamadas** entrante y saliente: quién lo llama, a qué llama, qué tablas toca y con qué operación.
 - **Migración / modernización** — inventario de dependencias real antes de mover esquemas o plataformas; incluye lo que vive en SQL dinámico y cursores.
 - **Auditoría de seguridad** — dónde se construye SQL dinámico (superficie de inyección), qué escribe sin transacción ni manejo de errores, operaciones destructivas.
@@ -113,12 +124,12 @@ Ejecutado contra **WideWorldImporters** (base de datos de muestra de Microsoft),
 | Objetos extraídos de la base | 47 procedimientos/funciones/vistas + 48 tablas |
 | Objetos en el grafo | **64** (los 47 + **17 triggers creados en runtime** por SQL dinámico) |
 | Tablas en el grafo | **69** (las 48 + 15 del catálogo `sys.*` referenciado + 3 vistas + 2 tablas creadas en runtime + 1 pseudo-tabla `OPENJSON`) |
-| Nodos del grafo | 1.593 |
-| Relaciones | 4.382 |
+| Nodos del grafo | 1.595 |
+| Relaciones | 4.390 |
 | Errores de parseo | **0** |
-| Claves ajenas contra `sys.foreign_keys` | **98 / 98** — 0 ausencias, 0 fantasmas |
-| Cadenas `EXEC` contra `sys.sql_expression_dependencies` | **12 / 12** — 0 ausencias |
-| Cobertura de lineage de columna | **32 / 32 columnas de salida (100%)** |
+| Claves ajenas contra `sys.foreign_keys` | **81 / 81** — 0 ausencias, 0 fantasmas *(la base declara 98; 81 caen dentro del alcance del grafo y son las que `validate` compara)* |
+| Cadenas `EXEC` contra `sys.sql_expression_dependencies` | **12 / 12** — 0 ausencias, 0 fantasmas |
+| Columnas de salida de las 3 vistas de WWI | **32 / 32** *(muestra pequeña — ver la cobertura real abajo)* |
 | Reglas de negocio (`WHERE` modelado como `:BusinessRule`) | **19** (antes 0) |
 
 Las dos primeras filas son la razón de ser de la herramienta: la base **no tiene ningún trigger** en `sys.objects`, pero el análisis del AST descubre los **17** que `DeactivateTemporalTablesBeforeDataLoad` crea en tiempo de ejecución. Un inventario de catálogo se los pierde enteros.
@@ -196,7 +207,7 @@ Resumen general, vista por objeto/tabla con flujo de control en **lenguaje natur
 
 ![Panel de riesgos: hallazgos por severidad y categoría con el detalle de cada regla](docs/readme-risks.png)
 
-El panel de riesgos clasifica cada hallazgo por **severidad** y **categoría**. Sobre WWI: **112 hallazgos** (1 crítico, 20 altos, 44 medios, 47 bajos) — Integridad 40, Diseño 29, Mantenibilidad 18, Seguridad 13, Rendimiento 7, Robustez 5 —, con el detalle de la regla — desde una **inyección SQL** (el único crítico: `Configuration_ApplyColumnstoreIndexing` construye `@SQL` desde datos de `sys.indexes`) hasta escrituras sin transacción, complejidad excesiva o problemas de integridad. La auditoría de seguridad y calidad que normalmente requiere una herramienta de pago, en un panel.
+El panel de riesgos clasifica cada hallazgo por **severidad** y **categoría**. Sobre WWI: **112 hallazgos** (1 crítico, 20 altos, 44 medios, 47 bajos) — Integridad 40, Diseño 29, Mantenibilidad 18, Seguridad 13, Rendimiento 7, Robustez 5 —, con el detalle de la regla — desde una **inyección SQL** (el único crítico: `Configuration_ApplyColumnstoreIndexing` construye `@SQL` desde datos de `sys.indexes`) hasta escrituras sin transacción, complejidad excesiva o problemas de integridad. Son reglas derivadas del AST, con severidad y categoría; no sustituyen a una revisión de seguridad.
 
 ## En tu CI/CD — un gate de impacto en cada PR
 
@@ -239,9 +250,9 @@ El `change_map_diff.json` queda como artefacto: qué objetos cambiaron y a quié
 - **Guarda el lineage analizado, no el fuente.** Pregunta "¿qué depende de X?", no "muéstrame el T-SQL de X".
 - **El SQL dinámico se resuelve solo hasta donde es reconstruible estáticamente.** Cuando el destino depende de un parámetro de entrada —el caso típico es `QUOTENAME(@DatabaseName)` para atacar otra base— no hay forma de saberlo sin ejecutar, y el paso se marca como no resuelto en vez de adivinar un destino falso. **Cuánto pesa esto en código real: en el First Responder Kit, 197 de 277 pasos dinámicos (el 71%) quedan sin resolver.** El motor lo cuenta objeto a objeto en `unresolved_dynamic_sql_steps`, así que sabes exactamente de cuánto no te puedes fiar. En WideWorldImporters, en cambio, se resuelven los 34 de 34: la diferencia está en si el destino depende de un parámetro o no.
 - **Sin scoring de confianza todavía**: una arista cierta y una inferida se ven igual (planificado).
-- **Completitud alta, no total**: la ausencia de una arista es "no detectada", no "probado que no existe".
+- **El lineage de columna es del 94,2 %, no del 100 %.** Medido sobre 7.786 referencias de un corpus de producción (DNN Platform), con 67,8 % de precisión y 453 referencias que no se ven. La ausencia de una arista es "no detectada", no "probado que no existe". Ver [`eval/column-recall/`](eval/column-recall/).
 - **Te da el mapa de dependencias, no el plan de migración.** Responde qué depende de qué; la semántica, la calidad del dato y las reglas de negocio siguen siendo trabajo tuyo.
-- **Probado a la escala de estos cuatro corpus** (el mayor: 2,3 MB, 11 objetos, un procedimiento de 10.659 líneas). No hay todavía medición sobre una base de miles de procedimientos.
+- **Probado a la escala de estos cinco corpus** (el mayor por objetos: 739 módulos de DNN Platform; el mayor por tamaño de un solo procedimiento: `sp_Blitz`, 478 KB y 10.659 líneas). No hay todavía medición sobre una base de miles de procedimientos.
 
 ## Pruébalo contra tu base de datos
 
