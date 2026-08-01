@@ -17,6 +17,16 @@ public static class SqlFileLoader
         @"CREATE\s+(?:OR\s+ALTER\s+)?(?:PROC(?:EDURE)?|FUNCTION|TRIGGER|VIEW|TABLE|SYNONYM)\s+(\[?[\w$]+\]?)(?:\s*\.\s*(\[?[\w$]+\]?))?",
         RegexOptions.IgnoreCase);
 
+    /// <summary>
+    /// sqlcmd batch separator: GO alone on its own line (optionally with a repeat
+    /// count). The trailing [ \t\r]* is load-bearing: scripts are CRLF and in
+    /// multiline mode "$" matches before the \n but NOT before the \r, so a plain
+    /// "GO[ \t]*$" silently never matches a Windows-authored script.
+    /// </summary>
+    private static readonly Regex BatchSeparator = new(
+        @"^[ \t]*GO[ \t]*\d*[ \t\r]*$",
+        RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
     public static int Run(string database, string outputPath, IReadOnlyList<string> sqlFilePaths)
     {
         var files = ExpandPaths(sqlFilePaths);
@@ -27,12 +37,42 @@ public static class SqlFileLoader
         }
 
         var entries = new List<SourceObject>();
+        var seenNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+        void Add(string schema, string table, string body, string file)
+        {
+            var name = $"{database}::{schema}.{table}";
+            if (seenNames.TryGetValue(name, out var firstFile))
+            {
+                Console.Error.WriteLine($"  ! duplicate object {name} (already defined in {firstFile}); keeping the first");
+                return;
+            }
+            seenNames[name] = file;
+            entries.Add(new SourceObject(name, body));
+        }
+
         foreach (var file in files)
         {
             var sql = File.ReadAllText(file);
-            var (schema, table) = DetectObjectName(sql) ?? ("dbo", Path.GetFileNameWithoutExtension(file));
-            entries.Add(new SourceObject($"{database}::{schema}.{table}", sql));
-            Console.WriteLine($"  + {file} -> {database}::{schema}.{table}");
+
+            // A file may hold a whole scripted database (SSMS "Generate Scripts",
+            // DNN/DotNetNuke .SqlDataProvider, Redgate output...). Split it on GO
+            // batches and emit one object per CREATE batch. Files that yield a
+            // single object keep the WHOLE file as their SQL, exactly as before,
+            // so per-object corpora (their SET ANSI_NULLS/GO preamble included)
+            // are byte-for-byte unaffected.
+            var objectBatches = SplitIntoObjectBatches(sql);
+            if (objectBatches.Count > 1)
+            {
+                foreach (var (schema, table, batch) in objectBatches)
+                    Add(schema, table, batch, file);
+                Console.WriteLine($"  + {file} -> {objectBatches.Count} objects (multi-object script)");
+                continue;
+            }
+
+            var (fileSchema, fileTable) = DetectObjectName(sql) ?? ("dbo", Path.GetFileNameWithoutExtension(file));
+            Add(fileSchema, fileTable, sql, file);
+            Console.WriteLine($"  + {file} -> {database}::{fileSchema}.{fileTable}");
         }
 
         var jsonOptions = new JsonSerializerOptions
@@ -66,6 +106,28 @@ public static class SqlFileLoader
             {
                 result.Add(path);
             }
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Splits a script on GO batch separators and returns the batches that define
+    /// an object, with the object name detected from each batch. Batches without a
+    /// CREATE (SET options, GRANTs, INSERT seed data, index DDL...) are dropped:
+    /// they belong to no object and would otherwise be attributed to whichever
+    /// CREATE happened to come first in the file.
+    /// </summary>
+    private static List<(string Schema, string Name, string Sql)> SplitIntoObjectBatches(string sql)
+    {
+        var result = new List<(string, string, string)>();
+        foreach (var raw in BatchSeparator.Split(sql))
+        {
+            var batch = raw.Trim();
+            if (batch.Length == 0)
+                continue;
+            if (DetectObjectName(batch) is not { } named)
+                continue;
+            result.Add((named.schema, named.name, batch));
         }
         return result;
     }
