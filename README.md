@@ -53,7 +53,7 @@ Es una **herramienta de utilidad**, hecha por una persona, no un producto de gob
 **Dónde no aporta, o directamente hay opciones mejores:**
 
 - **Es monodialecto.** Solo T-SQL. Si necesitas varios motores, [SQLGlot](https://github.com/tobymao/sqlglot) es más completo y más maduro — de hecho lo usamos **como oráculo** para validar nuestro propio lineage de columna (ver [`eval/sqlglot-oracle/`](eval/sqlglot-oracle/)).
-- **El lineage de columna no es completo.** 94,2 % de cobertura medida sobre corpus grande, con 67,8 % de precisión. Hay 453 referencias que no vemos, y están [documentadas](eval/column-recall/).
+- **El lineage de columna no es completo.** 94,2 % de cobertura medida sobre corpus grande, y 453 referencias que no vemos. Están [documentadas](eval/column-recall/).
 - **No es gobierno del dato.** Sin catálogo, glosario, permisos, ni linaje entre sistemas.
 - **No hay soporte ni garantías.** Es MIT, se publica tal cual.
 
@@ -86,9 +86,22 @@ No es solo WideWorldImporters. Se ejecuta contra **cinco corpus**, tres de ellos
 > pequeñas y de una construcción concreta (columnas de salida de vistas). Medido
 > sobre un corpus grande de T-SQL de producción —679 procedimientos de DNN
 > Platform, **7.786** referencias de columna según `sys.dm_sql_referenced_entities`—
-> la cobertura real es del **94,2 %**, con una precisión del **67,8 %**. Quedan
-> **453 referencias que el motor no ve**. El detalle, el corpus y el gate que lo
-> mide están en [`eval/column-recall/`](eval/column-recall/).
+> la cobertura real es del **94,2 %**, y quedan **453 referencias que el motor no
+> ve**. El detalle, el corpus y el gate que lo mide están en
+> [`eval/column-recall/`](eval/column-recall/).
+
+Sobre la precisión, medida por clase de evidencia en ese mismo corpus:
+
+| Cómo se supo la lectura | Aristas | Respaldadas por el oráculo |
+| --- | ---: | ---: |
+| Escrita literalmente en el SQL | 3.870 | **99,8 %** |
+| Expandida de un `SELECT *` | 1.523 | **98,0 %** |
+| Alcanzada atravesando una vista | 2.398 | 4,2 % |
+
+La tercera fila **no es un fallo**: son lecturas que resolvemos hasta la tabla base
+mientras el oráculo se para en la vista. Van marcadas con `via_view` en el grafo
+para que se puedan distinguir. Medir sin separarlas daba una precisión global del
+67,8 % que escondía que la extracción directa acierta el 99,8 %.
 
 Y contra corpus con oráculo propio:
 
