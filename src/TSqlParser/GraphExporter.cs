@@ -510,6 +510,15 @@ public static class GraphExporter
                                     Type = "READS_COLUMN",
                                     StartNodeId = stepId,
                                     EndNodeId = baseColId,
+                                    // Misma marca que la arista READS_FROM de arriba: esta lectura no está
+                                    // escrita en el SQL, se alcanza atravesando la vista hasta su tabla base.
+                                    // Sin distinguirla, un consumidor no puede saber si "lee Portals.Name"
+                                    // es literal o transitivo — y al medir contra las DMV (que se paran en
+                                    // la vista) toda esta clase parece un fallo cuando no lo es.
+                                    Properties = new Dictionary<string, object>
+                                    {
+                                        ["via_view"] = targetObjId,
+                                    },
                                 });
                             }
                         }

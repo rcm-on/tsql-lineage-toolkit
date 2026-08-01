@@ -55,6 +55,19 @@ public class ColumnRecallGateTests
     //   estricto  0,689314
     //   laxo      0,941660
     //   precisión 0,678080
+    /// <summary>
+    /// Suelo de precisión POR CLASE de evidencia, medido sobre este corpus. Es la base de una
+    /// puntuación de confianza defendible: si las aristas expandidas de un `SELECT *` aciertan
+    /// el 98 % sobre 1.523 casos reales, esa arista vale 0,98 — y eso no es una opinión que
+    /// discutir, es una cuenta. La precisión global (67,8 %) no sirve para esto: mezcla clases
+    /// y esconde que la extracción directa acierta el 99,8 %.
+    /// </summary>
+    private static readonly (string Class, double Floor)[] MinPrecisionByClass =
+    {
+        ("direct",        0.997),   // medido 99,8 % sobre 3.870 aristas
+        ("star_expanded", 0.975),   // medido 98,0 % sobre 1.523 aristas
+    };
+
     private const double MinStrictRecall = 0.6893;
     private const double MinLooseRecall  = 0.9416;
     private const double MinPrecision    = 0.6780;
@@ -128,6 +141,64 @@ public class ColumnRecallGateTests
         return refs;
     }
 
+    /// <summary>
+    /// Igual que <see cref="BuildGraphRefs"/> pero agrupando por CÓMO se supo cada arista.
+    /// Una precisión global engaña: mezcla lecturas escritas literalmente en el SQL con
+    /// lecturas alcanzadas atravesando una vista, y el oráculo (que se para en la vista)
+    /// no puede contener estas últimas. Sin separar clases, la global daba 67,8 % y la
+    /// expansión de estrella parecía la peor clase del motor (43,7 %) cuando en realidad
+    /// es de las mejores. Cada clase lleva su propio suelo.
+    /// </summary>
+    private static Dictionary<string, HashSet<Ref>> BuildGraphRefsByClass(GraphPayload graph)
+    {
+        var owner = graph.Relationships
+            .Where(r => r.Type == "HAS_STEP")
+            .GroupBy(r => r.EndNodeId)
+            .ToDictionary(g => g.Key, g => g.First().StartNodeId, StringComparer.Ordinal);
+
+        static string Prop(Dictionary<string, object> p, string key) =>
+            p.TryGetValue(key, out var v) && v is not null ? v.ToString() ?? "" : "";
+        static string Plain(string s) => s.Replace("[", "").Replace("]", "").ToLowerInvariant();
+
+        var columns = new Dictionary<string, (string Entity, string Column)>(StringComparer.Ordinal);
+        foreach (var n in graph.Nodes)
+        {
+            if (!n.Labels.Contains("Column")) continue;
+            var table = Plain(Prop(n.Properties, "table"));
+            var col = Plain(Prop(n.Properties, "name"));
+            if (table.Length == 0 || col.Length == 0) continue;
+            columns[n.Id] = (table.Contains('.') ? table : "dbo." + table, col);
+        }
+
+        // Pasos cuya lista de selección era "SELECT *": sus columnas no están escritas en
+        // el SQL, se expandieron desde el DDL de la tabla.
+        var starSteps = graph.Nodes
+            .Where(n => n.Labels.Contains("Step")
+                        && n.Properties.TryGetValue("select_star", out var s) && s is true)
+            .Select(n => n.Id)
+            .ToHashSet(StringComparer.Ordinal);
+
+        static string ModuleOf(string id)
+        {
+            var idx = id.IndexOf("::", StringComparison.Ordinal);
+            return Plain(idx >= 0 ? id[(idx + 2)..] : id);
+        }
+
+        var byClass = new Dictionary<string, HashSet<Ref>>(StringComparer.Ordinal);
+        foreach (var r in graph.Relationships)
+        {
+            if (!ColumnRefEdges.Contains(r.Type)) continue;
+            if (!columns.TryGetValue(r.EndNodeId, out var col)) continue;
+            var cls = r.Properties.ContainsKey("via_view") ? "via_view"
+                    : starSteps.Contains(r.StartNodeId) ? "star_expanded"
+                    : "direct";
+            var objId = owner.TryGetValue(r.StartNodeId, out var o) ? o : r.StartNodeId.Split("#step")[0];
+            (byClass.TryGetValue(cls, out var set) ? set : byClass[cls] = new HashSet<Ref>())
+                .Add(new Ref(ModuleOf(objId), col.Entity, col.Column));
+        }
+        return byClass;
+    }
+
     private static (HashSet<Ref> Oracle, HashSet<Ref> Graph) Measure()
     {
         var oracle = LoadOracle();
@@ -161,6 +232,50 @@ public class ColumnRecallGateTests
         Assert.True(strictRecall >= MinStrictRecall, "Regresión en recall estricto.\n" + report);
         Assert.True(looseRecall >= MinLooseRecall, "Regresión en recall laxo.\n" + report);
         Assert.True(precision >= MinPrecision, "Regresión en precisión (el motor emite más aristas sin respaldo).\n" + report);
+    }
+
+    /// <summary>
+    /// Precisión POR CLASE de evidencia, que es lo que puede sostener una puntuación de
+    /// confianza: la confianza de una arista es la precisión histórica de su clase, medida
+    /// sobre este corpus, no un número puesto a ojo.
+    ///
+    /// `via_view` queda deliberadamente FUERA de los suelos: son lecturas alcanzadas
+    /// atravesando una vista hasta su tabla base, y el oráculo se para en la vista, así que
+    /// por construcción casi ninguna está respaldada (~4 %). No es un fallo, es otra
+    /// convención — y meterla en un suelo sería fijar como invariante un artefacto de la
+    /// comparación. Se informa, no se gatea.
+    /// </summary>
+    [Fact]
+    public void ColumnLineage_PrecisionPerEvidenceClass()
+    {
+        var oracle = LoadOracle();
+        var (results, tableSchemas) = InputAnalyzer.Analyze(Path.Combine(EvalDir(), "dnn-corpus.json"));
+        var byClass = BuildGraphRefsByClass(GraphExporter.Build(results, includeColumns: true, tableSchemas));
+
+        // Módulos para los que el oráculo no aporta NINGUNA columna (typically por una tabla
+        // #temp, que impide a las DMV resolver dependencias a nivel columna). Ahí el ciego es
+        // el oráculo: juzgar nuestras aristas contra él sería contarlas mal.
+        var modulesSeen = oracle.Select(r => r.Module).ToHashSet(StringComparer.Ordinal);
+
+        var report = new List<string>();
+        var failures = new List<string>();
+        foreach (var (cls, floor) in MinPrecisionByClass)
+        {
+            var edges = byClass.TryGetValue(cls, out var set)
+                ? set.Where(r => modulesSeen.Contains(r.Module)).ToHashSet()
+                : new HashSet<Ref>();
+            Assert.True(edges.Count > 0, $"La clase '{cls}' no produjo ninguna arista: la clasificación está rota.");
+            var precision = (double)edges.Count(oracle.Contains) / edges.Count;
+            report.Add($"  {cls,-14} {edges.Count,6} aristas   precisión {precision:P1}  (suelo {floor:P1})");
+            if (precision < floor)
+                failures.Add(cls);
+        }
+
+        var viaView = byClass.TryGetValue("via_view", out var vv) ? vv.Count : 0;
+        report.Add($"  {"via_view",-14} {viaView,6} aristas   (informativa, no gateada)");
+
+        Assert.True(failures.Count == 0,
+            "Cae la precisión de: " + string.Join(", ", failures) + "\n" + string.Join("\n", report));
     }
 
     /// <summary>
