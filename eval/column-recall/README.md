@@ -90,11 +90,11 @@ cambios en la convención, no como nota.
 ## Línea base (2026-08-01)
 
 ```text
-oráculo=7786   aristas del grafo=7816
+oráculo=7786   aristas del grafo=7915
 
-  recall laxo     (módulo,columna)         = 93,08 %   (6797/7302)  <- cobertura real
-  recall estricto (módulo,ENTIDAD,columna) = 67,69 %   (5270/7786)
-  precisión                                = 67,43 %   (5270/7816)
+  recall laxo     (módulo,columna)         = 94,17 %   <- cobertura real
+  recall estricto (módulo,ENTIDAD,columna) = 68,93 %
+  precisión                                = 67,81 %
 ```
 
 Las aristas que cuentan como referencia son `READS_COLUMN`, `FILTERS_ON` y
@@ -104,8 +104,11 @@ columnas destino de todo `UPDATE ... SET` y hunde la medida 20 puntos. Añadir
 `CONSTRAINS`/`ASSIGNED_FROM`/`DERIVES_FROM` no sube el recall ni una décima y
 desploma la precisión al 42,7 %, así que se quedan fuera.
 
-El punto ciego restante son **533 referencias** que el motor no ve: 326 de tablas,
-190 de vistas y 17 de entidades no resueltas (temporales, CTE, alias).
+El punto ciego restante son **425 referencias** que el motor no ve.
+
+Recorrido de la cobertura: **67,9 % → 89,1 %** (contar `WRITES_COLUMN`) **→ 93,1 %**
+(expandir `SELECT alias.*`) **→ 93,5 %** (`SELECT @var = Col`) **→ 94,2 %**
+(resolver columnas sin cualificar contra el esquema en JOINs).
 
 El plan para subir estas cifras está en [notes/task-column-recall.md](../../notes/task-column-recall.md).
 
