@@ -87,21 +87,24 @@ Por tanto: **la cobertura real del motor es el 67,9 % (recall laxo), y el punto
 ciego real son las 2445 referencias que no ve.** El recall estricto sirve como
 detector de cambios en la convención, no como nota.
 
-## Línea base (2026-08-01, commit 14b0ca9)
+## Línea base (2026-08-01)
 
 ```text
-oráculo=7786   aristas del grafo=5892
+oráculo=7786   aristas del grafo=7816
 
-  recall laxo     (módulo,columna)         = 67,90 %   (4959/7302)   <- cobertura real
-  recall estricto (módulo,ENTIDAD,columna) = 43,96 %   (3423/7786)
-  precisión                                = 58,10 %   (3423/5892)
-  brecha de CONVENCIÓN (laxo - estricto)   = 23,9 pts
+  recall laxo     (módulo,columna)         = 93,08 %   (6797/7302)  <- cobertura real
+  recall estricto (módulo,ENTIDAD,columna) = 67,69 %   (5270/7786)
+  precisión                                = 67,43 %   (5270/7816)
 ```
 
-El punto ciego real son **2445 referencias que el motor no ve**, y 2196 de ellas
-son columnas de **tablas**, no de vistas. El 45 % de las pérdidas está en módulos
-con `SELECT *`, pero aun excluyéndolos el recall estricto se queda en 50 %, así
-que `SELECT *` no lo explica todo: falta diagnóstico del residuo.
+Las aristas que cuentan como referencia son `READS_COLUMN`, `FILTERS_ON` y
+`WRITES_COLUMN`. Las tres: el oráculo no distingue lectura de escritura, y dejar
+fuera `WRITES_COLUMN` (el error de la primera versión de este gate) descarta las
+columnas destino de todo `UPDATE ... SET` y hunde la medida 20 puntos. Añadir
+`CONSTRAINS`/`ASSIGNED_FROM`/`DERIVES_FROM` no sube el recall ni una décima y
+desploma la precisión al 42,7 %, así que se quedan fuera.
+
+El punto ciego restante son **505 referencias** que el motor no ve.
 
 El plan para subir estas cifras está en [notes/task-column-recall.md](../../notes/task-column-recall.md).
 
