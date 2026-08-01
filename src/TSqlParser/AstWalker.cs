@@ -373,12 +373,43 @@ public static class AstWalker
                         List<string> selColumns;
                         List<TableColumnRef> extraReads;
 
-                        var isSelectStar = qs.SelectElements.Any(e => e is SelectStarExpression);
+                        var starExprs = qs.SelectElements.OfType<SelectStarExpression>().ToList();
+                        var isSelectStar = starExprs.Count > 0;
                         if (isSelectStar)
                         {
                             // "SELECT * FROM T": expand to T's full column list when known.
-                            selColumns = (tableRefs.Count == 1 ? ResolveAllColumns(selTarget, ctx) : null) ?? new List<string>();
-                            extraReads = BuildExtraReads(tableRefs, new List<TableColumnRef>(), skipFirst: true);
+                            //
+                            // Con varias tablas en el FROM esto se rendía y devolvía la lista
+                            // vacía, que es justo la forma más común en código real:
+                            // "SELECT jc.*, u.* FROM A jc JOIN B u" o "SELECT R.*, UR.IsOwner
+                            // FROM ...". Medido sobre el corpus DNN, rendirse ahí perdía 287
+                            // columnas en 23 módulos. Ahora un "*" sin cualificar expande TODAS
+                            // las tablas del FROM y un "alias.*" expande sólo la tabla a la que
+                            // ese alias apunta.
+                            var hasUnqualifiedStar = starExprs.Any(s => s.Qualifier is not { Identifiers.Count: > 0 });
+                            var starQualifiers = starExprs
+                                .Where(s => s.Qualifier is { Identifiers.Count: > 0 })
+                                .Select(s => s.Qualifier!.Identifiers[^1].Value)
+                                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                            // El cualificador puede ser el alias ("jc") o el propio nombre de la
+                            // tabla, con o sin esquema ("dbo.Users" -> "Users").
+                            bool StarCovers((string Alias, string Table) tr) =>
+                                hasUnqualifiedStar
+                                || starQualifiers.Contains(tr.Alias)
+                                || starQualifiers.Contains(tr.Table)
+                                || starQualifiers.Contains(SqlText.NormalizeRef(tr.Table).Split('.')[^1]);
+
+                            selColumns = (tableRefs.Count > 0 && StarCovers(tableRefs[0])
+                                ? ResolveAllColumns(selTarget, ctx)
+                                : null) ?? new List<string>();
+
+                            var starExtras = new List<TableColumnRef>();
+                            foreach (var tr in tableRefs.Skip(1))
+                                if (StarCovers(tr) && ResolveAllColumns(tr.Table, ctx) is { Count: > 0 } starCols)
+                                    starExtras.Add(new TableColumnRef(tr.Table, starCols.ToArray()));
+
+                            extraReads = BuildExtraReads(tableRefs, starExtras, skipFirst: true);
                         }
                         else
                         {

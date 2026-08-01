@@ -52,12 +52,12 @@ public class ColumnRecallGateTests
     // Suelos medidos sobre este corpus (2026-08-01). Bajar de aquí es una regresión. Se ponen
     // truncados, no redondeados: el informe imprime 89,1 % pero el valor real es 0,890578, y
     // un suelo de 0,8908 haría fallar al propio commit que lo mide.
-    //   estricto  5005/7786 = 0,642820
-    //   laxo      6503/7302 = 0,890578
-    //   precisión 5005/7480 = 0,669118
-    private const double MinStrictRecall = 0.6428;
-    private const double MinLooseRecall  = 0.8905;
-    private const double MinPrecision    = 0.6691;
+    //   estricto  5270/7786 = 0,676856
+    //   laxo      6797/7302 = 0,930841
+    //   precisión 5270/7816 = 0,674258
+    private const double MinStrictRecall = 0.6768;
+    private const double MinLooseRecall  = 0.9308;
+    private const double MinPrecision    = 0.6742;
 
     private static string EvalDir()
     {
