@@ -434,7 +434,7 @@ public static class AstWalker
                                 refs.AddRange(collector.Refs);
                             }
                             List<TableColumnRef> extras;
-                            (selColumns, extras) = SplitColumnsByTable(refs, tableRefs);
+                            (selColumns, extras) = SplitColumnsByTable(refs, tableRefs, tn => ResolveAllColumns(tn, ctx));
                             // CROSS/OUTER APPLY xmlcol.nodes() shreds an XML column: that
                             // column is genuinely read, but its only mention is the apply
                             // target (a function table reference), invisible to the select
@@ -479,7 +479,7 @@ public static class AstWalker
                                 continue;
                             var setExtra = BuildExtraReads(setRefs, new List<TableColumnRef>(), skipFirst: true);
                             var (setFilterColumns, _, setFilterOpKinds, setFilterText, setFilterKind) =
-                                ExtractFilterColumnsCore(setQs.WhereClause, setQs.FromClause.TableReferences, setRefs, cteNames, cteBaseTables);
+                                ExtractFilterColumnsCore(setQs.WhereClause, setQs.FromClause.TableReferences, setRefs, cteNames, cteBaseTables, tn => ResolveAllColumns(tn, ctx));
                             AddLink(ctx, condStack, "SELECT", setRefs[0].Table, stmt, cteNames, cteBaseTables, extraReads: setExtra,
                                 filterColumnsOverride: setFilterColumns, filterOpKindsOverride: setFilterOpKinds,
                                 filterTextOverride: setFilterText, filterKindOverride: setFilterKind);
@@ -793,7 +793,7 @@ public static class AstWalker
                     continue;
 
                 var (filterColumns, _, filterOpKinds, filterText, filterKind) =
-                    ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables);
+                    ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables, tn => ResolveAllColumns(tn, ctx));
 
                 if (filterColumns.Count == 0)
                     continue; // nothing this branch contributes - don't manufacture an empty step
@@ -919,7 +919,7 @@ public static class AstWalker
                 DeleteStatement del2 when TargetName(del2.DeleteSpecification?.Target, cteNames) is { Length: > 0 } tn => new List<(string Alias, string Table)> { ("", tn) },
                 _ => new List<(string Alias, string Table)>(),
             };
-            (filterColumns, nestedTableRefs, filterOpKinds, filterText, filterKind) = ExtractFilterColumns(stmt, currentTableRefs, cteNames, cteBaseTables);
+            (filterColumns, nestedTableRefs, filterOpKinds, filterText, filterKind) = ExtractFilterColumns(stmt, currentTableRefs, cteNames, cteBaseTables, tn => ResolveAllColumns(tn, ctx));
         }
 
         // A nested EXISTS/IN/scalar-comparison subquery's own table (e.g.
@@ -958,7 +958,8 @@ public static class AstWalker
     /// MERGE's ON clause, EXEC, ...) simply yield no filter columns here.
     /// </summary>
     private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs, List<string> FilterOpKinds, string FilterText, string FilterKind) ExtractFilterColumns(
-        TSqlStatement stmt, List<(string Alias, string Table)> tableRefs, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+        TSqlStatement stmt, List<(string Alias, string Table)> tableRefs, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables,
+        Func<string, List<string>?>? columnsOf = null)
     {
         WhereClause? whereClause = stmt switch
         {
@@ -976,7 +977,7 @@ public static class AstWalker
             _ => null,
         }) ?? new List<TableReference>();
 
-        return ExtractFilterColumnsCore(whereClause, tRefs, tableRefs, cteNames, cteBaseTables);
+        return ExtractFilterColumnsCore(whereClause, tRefs, tableRefs, cteNames, cteBaseTables, columnsOf);
     }
 
     /// <summary>
@@ -996,7 +997,8 @@ public static class AstWalker
     /// </summary>
     private static (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs, List<string> FilterOpKinds, string FilterText, string FilterKind) ExtractFilterColumnsCore(
         WhereClause? whereClause, IList<TableReference> fromTableReferences, List<(string Alias, string Table)> tableRefs,
-        HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+        HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables,
+        Func<string, List<string>?>? columnsOf = null)
     {
         var filterRefs = new List<(string? Qualifier, string Column)>();
         var nestedTableRefs = new List<(string Alias, string Table)>();
@@ -1036,7 +1038,7 @@ public static class AstWalker
             CollectFrom(expr);
 
         var mergedTableRefs = nestedTableRefs.Count > 0 ? tableRefs.Concat(nestedTableRefs).ToList() : tableRefs;
-        var (primaryCols, extras) = SplitColumnsByTable(filterRefs, mergedTableRefs);
+        var (primaryCols, extras) = SplitColumnsByTable(filterRefs, mergedTableRefs, columnsOf);
 
         var result = new List<TableColumnRef>();
         if (primaryCols.Count > 0 && tableRefs.Count > 0)
@@ -1143,7 +1145,7 @@ public static class AstWalker
                 selectCols[i].Expression.Accept(collector);
                 if (collector.Refs.Count == 0)
                     continue;   // OUTPUT $action / literal - no column source
-                var (primaryCols, exs) = SplitColumnsByTable(collector.Refs, tableRefs);
+                var (primaryCols, exs) = SplitColumnsByTable(collector.Refs, tableRefs, tn => ResolveAllColumns(tn, ctx));
                 var exprText = SqlText.Generate(selectCols[i].Expression);
                 var exprOps = OperatorClassifier.Classify(selectCols[i].Expression);
                 if (primaryCols.Count > 0)
@@ -1514,8 +1516,38 @@ public static class AstWalker
     /// - Unqualified: attributed to tableRefs[0] only when it's the sole FROM table
     ///   (otherwise ambiguous - dropped rather than guessed).
     /// </summary>
+    /// <summary>
+    /// Índice en <paramref name="tableRefs"/> de la ÚNICA tabla cuyo esquema conocido declara
+    /// esa columna, o null si no la tiene ninguna o la tienen varias. Deliberadamente no
+    /// desempata: en un JOIN, dos tablas con "PortalID" son lo normal y elegir una al azar
+    /// metería una arista falsa, que cuesta precisión y engaña al análisis de impacto.
+    /// </summary>
+    private static int? ResolveUnqualified(
+        string column, List<(string Alias, string Table)> tableRefs, Func<string, List<string>?> columnsOf)
+    {
+        int? found = null;
+        for (var i = 0; i < tableRefs.Count; i++)
+        {
+            if (tableRefs[i].Table.Length == 0) continue;
+            var cols = columnsOf(tableRefs[i].Table);
+            if (cols == null || !cols.Contains(column, StringComparer.OrdinalIgnoreCase)) continue;
+            if (found != null) return null;   // ambigua
+            found = i;
+        }
+        return found;
+    }
+
+    /// <param name="columnsOf">
+    /// Resolvedor opcional tabla -&gt; lista de columnas conocidas. Sirve para colocar las
+    /// columnas SIN cualificar cuando hay varias tablas en el FROM ("WHERE Archived = 1"
+    /// con dos tablas unidas): sin él la columna se descarta y su lectura se pierde. Solo
+    /// se asigna cuando UNA sola tabla del FROM tiene ese nombre de columna; si hay empate
+    /// se sigue descartando, porque adivinar costaría precisión. Los llamadores que no
+    /// tienen el catálogo a mano lo pasan nulo y mantienen el comportamiento anterior.
+    /// </param>
     private static (List<string> Primary, List<TableColumnRef> Extras) SplitColumnsByTable(
-        IEnumerable<(string? Qualifier, string Column)> refs, List<(string Alias, string Table)> tableRefs)
+        IEnumerable<(string? Qualifier, string Column)> refs, List<(string Alias, string Table)> tableRefs,
+        Func<string, List<string>?>? columnsOf = null)
     {
         var primary = new List<string>();
         var primarySeen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -1538,6 +1570,11 @@ public static class AstWalker
             {
                 table = tableRefs[0].Table;
                 isPrimary = true;
+            }
+            else if (columnsOf != null && ResolveUnqualified(column, tableRefs, columnsOf) is { } hit)
+            {
+                table = tableRefs[hit].Table;
+                isPrimary = hit == 0;
             }
             else
             {
@@ -1956,10 +1993,10 @@ public static class AstWalker
                 sse.Expression.Accept(collector);
                 refs.AddRange(collector.Refs);
             }
-        var (selColumns, extras) = SplitColumnsByTable(refs, tableRefs);
+        var (selColumns, extras) = SplitColumnsByTable(refs, tableRefs, tn => ResolveAllColumns(tn, ctx));
         var extraReads = BuildExtraReads(tableRefs, extras, skipFirst: true);
 
-        var (filterColumns, nestedTableRefs, filterOpKinds, filterText, filterKind) = ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables);
+        var (filterColumns, nestedTableRefs, filterOpKinds, filterText, filterKind) = ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables, tn => ResolveAllColumns(tn, ctx));
         if (nestedTableRefs.Count > 0)
             foreach (var (_, nestedTable) in nestedTableRefs)
                 if (!extraReads.Any(e => string.Equals(e.Table, nestedTable, StringComparison.OrdinalIgnoreCase)))

@@ -52,12 +52,12 @@ public class ColumnRecallGateTests
     // Suelos medidos sobre este corpus (2026-08-01). Bajar de aquí es una regresión. Se ponen
     // TRUNCADOS, no redondeados: el informe imprime un decimal y poner el suelo en el valor
     // redondeado hace fallar al propio commit que lo mide (ya pasó dos veces).
-    //   estricto  0,681480
-    //   laxo      0,934538
-    //   precisión 0,675751
-    private const double MinStrictRecall = 0.6814;
-    private const double MinLooseRecall  = 0.9345;
-    private const double MinPrecision    = 0.6757;
+    //   estricto  0,689314
+    //   laxo      0,941660
+    //   precisión 0,678080
+    private const double MinStrictRecall = 0.6893;
+    private const double MinLooseRecall  = 0.9416;
+    private const double MinPrecision    = 0.6780;
 
     private static string EvalDir()
     {
