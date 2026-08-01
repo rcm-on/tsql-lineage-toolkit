@@ -24,6 +24,9 @@ jobs:
       - name: Test (Category!=Oracle)
         run: dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category!=Oracle"
 
+      - name: Test NetParser (Category!=Oracle)
+        run: dotnet test tests/NetParser.Tests/NetParser.Tests.csproj -c Release --filter "Category!=Oracle"
+
   # Oracle tests (ViewLineageOracleTests) compare against a live SQL Server holding
   # WideWorldImporters + AdventureWorks2019, and are excluded from the job above via
   # the Category!=Oracle filter (see docs/task-gates-dotnet.md, Paso 3).

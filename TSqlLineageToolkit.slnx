@@ -1,8 +1,12 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Parser.Contracts/Parser.Contracts.csproj" />
     <Project Path="src/TSqlParser/TSqlParser.csproj" />
+    <Project Path="src/NetParser/NetParser.csproj" />
+    <Project Path="src/ParserGeneral/ParserGeneral.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/TSqlParser.Tests/TSqlParser.Tests.csproj" />
+    <Project Path="tests/NetParser.Tests/NetParser.Tests.csproj" />
   </Folder>
 </Solution>
