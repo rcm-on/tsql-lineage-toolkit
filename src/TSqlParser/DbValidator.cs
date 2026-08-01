@@ -99,8 +99,27 @@ public static class DbValidator
         Console.WriteLine($"\nCALLS (EXEC) relationships in DB restricted to analyzed objects: {dbCallsInScope.Count}");
 
         var missingCalls = dbCallsInScope.Except(graphCalls).ToList();
+        var extraCalls = graphCalls.Except(dbCallsInScope).ToList();
         Console.WriteLine($"  In DB but missing from graph: {missingCalls.Count}");
         foreach (var c in missingCalls) Console.WriteLine($"    {c}");
+        // Symmetric side: without this, a phantom CALLS edge invented by the parser
+        // passes validation unnoticed (the FK check has always looked both ways).
+        Console.WriteLine($"  In graph but not in DB (within scope): {extraCalls.Count}");
+        foreach (var c in extraCalls) Console.WriteLine($"    {c}");
+
+        // Dependencies whose CALLER is a table (computed columns, CHECK/DEFAULT
+        // constraints invoking a UDF). They can never appear in graphCalls because
+        // tables are :Table nodes, not :SqlObject - report them so the gap stays
+        // visible instead of being silently filtered out by knownObjects. Views are
+        // materialised as BOTH :SqlObject and :Table, so pairs the graph already has
+        // a CALLS edge for are excluded, or this would cry wolf on every view->UDF.
+        var fromTables = dbCalls
+            .Where(c => knownTables.TryGetValue(c.db, out var t) && t.Contains(c.caller)
+                        && knownObjects.Contains(c.callee)
+                        && !graphCalls.Contains(c))
+            .ToList();
+        Console.WriteLine($"\nDependencies from TABLES to functions (computed columns / constraints): {fromTables.Count}");
+        foreach (var c in fromTables) Console.WriteLine($"    {c}  [not modelled]");
 
         return 0;
     }
@@ -165,7 +184,7 @@ public static class DbValidator
             FROM sys.sql_expression_dependencies dep
             JOIN sys.objects ref ON dep.referencing_id = ref.object_id
             JOIN sys.objects tgt ON dep.referenced_id   = tgt.object_id
-            WHERE ref.type IN ('P', 'TR')
+            WHERE ref.type IN ('P', 'TR', 'FN', 'IF', 'TF', 'V', 'U')
               AND tgt.type IN ('P', 'FN', 'IF', 'TF')
               AND ref.is_ms_shipped = 0
               AND tgt.is_ms_shipped = 0
