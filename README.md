@@ -53,7 +53,7 @@ Es una **herramienta de utilidad**, hecha por una persona, no un producto de gob
 **Dónde no aporta, o directamente hay opciones mejores:**
 
 - **Es monodialecto.** Solo T-SQL. Si necesitas varios motores, [SQLGlot](https://github.com/tobymao/sqlglot) es más completo y más maduro — de hecho lo usamos **como oráculo** para validar nuestro propio lineage de columna (ver [`eval/sqlglot-oracle/`](eval/sqlglot-oracle/)).
-- **El lineage de columna no es completo.** 94,2 % de cobertura medida sobre corpus grande, y 453 referencias que no vemos. Están [documentadas](eval/column-recall/).
+- **El lineage de columna no es completo.** 95,0 % de cobertura medida sobre corpus grande, y 363 referencias que no vemos. Están [documentadas](eval/column-recall/).
 - **No es gobierno del dato.** Sin catálogo, glosario, permisos, ni linaje entre sistemas.
 - **No hay soporte ni garantías.** Es MIT, se publica tal cual.
 
@@ -86,7 +86,7 @@ No es solo WideWorldImporters. Se ejecuta contra **cinco corpus**, tres de ellos
 > pequeñas y de una construcción concreta (columnas de salida de vistas). Medido
 > sobre un corpus grande de T-SQL de producción —679 procedimientos de DNN
 > Platform, **7.786** referencias de columna según `sys.dm_sql_referenced_entities`—
-> la cobertura real es del **94,2 %**, y quedan **453 referencias que el motor no
+> la cobertura real es del **95,0 %**, y quedan **363 referencias que el motor no
 > ve**. El detalle, el corpus y el gate que lo mide están en
 > [`eval/column-recall/`](eval/column-recall/).
 
@@ -95,7 +95,7 @@ Sobre la precisión, medida por clase de evidencia en ese mismo corpus:
 | Cómo se supo la lectura | Aristas | Respaldadas por el oráculo |
 | --- | ---: | ---: |
 | Escrita literalmente en el SQL | 3.870 | **99,8 %** |
-| Expandida de un `SELECT *` | 1.523 | **98,0 %** |
+| Expandida de un `SELECT *` | 1.589 | **98,0 %** |
 | Alcanzada atravesando una vista | 2.398 | 4,2 % |
 
 La tercera fila **no es un fallo**: son lecturas que resolvemos hasta la tabla base
@@ -265,7 +265,7 @@ El `change_map_diff.json` queda como artefacto: qué objetos cambiaron y a quié
 - **Sin scoring de confianza todavía**: una arista cierta y una inferida se ven igual. La base ya está medida —precisión por clase de evidencia, arriba— pero aún no se expone en la respuesta.
 - **El SQL dinámico parametrizado sí se puede recuperar, pero necesita runtime.** Estáticamente es imposible: si el nombre de la tabla se construye con `QUOTENAME(@TableName)`, no hay forma de saberlo sin ejecutar. Con `capture-plans` (sesión de Extended Events + `enrich-from-plans`) sí: sobre `Sequences.ReseedSequenceBeyondTableValues` de WideWorldImportersDW se recupera la arista a `Dimension.City`, invisible al análisis estático. **El coste es que hay que ejecutar la carga de trabajo**, y la cobertura depende de qué caminos se ejecuten — un plan es prueba de presencia, nunca de ausencia.
 - **Ojo al elegir dónde medirlo.** Sobre el First Responder Kit descubre 906 aristas y **ninguna es una tabla de negocio** (60 % temporales, 36 % internas de SQL Server): el FRK es tooling de DBA y su SQL dinámico ataca DMVs. Cualquier cifra de "aristas recuperadas" hay que leerla desglosada por tipo de destino.
-- **El lineage de columna es del 94,2 %, no del 100 %.** Medido sobre 7.786 referencias de un corpus de producción (DNN Platform), con 67,8 % de precisión y 453 referencias que no se ven. La ausencia de una arista es "no detectada", no "probado que no existe". Ver [`eval/column-recall/`](eval/column-recall/).
+- **El lineage de columna es del 95,0 %, no del 100 %.** Medido sobre 7.786 referencias de un corpus de producción (DNN Platform), y 363 referencias que no se ven. La ausencia de una arista es "no detectada", no "probado que no existe". Ver [`eval/column-recall/`](eval/column-recall/).
 - **Te da el mapa de dependencias, no el plan de migración.** Responde qué depende de qué; la semántica, la calidad del dato y las reglas de negocio siguen siendo trabajo tuyo.
 - **Probado a la escala de estos cinco corpus** (el mayor por objetos: 739 módulos de DNN Platform; el mayor por tamaño de un solo procedimiento: `sp_Blitz`, 478 KB y 10.659 líneas). No hay todavía medición sobre una base de miles de procedimientos.
 

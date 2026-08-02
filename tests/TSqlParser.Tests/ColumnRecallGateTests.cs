@@ -52,9 +52,9 @@ public class ColumnRecallGateTests
     // Suelos medidos sobre este corpus (2026-08-01). Bajar de aquí es una regresión. Se ponen
     // TRUNCADOS, no redondeados: el informe imprime un decimal y poner el suelo en el valor
     // redondeado hace fallar al propio commit que lo mide (ya pasó dos veces).
-    //   estricto  0,689314
-    //   laxo      0,941660
-    //   precisión 0,678080
+    //   estricto  0,697406
+    //   laxo      0,950288
+    //   precisión 0,680622
     /// <summary>
     /// Suelo de precisión POR CLASE de evidencia, medido sobre este corpus. Es la base de una
     /// puntuación de confianza defendible: si las aristas expandidas de un `SELECT *` aciertan
@@ -65,12 +65,12 @@ public class ColumnRecallGateTests
     private static readonly (string Class, double Floor)[] MinPrecisionByClass =
     {
         ("direct",        0.997),   // medido 99,8 % sobre 3.870 aristas
-        ("star_expanded", 0.975),   // medido 98,0 % sobre 1.523 aristas
+        ("star_expanded", 0.975),   // medido 98,0 % sobre 1.589 aristas
     };
 
-    private const double MinStrictRecall = 0.6893;
-    private const double MinLooseRecall  = 0.9416;
-    private const double MinPrecision    = 0.6780;
+    private const double MinStrictRecall = 0.6974;
+    private const double MinLooseRecall  = 0.9502;
+    private const double MinPrecision    = 0.6806;
 
     private static string EvalDir()
     {

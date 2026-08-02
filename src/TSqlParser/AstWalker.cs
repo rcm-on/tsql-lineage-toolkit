@@ -2418,8 +2418,22 @@ public static class AstWalker
         if (tableName.Length == 0)
             return null;
 
-        var key = $"{ctx.Db}::{SqlText.NormalizeRef(tableName)}";
-        return ctx.TryGetColumns(key, out var cols) ? cols : null;
+        var plain = SqlText.NormalizeRef(tableName);
+        if (ctx.TryGetColumns($"{ctx.Db}::{plain}", out var cols))
+            return cols;
+
+        // "SELECT * FROM TabModules" (sin esquema) frente a un catálogo que registra
+        // "dbo.TabModules": la clave sin cualificar no casa y la expansión devolvía la
+        // lista vacía, perdiendo la lista de selección entera. Medido sobre el corpus
+        // DNN eran 122 columnas en 29 módulos, la mayor bolsa de columnas que el motor
+        // no veía y para la que no había explicación.
+        //
+        // El respaldo solo se intenta cuando la búsqueda exacta ya ha fallado, así que
+        // nunca pisa una resolución buena; en el peor caso acierta el esquema por
+        // defecto, que es lo que SQL Server haría con ese mismo SQL.
+        return !plain.Contains('.') && ctx.TryGetColumns($"{ctx.Db}::dbo.{plain}", out var dboCols)
+            ? dboCols
+            : null;
     }
 
     /// <summary>
