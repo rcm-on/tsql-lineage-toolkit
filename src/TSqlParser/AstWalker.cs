@@ -409,6 +409,50 @@ public static class AstWalker
                                 if (StarCovers(tr) && ResolveAllColumns(tr.Table, ctx) is { Count: > 0 } starCols)
                                     starExtras.Add(new TableColumnRef(tr.Table, starCols.ToArray()));
 
+                            // Una estrella casi nunca viene sola: "SELECT el.*, ee.PortalId,
+                            // e.Message FROM ..." es la forma normal de ampliar una tabla con
+                            // campos de sus JOINs. Esta rama solo expandía la estrella y
+                            // DESCARTABA las columnas escritas explícitamente al lado.
+                            // Medido sobre el corpus DNN: la vista vw_EventLog y los tres
+                            // procedimientos que la leen perdían 12 columnas cada uno, justo
+                            // las 12 explícitas que siguen a "el.*".
+                            var explicitRefs = new List<(string? Qualifier, string Column)>();
+                            foreach (var el in qs.SelectElements)
+                            {
+                                var expr = el switch
+                                {
+                                    SelectScalarExpression sse => sse.Expression,
+                                    SelectSetVariable ssv      => ssv.Expression,
+                                    _                          => null,
+                                };
+                                if (expr == null)
+                                    continue;
+                                var explicitCollector = new QualifiedColumnCollector();
+                                expr.Accept(explicitCollector);
+                                explicitRefs.AddRange(explicitCollector.Refs);
+                            }
+
+                            if (explicitRefs.Count > 0)
+                            {
+                                var (explicitPrimary, explicitExtras) =
+                                    SplitColumnsByTable(explicitRefs, tableRefs, tn => ResolveAllColumns(tn, ctx));
+
+                                foreach (var c in explicitPrimary)
+                                    if (!selColumns.Contains(c, StringComparer.OrdinalIgnoreCase))
+                                        selColumns.Add(c);
+
+                                foreach (var ex in explicitExtras)
+                                {
+                                    var idx = starExtras.FindIndex(s => string.Equals(s.Table, ex.Table, StringComparison.OrdinalIgnoreCase));
+                                    if (idx < 0)
+                                        starExtras.Add(ex);
+                                    else
+                                        starExtras[idx] = new TableColumnRef(
+                                            ex.Table,
+                                            starExtras[idx].Columns.Union(ex.Columns, StringComparer.OrdinalIgnoreCase).ToArray());
+                                }
+                            }
+
                             extraReads = BuildExtraReads(tableRefs, starExtras, skipFirst: true);
                         }
                         else
