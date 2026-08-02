@@ -192,6 +192,32 @@ if (positional.Count >= 1 && positional[0] == "enrich-from-plans")
     return 0;
 }
 
+// "capture-plans <database> <outputDir> [--server <server>] [--exec-file <path.sql>] [--wait-seconds N]":
+// stands up an Extended Events session (query_post_execution_showplan +
+// event_file target) over <database>, runs the workload (from --exec-file, or
+// waits for the user to run it manually / --wait-seconds), stops the session,
+// correlates ADHOC/PREPARED dynamic-SQL events with their parent PROC via
+// nest_level, and writes one ShowPlanXML per procedure to <outputDir>/plans/
+// - ready to feed straight into "enrich-from-plans". Always stops/drops the
+// session and deletes the .xel files on the way out, even on failure:
+// query_post_execution_showplan is an expensive event to leave running.
+if (positional.Count >= 1 && positional[0] == "capture-plans")
+{
+    if (positional.Count < 3)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser capture-plans <database> <outputDir> [--server <server>] [--exec-file <path.sql>] [--wait-seconds N]");
+        return 1;
+    }
+    var serverArgIdx = Array.IndexOf(args, "--server");
+    var server = serverArgIdx >= 0 && serverArgIdx + 1 < args.Length ? args[serverArgIdx + 1] : @".\SQLEXPRESS";
+    var execFileArgIdx = Array.IndexOf(args, "--exec-file");
+    var execFile = execFileArgIdx >= 0 && execFileArgIdx + 1 < args.Length ? args[execFileArgIdx + 1] : null;
+    var waitArgIdx = Array.IndexOf(args, "--wait-seconds");
+    var waitSeconds = waitArgIdx >= 0 && waitArgIdx + 1 < args.Length && int.TryParse(args[waitArgIdx + 1], out var ws) ? ws : 0;
+
+    return XePlanCaptor.Run(server, positional[1], positional[2], execFile, waitSeconds);
+}
+
 // "plan-summary <plan.xml> [plan2.xml ...]": shows what tables each plan reads/writes.
 // Useful for quick inspection of a plan file before integrating into a graph.
 if (positional.Count >= 1 && positional[0] == "plan-summary")

@@ -218,6 +218,16 @@ public static class ExecutionPlanParser
                     table.StartsWith("Workfile", StringComparison.OrdinalIgnoreCase))
                     continue;
 
+                // Skip #temp tables and @table variables: the rest of the engine
+                // (GraphExporter.IsTempOrVariable) never materializes these as :Table
+                // nodes because they are not persisted objects, so a plan-sourced
+                // discovery here would just mint a phantom node PlanEnricher then
+                // cannot dedupe against static analysis. Measured on the FRK corpus:
+                // 64% of "discovered" edges were #temp/@table noise before this filter
+                // existed (547 temp + 34 table-variable out of 906).
+                if (IsTempOrVariable(table))
+                    continue;
+
                 var fullName = db.Length > 0
                     ? $"{db}.{schema}.{table}"
                     : schema.Length > 0 ? $"{schema}.{table}" : table;
@@ -230,6 +240,18 @@ public static class ExecutionPlanParser
 
     private static string Strip(string s) =>
         s.Trim().TrimStart('[').TrimEnd(']');
+
+    /// <summary>True for a table variable ("@T") or local/global temp table ("#T"/"##T")
+    /// reference, mirroring GraphExporter.IsTempOrVariable so the plan-enrichment path
+    /// applies the same exclusion as the rest of the engine.</summary>
+    private static bool IsTempOrVariable(string table)
+    {
+        var t = table.Trim().TrimStart('[').TrimEnd(']');
+        var lastDot = t.LastIndexOf('.');
+        if (lastDot >= 0)
+            t = t[(lastDot + 1)..];
+        return t.StartsWith('#') || t.StartsWith('@');
+    }
 
     private static long ParseLong(string? s)
     {
