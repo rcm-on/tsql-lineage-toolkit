@@ -452,6 +452,7 @@ public static class GraphExporter
                                     Type = "READS_COLUMN",
                                     StartNodeId = stepId,
                                     EndNodeId = colId,
+                                    Properties = { ["resolution"] = fl.SelectStar ? "star_expanded" : "direct" },
                                 });
                             }
                         }
@@ -518,6 +519,7 @@ public static class GraphExporter
                                     Properties = new Dictionary<string, object>
                                     {
                                         ["via_view"] = targetObjId,
+                                        ["resolution"] = "via_view",
                                     },
                                 });
                             }
@@ -559,7 +561,16 @@ public static class GraphExporter
                         foreach (var colName in fl.Columns)
                         {
                             var colId = GetOrCreateColumn(graph, columnIds, tableId, tableName, colName);
-                            var colRelProps = new Dictionary<string, object>();
+                            var colRelProps = new Dictionary<string, object>
+                            {
+                                // Clase de evidencia de esta arista: "direct" si la columna está
+                                // escrita literalmente en el SQL, "star_expanded" si vino de expandir
+                                // un SELECT * / alias.* contra el esquema. Mismo criterio que
+                                // BuildGraphRefsByClass en ColumnRecallGateTests, pero emitido aquí
+                                // en el punto donde el motor ya conoce la respuesta, no derivado
+                                // a posteriori.
+                                ["resolution"] = fl.SelectStar ? "star_expanded" : "direct",
+                            };
                             // ALTER's Detail ("DROP COLUMN"/"ALTER COLUMN") disambiguates a
                             // schema-changing WRITES_COLUMN from an ordinary INSERT/UPDATE
                             // write - an impact query for "what breaks if I drop this column"
@@ -709,7 +720,10 @@ public static class GraphExporter
                         foreach (var colName in filterCol.Columns)
                         {
                             var colId = GetOrCreateColumn(graph, columnIds, filterTableId, filterTableName, colName);
-                            var filtersProps = new Dictionary<string, object>();
+                            var filtersProps = new Dictionary<string, object>
+                            {
+                                ["resolution"] = fl.SelectStar ? "star_expanded" : "direct",
+                            };
                             AddOpKinds(filtersProps, fl.FilterOpKinds);
                             graph.Relationships.Add(new GraphRel
                             {

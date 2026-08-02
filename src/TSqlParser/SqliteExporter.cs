@@ -12,8 +12,13 @@ namespace TSqlParser;
 ///
 /// Schema:
 ///   nodes(id PK, label, name, cyclomatic_complexity, total_steps,
-///         dynamic_sql_steps, max_nesting, db)
+///         dynamic_sql_steps, unresolved_dynamic_sql_steps, max_nesting, db)
 ///   edges(src, dst, type, props)   -- props = JSON of the edge properties
+///
+/// unresolved_dynamic_sql_steps is the "no lo sé" signal for confidence buckets: it
+/// counts EXEC steps where dynamic SQL never resolved to a literal, so the object's
+/// READS_FROM/WRITES_TO/READS_COLUMN edges are a provable undercount, not a provable
+/// empty set. See scripts/lineage-queries.sql @col_impact.
 ///
 /// Per-object scalars (steps/dynamic/nesting) are rolled up here from Step nodes
 /// so a corpus-wide report is a single query. READS_FROM/WRITES_TO edges stay at
@@ -28,6 +33,15 @@ public static class SqliteExporter
         // ── roll up step-level facts to the owning SqlObject ────────────────
         var totalSteps = new Dictionary<string, int>(StringComparer.Ordinal);
         var dynamicSteps = new Dictionary<string, int>(StringComparer.Ordinal);
+        // Of the dynamic-SQL steps, how many never resolved to a literal (dynamic_sql
+        // property empty/missing): these run real SQL at execution time that
+        // READS_FROM/WRITES_TO/READS_COLUMN can't see - the parser fails closed rather
+        // than guessing, so this is the "the engine is blind here" signal a confidence
+        // consumer needs (the "No lo sé" bucket). Same criterion NodeStoreExporter uses
+        // for model.json's unresolved_dynamic_sql_steps (NodeStoreExporter.cs), kept in
+        // sync here rather than duplicated in GraphExporter since both read the same
+        // Step node properties off graph.Nodes.
+        var unresolvedDynamicSteps = new Dictionary<string, int>(StringComparer.Ordinal);
         var maxNesting = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var n in graph.Nodes)
         {
@@ -38,8 +52,14 @@ public static class SqliteExporter
                 continue;
             var owner = n.Id[..hash];
             totalSteps[owner] = totalSteps.GetValueOrDefault(owner) + 1;
-            if (n.Properties.TryGetValue("is_dynamic_sql", out var d) && d is true)
+            var isDynamic = n.Properties.TryGetValue("is_dynamic_sql", out var d) && d is true;
+            if (isDynamic)
+            {
                 dynamicSteps[owner] = dynamicSteps.GetValueOrDefault(owner) + 1;
+                var resolved = n.Properties.TryGetValue("dynamic_sql", out var dsql) && dsql is string { Length: > 0 };
+                if (!resolved)
+                    unresolvedDynamicSteps[owner] = unresolvedDynamicSteps.GetValueOrDefault(owner) + 1;
+            }
             if (n.Properties.TryGetValue("nesting_level", out var nl) && nl is int lvl)
                 maxNesting[owner] = Math.Max(maxNesting.GetValueOrDefault(owner), lvl);
         }
@@ -59,6 +79,8 @@ public static class SqliteExporter
                     -- rolled-up SqlObject scalars
                     cyclomatic_complexity INTEGER, total_steps INTEGER,
                     dynamic_sql_steps INTEGER, max_nesting INTEGER,
+                    -- of dynamic_sql_steps, how many never resolved to a literal ("no lo sé" signal)
+                    unresolved_dynamic_sql_steps INTEGER,
                     -- promoted SqlObject audit flags (robustness / inventory)
                     object_type TEXT, schema_name TEXT,
                     has_error_handling INTEGER, has_cursor INTEGER, has_transaction INTEGER,
@@ -102,10 +124,10 @@ public static class SqliteExporter
             nc.CommandText =
                 """
                 INSERT OR IGNORE INTO nodes
-                  (id,label,name,db,cyclomatic_complexity,total_steps,dynamic_sql_steps,max_nesting,
+                  (id,label,name,db,cyclomatic_complexity,total_steps,dynamic_sql_steps,unresolved_dynamic_sql_steps,max_nesting,
                    object_type,schema_name,has_error_handling,has_cursor,has_transaction,
                    action,is_dynamic_sql,nesting_level,data_type,is_nullable,is_primary_key,props)
-                VALUES ($id,$label,$name,$db,$cc,$ts,$ds,$mn,
+                VALUES ($id,$label,$name,$db,$cc,$ts,$ds,$uds,$mn,
                         $otype,$schema,$herr,$hcur,$htx,
                         $action,$dyn,$nest,$dtype,$nullable,$pk,$props)
                 """;
@@ -116,6 +138,7 @@ public static class SqliteExporter
             var pCc = AddParam(nc, "$cc");
             var pTs = AddParam(nc, "$ts");
             var pDs = AddParam(nc, "$ds");
+            var pUds = AddParam(nc, "$uds");
             var pMn = AddParam(nc, "$mn");
             var pOtype = AddParam(nc, "$otype");
             var pSchema = AddParam(nc, "$schema");
@@ -141,6 +164,7 @@ public static class SqliteExporter
                 pCc.Value = isObject ? Prop(n, "cyclomatic_complexity") : DBNull.Value;
                 pTs.Value = isObject ? totalSteps.GetValueOrDefault(n.Id) : DBNull.Value;
                 pDs.Value = isObject ? dynamicSteps.GetValueOrDefault(n.Id) : DBNull.Value;
+                pUds.Value = isObject ? unresolvedDynamicSteps.GetValueOrDefault(n.Id) : DBNull.Value;
                 pMn.Value = isObject ? maxNesting.GetValueOrDefault(n.Id) : DBNull.Value;
                 // Promoted columns: cheap, low-cardinality dimensions that audit/analysis
                 // queries filter or group by (see scripts/lineage-queries.sql audit set).

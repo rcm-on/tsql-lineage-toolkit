@@ -284,6 +284,66 @@ public class ColumnRecallGateTests
     }
 
     /// <summary>
+    /// Gate de emisión (tarea "confianza al consumidor"): hasta ahora la clase de evidencia
+    /// (direct/star_expanded/via_view) se DERIVABA a posteriori en <see cref="BuildGraphRefsByClass"/>
+    /// mirando `via_view` y `select_star`. Eso vale para medir, pero no para consumir: nada obligaba
+    /// a que la propiedad `resolution` que un consumidor real lee desde SQLite (`props` JSON en
+    /// `edges`) existiera, ni a que su valor casara con esa derivación.
+    ///
+    /// Este gate comprueba las DOS cosas sobre toda arista de columna (READS_COLUMN, WRITES_COLUMN,
+    /// FILTERS_ON - el mismo <see cref="ColumnRefEdges"/> que usa el resto del fichero):
+    ///   1. la propiedad `resolution` existe.
+    ///   2. su valor coincide exactamente con la clasificación derivada (misma prioridad: via_view
+    ///      gana sobre select_star, que gana sobre direct).
+    ///
+    /// Sin este gate, alguien puede tocar `GraphExporter`, dejar de escribir `resolution` en una
+    /// rama nueva o en una ya existente, y la clase se degrada en silencio: el resto de tests de
+    /// este fichero seguirían en verde porque derivan la clase por su cuenta, sin leer lo que el
+    /// motor efectivamente escribió en la arista.
+    /// </summary>
+    [Fact]
+    public void ColumnEdges_CarryResolutionProperty_MatchingDerivedClassification()
+    {
+        var (results, tableSchemas) = InputAnalyzer.Analyze(Path.Combine(EvalDir(), "dnn-corpus.json"));
+        var graph = GraphExporter.Build(results, includeColumns: true, tableSchemas);
+
+        // Misma regla que BuildGraphRefsByClass: pasos cuya lista de selección era "SELECT *".
+        var starSteps = graph.Nodes
+            .Where(n => n.Labels.Contains("Step")
+                        && n.Properties.TryGetValue("select_star", out var s) && s is true)
+            .Select(n => n.Id)
+            .ToHashSet(StringComparer.Ordinal);
+
+        var columnEdges = graph.Relationships.Where(r => ColumnRefEdges.Contains(r.Type)).ToList();
+        Assert.True(columnEdges.Count > 5000,
+            $"Se esperaban miles de aristas de columna (READS_COLUMN/WRITES_COLUMN/FILTERS_ON) sobre el corpus DNN, hay {columnEdges.Count}. La extracción se rompió.");
+
+        var missing = new List<string>();
+        var mismatched = new List<string>();
+        foreach (var r in columnEdges)
+        {
+            if (!r.Properties.TryGetValue("resolution", out var resolutionObj) || resolutionObj is not string resolution)
+            {
+                missing.Add($"{r.Type} {r.StartNodeId} -> {r.EndNodeId}");
+                continue;
+            }
+
+            var expected = r.Properties.ContainsKey("via_view") ? "via_view"
+                         : starSteps.Contains(r.StartNodeId) ? "star_expanded"
+                         : "direct";
+            if (!string.Equals(resolution, expected, StringComparison.Ordinal))
+                mismatched.Add($"{r.Type} {r.StartNodeId} -> {r.EndNodeId}: resolution=\"{resolution}\" esperado=\"{expected}\"");
+        }
+
+        Assert.True(missing.Count == 0,
+            $"{missing.Count} de {columnEdges.Count} aristas de columna NO tienen la propiedad 'resolution':\n" +
+            string.Join("\n", missing.Take(20)) + (missing.Count > 20 ? "\n  ..." : ""));
+        Assert.True(mismatched.Count == 0,
+            $"{mismatched.Count} de {columnEdges.Count} aristas tienen 'resolution' que NO casa con la clasificación derivada:\n" +
+            string.Join("\n", mismatched.Take(20)) + (mismatched.Count > 20 ? "\n  ..." : ""));
+    }
+
+    /// <summary>
     /// Control negativo: si la comparación estuviera rota (clave de join mal formada, conjuntos
     /// vacíos, normalización que iguala todo), el test de arriba pasaría sin medir nada. Aquí se
     /// perturba el oráculo renombrando cada columna y se exige que el recall se DESPLOME. Un gate
