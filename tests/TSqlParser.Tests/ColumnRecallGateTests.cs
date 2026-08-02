@@ -271,7 +271,12 @@ public class ColumnRecallGateTests
                 failures.Add(cls);
         }
 
-        var viaView = byClass.TryGetValue("via_view", out var vv) ? vv.Count : 0;
+        // Mismo filtro modulesSeen que las clases gateadas: sin él esta línea informaba
+        // 2.563 mientras las otras dos informaban filtradas, y comparar cifras de un mismo
+        // informe calculadas con criterios distintos es como se llega a una conclusión falsa.
+        var viaView = byClass.TryGetValue("via_view", out var vv)
+            ? vv.Count(r => modulesSeen.Contains(r.Module))
+            : 0;
         report.Add($"  {"via_view",-14} {viaView,6} aristas   (informativa, no gateada)");
 
         Assert.True(failures.Count == 0,
