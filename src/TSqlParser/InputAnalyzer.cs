@@ -13,6 +13,16 @@ public static class InputAnalyzer
 {
     private static readonly Regex CreateTableRegex = new(@"^\s*CREATE\s+TABLE\b", RegexOptions.IgnoreCase);
 
+    /// <summary>
+    /// Filtro barato para la pasada previa de vistas: evita reanalizar los 679
+    /// procedimientos del corpus sólo para descubrir que no son vistas. Se mira tras
+    /// quitar comentarios de cabecera, por la misma razón que el router de CREATE TABLE.
+    /// </summary>
+    private static readonly Regex CreateViewRegex =
+        new(@"^\s*CREATE\s+(OR\s+ALTER\s+)?VIEW\b", RegexOptions.IgnoreCase);
+
+    private static bool LooksLikeView(string sql) => CreateViewRegex.IsMatch(StripLeadingComments(sql));
+
     public static (List<ObjectResult> Results, List<TableSchemaResult> TableSchemas) Analyze(string path)
     {
         var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -50,6 +60,42 @@ public static class InputAnalyzer
             cols[$"{parts[0]}::{SqlText.NormalizeRef(parts[1])}"] = schema.Columns.Select(c => c.Name).ToList();
         }
 
+        // ── Pasada 1: sólo para aprender las columnas de SALIDA de las vistas ──
+        //
+        // El catálogo `cols` se construía únicamente con las tablas, así que un
+        // "SELECT * FROM vw_Modules" en un procedimiento no podía expandirse: nadie
+        // sabía qué columnas tiene esa vista. Medido sobre el corpus DNN eran 190
+        // referencias de columna que el motor no veía, la mayor bolsa restante.
+        //
+        // Una vista analizada SÍ conoce sus columnas de salida (ViewColumnLineage), así
+        // que basta con analizarlas primero, registrar el resultado en el catálogo y
+        // volver a analizar con él. Es el orden topológico en su versión barata: una
+        // vista construida sobre otra vista se resuelve si la segunda ya se expandió,
+        // y si no, se queda como estaba — nunca empeora.
+        var viewSources = objectSources
+            .Where(s => LooksLikeView(s.Sql))
+            .ToList();
+
+        foreach (var src in viewSources)
+        {
+            var probe = SqlAnalyzer.AnalyzeObject(src.Name, src.Sql, cols);
+            if (probe.ViewColumnLineage.Count == 0)
+                continue;
+            var parts = probe.ObjectName.Split("::", 2);
+            if (parts.Length != 2)
+                continue;
+            var outputs = probe.ViewColumnLineage
+                .Select(d => d.TargetColumn)
+                .Where(c => c.Length > 0)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+            if (outputs.Count == 0)
+                continue;
+            // No pisar una tabla real que se llame igual: el catálogo de tablas manda.
+            cols.TryAdd($"{parts[0]}::{SqlText.NormalizeRef(parts[1])}", outputs);
+        }
+
+        // ── Pasada 2: la buena, ya con las vistas en el catálogo ──────────────
         var objResults = new List<ObjectResult>();
         foreach (var src in objectSources)
             objResults.Add(SqlAnalyzer.AnalyzeObject(src.Name, src.Sql, cols));

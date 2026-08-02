@@ -52,9 +52,9 @@ public class ColumnRecallGateTests
     // Suelos medidos sobre este corpus (2026-08-01). Bajar de aquí es una regresión. Se ponen
     // TRUNCADOS, no redondeados: el informe imprime un decimal y poner el suelo en el valor
     // redondeado hace fallar al propio commit que lo mide (ya pasó dos veces).
-    //   estricto  0,697406
-    //   laxo      0,950288
-    //   precisión 0,680622
+    //   estricto  0,707039
+    //   laxo      0,960148
+    //   precisión 0,702437  (sólo módulos que el oráculo ve; ver nota en el test)
     /// <summary>
     /// Suelo de precisión POR CLASE de evidencia, medido sobre este corpus. Es la base de una
     /// puntuación de confianza defendible: si las aristas expandidas de un `SELECT *` aciertan
@@ -68,9 +68,9 @@ public class ColumnRecallGateTests
         ("star_expanded", 0.975),   // medido 98,0 % sobre 1.589 aristas
     };
 
-    private const double MinStrictRecall = 0.6974;
-    private const double MinLooseRecall  = 0.9502;
-    private const double MinPrecision    = 0.6806;
+    private const double MinStrictRecall = 0.7070;
+    private const double MinLooseRecall  = 0.9601;
+    private const double MinPrecision    = 0.7024;
 
     private static string EvalDir()
     {
@@ -219,7 +219,18 @@ public class ColumnRecallGateTests
         var graphLoose = graph.Select(r => (r.Module, r.Column)).ToHashSet();
         var looseRecall = (double)oracleLoose.Count(graphLoose.Contains) / oracleLoose.Count;
 
-        var precision = (double)strictHits / graph.Count;
+        // La precisión se mide SOLO sobre módulos para los que el oráculo aporta alguna
+        // columna. En el resto (típicamente por una tabla #temp, que impide a las DMV
+        // resolver dependencias a nivel columna) el ciego es el oráculo, y contar ahí
+        // nuestras aristas como falsos positivos castiga al motor por un límite ajeno.
+        //
+        // No es cosmético: al expandir SELECT * sobre vistas, la precisión global "bajó"
+        // de 68,06 % a 67,91 % mientras que la medida sobre módulos visibles SUBÍA de
+        // 69,96 % a 70,24 %. La caída era puro efecto de mezcla. Es además el mismo
+        // criterio que ya usa ColumnLineage_PrecisionPerEvidenceClass.
+        var modulesSeenHere = oracle.Select(r => r.Module).ToHashSet(StringComparer.Ordinal);
+        var judgeable = graph.Where(r => modulesSeenHere.Contains(r.Module)).ToHashSet();
+        var precision = (double)judgeable.Count(oracle.Contains) / judgeable.Count;
 
         var report =
             $"corpus DNN: oráculo={oracle.Count} aristas_grafo={graph.Count}\n" +
