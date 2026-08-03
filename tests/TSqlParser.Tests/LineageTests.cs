@@ -1384,6 +1384,54 @@ public class LineageTests
                  r.EndNodeId == $"{Db}:table:dbo.customers:column:CustomerName"));
     }
 
+    /// <summary>
+    /// Regression: a view that renames a source column in its SELECT list ("SELECT
+    /// CustomerName AS DisplayName FROM dbo.Customers") only ever got a READS_COLUMN
+    /// edge for the base table's ORIGINAL name (CustomerName), via the via_view bridge
+    /// above. A consumer selecting the view's own output name ("SELECT DisplayName
+    /// FROM dbo.VCustomers") never got a matching READS_COLUMN landing on the view
+    /// itself, because nothing represented the view's own renamed output column - only
+    /// GraphExporter's via_view expansion to the base table existed. The view must now
+    /// also get a direct READS_COLUMN on its own :Column node, named exactly like its
+    /// SELECT list output (DisplayName, not CustomerName).
+    /// </summary>
+    [Fact]
+    public void SelectFromAnalyzedView_RenamedColumn_GetsReadsColumnOnViewsOwnName()
+    {
+        var viewSql = """
+            CREATE VIEW dbo.VCustomers
+            AS
+            SELECT CustomerID, CustomerName AS DisplayName FROM dbo.Customers
+            """;
+        var consumerSql = """
+            CREATE PROCEDURE dbo.Consumer
+            AS
+            BEGIN
+                SELECT CustomerID, DisplayName FROM dbo.VCustomers
+            END
+            """;
+
+        var view = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.VCustomers", viewSql);
+        var consumer = SqlAnalyzer.AnalyzeObject($"{Db}::dbo.Consumer", consumerSql);
+        Assert.Null(view.Error);
+        Assert.Null(consumer.Error);
+
+        var graph = GraphExporter.Build(new List<ObjectResult> { view, consumer }, includeColumns: true);
+
+        var viewDisplayNameCol = FindNode(graph, n => n.Labels.Contains("Column") &&
+            string.Equals((string)n.Properties["table"], "dbo.vcustomers", StringComparison.OrdinalIgnoreCase) &&
+            string.Equals((string)n.Properties["name"], "DisplayName", StringComparison.OrdinalIgnoreCase));
+        Assert.NotNull(viewDisplayNameCol);
+
+        Assert.NotNull(FindRel(graph, "READS_COLUMN",
+            r => r.StartNodeId == $"{Db}::dbo.Consumer#step0" && r.EndNodeId == viewDisplayNameCol!.Id));
+
+        // The base table's original column name is still reachable, unaffected, via via_view.
+        Assert.NotNull(FindRel(graph, "READS_COLUMN",
+            r => r.StartNodeId == $"{Db}::dbo.Consumer#step0" &&
+                 r.EndNodeId == $"{Db}:table:dbo.customers:column:CustomerName"));
+    }
+
     [Fact]
     public void NestedIf_ProducesNestedRulesAndGoverns()
     {

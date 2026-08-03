@@ -70,6 +70,17 @@ public static class GraphExporter
         // view's base table(s) instead of dead-ending at the VIEW's SqlObject node.
         var viewBaseTables = new Dictionary<string, List<(string Table, string Column)>>();
 
+        // Every analyzed VIEW's ObjectName, so a reader's "SELECT ... FROM AnalyzedView"
+        // step can also land a READS_COLUMN on the VIEW's own :Column nodes (the ones
+        // BuildViewLineage already created under the view's table-scheme id), not just on
+        // the via_view expansion to base tables below. Without this, a query against a
+        // view that renames a column in its SELECT list (e.g. "M.PortalID AS
+        // [OwnerPortalID]") never gets a READS_COLUMN matching that renamed name anywhere:
+        // via_view only carries the base column's ORIGINAL name (PortalID), so the two
+        // disagree and the renamed output column is silently unrepresented on the view
+        // entity that a consumer (and the DMV oracle) actually expects it on.
+        var viewObjectIds = new HashSet<string>(StringComparer.Ordinal);
+
         foreach (var r in results)
         {
             var (db, plain) = SplitName(r.ObjectName);
@@ -86,6 +97,7 @@ public static class GraphExporter
 
             if (r.ObjectType == "VIEW")
             {
+                viewObjectIds.Add(r.ObjectName);
                 var bases = new List<(string Table, string Column)>();
                 foreach (var flv in r.FlowLinks)
                 {
@@ -474,6 +486,33 @@ public static class GraphExporter
                         StartNodeId = stepId,
                         EndNodeId = targetObjId,
                     });
+
+                    // Direct read of the VIEW's own output columns (as opposed to the
+                    // via_view expansion to base tables below): "this step reads
+                    // AnalyzedView.OutName" for whatever OutName it actually wrote/expanded
+                    // (fl.Columns - literal column list, or the star-expansion catalog for
+                    // "SELECT *"). Lands on the SAME :Column node BuildViewLineage already
+                    // created for the view (same table-scheme id, GetOrCreateTable below
+                    // uses the view's own (db, plain) exactly like BuildViewLineage does),
+                    // so a view that renames a source column in its SELECT list is still
+                    // matched by its OWN name - not just by the base table's original name,
+                    // which is all via_view can offer.
+                    if (fl.ConsequenceType == "SELECT" && viewObjectIds.Contains(targetObjId) && includeColumns)
+                    {
+                        var (viewDb, viewPlain) = SplitName(targetObjId);
+                        var (viewTableId, viewTableName) = GetOrCreateTable(graph, tableIds, tableShortNames, viewDb, viewPlain);
+                        foreach (var colName in fl.Columns)
+                        {
+                            var viewColId = GetOrCreateColumn(graph, columnIds, viewTableId, viewTableName, colName);
+                            graph.Relationships.Add(new GraphRel
+                            {
+                                Type = "READS_COLUMN",
+                                StartNodeId = stepId,
+                                EndNodeId = viewColId,
+                                Properties = { ["resolution"] = fl.SelectStar ? "star_expanded" : "direct" },
+                            });
+                        }
+                    }
 
                     // VIEW expansion: "SELECT ... FROM AnalyzedView" also reads straight
                     // through to the view's own real base table(s)/column(s) - not just
