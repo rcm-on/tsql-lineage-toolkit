@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Microsoft.SqlServer.TransactSql.ScriptDom;
 
 namespace TSqlParser;
 
@@ -13,10 +14,6 @@ namespace TSqlParser;
 /// </summary>
 public static class SqlFileLoader
 {
-    private static readonly Regex CreateRegex = new(
-        @"CREATE\s+(?:OR\s+ALTER\s+)?(?:PROC(?:EDURE)?|FUNCTION|TRIGGER|VIEW|TABLE|SYNONYM)\s+(\[?[\w$]+\]?)(?:\s*\.\s*(\[?[\w$]+\]?))?",
-        RegexOptions.IgnoreCase);
-
     /// <summary>
     /// sqlcmd batch separator: GO alone on its own line (optionally with a repeat
     /// count). The trailing [ \t\r]* is load-bearing: scripts are CRLF and in
@@ -37,17 +34,34 @@ public static class SqlFileLoader
         }
 
         var entries = new List<SourceObject>();
-        var seenNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var seenAt = new Dictionary<string, (string File, int EntryIndex)>(StringComparer.OrdinalIgnoreCase);
 
+        // Two batches resolving to the same name is normal, not an error: the
+        // idempotent-install pattern "IF OBJECT_ID(...) IS NULL EXECUTE (N'CREATE
+        // PROCEDURE dbo.X AS RETURN 138;'); GO ALTER PROCEDURE dbo.X (...) AS ..."
+        // (DarlingData's sp_HealthParser/sp_PressureDetector/etc.) legitimately
+        // produces two batches under the real object's name: a throwaway one-line
+        // stub and the real body, hundreds/thousands of lines later in the same
+        // file. "First batch wins" would keep whichever happens to come first in
+        // file order - the trivial stub, since the guard always precedes the real
+        // definition - discarding the real body entirely. Keep the larger instead:
+        // a placeholder stub is always tiny: real object bodies never are.
         void Add(string schema, string table, string body, string file)
         {
             var name = $"{database}::{schema}.{table}";
-            if (seenNames.TryGetValue(name, out var firstFile))
+            if (seenAt.TryGetValue(name, out var existing))
             {
-                Console.Error.WriteLine($"  ! duplicate object {name} (already defined in {firstFile}); keeping the first");
+                if (body.Length <= entries[existing.EntryIndex].Sql.Length)
+                {
+                    Console.Error.WriteLine($"  ! duplicate object {name} (already defined in {existing.File}, {entries[existing.EntryIndex].Sql.Length} chars vs {body.Length}); keeping the larger");
+                    return;
+                }
+                Console.Error.WriteLine($"  ! duplicate object {name} (already defined in {existing.File}, {entries[existing.EntryIndex].Sql.Length} chars); replacing with the larger definition from {file} ({body.Length} chars)");
+                entries[existing.EntryIndex] = new SourceObject(name, body);
+                seenAt[name] = (file, existing.EntryIndex);
                 return;
             }
-            seenNames[name] = file;
+            seenAt[name] = (file, entries.Count);
             entries.Add(new SourceObject(name, body));
         }
 
@@ -132,16 +146,96 @@ public static class SqlFileLoader
         return result;
     }
 
+    /// <summary>
+    /// Last-resort fallback only: matches "CREATE [OR ALTER] PROC/FUNCTION/TRIGGER/
+    /// VIEW/TABLE/SYNONYM &lt;name&gt;" as raw text. Used only when ScriptDom recovers
+    /// no batch at all (see DetectObjectName) - e.g. a script broken badly enough that
+    /// error recovery gives up on the whole thing, not just the offending statement.
+    /// A text regex can't tell a real statement from the same words in a comment or
+    /// string literal, so it must never be the primary path: that exact confusion
+    /// silently misattributed DarlingData's real 6000-line sp_HealthParser body to a
+    /// node named "dbo.failed" (from a comment reading "... CREATE TABLE failed.").
+    /// Here the risk is bounded: a file ScriptDom can't recover at all is already
+    /// going to be flagged as a parse error downstream, so a wrong name on it is far
+    /// cheaper than one on an otherwise-healthy, substantial object.
+    /// </summary>
+    private static readonly Regex LastResortCreateRegex = new(
+        @"CREATE\s+(?:OR\s+ALTER\s+)?(?:PROC(?:EDURE)?|FUNCTION|TRIGGER|VIEW|TABLE|SYNONYM)\s+(\[?[\w$]+\]?)(?:\s*\.\s*(\[?[\w$]+\]?))?",
+        RegexOptions.IgnoreCase);
+
+    /// <summary>
+    /// Finds the schema/name of the first CREATE/ALTER/CREATE-OR-ALTER
+    /// PROCEDURE/FUNCTION/TRIGGER/VIEW/TABLE/SYNONYM statement, primarily by parsing
+    /// <paramref name="sql"/> with ScriptDom instead of regex-matching the raw text.
+    ///
+    /// A text regex for "CREATE ... PROC/TABLE/..." cannot tell a real top-level
+    /// statement from the same words appearing inside a comment or a dynamic-SQL
+    /// string literal: a real script hit this exactly (DarlingData's sp_HealthParser
+    /// has "... and the resulting CREATE TABLE failed." in a comment), which made the
+    /// object's real, 6000-line ALTER PROCEDURE body get filed under the bogus name
+    /// "dbo.failed" - the whole procedure silently attributed to the wrong object.
+    /// ScriptDom can't make that mistake: a comment or string literal never produces
+    /// a CreateTableStatement/AlterProcedureStatement/etc. node, so this only matches
+    /// a statement the batch actually executes. Errors elsewhere in the batch don't
+    /// stop this: ScriptDom's error recovery keeps the outer CREATE/ALTER PROCEDURE
+    /// even when its body doesn't parse (deliberately broken test fixtures rely on
+    /// exactly this - the object should still get its real name, then fail to parse
+    /// under it). Only when recovery finds no batch at all does this fall back to
+    /// LastResortCreateRegex.
+    /// </summary>
     private static (string schema, string name)? DetectObjectName(string sql)
     {
-        var match = CreateRegex.Match(sql);
+        var parser = new TSql160Parser(initialQuotedIdentifiers: true);
+        using var reader = new StringReader(sql);
+        var fragment = parser.Parse(reader, out IList<ParseError> _);
+
+        var finder = new ObjectNameFinder();
+        fragment.Accept(finder);
+        if (finder.Name is { } name)
+        {
+            var schema = name.SchemaIdentifier?.Value ?? "dbo";
+            return (schema, name.BaseIdentifier.Value);
+        }
+
+        var match = LastResortCreateRegex.Match(sql);
         if (!match.Success)
             return null;
 
         var first = match.Groups[1].Value.Trim('[', ']');
-        if (match.Groups[2].Success)
-            return (first, match.Groups[2].Value.Trim('[', ']'));
+        return match.Groups[2].Success
+            ? (first, match.Groups[2].Value.Trim('[', ']'))
+            : ("dbo", first);
+    }
 
-        return ("dbo", first);
+    /// <summary>
+    /// Every CREATE/ALTER/CREATE OR ALTER variant of each object kind is its own
+    /// concrete ScriptDom type (e.g. AlterProcedureStatement, CreateOrAlterViewStatement);
+    /// TSqlFragmentVisitor dispatches by the node's exact compile-time type, not its
+    /// base class, so all three variants must be listed for every kind (same pattern
+    /// as TableAnalyzer.CreateTableFinder). Keeps the first one found; a batch is one
+    /// object definition by construction (SqlFileLoader splits on GO first).
+    /// </summary>
+    private sealed class ObjectNameFinder : TSqlFragmentVisitor
+    {
+        public SchemaObjectName? Name { get; private set; }
+
+        public override void Visit(CreateProcedureStatement node) => Name ??= node.ProcedureReference.Name;
+        public override void Visit(AlterProcedureStatement node) => Name ??= node.ProcedureReference.Name;
+        public override void Visit(CreateOrAlterProcedureStatement node) => Name ??= node.ProcedureReference.Name;
+
+        public override void Visit(CreateFunctionStatement node) => Name ??= node.Name;
+        public override void Visit(AlterFunctionStatement node) => Name ??= node.Name;
+        public override void Visit(CreateOrAlterFunctionStatement node) => Name ??= node.Name;
+
+        public override void Visit(CreateTriggerStatement node) => Name ??= node.Name;
+        public override void Visit(AlterTriggerStatement node) => Name ??= node.Name;
+        public override void Visit(CreateOrAlterTriggerStatement node) => Name ??= node.Name;
+
+        public override void Visit(CreateViewStatement node) => Name ??= node.SchemaObjectName;
+        public override void Visit(AlterViewStatement node) => Name ??= node.SchemaObjectName;
+        public override void Visit(CreateOrAlterViewStatement node) => Name ??= node.SchemaObjectName;
+
+        public override void Visit(CreateTableStatement node) => Name ??= node.SchemaObjectName;
+        public override void Visit(CreateSynonymStatement node) => Name ??= node.Name;
     }
 }
