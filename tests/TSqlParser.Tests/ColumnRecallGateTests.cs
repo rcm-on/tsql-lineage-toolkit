@@ -64,11 +64,16 @@ public class ColumnRecallGateTests
     /// el 98 % sobre 1.523 casos reales, esa arista vale 0,98 — y eso no es una opinión que
     /// discutir, es una cuenta. La precisión global (67,8 %) no sirve para esto: mezcla clases
     /// y esconde que la extracción directa acierta el 99,8 %.
+    ///
+    /// Remedido 2026-08-03 tras el fix de fix/blind-columns (subió sobre todo star_expanded,
+    /// de 98,2 % a 98,88 %, porque la vista renombrada que antes perdía columnas alimentaba
+    /// aristas de esta clase). Suelos truncados por debajo del valor real, no redondeados
+    /// (misma razón que MinStrictRecall/MinLooseRecall arriba).
     /// </summary>
     private static readonly (string Class, double Floor)[] MinPrecisionByClass =
     {
-        ("direct",        0.997),   // medido 99,8 % sobre 3.870 aristas
-        ("star_expanded", 0.975),   // medido 98,2 % sobre 1.697 aristas
+        ("direct",        0.9978),  // medido 99,78 % sobre 4.148 aristas
+        ("star_expanded", 0.9888),  // medido 98,88 % sobre 3.493 aristas
     };
 
     private const double MinStrictRecall = 0.9658;
