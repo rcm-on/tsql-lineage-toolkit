@@ -49,11 +49,13 @@ public class ColumnRecallGateTests
     private static readonly HashSet<string> ColumnRefEdges =
         new(StringComparer.Ordinal) { "READS_COLUMN", "FILTERS_ON", "WRITES_COLUMN" };
 
-    // Suelos medidos sobre este corpus (2026-08-01). Bajar de aquí es una regresión. Se ponen
-    // TRUNCADOS, no redondeados: el informe imprime un decimal y poner el suelo en el valor
-    // redondeado hace fallar al propio commit que lo mide (ya pasó dos veces).
-    //   estricto  0,711405
-    //   laxo      0,969734
+    // Suelos medidos sobre este corpus (2026-08-03, tras el fix de FILTERS_ON en INSERT...SELECT
+    // y de READS_COLUMN sobre el nombre propio de columnas renombradas en vistas - antes
+    // 0,711405/0,969734). Bajar de aquí es una regresión. Se ponen TRUNCADOS, no redondeados:
+    // el informe imprime un decimal y poner el suelo en el valor redondeado hace fallar al
+    // propio commit que lo mide (ya pasó dos veces).
+    //   estricto  0,965836
+    //   laxo      0,980827
     // La precisión global se informa pero no se gatea (ver nota en el test); quien
     // vigila la invención de aristas es el suelo POR CLASE de MinPrecisionByClass.
     /// <summary>
@@ -69,8 +71,8 @@ public class ColumnRecallGateTests
         ("star_expanded", 0.975),   // medido 98,2 % sobre 1.697 aristas
     };
 
-    private const double MinStrictRecall = 0.7114;
-    private const double MinLooseRecall  = 0.9697;
+    private const double MinStrictRecall = 0.9658;
+    private const double MinLooseRecall  = 0.9808;
 
     private static string EvalDir()
     {

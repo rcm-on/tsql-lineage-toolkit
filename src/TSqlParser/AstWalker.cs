@@ -174,8 +174,21 @@ public static class AstWalker
                         // of the table, in order (whether via "SELECT *" or "VALUES (...)").
                         if (insColumns.Count == 0)
                             insColumns = ResolveAllColumns(insTarget, ctx) ?? insColumns;
-                        var (lineage, insExtraReads) = InsertSelectLineage(ins, insColumns, cteNames, cteBaseTables);
+                        var (lineage, insExtraReads, insFilterInfo) = InsertSelectLineage(ins, insColumns, cteNames, cteBaseTables, ctx);
                         ProcessOutputClause(ins.InsertSpecification?.OutputIntoClause, insTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+
+                        // Mirror AddLink's own nested-subquery bridging (see its NestedTableRefs
+                        // handling): since we pass filterColumnsOverride explicitly below, AddLink's
+                        // auto-detect (and the merge that normally rides along with it) never runs,
+                        // so a WHERE-nested EXISTS/IN table from insFilterInfo needs its own
+                        // READS_FROM added here instead.
+                        if (insFilterInfo.NestedTableRefs.Count > 0)
+                        {
+                            insExtraReads = insExtraReads.ToList();
+                            foreach (var (_, table) in insFilterInfo.NestedTableRefs)
+                                if (!insExtraReads.Any(e => string.Equals(e.Table, table, StringComparison.OrdinalIgnoreCase)))
+                                    insExtraReads.Add(new TableColumnRef(table, Array.Empty<string>()));
+                        }
 
                         // "INSERT INTO T (...) EXEC [@var | proc] ...": the insert source
                         // is itself an EXEC (proc call or dynamic SQL via sp_executesql),
@@ -201,7 +214,9 @@ public static class AstWalker
                         }
                         else
                         {
-                            AddLink(ctx, condStack, "INSERT", insTarget, stmt, cteNames, cteBaseTables, columns: insColumns, columnLineage: lineage, extraReads: insExtraReads);
+                            AddLink(ctx, condStack, "INSERT", insTarget, stmt, cteNames, cteBaseTables, columns: insColumns, columnLineage: lineage, extraReads: insExtraReads,
+                                filterColumnsOverride: insFilterInfo.FilterColumns, filterOpKindsOverride: insFilterInfo.FilterOpKinds,
+                                filterTextOverride: insFilterInfo.FilterText, filterKindOverride: insFilterInfo.FilterKind);
                         }
                     }
                     break;
@@ -1675,9 +1690,15 @@ public static class AstWalker
     /// e.g. "SELECT d.SumC FROM (SELECT A.Col1+B.Col2 ... FROM A CROSS JOIN B) d" still
     /// gives both A and B a READS_FROM even though "d.SumC" itself can't be attributed.
     /// </returns>
-    private static (List<ColumnDerivation> Lineage, List<TableColumnRef> ExtraReads) InsertSelectLineage(InsertStatement ins, IReadOnlyList<string> insColumns, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    /// <summary>Empty FILTERS_ON payload shared by every early-return path of <see cref="InsertSelectLineage"/> below.</summary>
+    private static readonly (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs, List<string> FilterOpKinds, string FilterText, string FilterKind) EmptyFilterInfo =
+        (new List<TableColumnRef>(), new List<(string Alias, string Table)>(), new List<string>(), "", "");
+
+    private static (List<ColumnDerivation> Lineage, List<TableColumnRef> ExtraReads,
+        (List<TableColumnRef> FilterColumns, List<(string Alias, string Table)> NestedTableRefs, List<string> FilterOpKinds, string FilterText, string FilterKind) FilterInfo)
+        InsertSelectLineage(InsertStatement ins, IReadOnlyList<string> insColumns, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables, WalkContext ctx)
     {
-        var empty = (new List<ColumnDerivation>(), new List<TableColumnRef>());
+        var empty = (new List<ColumnDerivation>(), new List<TableColumnRef>(), EmptyFilterInfo);
 
         if (ins.InsertSpecification?.InsertSource is not SelectInsertSource insSrc)
             return empty;
@@ -1704,7 +1725,7 @@ public static class AstWalker
             if (branchRefs.Count == 0)
                 return empty;
             var unionExtraReads = BuildExtraReads(branchRefs, new List<TableColumnRef>(), skipFirst: false);
-            return (new List<ColumnDerivation>(), unionExtraReads);
+            return (new List<ColumnDerivation>(), unionExtraReads, EmptyFilterInfo);
         }
 
         if (insSrc.Select is not QuerySpecification qs)
@@ -1732,7 +1753,24 @@ public static class AstWalker
                     if (!(rf.Qualifier != null && applyMap.ContainsKey(rf.Qualifier)))
                         allRefs.Add(rf);
             }
-        var (_, extrasFromCols) = SplitColumnsByTable(allRefs, tableRefs);
+        var (primaryReadCols, extrasFromCols) = SplitColumnsByTable(allRefs, tableRefs);
+        // The primary FROM table (tableRefs[0]) needs its own read columns represented
+        // here too, not just in the per-target-column `lineage` below: unlike a plain
+        // SELECT step (whose AddLink call always attributes tableRefs[0]'s columns via
+        // its own `columns:` argument), INSERT...SELECT has no other READS_FROM for its
+        // primary source - see the ExtraReads doc above. Without this, "INSERT INTO
+        // @tmp (...) SELECT expr(a.Col) FROM A a JOIN B b ..." (a table-variable/temp
+        // target, whose DERIVES_FROM lineage below is dropped as transient) silently
+        // lost every read of A's own columns - only B (a genuine "extra") survived.
+        if (primaryReadCols.Count > 0)
+        {
+            var primaryIdx = extrasFromCols.FindIndex(e => string.Equals(e.Table, tableRefs[0].Table, StringComparison.OrdinalIgnoreCase));
+            if (primaryIdx < 0)
+                extrasFromCols.Insert(0, new TableColumnRef(tableRefs[0].Table, primaryReadCols));
+            else
+                extrasFromCols[primaryIdx] = new TableColumnRef(tableRefs[0].Table,
+                    extrasFromCols[primaryIdx].Columns.Union(primaryReadCols, StringComparer.OrdinalIgnoreCase).ToArray());
+        }
         // Each apply-shredded source column is genuinely read even though its only mention
         // is the apply target (invisible to the select list) - add it as a read.
         foreach (var src in applyMap.Values)
@@ -1780,7 +1818,16 @@ public static class AstWalker
                         grp.Select(x => x.Column).Distinct(StringComparer.OrdinalIgnoreCase).ToList(), exprText, exprOps));
             }
         }
-        return (lineage, extraReads);
+
+        // FILTERS_ON: "INSERT INTO T (...) SELECT ... FROM S [JOIN ...] WHERE ..." has its
+        // WHERE clause nested inside the SELECT source, not on the InsertStatement itself -
+        // AddLink's own auto-detect (ExtractFilterColumns) only recognizes SELECT/UPDATE/
+        // DELETE, so this WHERE (and any JOIN ON predicates) was silently dropped for every
+        // INSERT...SELECT, gated or not. Computed the same way any other step's filter
+        // columns are, then returned for the caller to pass as an override.
+        var filterInfo = ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, tableRefs, cteNames, cteBaseTables, tn => ResolveAllColumns(tn, ctx));
+
+        return (lineage, extraReads, filterInfo);
     }
 
     /// <summary>
