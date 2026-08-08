@@ -1,7 +1,19 @@
-# Recall de lineage de columna (corpus DNN)
+# Recall de lineage de columna
 
 Mide cuánto del lineage de columna que **SQL Server dice que existe** captura
-nuestro motor, sobre un corpus grande de T-SQL de producción real.
+nuestro motor, sobre corpus de T-SQL de producción real. Los corpus se declaran en
+[`eval/corpora.json`](../corpora.json); hoy son dos:
+
+| Corpus | Oráculo | Recall laxo | Recall estricto | Precisión `direct` |
+|---|---:|---:|---:|---:|
+| `dnn` — DNN Platform | 7.786 | **98,1 %** | 96,6 % | 99,78 % |
+| `wwidw` — WideWorldImportersDW | 627 | **84,9 %** | 76,4 % | **100 %** |
+
+Los 13 puntos de diferencia son la razón de tener el segundo. WWI-DW aporta ETL
+`staging`→`dim`/`fact` y `MERGE` a volumen, que DNN no tiene, y su precisión del
+100 % sobre 479 aristas dice que el hueco es **de cobertura, no de invención**: lo
+que emite es correcto, simplemente no ve todo. El resto de este documento describe
+el corpus `dnn`, que es el que da la señal fina.
 
 Lo ejecuta [`ColumnRecallGateTests`](../../tests/TSqlParser.Tests/ColumnRecallGateTests.cs).
 A diferencia de [`view-lineage`](../view-lineage/), este gate **no necesita SQL

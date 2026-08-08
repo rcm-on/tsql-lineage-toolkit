@@ -28,6 +28,32 @@
           "star_expanded": 0.9888
         }
       }
+    },
+    {
+      "id": "wwidw",
+      "name": "WideWorldImportersDW",
+      "kind": "schema-real",
+      "license": "MIT (Microsoft SQL Server Samples)",
+      "provenance": "github.com/microsoft/sql-server-samples - WideWorldImportersDW-Standard.bak restaurado en SQLEXPRESS. Usar la variante -Standard: la -Full NO restaura en SQLEXPRESS por el filegroup In-Memory (error 3414). Congelado el 2026-08-08.",
+      "input": "eval/column-recall/wwidw-corpus.json",
+      "oracle": "eval/column-recall/wwidw-oracle.psv",
+      "oracle_query": "eval/column-recall/extract-oracle.sql",
+      "source_db": {
+        "name": "WideWorldImportersDW",
+        "server": "localhost\\SQLEXPRESS",
+        "compatibility_level": 130
+      },
+      "expected": {
+        "oracle_rows": 627,
+        "min_column_edges": 400
+      },
+      "floors": {
+        "strict_recall": 0.763,
+        "loose_recall": 0.848,
+        "precision_by_class": {
+          "direct": 0.99
+        }
+      }
     }
   ]
 }

@@ -377,7 +377,13 @@ public class ColumnRecallGateTests
             $"El oráculo de '{corpus.Id}' declara {corpus.Expected.OracleRows} filas y tiene {oracle.Count}. " +
             "Si el corpus se ha regenerado a propósito, actualiza eval/corpora.json en un commit " +
             "SEPARADO de cualquier cambio del motor.");
-        Assert.True(graph.Count > 1000, $"El grafo debería emitir miles de lecturas de columna, emite {graph.Count}");
+        // El suelo sale del manifiesto, no de un "> 1000" clavado aquí. Ese 1000 era una
+        // suposición del tamaño de DNN, y el primer corpus que entró detrás (WWI-DW, 480
+        // aristas: 24 procedimientos, no 739) la tumbó el mismo día. Es justo lo que se le
+        // pide a un segundo corpus — destapar lo que estaba calibrado a ojo sobre el primero.
+        Assert.True(graph.Count >= corpus.Expected.MinColumnEdges,
+            $"El grafo de '{corpus.Id}' debería emitir al menos {corpus.Expected.MinColumnEdges} " +
+            $"lecturas de columna, emite {graph.Count}.");
 
         var perturbed = oracle.Select(r => r with { Column = r.Column + "_zzz_no_existe" }).ToHashSet();
         var perturbedRecall = (double)perturbed.Count(graph.Contains) / perturbed.Count;

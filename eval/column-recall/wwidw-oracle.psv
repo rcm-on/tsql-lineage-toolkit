@@ -1,0 +1,627 @@
+application.configuration_populatelargesaletable|fact.sale|bill to customer key
+application.configuration_populatelargesaletable|fact.sale|city key
+application.configuration_populatelargesaletable|fact.sale|customer key
+application.configuration_populatelargesaletable|fact.sale|delivery date key
+application.configuration_populatelargesaletable|fact.sale|description
+application.configuration_populatelargesaletable|fact.sale|invoice date key
+application.configuration_populatelargesaletable|fact.sale|lineage key
+application.configuration_populatelargesaletable|fact.sale|package
+application.configuration_populatelargesaletable|fact.sale|profit
+application.configuration_populatelargesaletable|fact.sale|quantity
+application.configuration_populatelargesaletable|fact.sale|sale key
+application.configuration_populatelargesaletable|fact.sale|salesperson key
+application.configuration_populatelargesaletable|fact.sale|stock item key
+application.configuration_populatelargesaletable|fact.sale|tax amount
+application.configuration_populatelargesaletable|fact.sale|tax rate
+application.configuration_populatelargesaletable|fact.sale|total chiller items
+application.configuration_populatelargesaletable|fact.sale|total dry items
+application.configuration_populatelargesaletable|fact.sale|total excluding tax
+application.configuration_populatelargesaletable|fact.sale|total including tax
+application.configuration_populatelargesaletable|fact.sale|unit price
+application.configuration_populatelargesaletable|fact.sale|wwi invoice id
+application.configuration_populatelargesaletable|integration.lineage|data load completed
+application.configuration_populatelargesaletable|integration.lineage|data load started
+application.configuration_populatelargesaletable|integration.lineage|lineage key
+application.configuration_populatelargesaletable|integration.lineage|source system cutoff time
+application.configuration_populatelargesaletable|integration.lineage|table name
+application.configuration_populatelargesaletable|integration.lineage|was successful
+application.configuration_reseedetl|dimension.city|city
+application.configuration_reseedetl|dimension.city|city key
+application.configuration_reseedetl|dimension.city|continent
+application.configuration_reseedetl|dimension.city|country
+application.configuration_reseedetl|dimension.city|latest recorded population
+application.configuration_reseedetl|dimension.city|lineage key
+application.configuration_reseedetl|dimension.city|location
+application.configuration_reseedetl|dimension.city|region
+application.configuration_reseedetl|dimension.city|sales territory
+application.configuration_reseedetl|dimension.city|state province
+application.configuration_reseedetl|dimension.city|subregion
+application.configuration_reseedetl|dimension.city|valid from
+application.configuration_reseedetl|dimension.city|valid to
+application.configuration_reseedetl|dimension.city|wwi city id
+application.configuration_reseedetl|dimension.customer|bill to customer
+application.configuration_reseedetl|dimension.customer|buying group
+application.configuration_reseedetl|dimension.customer|category
+application.configuration_reseedetl|dimension.customer|customer
+application.configuration_reseedetl|dimension.customer|customer key
+application.configuration_reseedetl|dimension.customer|lineage key
+application.configuration_reseedetl|dimension.customer|postal code
+application.configuration_reseedetl|dimension.customer|primary contact
+application.configuration_reseedetl|dimension.customer|valid from
+application.configuration_reseedetl|dimension.customer|valid to
+application.configuration_reseedetl|dimension.customer|wwi customer id
+application.configuration_reseedetl|dimension.employee|employee
+application.configuration_reseedetl|dimension.employee|employee key
+application.configuration_reseedetl|dimension.employee|is salesperson
+application.configuration_reseedetl|dimension.employee|lineage key
+application.configuration_reseedetl|dimension.employee|photo
+application.configuration_reseedetl|dimension.employee|preferred name
+application.configuration_reseedetl|dimension.employee|valid from
+application.configuration_reseedetl|dimension.employee|valid to
+application.configuration_reseedetl|dimension.employee|wwi employee id
+application.configuration_reseedetl|dimension.payment method|lineage key
+application.configuration_reseedetl|dimension.payment method|payment method
+application.configuration_reseedetl|dimension.payment method|payment method key
+application.configuration_reseedetl|dimension.payment method|valid from
+application.configuration_reseedetl|dimension.payment method|valid to
+application.configuration_reseedetl|dimension.payment method|wwi payment method id
+application.configuration_reseedetl|dimension.stock item|barcode
+application.configuration_reseedetl|dimension.stock item|brand
+application.configuration_reseedetl|dimension.stock item|buying package
+application.configuration_reseedetl|dimension.stock item|color
+application.configuration_reseedetl|dimension.stock item|is chiller stock
+application.configuration_reseedetl|dimension.stock item|lead time days
+application.configuration_reseedetl|dimension.stock item|lineage key
+application.configuration_reseedetl|dimension.stock item|photo
+application.configuration_reseedetl|dimension.stock item|quantity per outer
+application.configuration_reseedetl|dimension.stock item|recommended retail price
+application.configuration_reseedetl|dimension.stock item|selling package
+application.configuration_reseedetl|dimension.stock item|size
+application.configuration_reseedetl|dimension.stock item|stock item
+application.configuration_reseedetl|dimension.stock item|stock item key
+application.configuration_reseedetl|dimension.stock item|tax rate
+application.configuration_reseedetl|dimension.stock item|typical weight per unit
+application.configuration_reseedetl|dimension.stock item|unit price
+application.configuration_reseedetl|dimension.stock item|valid from
+application.configuration_reseedetl|dimension.stock item|valid to
+application.configuration_reseedetl|dimension.stock item|wwi stock item id
+application.configuration_reseedetl|dimension.supplier|category
+application.configuration_reseedetl|dimension.supplier|lineage key
+application.configuration_reseedetl|dimension.supplier|payment days
+application.configuration_reseedetl|dimension.supplier|postal code
+application.configuration_reseedetl|dimension.supplier|primary contact
+application.configuration_reseedetl|dimension.supplier|supplier
+application.configuration_reseedetl|dimension.supplier|supplier key
+application.configuration_reseedetl|dimension.supplier|supplier reference
+application.configuration_reseedetl|dimension.supplier|valid from
+application.configuration_reseedetl|dimension.supplier|valid to
+application.configuration_reseedetl|dimension.supplier|wwi supplier id
+application.configuration_reseedetl|dimension.transaction type|lineage key
+application.configuration_reseedetl|dimension.transaction type|transaction type
+application.configuration_reseedetl|dimension.transaction type|transaction type key
+application.configuration_reseedetl|dimension.transaction type|valid from
+application.configuration_reseedetl|dimension.transaction type|valid to
+application.configuration_reseedetl|dimension.transaction type|wwi transaction type id
+application.configuration_reseedetl|integration.etl cutoff|cutoff time
+integration.getlastetlcutofftime|integration.etl cutoff|cutoff time
+integration.getlastetlcutofftime|integration.etl cutoff|table name
+integration.getlineagekey|integration.lineage|data load completed
+integration.getlineagekey|integration.lineage|data load started
+integration.getlineagekey|integration.lineage|lineage key
+integration.getlineagekey|integration.lineage|source system cutoff time
+integration.getlineagekey|integration.lineage|table name
+integration.getlineagekey|integration.lineage|was successful
+integration.migratestagedcitydata|dimension.city|city
+integration.migratestagedcitydata|dimension.city|continent
+integration.migratestagedcitydata|dimension.city|country
+integration.migratestagedcitydata|dimension.city|latest recorded population
+integration.migratestagedcitydata|dimension.city|lineage key
+integration.migratestagedcitydata|dimension.city|location
+integration.migratestagedcitydata|dimension.city|region
+integration.migratestagedcitydata|dimension.city|sales territory
+integration.migratestagedcitydata|dimension.city|state province
+integration.migratestagedcitydata|dimension.city|subregion
+integration.migratestagedcitydata|dimension.city|valid from
+integration.migratestagedcitydata|dimension.city|valid to
+integration.migratestagedcitydata|dimension.city|wwi city id
+integration.migratestagedcitydata|integration.city_staging|city
+integration.migratestagedcitydata|integration.city_staging|continent
+integration.migratestagedcitydata|integration.city_staging|country
+integration.migratestagedcitydata|integration.city_staging|latest recorded population
+integration.migratestagedcitydata|integration.city_staging|location
+integration.migratestagedcitydata|integration.city_staging|region
+integration.migratestagedcitydata|integration.city_staging|sales territory
+integration.migratestagedcitydata|integration.city_staging|state province
+integration.migratestagedcitydata|integration.city_staging|subregion
+integration.migratestagedcitydata|integration.city_staging|valid from
+integration.migratestagedcitydata|integration.city_staging|valid to
+integration.migratestagedcitydata|integration.city_staging|wwi city id
+integration.migratestagedcitydata|integration.etl cutoff|cutoff time
+integration.migratestagedcitydata|integration.etl cutoff|table name
+integration.migratestagedcitydata|integration.lineage|data load completed
+integration.migratestagedcitydata|integration.lineage|lineage key
+integration.migratestagedcitydata|integration.lineage|source system cutoff time
+integration.migratestagedcitydata|integration.lineage|table name
+integration.migratestagedcitydata|integration.lineage|was successful
+integration.migratestagedcustomerdata|dimension.customer|bill to customer
+integration.migratestagedcustomerdata|dimension.customer|buying group
+integration.migratestagedcustomerdata|dimension.customer|category
+integration.migratestagedcustomerdata|dimension.customer|customer
+integration.migratestagedcustomerdata|dimension.customer|lineage key
+integration.migratestagedcustomerdata|dimension.customer|postal code
+integration.migratestagedcustomerdata|dimension.customer|primary contact
+integration.migratestagedcustomerdata|dimension.customer|valid from
+integration.migratestagedcustomerdata|dimension.customer|valid to
+integration.migratestagedcustomerdata|dimension.customer|wwi customer id
+integration.migratestagedcustomerdata|integration.customer_staging|bill to customer
+integration.migratestagedcustomerdata|integration.customer_staging|buying group
+integration.migratestagedcustomerdata|integration.customer_staging|category
+integration.migratestagedcustomerdata|integration.customer_staging|customer
+integration.migratestagedcustomerdata|integration.customer_staging|postal code
+integration.migratestagedcustomerdata|integration.customer_staging|primary contact
+integration.migratestagedcustomerdata|integration.customer_staging|valid from
+integration.migratestagedcustomerdata|integration.customer_staging|valid to
+integration.migratestagedcustomerdata|integration.customer_staging|wwi customer id
+integration.migratestagedcustomerdata|integration.etl cutoff|cutoff time
+integration.migratestagedcustomerdata|integration.etl cutoff|table name
+integration.migratestagedcustomerdata|integration.lineage|data load completed
+integration.migratestagedcustomerdata|integration.lineage|lineage key
+integration.migratestagedcustomerdata|integration.lineage|source system cutoff time
+integration.migratestagedcustomerdata|integration.lineage|table name
+integration.migratestagedcustomerdata|integration.lineage|was successful
+integration.migratestagedemployeedata|dimension.employee|employee
+integration.migratestagedemployeedata|dimension.employee|is salesperson
+integration.migratestagedemployeedata|dimension.employee|lineage key
+integration.migratestagedemployeedata|dimension.employee|photo
+integration.migratestagedemployeedata|dimension.employee|preferred name
+integration.migratestagedemployeedata|dimension.employee|valid from
+integration.migratestagedemployeedata|dimension.employee|valid to
+integration.migratestagedemployeedata|dimension.employee|wwi employee id
+integration.migratestagedemployeedata|integration.employee_staging|employee
+integration.migratestagedemployeedata|integration.employee_staging|is salesperson
+integration.migratestagedemployeedata|integration.employee_staging|photo
+integration.migratestagedemployeedata|integration.employee_staging|preferred name
+integration.migratestagedemployeedata|integration.employee_staging|valid from
+integration.migratestagedemployeedata|integration.employee_staging|valid to
+integration.migratestagedemployeedata|integration.employee_staging|wwi employee id
+integration.migratestagedemployeedata|integration.etl cutoff|cutoff time
+integration.migratestagedemployeedata|integration.etl cutoff|table name
+integration.migratestagedemployeedata|integration.lineage|data load completed
+integration.migratestagedemployeedata|integration.lineage|lineage key
+integration.migratestagedemployeedata|integration.lineage|source system cutoff time
+integration.migratestagedemployeedata|integration.lineage|table name
+integration.migratestagedemployeedata|integration.lineage|was successful
+integration.migratestagedmovementdata|dimension.customer|customer key
+integration.migratestagedmovementdata|dimension.customer|valid from
+integration.migratestagedmovementdata|dimension.customer|valid to
+integration.migratestagedmovementdata|dimension.customer|wwi customer id
+integration.migratestagedmovementdata|dimension.stock item|stock item key
+integration.migratestagedmovementdata|dimension.stock item|valid from
+integration.migratestagedmovementdata|dimension.stock item|valid to
+integration.migratestagedmovementdata|dimension.stock item|wwi stock item id
+integration.migratestagedmovementdata|dimension.supplier|supplier key
+integration.migratestagedmovementdata|dimension.supplier|valid from
+integration.migratestagedmovementdata|dimension.supplier|valid to
+integration.migratestagedmovementdata|dimension.supplier|wwi supplier id
+integration.migratestagedmovementdata|dimension.transaction type|transaction type key
+integration.migratestagedmovementdata|dimension.transaction type|valid from
+integration.migratestagedmovementdata|dimension.transaction type|valid to
+integration.migratestagedmovementdata|dimension.transaction type|wwi transaction type id
+integration.migratestagedmovementdata|fact.movement|customer key
+integration.migratestagedmovementdata|fact.movement|date key
+integration.migratestagedmovementdata|fact.movement|lineage key
+integration.migratestagedmovementdata|fact.movement|quantity
+integration.migratestagedmovementdata|fact.movement|stock item key
+integration.migratestagedmovementdata|fact.movement|supplier key
+integration.migratestagedmovementdata|fact.movement|transaction type key
+integration.migratestagedmovementdata|fact.movement|wwi invoice id
+integration.migratestagedmovementdata|fact.movement|wwi purchase order id
+integration.migratestagedmovementdata|fact.movement|wwi stock item transaction id
+integration.migratestagedmovementdata|integration.etl cutoff|cutoff time
+integration.migratestagedmovementdata|integration.etl cutoff|table name
+integration.migratestagedmovementdata|integration.lineage|data load completed
+integration.migratestagedmovementdata|integration.lineage|lineage key
+integration.migratestagedmovementdata|integration.lineage|source system cutoff time
+integration.migratestagedmovementdata|integration.lineage|table name
+integration.migratestagedmovementdata|integration.lineage|was successful
+integration.migratestagedmovementdata|integration.movement_staging|customer key
+integration.migratestagedmovementdata|integration.movement_staging|date key
+integration.migratestagedmovementdata|integration.movement_staging|last modifed when
+integration.migratestagedmovementdata|integration.movement_staging|quantity
+integration.migratestagedmovementdata|integration.movement_staging|stock item key
+integration.migratestagedmovementdata|integration.movement_staging|supplier key
+integration.migratestagedmovementdata|integration.movement_staging|transaction type key
+integration.migratestagedmovementdata|integration.movement_staging|wwi customer id
+integration.migratestagedmovementdata|integration.movement_staging|wwi invoice id
+integration.migratestagedmovementdata|integration.movement_staging|wwi purchase order id
+integration.migratestagedmovementdata|integration.movement_staging|wwi stock item id
+integration.migratestagedmovementdata|integration.movement_staging|wwi stock item transaction id
+integration.migratestagedmovementdata|integration.movement_staging|wwi supplier id
+integration.migratestagedmovementdata|integration.movement_staging|wwi transaction type id
+integration.migratestagedorderdata|dimension.city|city key
+integration.migratestagedorderdata|dimension.city|valid from
+integration.migratestagedorderdata|dimension.city|valid to
+integration.migratestagedorderdata|dimension.city|wwi city id
+integration.migratestagedorderdata|dimension.customer|customer key
+integration.migratestagedorderdata|dimension.customer|valid from
+integration.migratestagedorderdata|dimension.customer|valid to
+integration.migratestagedorderdata|dimension.customer|wwi customer id
+integration.migratestagedorderdata|dimension.employee|employee key
+integration.migratestagedorderdata|dimension.employee|valid from
+integration.migratestagedorderdata|dimension.employee|valid to
+integration.migratestagedorderdata|dimension.employee|wwi employee id
+integration.migratestagedorderdata|dimension.stock item|stock item key
+integration.migratestagedorderdata|dimension.stock item|valid from
+integration.migratestagedorderdata|dimension.stock item|valid to
+integration.migratestagedorderdata|dimension.stock item|wwi stock item id
+integration.migratestagedorderdata|fact.order|city key
+integration.migratestagedorderdata|fact.order|customer key
+integration.migratestagedorderdata|fact.order|description
+integration.migratestagedorderdata|fact.order|lineage key
+integration.migratestagedorderdata|fact.order|order date key
+integration.migratestagedorderdata|fact.order|package
+integration.migratestagedorderdata|fact.order|picked date key
+integration.migratestagedorderdata|fact.order|picker key
+integration.migratestagedorderdata|fact.order|quantity
+integration.migratestagedorderdata|fact.order|salesperson key
+integration.migratestagedorderdata|fact.order|stock item key
+integration.migratestagedorderdata|fact.order|tax amount
+integration.migratestagedorderdata|fact.order|tax rate
+integration.migratestagedorderdata|fact.order|total excluding tax
+integration.migratestagedorderdata|fact.order|total including tax
+integration.migratestagedorderdata|fact.order|unit price
+integration.migratestagedorderdata|fact.order|wwi backorder id
+integration.migratestagedorderdata|fact.order|wwi order id
+integration.migratestagedorderdata|integration.etl cutoff|cutoff time
+integration.migratestagedorderdata|integration.etl cutoff|table name
+integration.migratestagedorderdata|integration.lineage|data load completed
+integration.migratestagedorderdata|integration.lineage|lineage key
+integration.migratestagedorderdata|integration.lineage|source system cutoff time
+integration.migratestagedorderdata|integration.lineage|table name
+integration.migratestagedorderdata|integration.lineage|was successful
+integration.migratestagedorderdata|integration.order_staging|city key
+integration.migratestagedorderdata|integration.order_staging|customer key
+integration.migratestagedorderdata|integration.order_staging|description
+integration.migratestagedorderdata|integration.order_staging|last modified when
+integration.migratestagedorderdata|integration.order_staging|order date key
+integration.migratestagedorderdata|integration.order_staging|package
+integration.migratestagedorderdata|integration.order_staging|picked date key
+integration.migratestagedorderdata|integration.order_staging|picker key
+integration.migratestagedorderdata|integration.order_staging|quantity
+integration.migratestagedorderdata|integration.order_staging|salesperson key
+integration.migratestagedorderdata|integration.order_staging|stock item key
+integration.migratestagedorderdata|integration.order_staging|tax amount
+integration.migratestagedorderdata|integration.order_staging|tax rate
+integration.migratestagedorderdata|integration.order_staging|total excluding tax
+integration.migratestagedorderdata|integration.order_staging|total including tax
+integration.migratestagedorderdata|integration.order_staging|unit price
+integration.migratestagedorderdata|integration.order_staging|wwi backorder id
+integration.migratestagedorderdata|integration.order_staging|wwi city id
+integration.migratestagedorderdata|integration.order_staging|wwi customer id
+integration.migratestagedorderdata|integration.order_staging|wwi order id
+integration.migratestagedorderdata|integration.order_staging|wwi picker id
+integration.migratestagedorderdata|integration.order_staging|wwi salesperson id
+integration.migratestagedorderdata|integration.order_staging|wwi stock item id
+integration.migratestagedpaymentmethoddata|dimension.payment method|lineage key
+integration.migratestagedpaymentmethoddata|dimension.payment method|payment method
+integration.migratestagedpaymentmethoddata|dimension.payment method|valid from
+integration.migratestagedpaymentmethoddata|dimension.payment method|valid to
+integration.migratestagedpaymentmethoddata|dimension.payment method|wwi payment method id
+integration.migratestagedpaymentmethoddata|integration.etl cutoff|cutoff time
+integration.migratestagedpaymentmethoddata|integration.etl cutoff|table name
+integration.migratestagedpaymentmethoddata|integration.lineage|data load completed
+integration.migratestagedpaymentmethoddata|integration.lineage|lineage key
+integration.migratestagedpaymentmethoddata|integration.lineage|source system cutoff time
+integration.migratestagedpaymentmethoddata|integration.lineage|table name
+integration.migratestagedpaymentmethoddata|integration.lineage|was successful
+integration.migratestagedpaymentmethoddata|integration.paymentmethod_staging|payment method
+integration.migratestagedpaymentmethoddata|integration.paymentmethod_staging|valid from
+integration.migratestagedpaymentmethoddata|integration.paymentmethod_staging|valid to
+integration.migratestagedpaymentmethoddata|integration.paymentmethod_staging|wwi payment method id
+integration.migratestagedpurchasedata|dimension.stock item|stock item key
+integration.migratestagedpurchasedata|dimension.stock item|valid from
+integration.migratestagedpurchasedata|dimension.stock item|valid to
+integration.migratestagedpurchasedata|dimension.stock item|wwi stock item id
+integration.migratestagedpurchasedata|dimension.supplier|supplier key
+integration.migratestagedpurchasedata|dimension.supplier|valid from
+integration.migratestagedpurchasedata|dimension.supplier|valid to
+integration.migratestagedpurchasedata|dimension.supplier|wwi supplier id
+integration.migratestagedpurchasedata|fact.purchase|date key
+integration.migratestagedpurchasedata|fact.purchase|is order finalized
+integration.migratestagedpurchasedata|fact.purchase|lineage key
+integration.migratestagedpurchasedata|fact.purchase|ordered outers
+integration.migratestagedpurchasedata|fact.purchase|ordered quantity
+integration.migratestagedpurchasedata|fact.purchase|package
+integration.migratestagedpurchasedata|fact.purchase|received outers
+integration.migratestagedpurchasedata|fact.purchase|stock item key
+integration.migratestagedpurchasedata|fact.purchase|supplier key
+integration.migratestagedpurchasedata|fact.purchase|wwi purchase order id
+integration.migratestagedpurchasedata|integration.etl cutoff|cutoff time
+integration.migratestagedpurchasedata|integration.etl cutoff|table name
+integration.migratestagedpurchasedata|integration.lineage|data load completed
+integration.migratestagedpurchasedata|integration.lineage|lineage key
+integration.migratestagedpurchasedata|integration.lineage|source system cutoff time
+integration.migratestagedpurchasedata|integration.lineage|table name
+integration.migratestagedpurchasedata|integration.lineage|was successful
+integration.migratestagedpurchasedata|integration.purchase_staging|date key
+integration.migratestagedpurchasedata|integration.purchase_staging|is order finalized
+integration.migratestagedpurchasedata|integration.purchase_staging|last modified when
+integration.migratestagedpurchasedata|integration.purchase_staging|ordered outers
+integration.migratestagedpurchasedata|integration.purchase_staging|ordered quantity
+integration.migratestagedpurchasedata|integration.purchase_staging|package
+integration.migratestagedpurchasedata|integration.purchase_staging|received outers
+integration.migratestagedpurchasedata|integration.purchase_staging|stock item key
+integration.migratestagedpurchasedata|integration.purchase_staging|supplier key
+integration.migratestagedpurchasedata|integration.purchase_staging|wwi purchase order id
+integration.migratestagedpurchasedata|integration.purchase_staging|wwi stock item id
+integration.migratestagedpurchasedata|integration.purchase_staging|wwi supplier id
+integration.migratestagedsaledata|dimension.city|city key
+integration.migratestagedsaledata|dimension.city|valid from
+integration.migratestagedsaledata|dimension.city|valid to
+integration.migratestagedsaledata|dimension.city|wwi city id
+integration.migratestagedsaledata|dimension.customer|customer key
+integration.migratestagedsaledata|dimension.customer|valid from
+integration.migratestagedsaledata|dimension.customer|valid to
+integration.migratestagedsaledata|dimension.customer|wwi customer id
+integration.migratestagedsaledata|dimension.employee|employee key
+integration.migratestagedsaledata|dimension.employee|valid from
+integration.migratestagedsaledata|dimension.employee|valid to
+integration.migratestagedsaledata|dimension.employee|wwi employee id
+integration.migratestagedsaledata|dimension.stock item|stock item key
+integration.migratestagedsaledata|dimension.stock item|valid from
+integration.migratestagedsaledata|dimension.stock item|valid to
+integration.migratestagedsaledata|dimension.stock item|wwi stock item id
+integration.migratestagedsaledata|fact.sale|bill to customer key
+integration.migratestagedsaledata|fact.sale|city key
+integration.migratestagedsaledata|fact.sale|customer key
+integration.migratestagedsaledata|fact.sale|delivery date key
+integration.migratestagedsaledata|fact.sale|description
+integration.migratestagedsaledata|fact.sale|invoice date key
+integration.migratestagedsaledata|fact.sale|lineage key
+integration.migratestagedsaledata|fact.sale|package
+integration.migratestagedsaledata|fact.sale|profit
+integration.migratestagedsaledata|fact.sale|quantity
+integration.migratestagedsaledata|fact.sale|salesperson key
+integration.migratestagedsaledata|fact.sale|stock item key
+integration.migratestagedsaledata|fact.sale|tax amount
+integration.migratestagedsaledata|fact.sale|tax rate
+integration.migratestagedsaledata|fact.sale|total chiller items
+integration.migratestagedsaledata|fact.sale|total dry items
+integration.migratestagedsaledata|fact.sale|total excluding tax
+integration.migratestagedsaledata|fact.sale|total including tax
+integration.migratestagedsaledata|fact.sale|unit price
+integration.migratestagedsaledata|fact.sale|wwi invoice id
+integration.migratestagedsaledata|integration.etl cutoff|cutoff time
+integration.migratestagedsaledata|integration.etl cutoff|table name
+integration.migratestagedsaledata|integration.lineage|data load completed
+integration.migratestagedsaledata|integration.lineage|lineage key
+integration.migratestagedsaledata|integration.lineage|source system cutoff time
+integration.migratestagedsaledata|integration.lineage|table name
+integration.migratestagedsaledata|integration.lineage|was successful
+integration.migratestagedsaledata|integration.sale_staging|bill to customer key
+integration.migratestagedsaledata|integration.sale_staging|city key
+integration.migratestagedsaledata|integration.sale_staging|customer key
+integration.migratestagedsaledata|integration.sale_staging|delivery date key
+integration.migratestagedsaledata|integration.sale_staging|description
+integration.migratestagedsaledata|integration.sale_staging|invoice date key
+integration.migratestagedsaledata|integration.sale_staging|last modified when
+integration.migratestagedsaledata|integration.sale_staging|package
+integration.migratestagedsaledata|integration.sale_staging|profit
+integration.migratestagedsaledata|integration.sale_staging|quantity
+integration.migratestagedsaledata|integration.sale_staging|salesperson key
+integration.migratestagedsaledata|integration.sale_staging|stock item key
+integration.migratestagedsaledata|integration.sale_staging|tax amount
+integration.migratestagedsaledata|integration.sale_staging|tax rate
+integration.migratestagedsaledata|integration.sale_staging|total chiller items
+integration.migratestagedsaledata|integration.sale_staging|total dry items
+integration.migratestagedsaledata|integration.sale_staging|total excluding tax
+integration.migratestagedsaledata|integration.sale_staging|total including tax
+integration.migratestagedsaledata|integration.sale_staging|unit price
+integration.migratestagedsaledata|integration.sale_staging|wwi bill to customer id
+integration.migratestagedsaledata|integration.sale_staging|wwi city id
+integration.migratestagedsaledata|integration.sale_staging|wwi customer id
+integration.migratestagedsaledata|integration.sale_staging|wwi invoice id
+integration.migratestagedsaledata|integration.sale_staging|wwi salesperson id
+integration.migratestagedsaledata|integration.sale_staging|wwi stock item id
+integration.migratestagedstockholdingdata|dimension.stock item|stock item key
+integration.migratestagedstockholdingdata|dimension.stock item|valid to
+integration.migratestagedstockholdingdata|dimension.stock item|wwi stock item id
+integration.migratestagedstockholdingdata|fact.stock holding|bin location
+integration.migratestagedstockholdingdata|fact.stock holding|last cost price
+integration.migratestagedstockholdingdata|fact.stock holding|last stocktake quantity
+integration.migratestagedstockholdingdata|fact.stock holding|lineage key
+integration.migratestagedstockholdingdata|fact.stock holding|quantity on hand
+integration.migratestagedstockholdingdata|fact.stock holding|reorder level
+integration.migratestagedstockholdingdata|fact.stock holding|stock item key
+integration.migratestagedstockholdingdata|fact.stock holding|target stock level
+integration.migratestagedstockholdingdata|integration.etl cutoff|cutoff time
+integration.migratestagedstockholdingdata|integration.etl cutoff|table name
+integration.migratestagedstockholdingdata|integration.lineage|data load completed
+integration.migratestagedstockholdingdata|integration.lineage|lineage key
+integration.migratestagedstockholdingdata|integration.lineage|source system cutoff time
+integration.migratestagedstockholdingdata|integration.lineage|table name
+integration.migratestagedstockholdingdata|integration.lineage|was successful
+integration.migratestagedstockholdingdata|integration.stockholding_staging|bin location
+integration.migratestagedstockholdingdata|integration.stockholding_staging|last cost price
+integration.migratestagedstockholdingdata|integration.stockholding_staging|last stocktake quantity
+integration.migratestagedstockholdingdata|integration.stockholding_staging|quantity on hand
+integration.migratestagedstockholdingdata|integration.stockholding_staging|reorder level
+integration.migratestagedstockholdingdata|integration.stockholding_staging|stock item key
+integration.migratestagedstockholdingdata|integration.stockholding_staging|target stock level
+integration.migratestagedstockholdingdata|integration.stockholding_staging|wwi stock item id
+integration.migratestagedstockitemdata|dimension.stock item|barcode
+integration.migratestagedstockitemdata|dimension.stock item|brand
+integration.migratestagedstockitemdata|dimension.stock item|buying package
+integration.migratestagedstockitemdata|dimension.stock item|color
+integration.migratestagedstockitemdata|dimension.stock item|is chiller stock
+integration.migratestagedstockitemdata|dimension.stock item|lead time days
+integration.migratestagedstockitemdata|dimension.stock item|lineage key
+integration.migratestagedstockitemdata|dimension.stock item|photo
+integration.migratestagedstockitemdata|dimension.stock item|quantity per outer
+integration.migratestagedstockitemdata|dimension.stock item|recommended retail price
+integration.migratestagedstockitemdata|dimension.stock item|selling package
+integration.migratestagedstockitemdata|dimension.stock item|size
+integration.migratestagedstockitemdata|dimension.stock item|stock item
+integration.migratestagedstockitemdata|dimension.stock item|tax rate
+integration.migratestagedstockitemdata|dimension.stock item|typical weight per unit
+integration.migratestagedstockitemdata|dimension.stock item|unit price
+integration.migratestagedstockitemdata|dimension.stock item|valid from
+integration.migratestagedstockitemdata|dimension.stock item|valid to
+integration.migratestagedstockitemdata|dimension.stock item|wwi stock item id
+integration.migratestagedstockitemdata|integration.etl cutoff|cutoff time
+integration.migratestagedstockitemdata|integration.etl cutoff|table name
+integration.migratestagedstockitemdata|integration.lineage|data load completed
+integration.migratestagedstockitemdata|integration.lineage|lineage key
+integration.migratestagedstockitemdata|integration.lineage|source system cutoff time
+integration.migratestagedstockitemdata|integration.lineage|table name
+integration.migratestagedstockitemdata|integration.lineage|was successful
+integration.migratestagedstockitemdata|integration.stockitem_staging|barcode
+integration.migratestagedstockitemdata|integration.stockitem_staging|brand
+integration.migratestagedstockitemdata|integration.stockitem_staging|buying package
+integration.migratestagedstockitemdata|integration.stockitem_staging|color
+integration.migratestagedstockitemdata|integration.stockitem_staging|is chiller stock
+integration.migratestagedstockitemdata|integration.stockitem_staging|lead time days
+integration.migratestagedstockitemdata|integration.stockitem_staging|photo
+integration.migratestagedstockitemdata|integration.stockitem_staging|quantity per outer
+integration.migratestagedstockitemdata|integration.stockitem_staging|recommended retail price
+integration.migratestagedstockitemdata|integration.stockitem_staging|selling package
+integration.migratestagedstockitemdata|integration.stockitem_staging|size
+integration.migratestagedstockitemdata|integration.stockitem_staging|stock item
+integration.migratestagedstockitemdata|integration.stockitem_staging|tax rate
+integration.migratestagedstockitemdata|integration.stockitem_staging|typical weight per unit
+integration.migratestagedstockitemdata|integration.stockitem_staging|unit price
+integration.migratestagedstockitemdata|integration.stockitem_staging|valid from
+integration.migratestagedstockitemdata|integration.stockitem_staging|valid to
+integration.migratestagedstockitemdata|integration.stockitem_staging|wwi stock item id
+integration.migratestagedsupplierdata|dimension.supplier|category
+integration.migratestagedsupplierdata|dimension.supplier|lineage key
+integration.migratestagedsupplierdata|dimension.supplier|payment days
+integration.migratestagedsupplierdata|dimension.supplier|postal code
+integration.migratestagedsupplierdata|dimension.supplier|primary contact
+integration.migratestagedsupplierdata|dimension.supplier|supplier
+integration.migratestagedsupplierdata|dimension.supplier|supplier reference
+integration.migratestagedsupplierdata|dimension.supplier|valid from
+integration.migratestagedsupplierdata|dimension.supplier|valid to
+integration.migratestagedsupplierdata|dimension.supplier|wwi supplier id
+integration.migratestagedsupplierdata|integration.etl cutoff|cutoff time
+integration.migratestagedsupplierdata|integration.etl cutoff|table name
+integration.migratestagedsupplierdata|integration.lineage|data load completed
+integration.migratestagedsupplierdata|integration.lineage|lineage key
+integration.migratestagedsupplierdata|integration.lineage|source system cutoff time
+integration.migratestagedsupplierdata|integration.lineage|table name
+integration.migratestagedsupplierdata|integration.lineage|was successful
+integration.migratestagedsupplierdata|integration.supplier_staging|category
+integration.migratestagedsupplierdata|integration.supplier_staging|payment days
+integration.migratestagedsupplierdata|integration.supplier_staging|postal code
+integration.migratestagedsupplierdata|integration.supplier_staging|primary contact
+integration.migratestagedsupplierdata|integration.supplier_staging|supplier
+integration.migratestagedsupplierdata|integration.supplier_staging|supplier reference
+integration.migratestagedsupplierdata|integration.supplier_staging|valid from
+integration.migratestagedsupplierdata|integration.supplier_staging|valid to
+integration.migratestagedsupplierdata|integration.supplier_staging|wwi supplier id
+integration.migratestagedtransactiondata|dimension.customer|customer key
+integration.migratestagedtransactiondata|dimension.customer|valid from
+integration.migratestagedtransactiondata|dimension.customer|valid to
+integration.migratestagedtransactiondata|dimension.customer|wwi customer id
+integration.migratestagedtransactiondata|dimension.payment method|payment method key
+integration.migratestagedtransactiondata|dimension.payment method|valid from
+integration.migratestagedtransactiondata|dimension.payment method|valid to
+integration.migratestagedtransactiondata|dimension.payment method|wwi payment method id
+integration.migratestagedtransactiondata|dimension.supplier|supplier key
+integration.migratestagedtransactiondata|dimension.supplier|valid from
+integration.migratestagedtransactiondata|dimension.supplier|valid to
+integration.migratestagedtransactiondata|dimension.supplier|wwi supplier id
+integration.migratestagedtransactiondata|dimension.transaction type|transaction type key
+integration.migratestagedtransactiondata|dimension.transaction type|valid from
+integration.migratestagedtransactiondata|dimension.transaction type|valid to
+integration.migratestagedtransactiondata|dimension.transaction type|wwi transaction type id
+integration.migratestagedtransactiondata|fact.transaction|bill to customer key
+integration.migratestagedtransactiondata|fact.transaction|customer key
+integration.migratestagedtransactiondata|fact.transaction|date key
+integration.migratestagedtransactiondata|fact.transaction|is finalized
+integration.migratestagedtransactiondata|fact.transaction|lineage key
+integration.migratestagedtransactiondata|fact.transaction|outstanding balance
+integration.migratestagedtransactiondata|fact.transaction|payment method key
+integration.migratestagedtransactiondata|fact.transaction|supplier invoice number
+integration.migratestagedtransactiondata|fact.transaction|supplier key
+integration.migratestagedtransactiondata|fact.transaction|tax amount
+integration.migratestagedtransactiondata|fact.transaction|total excluding tax
+integration.migratestagedtransactiondata|fact.transaction|total including tax
+integration.migratestagedtransactiondata|fact.transaction|transaction type key
+integration.migratestagedtransactiondata|fact.transaction|wwi customer transaction id
+integration.migratestagedtransactiondata|fact.transaction|wwi invoice id
+integration.migratestagedtransactiondata|fact.transaction|wwi purchase order id
+integration.migratestagedtransactiondata|fact.transaction|wwi supplier transaction id
+integration.migratestagedtransactiondata|integration.etl cutoff|cutoff time
+integration.migratestagedtransactiondata|integration.etl cutoff|table name
+integration.migratestagedtransactiondata|integration.lineage|data load completed
+integration.migratestagedtransactiondata|integration.lineage|lineage key
+integration.migratestagedtransactiondata|integration.lineage|source system cutoff time
+integration.migratestagedtransactiondata|integration.lineage|table name
+integration.migratestagedtransactiondata|integration.lineage|was successful
+integration.migratestagedtransactiondata|integration.transaction_staging|bill to customer key
+integration.migratestagedtransactiondata|integration.transaction_staging|customer key
+integration.migratestagedtransactiondata|integration.transaction_staging|date key
+integration.migratestagedtransactiondata|integration.transaction_staging|is finalized
+integration.migratestagedtransactiondata|integration.transaction_staging|last modified when
+integration.migratestagedtransactiondata|integration.transaction_staging|outstanding balance
+integration.migratestagedtransactiondata|integration.transaction_staging|payment method key
+integration.migratestagedtransactiondata|integration.transaction_staging|supplier invoice number
+integration.migratestagedtransactiondata|integration.transaction_staging|supplier key
+integration.migratestagedtransactiondata|integration.transaction_staging|tax amount
+integration.migratestagedtransactiondata|integration.transaction_staging|total excluding tax
+integration.migratestagedtransactiondata|integration.transaction_staging|total including tax
+integration.migratestagedtransactiondata|integration.transaction_staging|transaction type key
+integration.migratestagedtransactiondata|integration.transaction_staging|wwi bill to customer id
+integration.migratestagedtransactiondata|integration.transaction_staging|wwi customer id
+integration.migratestagedtransactiondata|integration.transaction_staging|wwi customer transaction id
+integration.migratestagedtransactiondata|integration.transaction_staging|wwi invoice id
+integration.migratestagedtransactiondata|integration.transaction_staging|wwi payment method id
+integration.migratestagedtransactiondata|integration.transaction_staging|wwi purchase order id
+integration.migratestagedtransactiondata|integration.transaction_staging|wwi supplier id
+integration.migratestagedtransactiondata|integration.transaction_staging|wwi supplier transaction id
+integration.migratestagedtransactiondata|integration.transaction_staging|wwi transaction type id
+integration.migratestagedtransactiontypedata|dimension.transaction type|lineage key
+integration.migratestagedtransactiontypedata|dimension.transaction type|transaction type
+integration.migratestagedtransactiontypedata|dimension.transaction type|valid from
+integration.migratestagedtransactiontypedata|dimension.transaction type|valid to
+integration.migratestagedtransactiontypedata|dimension.transaction type|wwi transaction type id
+integration.migratestagedtransactiontypedata|integration.etl cutoff|cutoff time
+integration.migratestagedtransactiontypedata|integration.etl cutoff|table name
+integration.migratestagedtransactiontypedata|integration.lineage|data load completed
+integration.migratestagedtransactiontypedata|integration.lineage|lineage key
+integration.migratestagedtransactiontypedata|integration.lineage|source system cutoff time
+integration.migratestagedtransactiontypedata|integration.lineage|table name
+integration.migratestagedtransactiontypedata|integration.lineage|was successful
+integration.migratestagedtransactiontypedata|integration.transactiontype_staging|transaction type
+integration.migratestagedtransactiontypedata|integration.transactiontype_staging|valid from
+integration.migratestagedtransactiontypedata|integration.transactiontype_staging|valid to
+integration.migratestagedtransactiontypedata|integration.transactiontype_staging|wwi transaction type id
+integration.populatedatedimensionforyear|dimension.date|calendar month label
+integration.populatedatedimensionforyear|dimension.date|calendar month number
+integration.populatedatedimensionforyear|dimension.date|calendar year
+integration.populatedatedimensionforyear|dimension.date|calendar year label
+integration.populatedatedimensionforyear|dimension.date|date
+integration.populatedatedimensionforyear|dimension.date|day
+integration.populatedatedimensionforyear|dimension.date|day number
+integration.populatedatedimensionforyear|dimension.date|fiscal month label
+integration.populatedatedimensionforyear|dimension.date|fiscal month number
+integration.populatedatedimensionforyear|dimension.date|fiscal year
+integration.populatedatedimensionforyear|dimension.date|fiscal year label
+integration.populatedatedimensionforyear|dimension.date|iso week number
+integration.populatedatedimensionforyear|dimension.date|month
+integration.populatedatedimensionforyear|dimension.date|short month
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|calendar month label
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|calendar month number
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|calendar year
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|calendar year label
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|date
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|day
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|day number
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|fiscal month label
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|fiscal month number
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|fiscal year
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|fiscal year label
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|iso week number
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|month
+integration.populatedatedimensionforyear|integration.generatedatedimensioncolumns|short month
