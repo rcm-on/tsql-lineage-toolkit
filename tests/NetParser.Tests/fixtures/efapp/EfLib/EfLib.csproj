@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- In-house DLL shipped without sources: a dependency we can see but not walk into. -->
+    <Reference Include="Legacy.Data, Version=1.0.0.0, Culture=neutral">
+      <HintPath>..\lib\Legacy.Data.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

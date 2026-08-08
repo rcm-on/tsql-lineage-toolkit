@@ -11,4 +11,9 @@
     <PackageReference Include="Dapper" Version="2.1.35" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Declared and never used: the dead reference the gate has to catch. -->
+    <ProjectReference Include="..\EfLib\EfLib.csproj" />
+  </ItemGroup>
+
 </Project>

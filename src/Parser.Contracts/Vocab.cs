@@ -13,8 +13,28 @@ public static class Vocab
         // SQL side (GraphExporter)
         "SqlObject", "Process", "Workflow", "Parameter", "Variable", "Step", "Action", "Table", "Column", "Rule",
         "Database", "Schema", "BusinessRule",
-        // App side (NetParser)
-        "AppSolution", "AppProject", "AppPackage", "AppFile", "AppClass", "AppMethod", "AppEndpoint", "ExternalService",
+        // App side (NetParser). EntryPoint and ExternalTarget are the symmetric pair:
+        // where a flow starts (an HTTP route, a Main, a hosted service, a UI handler)
+        // and where it leaves the process (see Boundary). Neither is tied to a
+        // project type or a protocol — that lives in their "kind"/"protocol" props.
+        "AppSolution", "AppProject", "AppPackage", "AppFile", "AppClass", "AppMethod", "AppNamespace",
+        "EntryPoint", "ExternalTarget",
+    };
+
+    /// <summary>
+    /// How a flow can start. Open-ended by design: one more project type is one more
+    /// value. Scope is C# server-side code — desktop UI (WinForms/WPF/MAUI) and
+    /// WebForms are deliberately absent, not pending.
+    /// </summary>
+    public static readonly IReadOnlyList<string> EntryPointKinds = new[]
+    {
+        "http_route",      // MVC/Web API action, minimal API
+        "console_main",    // console app, batch job, scheduled task
+        "hosted_service",  // BackgroundService/IHostedService/Windows service
+        "job",             // Hangfire/Quartz/timer-triggered work
+        "function",        // Azure Function / serverless trigger
+        "message_handler", // broker subscription, MediatR/NServiceBus handler
+        "library_api",     // public surface of a class library: called from outside the solution
     };
 
     public static readonly IReadOnlyList<string> KnownEdgeTypes = new[]
@@ -28,6 +48,15 @@ public static class Vocab
         "CREATES", "ON",
         // App side (NetParser): project/package deps, method->SqlObject|Table bridge,
         // EF entity->table mapping
-        "DEPENDS_ON", "EXECUTES_SQL", "MAPS_TO", "IMPLEMENTS", "EXPOSES",
+        "DEPENDS_ON", "EXECUTES_SQL", "MAPS_TO", "IMPLEMENTS", "EXPOSES", Boundary.ExternalEdge,
+    };
+
+    /// <summary>
+    /// Edges that cross out of the process. A consumer asking "what infrastructure
+    /// does this project touch?" selects these, not a hardcoded list per protocol.
+    /// </summary>
+    public static readonly IReadOnlyList<string> BoundaryEdgeTypes = new[]
+    {
+        "EXECUTES_SQL", Boundary.ExternalEdge,
     };
 }

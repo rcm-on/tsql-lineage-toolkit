@@ -46,15 +46,17 @@ for (var i = 0; i < args.Length; i++)
 
 var includeColumns = args.Contains("--columns");
 var emitNodeStore = args.Contains("--nodestore");
+var allowPartial = args.Contains("--allow-partial");
 
 if (positional.Count == 0 || outDir == null)
 {
-    Console.Error.WriteLine("Usage: parsergeneral <input1> [input2 ...] --out <dir> [--nodestore] [--columns]");
+    Console.Error.WriteLine(
+        "Usage: parsergeneral <input1> [input2 ...] --out <dir> [--nodestore] [--columns] [--allow-partial]");
     return 1;
 }
 
 var tsqlExtractor = new TSqlExtractorAdapter();
-var netExtractor = new NetExtractor();
+var netExtractor = new NetExtractor { AllowPartial = allowPartial };
 IGraphExtractor[] registry = { tsqlExtractor, netExtractor };
 
 var payloads = new List<GraphPayload>();
@@ -67,10 +69,33 @@ foreach (var input in positional)
         continue;
     }
 
-    var payload = extractor is TSqlExtractorAdapter tsql
-        ? tsql.Extract(input, includeColumns)
-        : extractor.Extract(input);
+    GraphPayload payload;
+    try
+    {
+        payload = extractor is TSqlExtractorAdapter tsql
+            ? tsql.Extract(input, includeColumns)
+            : extractor.Extract(input);
+    }
+    catch (UnsupportedProjectException ex)
+    {
+        // Nothing is written: a graph missing a whole project would answer impact
+        // questions with silent gaps, and the caller has no way to tell.
+        Console.Error.WriteLine($"[{extractor.Name}] {input}:");
+        Console.Error.WriteLine(ex.Message);
+        return 2;
+    }
+
     Console.WriteLine($"[{extractor.Name}] {input}: {payload.Nodes.Count} nodes, {payload.Relationships.Count} relationships");
+    if (allowPartial)
+    {
+        var skipped = payload.Nodes
+            .Where(n => n.Properties.TryGetValue("analyzed", out var a) && a is false)
+            .ToList();
+        foreach (var node in skipped)
+            Console.WriteLine($"  WARNING not analysed: {node.Properties["name"]} - {node.Properties["unsupported_reason"]}");
+        if (skipped.Count > 0)
+            Console.WriteLine($"  Graph is PARTIAL: {skipped.Count} project(s) excluded. Impact answers may be incomplete.");
+    }
     payloads.Add(payload);
 }
 

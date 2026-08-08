@@ -11,7 +11,10 @@ namespace NetParser;
 /// <summary>
 /// Roslyn-based extractor for .NET solutions/projects. Emits, in Vocab terms:
 ///   structure  - AppSolution/AppProject/AppPackage/AppFile/AppClass/AppMethod,
-///                CONTAINS, DEPENDS_ON, CALLS (semantic, intra-solution)
+///                CONTAINS, DEPENDS_ON, CALLS (semantic, intra-solution). Calls
+///                through an interface also get a resolved CALLS to the member
+///                that runs (props via=interface, resolution=di|unique_impl), so
+///                the chain controller -> service -> repository -> SQL closes.
 ///   sql bridge - EXECUTES_SQL (AppMethod -> SqlObject|Table) from string flow
 ///                into ADO/Dapper/EF sinks; confidence EXTRACTED (literal),
 ///                RESOLVED (call-site narrowing), AMBIGUOUS (catalog template
@@ -68,6 +71,14 @@ public class NetExtractor : IGraphExtractor
     /// <summary>Also emit AMBIGUOUS candidate edges (catalog matches of an unresolved template).</summary>
     public bool IncludeAmbiguous { get; set; } = true;
 
+    /// <summary>
+    /// Extract anyway when the input contains projects outside scope. Off by default:
+    /// a partial graph presented as complete produces confidently wrong impact answers.
+    /// When on, the excluded projects are written as nodes with analyzed=false so the
+    /// gap is visible to whoever reads the graph, not only to whoever ran the command.
+    /// </summary>
+    public bool AllowPartial { get; set; }
+
     public string Name => "net";
 
     public bool CanHandle(string inputPath) =>
@@ -80,6 +91,9 @@ public class NetExtractor : IGraphExtractor
     public GraphPayload Extract(string inputPath)
     {
         var sln = SolutionLoader.Load(inputPath);
+        if (sln.Unsupported.Count > 0 && !AllowPartial)
+            throw new UnsupportedProjectException(sln.Unsupported);
+
         var catalog = CatalogPath is not null ? Catalog.Load(CatalogPath) : null;
         var b = new Builder(sln, catalog, IncludeAmbiguous);
         return b.Build();
@@ -116,6 +130,23 @@ public class NetExtractor : IGraphExtractor
             new(new CallSiteKeyComparer());
         // sinks whose template still has a parameter hole, waiting for call-site narrowing
         private readonly List<PendingTemplate> _pending = new();
+        // interface member -> concrete implementations declared in the solution
+        private readonly Dictionary<IMethodSymbol, List<(INamedTypeSymbol Type, IMethodSymbol Member)>> _ifaceImpls =
+            new(SymbolEqualityComparer.Default);
+        // interface type -> implementations bound in DI registrations
+        private readonly Dictionary<INamedTypeSymbol, List<INamedTypeSymbol>> _diBindings =
+            new(SymbolEqualityComparer.Default);
+        // interface type -> implementations instantiated with `new` (composition without a container)
+        private readonly Dictionary<INamedTypeSymbol, List<INamedTypeSymbol>> _newBindings =
+            new(SymbolEqualityComparer.Default);
+        // calls landing on an interface member, waiting for the implementation to be picked
+        private readonly List<PendingInterfaceCall> _pendingIfaceCalls = new();
+        // public methods of class libraries: entry points only if nothing in the solution calls them
+        private readonly List<LibraryApiCandidate> _libraryApiCandidates = new();
+        // architecture indexes: who owns what, so class-level coupling can be rolled up
+        private readonly Dictionary<string, string> _methodOwner = new(StringComparer.Ordinal);   // methodId -> classId
+        private readonly Dictionary<string, string> _classNamespace = new(StringComparer.Ordinal); // classId -> namespace
+        private readonly Dictionary<string, string> _classProject = new(StringComparer.Ordinal);   // classId -> project name
         // DbSet property name -> entity type name (per solution; names are enough at this scale)
         private readonly Dictionary<string, string> _dbSetEntity = new(StringComparer.Ordinal);
         // entity type name -> resolved table id
@@ -123,6 +154,12 @@ public class NetExtractor : IGraphExtractor
 
         private sealed record PendingTemplate(
             string MethodId, SqlStringTemplate Template, bool IsProcName, int Line, string File, string? Conditions);
+
+        private sealed record PendingInterfaceCall(
+            string CallerId, IMethodSymbol Member, int Line, string File);
+
+        private sealed record LibraryApiCandidate(
+            string MethodId, string ClassId, string Key, int Line, string File);
 
         public Builder(SolutionInfo sln, Catalog? catalog, bool includeAmbiguous)
         {
@@ -135,6 +172,22 @@ public class NetExtractor : IGraphExtractor
         {
             string slnId = $"app::{_sln.Name}";
             AddNode(slnId, "AppSolution", new() { ["name"] = _sln.Name, ["path"] = _sln.RootDir });
+
+            // Excluded projects are part of the graph, flagged: a consumer walking the
+            // solution sees the hole instead of concluding it does not exist.
+            foreach (var skipped in _sln.Unsupported)
+            {
+                string skippedId = $"app::proj:{skipped.Name}";
+                AddNode(skippedId, "AppProject", new()
+                {
+                    ["name"] = skipped.Name,
+                    ["kind"] = "unsupported",
+                    ["path"] = skipped.Path,
+                    ["analyzed"] = false,
+                    ["unsupported_reason"] = skipped.Reason,
+                });
+                AddEdge("CONTAINS", slnId, skippedId);
+            }
 
             var compilations = new Dictionary<string, CSharpCompilation>(StringComparer.OrdinalIgnoreCase);
             var trees = new Dictionary<SyntaxTree, (ProjectInfo Proj, string FileId)>();
@@ -164,6 +217,12 @@ public class NetExtractor : IGraphExtractor
                 }
                 foreach (var dep in proj.ProjectReferences)
                     AddEdge("DEPENDS_ON", projId, $"app::proj:{dep}", new() { ["kind"] = "project" });
+                foreach (var asm in proj.AssemblyReferences)
+                {
+                    string asmId = $"app::asm:{asm}";
+                    AddNode(asmId, "AppPackage", new() { ["name"] = asm, ["kind"] = "assembly" });
+                    AddEdge("DEPENDS_ON", projId, asmId, new() { ["kind"] = "assembly" });
+                }
 
                 var projTrees = new List<SyntaxTree>();
                 foreach (var file in proj.SourceFiles)
@@ -188,16 +247,20 @@ public class NetExtractor : IGraphExtractor
             // Pass 1: declarations (classes, methods, CONTAINS) + EF model mapping.
             foreach (var comp in compilations.Values)
                 foreach (var tree in comp.SyntaxTrees)
-                    DeclarationPass(comp.GetSemanticModel(tree), tree, trees[tree].FileId);
+                    DeclarationPass(comp.GetSemanticModel(tree), tree, trees[tree].FileId, trees[tree].Proj);
 
             // Pass 2: calls + call-site literals, SQL sinks, EF usage, rules.
             foreach (var comp in compilations.Values)
                 foreach (var tree in comp.SyntaxTrees)
                     BodyPass(comp.GetSemanticModel(tree), tree);
 
-            // Pass 3: narrow pending templates from call-site literals.
+            // Pass 3: narrow pending templates from call-site literals, and walk
+            // interface calls through to the implementation bound by DI.
             foreach (var pending in _pending)
                 EmitTemplate(pending);
+            ResolveInterfaceCalls();
+            EmitLibraryApiEntryPoints();
+            EmitArchitectureDependencies();
 
             int i = 0;
             foreach (var e in _edges) e.Id = $"a{i++}";
@@ -208,8 +271,9 @@ public class NetExtractor : IGraphExtractor
         }
 
         // ---------------- pass 1: declarations + EF model ----------------
-        private void DeclarationPass(SemanticModel model, SyntaxTree tree, string fileId)
+        private void DeclarationPass(SemanticModel model, SyntaxTree tree, string fileId, ProjectInfo project)
         {
+            string projectKind = project.Kind;
             var root = tree.GetRoot();
             foreach (var typeDecl in root.DescendantNodes().OfType<TypeDeclarationSyntax>())
             {
@@ -233,6 +297,18 @@ public class NetExtractor : IGraphExtractor
                     ["line"] = Line(typeDecl),
                 });
                 AddEdge("CONTAINS", fileId, classId);
+
+                // Namespace as a node, not just a property: it is the unit a layer map
+                // is drawn in, and the only one that survives moving files around.
+                string ns = typeSymbol.ContainingNamespace?.ToDisplayString() ?? "";
+                _classProject[classId] = project.Name;
+                if (!string.IsNullOrEmpty(ns) && ns != "<global namespace>")
+                {
+                    _classNamespace[classId] = ns;
+                    string nsId = $"app::ns:{ns}";
+                    AddNode(nsId, "AppNamespace", new() { ["name"] = ns });
+                    AddEdge("BELONGS_TO", classId, nsId);
+                }
 
                 // Interfaces implemented / base class, when declared in this solution.
                 foreach (var iface in typeSymbol.Interfaces)
@@ -262,6 +338,7 @@ public class NetExtractor : IGraphExtractor
                     bool overloaded = methodDecls.Count(m => m.Identifier.ValueText == methodDecl.Identifier.ValueText) > 1;
                     string methodId = $"app::{Fqn(typeSymbol)}.{ms.Name}" + (overloaded ? $"({ms.Parameters.Length})" : "");
                     _methodIds[ms] = methodId;
+                    _methodOwner[methodId] = classId;
                     AddNode(methodId, "AppMethod", new()
                     {
                         ["name"] = ms.Name,
@@ -273,9 +350,49 @@ public class NetExtractor : IGraphExtractor
 
                     if (isController)
                         EmitControllerEndpoint(methodDecl, classId, methodId, controllerRoute);
+
+                    CollectNonHttpEntryPoints(typeDecl, typeSymbol, ms, classId, methodId, projectKind,
+                        Line(methodDecl), Rel(tree.FilePath));
+
+                    // A class library has no entry point of its own: its callers live
+                    // outside the solution. Its public surface is the way in, decided
+                    // in pass 3 once every intra-solution call is known.
+                    if (projectKind == "library" &&
+                        ms.DeclaredAccessibility == Accessibility.Public &&
+                        typeSymbol.DeclaredAccessibility == Accessibility.Public &&
+                        typeSymbol.TypeKind != TypeKind.Interface)
+                        _libraryApiCandidates.Add(new LibraryApiCandidate(
+                            methodId, classId, $"{typeSymbol.Name}.{ms.Name}", Line(methodDecl), Rel(tree.FilePath)));
                 }
 
+                CollectInterfaceImplementations(typeSymbol);
                 CollectEfModel(typeDecl, typeSymbol, model);
+            }
+        }
+
+        /// <summary>
+        /// Indexes, for every interface member declared in this solution, the concrete
+        /// members that implement it. This is what lets a call landing on the interface
+        /// be walked through to the code that actually runs (see ResolveInterfaceCalls).
+        /// Abstract/virtual dispatch through base classes is not covered in v1.
+        /// </summary>
+        private void CollectInterfaceImplementations(INamedTypeSymbol typeSymbol)
+        {
+            if (typeSymbol.TypeKind is not (TypeKind.Class or TypeKind.Struct) || typeSymbol.IsAbstract) return;
+
+            foreach (var iface in typeSymbol.AllInterfaces)
+            {
+                if (!iface.Locations.Any(l => l.IsInSource)) continue;
+
+                foreach (var member in iface.GetMembers().OfType<IMethodSymbol>())
+                {
+                    if (typeSymbol.FindImplementationForInterfaceMember(member) is not IMethodSymbol impl) continue;
+
+                    var key = (IMethodSymbol)member.OriginalDefinition;
+                    if (!_ifaceImpls.TryGetValue(key, out var list))
+                        _ifaceImpls[key] = list = new List<(INamedTypeSymbol, IMethodSymbol)>();
+                    list.Add((typeSymbol, (IMethodSymbol)impl.OriginalDefinition));
+                }
             }
         }
 
@@ -390,14 +507,76 @@ public class NetExtractor : IGraphExtractor
 
         private void AddEndpoint(string verb, string route, string? ownerId, string handlerId, int line, string file)
         {
-            string endpointId = $"app::endpoint:{verb} {route}";
-            AddNode(endpointId, "AppEndpoint", new()
+            var props = new Dictionary<string, object> { ["verb"] = verb, ["route"] = route };
+            AddEntryPoint("http_route", $"{verb} {route}", ownerId, handlerId, line, file, props);
+        }
+
+        /// <summary>
+        /// Registers where a flow starts. An HTTP route is one kind among several: a
+        /// console Main, a hosted service, a UI handler or a timer job start flows the
+        /// same way and reach the same database. Callers pass the kind; the shape of
+        /// the node and the edges to the handler never change.
+        /// </summary>
+        private void AddEntryPoint(string kind, string key, string? ownerId, string handlerId,
+            int line, string file, Dictionary<string, object>? extra = null)
+        {
+            string entryId = $"app::entry:{kind}:{key}";
+            var props = new Dictionary<string, object>
             {
-                ["name"] = $"{verb} {route}", ["verb"] = verb, ["route"] = route,
-                ["path"] = file, ["line"] = line,
-            });
-            if (ownerId is not null) AddEdge("EXPOSES", ownerId, endpointId);
-            AddEdge("CALLS", endpointId, handlerId);
+                ["name"] = key, ["kind"] = kind, ["path"] = file, ["line"] = line,
+            };
+            if (extra is not null)
+                foreach (var (k, v) in extra) props[k] = v;
+
+            AddNode(entryId, "EntryPoint", props);
+            if (ownerId is not null) AddEdge("EXPOSES", ownerId, entryId);
+            AddEdge("CALLS", entryId, handlerId);
+        }
+
+        /// <summary>
+        /// Entry points that no routing table declares: the Main of a console/batch job,
+        /// and the method a hosted or Windows service runs. These are the way in for
+        /// every project that is not a web API — services, batch and scheduled work.
+        /// </summary>
+        private void CollectNonHttpEntryPoints(TypeDeclarationSyntax typeDecl, INamedTypeSymbol typeSymbol,
+            IMethodSymbol ms, string classId, string methodId, string projectKind, int line, string file)
+        {
+            if (ms.IsStatic && ms.Name == "Main" && projectKind is not ("library" or "test"))
+            {
+                AddEntryPoint("console_main", $"{typeSymbol.Name}.Main", classId, methodId, line, file);
+                return;
+            }
+
+            // BackgroundService.ExecuteAsync / IHostedService.StartAsync / legacy
+            // ServiceBase.OnStart: the loop a service actually runs. Matched on names
+            // as well as symbols — without a restore these base types do not resolve.
+            if (ms.Name is not ("ExecuteAsync" or "StartAsync" or "OnStart" or "Execute")) return;
+
+            var baseNames = BaseTypeNames(typeSymbol)
+                .Concat(typeSymbol.AllInterfaces.Select(i => i.Name))
+                .Concat(typeDecl.BaseList?.Types.Select(t => t.Type.ToString().Split('.').Last().Split('<')[0])
+                        ?? Enumerable.Empty<string>())
+                .ToList();
+
+            // A scheduler's job (Quartz IJob and friends) is a process too: nothing
+            // calls it from the code, it is started from outside on a clock.
+            if (baseNames.Any(n => n is "IJob" or "IJobExecutor" or "IInvocable") && ms.Name is "Execute" or "ExecuteAsync")
+            {
+                AddEntryPoint("job", $"{typeSymbol.Name}.{ms.Name}", classId, methodId, line, file);
+                return;
+            }
+
+            if (baseNames.Any(IsHostedBase) && ms.Name is not "Execute")
+                AddEntryPoint("hosted_service", $"{typeSymbol.Name}.{ms.Name}", classId, methodId, line, file);
+        }
+
+        private static bool IsHostedBase(string name) =>
+            name is "BackgroundService" or "ServiceBase" or "IHostedService";
+
+        private static IEnumerable<string> BaseTypeNames(INamedTypeSymbol type)
+        {
+            for (var t = type.BaseType; t is not null; t = t.BaseType)
+                yield return t.Name;
         }
 
         private static string? RouteFromAttributes(SyntaxList<AttributeListSyntax> lists, string typeName)
@@ -422,6 +601,7 @@ public class NetExtractor : IGraphExtractor
         private void BodyPass(SemanticModel model, SyntaxTree tree)
         {
             var root = tree.GetRoot();
+            CollectNewBindings(model, root);
 
             foreach (var methodDecl in root.DescendantNodes().OfType<MethodDeclarationSyntax>())
             {
@@ -501,6 +681,12 @@ public class NetExtractor : IGraphExtractor
                             args[i].Expression is LiteralExpressionSyntax lit &&
                             lit.IsKind(SyntaxKind.StringLiteralExpression))
                             Record(_callSiteLiterals, (original, i), lit.Token.ValueText);
+
+                    // The edge above stops at the interface; the implementation is
+                    // picked once every DI registration has been seen (pass 3).
+                    if (original.ContainingType?.TypeKind == TypeKind.Interface)
+                        _pendingIfaceCalls.Add(new PendingInterfaceCall(
+                            callerId, original, Line(inv), Rel(inv.SyntaxTree.FilePath)));
                 }
             }
 
@@ -514,6 +700,7 @@ public class NetExtractor : IGraphExtractor
                 var impl = model.GetSymbolInfo(gen.TypeArgumentList.Arguments[1]).Symbol as INamedTypeSymbol;
                 if (iface is not null && impl is not null &&
                     iface.Locations.Any(l => l.IsInSource) && impl.Locations.Any(l => l.IsInSource))
+                {
                     AddEdge("DEPENDS_ON", $"app::{Fqn(iface)}", $"app::{Fqn(impl)}", new()
                     {
                         ["kind"] = "di",
@@ -521,6 +708,30 @@ public class NetExtractor : IGraphExtractor
                         ["registered_in"] = callerId,
                         ["line"] = Line(inv),
                     });
+                    RecordDiBinding(iface, impl);
+                }
+            }
+            // Non-generic form: services.AddScoped(typeof(IFoo), typeof(Foo)).
+            else if (inv.Expression is MemberAccessExpressionSyntax { Name.Identifier.ValueText: var addName } &&
+                     addName is "AddScoped" or "AddTransient" or "AddSingleton" &&
+                     inv.ArgumentList.Arguments.Count == 2 &&
+                     inv.ArgumentList.Arguments[0].Expression is TypeOfExpressionSyntax ifaceOf &&
+                     inv.ArgumentList.Arguments[1].Expression is TypeOfExpressionSyntax implOf)
+            {
+                var iface = model.GetSymbolInfo(ifaceOf.Type).Symbol as INamedTypeSymbol;
+                var impl = model.GetSymbolInfo(implOf.Type).Symbol as INamedTypeSymbol;
+                if (iface is not null && impl is not null &&
+                    iface.Locations.Any(l => l.IsInSource) && impl.Locations.Any(l => l.IsInSource))
+                {
+                    AddEdge("DEPENDS_ON", $"app::{Fqn(iface)}", $"app::{Fqn(impl)}", new()
+                    {
+                        ["kind"] = "di",
+                        ["lifetime"] = addName["Add".Length..].ToLowerInvariant(),
+                        ["registered_in"] = callerId,
+                        ["line"] = Line(inv),
+                    });
+                    RecordDiBinding(iface, impl);
+                }
             }
 
             // Dapper / EF raw sinks (syntax fallback: no restore of the target app).
@@ -533,14 +744,27 @@ public class NetExtractor : IGraphExtractor
                     inv.ArgumentList.Arguments.Count > 0)
                 {
                     var url = StringResolver.Resolve(inv.ArgumentList.Arguments[0].Expression, model);
-                    if (url.HasKnownText)
+                    bool known = url.HasKnownText;
+                    string urlText = known ? url.Literal ?? url.ToString() : "";
+                    string key = known && Uri.TryCreate(urlText, UriKind.Absolute, out var abs)
+                        ? abs.Host
+                        : known ? urlText : Boundary.UnknownKey;
+
+                    // An HTTP sink whose target cannot be read is still infrastructure
+                    // this method touches: reported as UNRESOLVED rather than dropped.
+                    string targetId = Boundary.TargetId("http", key);
+                    AddNode(targetId, Boundary.TargetLabel, new()
                     {
-                        string urlText = url.Literal ?? url.ToString();
-                        string svc = Uri.TryCreate(urlText, UriKind.Absolute, out var abs) ? abs.Host : urlText;
-                        string svcId = $"app::svc:{svc}";
-                        AddNode(svcId, "ExternalService", new() { ["name"] = svc, ["url"] = urlText });
-                        AddEdge("CALLS", callerId, svcId, new() { ["kind"] = "http", ["url"] = urlText, ["line"] = Line(inv) });
-                    }
+                        ["name"] = key, ["protocol"] = "http",
+                    });
+                    var props = Boundary.Props("http",
+                        known ? (url.Literal is not null ? "EXTRACTED" : "RESOLVED") : "UNRESOLVED",
+                        known ? (url.Literal is not null ? "literal" : "local_flow") : "unresolved",
+                        known ? urlText : name,
+                        Line(inv), Rel(inv.SyntaxTree.FilePath));
+                    if (known) props["url"] = urlText;
+                    AddEdge(Boundary.ExternalEdge, callerId, targetId, props,
+                        dedupeKeyExtra: Line(inv).ToString());
                 }
 
                 bool dapper = DapperMethods.Contains(name);
@@ -746,16 +970,216 @@ public class NetExtractor : IGraphExtractor
         private void AddBridge(string methodId, string targetId, string kind, string confidence, int line,
             string file, string matched, string? conditions)
         {
-            var props = new Dictionary<string, object>
+            // Same uniform boundary contract as any other protocol; "kind" and
+            // "matched_literal" stay for the SQL-side consumers that already read them.
+            string resolution = confidence switch
             {
-                ["kind"] = kind,
-                ["confidence"] = confidence,
-                ["line"] = line,
-                ["file"] = file,
-                ["matched_literal"] = matched,
+                "EXTRACTED" => "literal",
+                "RESOLVED" => "interproc_1",
+                "AMBIGUOUS" => "catalog_match",
+                _ => "unresolved",
             };
+            var props = Boundary.Props("sql", confidence, resolution, matched, line, file);
+            props["kind"] = kind;
+            props["matched_literal"] = matched;
             if (conditions is not null) props["conditions"] = conditions;
             AddEdge("EXECUTES_SQL", methodId, targetId, props, dedupeKeyExtra: confidence + "|" + line);
+        }
+
+        /// <summary>
+        /// Composition without a container: `IFoo foo = new Foo();`. Desktop, batch and
+        /// pre-DI code wires itself this way, so binding only through DI registrations
+        /// would leave those solutions with a call graph that dies at every interface.
+        /// </summary>
+        private void CollectNewBindings(SemanticModel model, SyntaxNode root)
+        {
+            foreach (var creation in root.DescendantNodes().OfType<ObjectCreationExpressionSyntax>())
+            {
+                var info = model.GetTypeInfo(creation);
+                if (info.Type is not INamedTypeSymbol impl || !impl.Locations.Any(l => l.IsInSource)) continue;
+                if (info.ConvertedType is not INamedTypeSymbol { TypeKind: TypeKind.Interface } iface) continue;
+                if (!iface.Locations.Any(l => l.IsInSource)) continue;
+
+                var key = (INamedTypeSymbol)iface.OriginalDefinition;
+                if (!_newBindings.TryGetValue(key, out var list))
+                    _newBindings[key] = list = new List<INamedTypeSymbol>();
+                if (!list.Contains(impl, SymbolEqualityComparer.Default))
+                    list.Add(impl);
+            }
+        }
+
+        private void RecordDiBinding(INamedTypeSymbol iface, INamedTypeSymbol impl)
+        {
+            // Keyed on the open generic so IRepo<Order> registrations answer for
+            // IRepo<T> call sites; closed-generic precision is out of scope in v1.
+            var key = (INamedTypeSymbol)iface.OriginalDefinition;
+            if (!_diBindings.TryGetValue(key, out var list))
+                _diBindings[key] = list = new List<INamedTypeSymbol>();
+            if (!list.Contains(impl, SymbolEqualityComparer.Default))
+                list.Add(impl);
+        }
+
+        /// <summary>
+        /// Walks every call that landed on an interface member through to the member
+        /// that actually runs. Without this the call graph dies at the first injected
+        /// interface and no controller -> service -> repository -> SQL chain closes.
+        /// The implementation is chosen from the DI registration ("di") or, failing
+        /// that, from a single implementation in the solution ("unique_impl"). Several
+        /// candidates and no registration is left unresolved: guessing would put a
+        /// wrong method on the impact path, which is worse than a gap.
+        /// </summary>
+        private void ResolveInterfaceCalls()
+        {
+            foreach (var call in _pendingIfaceCalls)
+            {
+                if (!_ifaceImpls.TryGetValue(call.Member, out var candidates) || candidates.Count == 0) continue;
+
+                var iface = (INamedTypeSymbol)call.Member.ContainingType.OriginalDefinition;
+                List<(INamedTypeSymbol Type, IMethodSymbol Member)> chosen;
+                string resolution;
+
+                if (_diBindings.TryGetValue(iface, out var bound))
+                {
+                    chosen = candidates.Where(c => bound.Contains(c.Type, SymbolEqualityComparer.Default)).ToList();
+                    resolution = "di";
+                    if (chosen.Count == 0) continue;
+                }
+                else if (candidates.Count == 1)
+                {
+                    chosen = candidates;
+                    resolution = "unique_impl";
+                }
+                // A single type instantiated for this interface anywhere in the solution.
+                // Several different ones is a data-flow question, and guessing it would
+                // put a method that never runs on the impact path.
+                else if (_newBindings.TryGetValue(iface, out var built) && built.Count == 1)
+                {
+                    chosen = candidates.Where(c => built.Contains(c.Type, SymbolEqualityComparer.Default)).ToList();
+                    resolution = "new_binding";
+                    if (chosen.Count == 0) continue;
+                }
+                else
+                {
+                    continue;
+                }
+
+                foreach (var (_, member) in chosen)
+                {
+                    if (!_methodIds.TryGetValue(member, out var implId)) continue;
+                    // No dedupe key: a direct call to the same method already covers it.
+                    AddEdge("CALLS", call.CallerId, implId, new()
+                    {
+                        ["via"] = "interface",
+                        ["interface"] = $"app::{Fqn(iface)}.{call.Member.Name}",
+                        ["resolution"] = resolution,
+                        ["line"] = call.Line,
+                        ["file"] = call.File,
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// A DLL analysed on its own has no Main and no routes, so every chain inside it
+        /// would be orphaned. Its public methods that nothing in the solution calls are
+        /// the way in — that is what a caller outside the solution can reach.
+        /// </summary>
+        private void EmitLibraryApiEntryPoints()
+        {
+            var called = _edges.Where(e => e.Type == "CALLS").Select(e => e.EndNodeId).ToHashSet(StringComparer.Ordinal);
+
+            foreach (var candidate in _libraryApiCandidates)
+            {
+                if (called.Contains(candidate.MethodId)) continue;
+                AddEntryPoint("library_api", candidate.Key, candidate.ClassId, candidate.MethodId,
+                    candidate.Line, candidate.File);
+            }
+        }
+
+        /// <summary>
+        /// Rolls the call graph up into the levels an architect actually asks about.
+        /// Class coupling so far came only from inheritance and constructor injection,
+        /// which misses every static call and every collaborator obtained some other
+        /// way; here it is derived from the calls that really happen, then aggregated
+        /// into namespace-to-namespace and project-to-project dependencies.
+        ///
+        /// The declared project references are marked used/unused against that: a
+        /// reference nobody exercises is a finding, not noise.
+        /// </summary>
+        private void EmitArchitectureDependencies()
+        {
+            // classId -> classId, counting the calls that back the dependency.
+            var classUses = new Dictionary<(string From, string To), int>();
+
+            foreach (var edge in _edges.Where(e => e.Type == "CALLS").ToList())
+            {
+                if (!_methodOwner.TryGetValue(edge.StartNodeId, out var fromClass)) continue;
+                if (!_methodOwner.TryGetValue(edge.EndNodeId, out var toClass)) continue;
+                if (fromClass == toClass) continue;
+
+                var key = (fromClass, toClass);
+                classUses[key] = classUses.TryGetValue(key, out var n) ? n + 1 : 1;
+            }
+
+            foreach (var ((fromClass, toClass), count) in classUses)
+            {
+                var props = new Dictionary<string, object> { ["kind"] = "uses", ["calls"] = count };
+                if (CrossProject(fromClass, toClass, out var fromProj, out var toProj))
+                {
+                    props["cross_project"] = true;
+                    props["from_project"] = fromProj;
+                    props["to_project"] = toProj;
+                }
+                AddEdge("DEPENDS_ON", fromClass, toClass, props, dedupeKeyExtra: "uses");
+            }
+
+            // Namespace level: every class-to-class dependency, whatever produced it.
+            var nsUses = new Dictionary<(string From, string To), int>();
+            foreach (var edge in _edges.Where(e => e.Type == "DEPENDS_ON").ToList())
+            {
+                if (!_classNamespace.TryGetValue(edge.StartNodeId, out var fromNs)) continue;
+                if (!_classNamespace.TryGetValue(edge.EndNodeId, out var toNs)) continue;
+                if (fromNs == toNs) continue;
+
+                var key = (fromNs, toNs);
+                nsUses[key] = nsUses.TryGetValue(key, out var n) ? n + 1 : 1;
+            }
+
+            foreach (var ((fromNs, toNs), count) in nsUses)
+                AddEdge("DEPENDS_ON", $"app::ns:{fromNs}", $"app::ns:{toNs}",
+                    new() { ["kind"] = "namespace", ["references"] = count }, dedupeKeyExtra: "namespace");
+
+            MarkUnusedProjectReferences(classUses.Keys);
+        }
+
+        private bool CrossProject(string fromClass, string toClass, out string fromProj, out string toProj)
+        {
+            fromProj = _classProject.TryGetValue(fromClass, out var f) ? f : "";
+            toProj = _classProject.TryGetValue(toClass, out var t) ? t : "";
+            return fromProj.Length > 0 && toProj.Length > 0 && fromProj != toProj;
+        }
+
+        /// <summary>
+        /// A ProjectReference the code never exercises is dead weight in the build and a
+        /// lie in the architecture diagram. The flag is only trustworthy because the
+        /// usage side comes from resolved calls, so it is reported, never removed.
+        /// </summary>
+        private void MarkUnusedProjectReferences(IEnumerable<(string From, string To)> classUses)
+        {
+            var usedPairs = new HashSet<(string, string)>();
+            foreach (var (fromClass, toClass) in classUses)
+                if (CrossProject(fromClass, toClass, out var fromProj, out var toProj))
+                    usedPairs.Add((fromProj, toProj));
+
+            foreach (var edge in _edges)
+            {
+                if (edge.Type != "DEPENDS_ON") continue;
+                if (!edge.Properties.TryGetValue("kind", out var kind) || (string)kind != "project") continue;
+
+                string from = edge.StartNodeId["app::proj:".Length..];
+                string to = edge.EndNodeId["app::proj:".Length..];
+                edge.Properties["used"] = usedPairs.Contains((from, to));
+            }
         }
 
         private void AddNode(string id, string label, Dictionary<string, object> props)
