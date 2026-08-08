@@ -37,17 +37,23 @@ sed -e 's/{databaseOwner}/dbo./g' -e 's/{objectQualifier}//g' \
 
 ## Cómo regenerar
 
+Este corpus está declarado en [`eval/corpora.json`](../corpora.json), así que la
+regeneración es un solo comando (ver [`eval/README.md`](../README.md)):
+
 ```bash
-# 1. Materializar el esquema en una base de trabajo
+TSqlParser corpus refresh dnn            # regenera y DIFFEA, sin escribir (sale 2 si hay deriva)
+TSqlParser corpus refresh dnn --write    # además sobrescribe los ficheros de aquí
+```
+
+Lo único que sigue siendo manual es materializar la base la primera vez:
+
+```bash
 sqlcmd -S localhost\SQLEXPRESS -E -C -Q "CREATE DATABASE DnnCorpus;"
 sqlcmd -S localhost\SQLEXPRESS -E -C -d DnnCorpus -b -i dnn_schema.sql
-
-# 2. Volcar el corpus (definiciones + DDL de tablas)
-TSqlParser extract DnnCorpus dnn-corpus.json --server localhost\SQLEXPRESS --tables
-
-# 3. Volcar el oráculo con las DMV (ver extract-oracle.sql)
-sqlcmd -S localhost\SQLEXPRESS -E -C -d DnnCorpus -h-1 -W -i extract-oracle.sql
 ```
+
+`--write` **no toca los suelos**: son cifras medidas, hay que correr el gate y subirlas
+a mano — y en un commit separado de cualquier cambio del motor.
 
 El oráculo son las filas de `sys.dm_sql_referenced_entities` con
 `referenced_minor_id > 0`, que es como SQL Server resuelve "qué columna de qué

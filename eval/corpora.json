@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "doc": "Manifiesto de corpus de evaluacion. Ver eval/README.md para el significado de cada campo. Las rutas son relativas a la raiz del repositorio.",
+  "corpora": [
+    {
+      "id": "dnn",
+      "name": "DNN Platform (DotNetNuke)",
+      "kind": "schema-real",
+      "license": "MIT",
+      "provenance": "github.com/dnnsoftware/Dnn.Platform - DNN Platform/Website/Providers/DataProviders/SqlDataProvider/DotNetNuke.Schema.SqlDataProvider, sustituyendo {databaseOwner}->dbo. y {objectQualifier}->(vacio). Congelado el 2026-08-01.",
+      "input": "eval/column-recall/dnn-corpus.json",
+      "oracle": "eval/column-recall/oracle-columns.psv",
+      "oracle_query": "eval/column-recall/extract-oracle.sql",
+      "source_db": {
+        "name": "DnnCorpus",
+        "server": "localhost\\SQLEXPRESS",
+        "compatibility_level": 170
+      },
+      "expected": {
+        "oracle_rows": 7786,
+        "min_column_edges": 5000
+      },
+      "floors": {
+        "strict_recall": 0.9658,
+        "loose_recall": 0.9808,
+        "precision_by_class": {
+          "direct": 0.9978,
+          "star_expanded": 0.9888
+        }
+      }
+    }
+  ]
+}

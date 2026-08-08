@@ -3,14 +3,16 @@ using TSqlParser;
 namespace TSqlParser.Tests;
 
 /// <summary>
-/// Trinquete del lineage de columna medido contra un oráculo externo, sobre un corpus
-/// grande de T-SQL real (DNN Platform / DotNetNuke, 739 módulos + 128 tablas).
+/// Trinquete del lineage de columna medido contra un oráculo externo, sobre corpus grandes de
+/// T-SQL real. Los corpus, sus oráculos y sus suelos NO están aquí: se declaran en
+/// <c>eval/corpora.json</c> y los lee <see cref="EvalCorpora"/>. Cada test es un
+/// <c>[Theory]</c> que se ejecuta una vez por corpus gateado, así que añadir una base es
+/// añadir una entrada de datos, no duplicar esta clase (ver el porqué en EvalCorpora).
 ///
 /// A diferencia de <see cref="ViewLineageOracleTests"/>, este gate NO necesita SQL Server:
-/// tanto el corpus como el oráculo están congelados en eval/column-recall/, así que corre
-/// en cualquier runner. El oráculo se generó una vez con
-/// sys.dm_sql_referenced_entities (referenced_minor_id &gt; 0) sobre la base restaurada;
-/// ver eval/column-recall/README.md para regenerarlo.
+/// tanto el corpus como el oráculo están congelados en el repo, así que corre en cualquier
+/// runner. El oráculo se generó con sys.dm_sql_referenced_entities (referenced_minor_id &gt; 0)
+/// sobre la base restaurada; ver eval/README.md para regenerarlo.
 ///
 /// Mide TRES cosas, no una. El recall solo mide lo que falta; sin precisión, un motor que
 /// inventara aristas pasaría el gate con nota. Ese fue exactamente el agujero que tenía
@@ -49,52 +51,24 @@ public class ColumnRecallGateTests
     private static readonly HashSet<string> ColumnRefEdges =
         new(StringComparer.Ordinal) { "READS_COLUMN", "FILTERS_ON", "WRITES_COLUMN" };
 
-    // Suelos medidos sobre este corpus (2026-08-03, tras el fix de FILTERS_ON en INSERT...SELECT
-    // y de READS_COLUMN sobre el nombre propio de columnas renombradas en vistas - antes
-    // 0,711405/0,969734). Bajar de aquí es una regresión. Se ponen TRUNCADOS, no redondeados:
-    // el informe imprime un decimal y poner el suelo en el valor redondeado hace fallar al
-    // propio commit que lo mide (ya pasó dos veces).
-    //   estricto  0,965836
-    //   laxo      0,980827
-    // La precisión global se informa pero no se gatea (ver nota en el test); quien
-    // vigila la invención de aristas es el suelo POR CLASE de MinPrecisionByClass.
-    /// <summary>
-    /// Suelo de precisión POR CLASE de evidencia, medido sobre este corpus. Es la base de una
-    /// puntuación de confianza defendible: si las aristas expandidas de un `SELECT *` aciertan
-    /// el 98 % sobre 1.523 casos reales, esa arista vale 0,98 — y eso no es una opinión que
-    /// discutir, es una cuenta. La precisión global (67,8 %) no sirve para esto: mezcla clases
-    /// y esconde que la extracción directa acierta el 99,8 %.
-    ///
-    /// Remedido 2026-08-03 tras el fix de fix/blind-columns (subió sobre todo star_expanded,
-    /// de 98,2 % a 98,88 %, porque la vista renombrada que antes perdía columnas alimentaba
-    /// aristas de esta clase). Suelos truncados por debajo del valor real, no redondeados
-    /// (misma razón que MinStrictRecall/MinLooseRecall arriba).
-    /// </summary>
-    private static readonly (string Class, double Floor)[] MinPrecisionByClass =
-    {
-        ("direct",        0.9978),  // medido 99,78 % sobre 4.148 aristas
-        ("star_expanded", 0.9888),  // medido 98,88 % sobre 3.493 aristas
-    };
-
-    private const double MinStrictRecall = 0.9658;
-    private const double MinLooseRecall  = 0.9808;
-
-    private static string EvalDir()
-    {
-        var dir = AppContext.BaseDirectory;
-        while (dir != null && !File.Exists(Path.Combine(dir, "eval", "column-recall", "oracle-columns.psv")))
-            dir = Path.GetDirectoryName(dir);
-        Assert.False(dir == null, "No se encontró eval/column-recall/ subiendo desde " + AppContext.BaseDirectory);
-        return Path.Combine(dir!, "eval", "column-recall");
-    }
+    // Los suelos viven en eval/corpora.json, uno por corpus. Están TRUNCADOS por debajo del
+    // valor medido, no redondeados: el informe imprime un decimal y poner el suelo en el valor
+    // redondeado hace fallar al propio commit que lo mide (ya pasó dos veces).
+    //
+    // El suelo de precisión es POR CLASE de evidencia, y esa es la base de una puntuación de
+    // confianza defendible: si las aristas expandidas de un `SELECT *` aciertan el 98,88 % sobre
+    // 3.493 casos reales, esa arista vale 0,9888 — y eso no es una opinión que discutir, es una
+    // cuenta. La precisión GLOBAL no sirve para esto (ver la nota larga en
+    // ColumnLineage_MeetsMeasuredFloors): mezcla clases y esconde que la extracción directa
+    // acierta el 99,78 %.
 
     /// <summary>Una fila del oráculo: módulo, entidad referenciada y columna, todo en minúsculas.</summary>
     private readonly record struct Ref(string Module, string Entity, string Column);
 
-    private static HashSet<Ref> LoadOracle()
+    private static HashSet<Ref> LoadOracle(CorpusEntry corpus)
     {
         var set = new HashSet<Ref>();
-        foreach (var line in File.ReadLines(Path.Combine(EvalDir(), "oracle-columns.psv")))
+        foreach (var line in File.ReadLines(corpus.OraclePath(EvalCorpora.RepoRoot())))
         {
             var p = line.Split('|');
             if (p.Length == 3)
@@ -206,18 +180,22 @@ public class ColumnRecallGateTests
         return byClass;
     }
 
-    private static (HashSet<Ref> Oracle, HashSet<Ref> Graph) Measure()
+    private static GraphPayload BuildGraph(CorpusEntry corpus)
     {
-        var oracle = LoadOracle();
-        var (results, tableSchemas) = InputAnalyzer.Analyze(Path.Combine(EvalDir(), "dnn-corpus.json"));
-        var graph = GraphExporter.Build(results, includeColumns: true, tableSchemas);
-        return (oracle, BuildGraphRefs(graph));
+        var (results, tableSchemas) = InputAnalyzer.Analyze(corpus.InputPath(EvalCorpora.RepoRoot()));
+        return GraphExporter.Build(results, includeColumns: true, tableSchemas);
     }
 
-    [Fact]
-    public void ColumnLineage_MeetsMeasuredFloors()
+    private static (HashSet<Ref> Oracle, HashSet<Ref> Graph) Measure(CorpusEntry corpus) =>
+        (LoadOracle(corpus), BuildGraphRefs(BuildGraph(corpus)));
+
+    [Theory]
+    [MemberData(nameof(EvalCorpora.GatedCorpusIds), MemberType = typeof(EvalCorpora))]
+    public void ColumnLineage_MeetsMeasuredFloors(string corpusId)
     {
-        var (oracle, graph) = Measure();
+        var corpus = EvalCorpora.Get(corpusId);
+        var floors = corpus.Floors!;
+        var (oracle, graph) = Measure(corpus);
 
         var strictHits = oracle.Count(graph.Contains);
         var strictRecall = (double)strictHits / oracle.Count;
@@ -240,15 +218,15 @@ public class ColumnRecallGateTests
         var precision = (double)judgeable.Count(oracle.Contains) / judgeable.Count;
 
         var report =
-            $"corpus DNN: oráculo={oracle.Count} aristas_grafo={graph.Count}\n" +
-            $"  recall estricto (módulo,ENTIDAD,columna) = {strictRecall:P1}  (suelo {MinStrictRecall:P1})\n" +
-            $"  recall laxo     (módulo,columna)         = {looseRecall:P1}  (suelo {MinLooseRecall:P1})\n" +
+            $"corpus {corpus.Id} ({corpus.Name}): oráculo={oracle.Count} aristas_grafo={graph.Count}\n" +
+            $"  recall estricto (módulo,ENTIDAD,columna) = {strictRecall:P1}  (suelo {floors.StrictRecall:P1})\n" +
+            $"  recall laxo     (módulo,columna)         = {looseRecall:P1}  (suelo {floors.LooseRecall:P1})\n" +
             $"  precisión                                = {precision:P1}  (informativa, no gateada)\n" +
             $"  brecha de CONVENCIÓN (laxo - estricto)   = {looseRecall - strictRecall:P1}  " +
             "(mayoritariamente vistas atravesadas hasta la tabla base)";
 
-        Assert.True(strictRecall >= MinStrictRecall, "Regresión en recall estricto.\n" + report);
-        Assert.True(looseRecall >= MinLooseRecall, "Regresión en recall laxo.\n" + report);
+        Assert.True(strictRecall >= floors.StrictRecall, "Regresión en recall estricto.\n" + report);
+        Assert.True(looseRecall >= floors.LooseRecall, "Regresión en recall laxo.\n" + report);
 
         // La precisión GLOBAL se informa pero NO se gatea, y conviene saber por qué:
         // mezcla clases y su movimiento lo domina la proporción de aristas via_view, cuya
@@ -276,21 +254,22 @@ public class ColumnRecallGateTests
     /// convención — y meterla en un suelo sería fijar como invariante un artefacto de la
     /// comparación. Se informa, no se gatea.
     /// </summary>
-    [Fact]
-    public void ColumnLineage_PrecisionPerEvidenceClass()
+    [Theory]
+    [MemberData(nameof(EvalCorpora.GatedCorpusIds), MemberType = typeof(EvalCorpora))]
+    public void ColumnLineage_PrecisionPerEvidenceClass(string corpusId)
     {
-        var oracle = LoadOracle();
-        var (results, tableSchemas) = InputAnalyzer.Analyze(Path.Combine(EvalDir(), "dnn-corpus.json"));
-        var byClass = BuildGraphRefsByClass(GraphExporter.Build(results, includeColumns: true, tableSchemas));
+        var corpus = EvalCorpora.Get(corpusId);
+        var oracle = LoadOracle(corpus);
+        var byClass = BuildGraphRefsByClass(BuildGraph(corpus));
 
         // Módulos para los que el oráculo no aporta NINGUNA columna (typically por una tabla
         // #temp, que impide a las DMV resolver dependencias a nivel columna). Ahí el ciego es
         // el oráculo: juzgar nuestras aristas contra él sería contarlas mal.
         var modulesSeen = oracle.Select(r => r.Module).ToHashSet(StringComparer.Ordinal);
 
-        var report = new List<string>();
+        var report = new List<string> { $"corpus {corpus.Id} ({corpus.Name}):" };
         var failures = new List<string>();
-        foreach (var (cls, floor) in MinPrecisionByClass)
+        foreach (var (cls, floor) in corpus.Floors!.PrecisionByClass)
         {
             var edges = byClass.TryGetValue(cls, out var set)
                 ? set.Where(r => modulesSeen.Contains(r.Module)).ToHashSet()
@@ -332,11 +311,12 @@ public class ColumnRecallGateTests
     /// este fichero seguirían en verde porque derivan la clase por su cuenta, sin leer lo que el
     /// motor efectivamente escribió en la arista.
     /// </summary>
-    [Fact]
-    public void ColumnEdges_CarryResolutionProperty_MatchingDerivedClassification()
+    [Theory]
+    [MemberData(nameof(EvalCorpora.GatedCorpusIds), MemberType = typeof(EvalCorpora))]
+    public void ColumnEdges_CarryResolutionProperty_MatchingDerivedClassification(string corpusId)
     {
-        var (results, tableSchemas) = InputAnalyzer.Analyze(Path.Combine(EvalDir(), "dnn-corpus.json"));
-        var graph = GraphExporter.Build(results, includeColumns: true, tableSchemas);
+        var corpus = EvalCorpora.Get(corpusId);
+        var graph = BuildGraph(corpus);
 
         // Misma regla que BuildGraphRefsByClass: pasos cuya lista de selección era "SELECT *".
         var starSteps = graph.Nodes
@@ -346,8 +326,10 @@ public class ColumnRecallGateTests
             .ToHashSet(StringComparer.Ordinal);
 
         var columnEdges = graph.Relationships.Where(r => ColumnRefEdges.Contains(r.Type)).ToList();
-        Assert.True(columnEdges.Count > 5000,
-            $"Se esperaban miles de aristas de columna (READS_COLUMN/WRITES_COLUMN/FILTERS_ON) sobre el corpus DNN, hay {columnEdges.Count}. La extracción se rompió.");
+        Assert.True(columnEdges.Count >= corpus.Expected!.MinColumnEdges,
+            $"Se esperaban al menos {corpus.Expected.MinColumnEdges} aristas de columna " +
+            $"(READS_COLUMN/WRITES_COLUMN/FILTERS_ON) sobre el corpus {corpus.Id}, hay {columnEdges.Count}. " +
+            "La extracción se rompió.");
 
         var missing = new List<string>();
         var mismatched = new List<string>();
@@ -380,12 +362,21 @@ public class ColumnRecallGateTests
     /// perturba el oráculo renombrando cada columna y se exige que el recall se DESPLOME. Un gate
     /// que no puede fallar no es un gate.
     /// </summary>
-    [Fact]
-    public void Measurement_IsSensitive_ControlThatMustCollapse()
+    [Theory]
+    [MemberData(nameof(EvalCorpora.GatedCorpusIds), MemberType = typeof(EvalCorpora))]
+    public void Measurement_IsSensitive_ControlThatMustCollapse(string corpusId)
     {
-        var (oracle, graph) = Measure();
+        var corpus = EvalCorpora.Get(corpusId);
+        var (oracle, graph) = Measure(corpus);
 
-        Assert.True(oracle.Count > 7000, $"El oráculo debería tener ~7786 filas, tiene {oracle.Count}");
+        // Igualdad EXACTA, no un ">": el oráculo es un fichero congelado. Si cambia de tamaño,
+        // o se regeneró contra otra base o se truncó, y en cualquiera de los dos casos los
+        // suelos de este corpus dejan de referirse a lo que se está midiendo. Actualizar el
+        // corpus obliga a tocar el manifiesto, que es exactamente la disciplina que se busca.
+        Assert.True(oracle.Count == corpus.Expected!.OracleRows,
+            $"El oráculo de '{corpus.Id}' declara {corpus.Expected.OracleRows} filas y tiene {oracle.Count}. " +
+            "Si el corpus se ha regenerado a propósito, actualiza eval/corpora.json en un commit " +
+            "SEPARADO de cualquier cambio del motor.");
         Assert.True(graph.Count > 1000, $"El grafo debería emitir miles de lecturas de columna, emite {graph.Count}");
 
         var perturbed = oracle.Select(r => r with { Column = r.Column + "_zzz_no_existe" }).ToHashSet();

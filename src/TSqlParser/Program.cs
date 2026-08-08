@@ -98,6 +98,45 @@ if (positional.Count >= 1 && positional[0] == "extract")
     return TableSchemaExtractor.RunAll(positional[1], positional[2], server);
 }
 
+// "corpus list" / "corpus refresh <id> [--server <server>] [--write]": manages the
+// evaluation corpora declared in eval/corpora.json.
+//
+// "refresh" regenerates a corpus (module definitions + table DDL) and its column-level
+// oracle from the live database and DIFFS them against the frozen copy in the repo.
+// It writes nothing unless --write is passed: detecting that the frozen copy drifted
+// away from the source database is the cheap, repeatable operation; overwriting it
+// moves the gate numbers, so it has to be asked for. Exit code 2 means drift, so the
+// check form works as a CI guard.
+if (positional.Count >= 1 && positional[0] == "corpus")
+{
+    var repoRoot = CorpusManifest.FindRepoRoot(Directory.GetCurrentDirectory())
+                   ?? CorpusManifest.FindRepoRoot(AppContext.BaseDirectory);
+    if (repoRoot == null)
+    {
+        Console.Error.WriteLine($"No se encontró {CorpusManifest.RelPath} subiendo desde {Directory.GetCurrentDirectory()}");
+        return 1;
+    }
+
+    var sub = positional.Count >= 2 ? positional[1] : "list";
+    if (sub == "list")
+        return CorpusRefresher.List(repoRoot);
+
+    if (sub == "refresh")
+    {
+        if (positional.Count < 3)
+        {
+            Console.Error.WriteLine("Usage: TSqlParser corpus refresh <id> [--server <server>] [--write]");
+            return 1;
+        }
+        var corpusServerIdx = Array.IndexOf(args, "--server");
+        var corpusServer = corpusServerIdx >= 0 && corpusServerIdx + 1 < args.Length ? args[corpusServerIdx + 1] : null;
+        return CorpusRefresher.Refresh(repoRoot, positional[2], corpusServer, args.Contains("--write"));
+    }
+
+    Console.Error.WriteLine($"Subcomando desconocido '{sub}'. Usage: TSqlParser corpus [list | refresh <id> [--server <server>] [--write]]");
+    return 1;
+}
+
 // "extract-tables <graph.json> <input.json> [--server <server>]": for every
 // :Table node in graph.json, fetches its CREATE TABLE DDL (columns, types,
 // PK, FK) from the live database and appends it to input.json.
