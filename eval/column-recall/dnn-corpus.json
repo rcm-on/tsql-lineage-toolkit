@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "Name": "DnnCorpus::dbo.AddAuthentication",
     "Sql": "CREATE PROCEDURE dbo.[AddAuthentication]\r\n\t@PackageID\t\t\t\tint,\r\n\t@AuthenticationType     nvarchar(100),\r\n\t@IsEnabled\t\t\t\tbit,\r\n\t@SettingsControlSrc     nvarchar(250),\r\n\t@LoginControlSrc\t\tnvarchar(250),\r\n\t@LogoffControlSrc\t\tnvarchar(250),\r\n\t@CreatedByUserID\tint\r\nAS\r\n\tINSERT INTO Authentication (\r\n\t\tPackageID,\r\n\t\tAuthenticationType,\r\n\t\tIsEnabled,\r\n\t\tSettingsControlSrc,\r\n\t\tLoginControlSrc,\r\n\t\tLogoffControlSrc,\r\n\t\t[CreatedByUserID],\r\n\t\t[CreatedOnDate],\r\n\t\t[LastModifiedByUserID],\r\n\t\t[LastModifiedOnDate]\r\n\t)\r\n\tVALUES (\r\n\t\t@PackageID,\r\n\t\t@AuthenticationType,\r\n\t\t@IsEnabled,\r\n\t\t@SettingsControlSrc,\r\n\t\t@LoginControlSrc,\r\n\t\t@LogoffControlSrc,\r\n\t\t@CreatedByUserID,\r\n\t\tgetdate(),\r\n\t\t@CreatedByUserID,\r\n\t\tgetdate()\r\n\t)\r\n\r\n\tSELECT SCOPE_IDENTITY()\r\n"
