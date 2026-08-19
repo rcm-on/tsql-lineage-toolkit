@@ -1,3 +1,12 @@
+---
+title: Bitácora
+description: Qué cambió en cada sesión, lo más reciente arriba.
+read_when: Para saber qué pasó en las últimas sesiones antes de continuar el trabajo.
+related: [docs/PROYECTO.md, docs/plan-arquitectura.md, docs/CONVENCIONES.md]
+stability: volatile
+updated: 2026-08-19
+---
+
 # Bitácora
 
 Qué cambió en cada sesión, lo más reciente arriba. **Se escribe al terminar la sesión,

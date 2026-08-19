@@ -1,3 +1,12 @@
+---
+title: Plan de arquitectura
+description: Plan de ejecución de la Fase 0/1/2 de la solución, con rutas, contrato y gate por paso.
+read_when: Para saber qué queda por hacer y en qué orden, o antes de mover código entre proyectos.
+related: [docs/ARQUITECTURA.md, docs/PATRONES.md, docs/BITACORA.md]
+stability: volatile
+updated: 2026-08-19
+---
+
 # Plan de diseño de la solución
 
 Alcance: la solución completa (`Parser.Contracts`, `TSqlParser`, `NetParser`,

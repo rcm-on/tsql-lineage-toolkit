@@ -1,7 +1,19 @@
+---
+title: Arquitectura
+description: Mapa de la solución — qué proyecto existe, qué contiene y qué puede depender de qué.
+read_when: Antes de mover o crear un fichero, o de tocar el servidor MCP o el contrato del store.
+related: [docs/GLOSARIO-GRAFO.md, docs/PATRONES.md, docs/plan-arquitectura.md]
+stability: durable
+updated: 2026-08-19
+---
+
 # Arquitectura
 
 Mapa de la solución: qué proyecto existe, qué contiene y **qué puede depender de qué**.
 Antes de mover o crear un fichero, mira la tabla de §2: dice dónde va y por qué.
+
+El glosario del grafo (nodos, aristas, ids, granularidad de Step) vive aparte en
+`docs/GLOSARIO-GRAFO.md`. Los patrones de diseño y su estado, en `docs/PATRONES.md`.
 
 ## 1. Dirección de la dependencia
 
@@ -65,22 +77,7 @@ reescribía los tipos de arista como literales: renombrar uno en `Vocab` no romp
 compilación y dejaba al MCP devolviendo `affected:[]` en silencio — indistinguible de
 "nada depende de esto". `StoreSchemaGateTests` convierte ese fallo mudo en rojo.
 
-## 4. El grafo
-
-- Nodos: `SqlObject`, `Table`, `Column`, `Step`, `Action`, `Variable`, `Rule`,
-  `Workflow`... más el lado de aplicación (`AppMethod`, `EntryPoint`, `ExternalTarget`...).
-  El vocabulario cerrado está en `Vocab.KnownNodeLabels`.
-- Aristas: apuntan **actor → recurso** (llamador→llamado, lector→tabla, escritor→tabla,
-  columna derivada→columna fuente). De ahí que "downstream" (qué se rompe si cambio esto)
-  camine las aristas hacia atrás y "upstream" (de qué depende) hacia delante.
-- Ids: `SqlObject` = `Db::esquema.objeto`; `Table` = `Db:table:esquema.tabla` (minúsculas);
-  `Column` = `...:column:Col`; `Step` = `<objId>#stepN`.
-- **Granularidad de Step**: `READS_FROM`, `WRITES_TO`, `READS_COLUMN` y `WRITES_COLUMN`
-  salen de un `Step`, no del `SqlObject`. Cualquier agregación por objeto tiene que
-  enrollar el step a su dueño (`StoreSchema.RollUpStep`). `CALLS` es la excepción: sale
-  directamente del `SqlObject`.
-
-## 5. El servidor MCP
+## 4. El servidor MCP
 
 - Transporte JSON-RPC 2.0 delimitado por saltos de línea sobre stdin/stdout, escrito a
   mano (el porqué, frente al SDK oficial, está en `notes/checkpoints/T16.md`).
@@ -97,22 +94,5 @@ compilación y dejaba al MCP devolviendo `affected:[]` en silencio — indisting
 - Una respuesta vacía siempre lleva `reason`, y `hint` cuando la dirección contraria sí
   tiene resultados.
 
-## 6. Patrones, y dónde NO aplicarlos
-
-Distinción que decide cada caso: **Strategy** = elegir una de N alternativas
-intercambiables. **Pipeline** = ejecutar las N en orden.
-
-| Sitio | Patrón | Estado |
-|---|---|---|
-| Herramientas MCP | Strategy + registro (`IMcpTool`) | hecho |
-| Exportadores | Strategy + registro (`IGraphSink`) | pendiente |
-| Reglas de riesgo | Strategy + registro (`IRiskRule`) | pendiente |
-| Orígenes de entrada | Strategy (`IObjectSource`) | pendiente |
-| Subcomandos del CLI | Command (`ISubcommand`) | pendiente |
-| Acceso a SQL Server | Inversión de dependencia (`ISqlCatalog`) | pendiente |
-| `GraphExporter.Build` | **Pipeline** de pasos, no Strategy | pendiente |
-| `AstWalker` | **Visitor** — ScriptDom ya lo ofrece (`TSqlFragmentVisitor`) | pendiente |
-
-Lo que se descartó a propósito, para no volver a discutirlo: repositorio genérico,
-contenedor de DI y fábricas abstractas. No hay un segundo cliente de casi nada, y
-abstraer sin él es coste sin retorno.
+Los patrones de diseño de cada componente (Strategy/Pipeline/Visitor, y qué se descartó a
+propósito) están en `docs/PATRONES.md`.
