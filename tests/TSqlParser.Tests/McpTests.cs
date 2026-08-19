@@ -204,8 +204,10 @@ public class McpTests : IDisposable
         var result = McpTools.Impact(conn, hubId, "upstream", depth: 1, limit: 50);
 
         Assert.Empty((List<Dictionary<string, object?>>)result["affected"]!);
+        // La lista de tipos sale del contrato, no reescrita aquí: si se reescribiera, este
+        // test dejaría de verificar el mensaje y pasaría a fijar una copia que se desincroniza.
         Assert.Equal(
-            "sin aristas CALLS/READS_FROM/WRITES_TO/DERIVES_FROM/READS_COLUMN/WRITES_COLUMN salientes de este nodo.",
+            $"sin aristas {string.Join("/", StoreSchema.ImpactEdgeTypes)} salientes de este nodo.",
             result["reason"]);
     }
 

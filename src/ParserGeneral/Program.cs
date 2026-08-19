@@ -1,4 +1,4 @@
-// ParserGeneral: orchestrator CLI that fuses the SQL-side graph (TSqlParser,
+﻿// ParserGeneral: orchestrator CLI that fuses the SQL-side graph (TSqlParser,
 // via TSqlExtractorAdapter) and the app-side graph (NetParser, via NetExtractor)
 // into a single graph_full.json (and optionally a unified NodeStore), so
 // downstream tooling (change_map, lineage-queries, dashboard) sees one graph
@@ -46,13 +46,12 @@ for (var i = 0; i < args.Length; i++)
 }
 
 var includeColumns = args.Contains("--columns");
-var emitNodeStore = args.Contains("--nodestore");
 var allowPartial = args.Contains("--allow-partial");
 
 if (positional.Count == 0 || outDir == null)
 {
-    Console.Error.WriteLine(
-        "Usage: parsergeneral <input1> [input2 ...] --out <dir> [--nodestore] [--columns] [--allow-partial]");
+    Console.Error.WriteLine("Usage: parsergeneral <input1> [input2 ...] --out <dir> [--columns] [--allow-partial]");
+    Console.Error.WriteLine("                     [--nodestore] [--sqlite] [--graphify] [--graphml] [--project=<nombre>]");
     return 1;
 }
 
@@ -120,13 +119,20 @@ var graphOutputPath = Path.Combine(outDir, "graph_full.json");
 File.WriteAllText(graphOutputPath, JsonSerializer.Serialize(merged, jsonOptions), Encoding.UTF8);
 Console.WriteLine($"Graph: {merged.Nodes.Count} nodes, {merged.Relationships.Count} relationships -> {graphOutputPath}");
 
-if (emitNodeStore)
+// Los formatos de salida son los mismos que los de TSqlParser: GraphSinks.Default, en
+// Parser.Graph. El grafo unificado (SQL + .NET) llega así a SQLite, que es lo que lee el
+// servidor MCP, sin que este proyecto conozca ScriptDom.
+var db = InferDatabaseName(merged);
+var exportContext = new ExportContext
 {
-    var db = InferDatabaseName(merged);
-    var nodeStorePath = Path.Combine(outDir, "graph_full.nodes");
-    var stats = NodeStoreExporter.Write(merged, nodeStorePath, db, jsonOptions);
-    Console.WriteLine($"NodeStore: {stats.Objects} objects, {stats.SharedNodes} shared nodes, {stats.Edges} edges -> {nodeStorePath}");
-}
+    GraphOutputPath = graphOutputPath,
+    Database = db,
+    Project = args.FirstOrDefault(a => a.StartsWith("--project="))?["--project=".Length..] ?? db,
+    JsonOptions = jsonOptions,
+};
+
+foreach (var sink in GraphSinks.Default.Where(s => args.Contains(s.Flag)))
+    Console.WriteLine(sink.Write(merged, exportContext).Summary);
 
 return 0;
 

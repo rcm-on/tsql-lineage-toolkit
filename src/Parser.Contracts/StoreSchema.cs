@@ -53,6 +53,9 @@ public static class StoreSchema
     public static readonly IReadOnlyList<string> ImpactEdgeTypes =
     [
         "CALLS", "READS_FROM", "WRITES_TO", "DERIVES_FROM", "READS_COLUMN", "WRITES_COLUMN",
+        // Puente aplicación -> base de datos, para que el impacto cruce la pila en un store
+        // unificado. En uno solo de SQL no existen y no cambian nada.
+        "EXECUTES_SQL", "MAPS_TO",
     ];
 
     /// <summary>Aristas de referencia a columna, las que clasifica `resolution`.</summary>
@@ -68,5 +71,9 @@ public static class StoreSchema
     public static readonly IReadOnlyList<string> AddressableLabels =
     [
         "SqlObject", "Table", "Column",
+        // Lado de aplicación en un store unificado: un agente puede nombrar un método o un
+        // punto de entrada. AppFile/AppNamespace/AppPackage/AppSolution quedan fuera a
+        // propósito: son contenedores, no cosas que alguien pregunte por su nombre.
+        "AppProject", "AppClass", "AppMethod", "EntryPoint", "ExternalTarget",
     ];
 }
