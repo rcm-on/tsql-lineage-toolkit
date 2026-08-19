@@ -124,6 +124,15 @@ public static class SqlAnalyzer
             : tvfSelect != null ? "INLINE_TABLE_FUNCTION"
             : "SCRIPT";
 
+        // TVF output columns, so a caller's "SELECT * FROM func()" can expand (see
+        // InputAnalyzer's pre-pass). Inline: positional names off the RETURN SELECT list
+        // (same as an unnamed view). Multi-statement: the declared RETURNS @t TABLE(...).
+        if (result.ObjectType == "INLINE_TABLE_FUNCTION")
+            result.TvfOutputColumns.AddRange(AstWalker.ViewColumnLineage(tvfSelect!, Array.Empty<string>())
+                .Select(d => d.TargetColumn).Where(c => c.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase));
+        else if (result.ObjectType == "TABLE_VALUED_FUNCTION")
+            result.TvfOutputColumns.AddRange(FindTvfReturnTableColumns(topStatements));
+
         // Re-parse any EXEC steps whose dynamic SQL resolved to a pure literal:
         // extract INSERT/SELECT/UPDATE/DELETE/MERGE targets from the literal text
         // and inject them as additional FlowLinks so downstream lineage sees the
@@ -310,6 +319,19 @@ public static class SqlAnalyzer
             if (stmt.GetType().Name.Contains("View") &&
                 stmt.GetType().GetProperty("Columns")?.GetValue(stmt) is IEnumerable<Identifier> cols)
                 return cols.Select(c => c.Value).Where(v => !string.IsNullOrEmpty(v)).ToList();
+        }
+        return Array.Empty<string>();
+    }
+
+    /// <summary>The declared column list of "RETURNS @t TABLE (Col1 int, Col2 nvarchar(50), ...)" for a multi-statement TVF.</summary>
+    private static IReadOnlyList<string> FindTvfReturnTableColumns(IList<TSqlStatement> topStatements)
+    {
+        foreach (var stmt in topStatements)
+        {
+            if (stmt.GetType().Name.Contains("Function") &&
+                stmt.GetType().GetProperty("ReturnType")?.GetValue(stmt)
+                    is TableValuedFunctionReturnType { DeclareTableVariableBody.Definition: { } def })
+                return def.ColumnDefinitions.Select(c => c.ColumnIdentifier?.Value ?? "").Where(v => v.Length > 0).ToList();
         }
         return Array.Empty<string>();
     }

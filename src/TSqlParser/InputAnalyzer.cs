@@ -23,6 +23,11 @@ public static class InputAnalyzer
 
     private static bool LooksLikeView(string sql) => CreateViewRegex.IsMatch(StripLeadingComments(sql));
 
+    private static readonly Regex CreateFunctionRegex =
+        new(@"^\s*CREATE\s+(OR\s+ALTER\s+)?FUNCTION\b", RegexOptions.IgnoreCase);
+
+    private static bool LooksLikeFunction(string sql) => CreateFunctionRegex.IsMatch(StripLeadingComments(sql));
+
     public static (List<ObjectResult> Results, List<TableSchemaResult> TableSchemas) Analyze(string path)
     {
         var opts = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -95,7 +100,22 @@ public static class InputAnalyzer
             cols.TryAdd($"{parts[0]}::{SqlText.NormalizeRef(parts[1])}", outputs);
         }
 
-        // ── Pasada 2: la buena, ya con las vistas en el catálogo ──────────────
+        // ── Pasada 1b: igual que arriba, para funciones de tabla (TVF) ──
+        // Mismo motivo que las vistas: sin columnas de salida conocidas, "SELECT * FROM
+        // func()" no expande. TvfOutputColumns (SqlAnalyzer) ya las calcula para las dos
+        // formas de TVF; aquí solo se registran en el catálogo.
+        foreach (var src in objectSources.Where(s => LooksLikeFunction(s.Sql)))
+        {
+            var probe = SqlAnalyzer.AnalyzeObject(src.Name, src.Sql, cols);
+            if (probe.TvfOutputColumns.Count == 0)
+                continue;
+            var parts = probe.ObjectName.Split("::", 2);
+            if (parts.Length != 2)
+                continue;
+            cols.TryAdd($"{parts[0]}::{SqlText.NormalizeRef(parts[1])}", probe.TvfOutputColumns.Distinct(StringComparer.OrdinalIgnoreCase).ToList());
+        }
+
+        // ── Pasada 2: la buena, ya con las vistas y TVFs en el catálogo ──────────────
         var objResults = new List<ObjectResult>();
         foreach (var src in objectSources)
             objResults.Add(SqlAnalyzer.AnalyzeObject(src.Name, src.Sql, cols));

@@ -271,6 +271,12 @@ public static class AstWalker
                         var mrgTarget = TargetName(mrg.MergeSpecification?.Target, cteNames);
                         List<TableColumnRef>? mrgExtraReads = null;
 
+                        // Target first (so t.-qualified / unqualified refs resolve to it), then
+                        // USING source(s) - built once here and threaded into MergeLineage/the ON
+                        // clause below, instead of each rebuilding its own copy.
+                        var mrgTableRefs = new List<(string Alias, string Table)>
+                            { (mrg.MergeSpecification?.TableAlias?.Value ?? mrgTarget, mrgTarget) };
+
                         // MERGE's source ("USING <TableReference> ...") can itself be a JOIN,
                         // unlike Target - so it's flattened the same way a FROM clause is,
                         // rather than resolved as a single TargetName.
@@ -278,14 +284,63 @@ public static class AstWalker
                         {
                             var refs = new List<(string Alias, string Table)>();
                             CollectTableRefsInto(mrg.MergeSpecification.TableReference, cteNames, cteBaseTables, refs);
+                            foreach (var r in refs)
+                                if (!mrgTableRefs.Any(x => string.Equals(x.Alias, r.Alias, StringComparison.OrdinalIgnoreCase) && string.Equals(x.Table, r.Table, StringComparison.OrdinalIgnoreCase)))
+                                    mrgTableRefs.Add(r);
                             mrgExtraReads = BuildExtraReads(refs, new List<TableColumnRef>(), skipFirst: false);
                         }
 
                         ProcessOutputClause(mrg.MergeSpecification?.OutputIntoClause, mrgTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
 
-                        var mrgLineage = MergeLineage(mrg, mrgTarget, cteNames, cteBaseTables);
-                        var mrgColumns = mrgLineage.Select(d => d.TargetColumn).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-                        AddLink(ctx, condStack, "MERGE", mrgTarget, stmt, cteNames, cteBaseTables, columns: mrgColumns, columnLineage: mrgLineage, extraReads: mrgExtraReads);
+                        var mrgLineage = MergeLineage(mrg, mrgTarget, mrgTableRefs);
+                        // WRITES_COLUMN must cover every column actually assigned by a WHEN
+                        // MATCHED UPDATE SET / WHEN NOT MATCHED INSERT column list, not just the
+                        // ones MergeLineage could trace back to a real source table - mirrors
+                        // UpdateColumns()/InsertColumns() for a plain UPDATE/INSERT, which never
+                        // conditioned WRITES_COLUMN on DERIVES_FROM succeeding. Without this, a
+                        // "WHEN MATCHED THEN UPDATE SET Col = q.Val" whose USING source is a
+                        // derived table of only variables/parameters (no real base table to
+                        // resolve q.Val to - e.g. dbo.UpdateHostSetting in the DNN corpus, see
+                        // eval/column-recall/blind-refs.md causa #2) silently dropped Col from the
+                        // graph entirely: no DERIVES_FROM (nothing to trace) AND no WRITES_COLUMN
+                        // (mrgColumns used to come only from mrgLineage).
+                        var mrgColumns = mrgLineage.Select(d => d.TargetColumn)
+                            .Concat(MergeTargetColumns(mrg))
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .ToList();
+
+                        // ON clause -> FILTERS_ON: "what decided which rows got matched", same
+                        // role as a JOIN's ON predicate elsewhere (also FILTERS_ON, never a
+                        // :BusinessRule - see ExtractFilterColumnsCore's WHERE-only FilterText
+                        // note) - so filterTextOverride is deliberately left unset here. Resolved
+                        // against the same mrgTableRefs (target + flattened USING source(s)) as
+                        // MergeLineage above; an alias that isn't a real table (e.g. a USING
+                        // derived table built only from variables) is silently dropped rather than
+                        // guessed, same "don't fabricate" contract SplitColumnsByTable already
+                        // uses everywhere else.
+                        List<TableColumnRef>? mrgFilterColumns = null;
+                        List<string>? mrgFilterOpKinds = null;
+                        if (mrg.MergeSpecification?.SearchCondition != null)
+                        {
+                            var onCollector = new QualifiedColumnCollector();
+                            mrg.MergeSpecification.SearchCondition.Accept(onCollector);
+                            if (onCollector.Refs.Count > 0)
+                            {
+                                var (onPrimary, onExtras) = SplitColumnsByTable(onCollector.Refs, mrgTableRefs);
+                                var onFilters = new List<TableColumnRef>();
+                                if (onPrimary.Count > 0)
+                                    onFilters.Add(new TableColumnRef(mrgTableRefs[0].Table, onPrimary));
+                                onFilters.AddRange(onExtras);
+                                if (onFilters.Count > 0)
+                                {
+                                    mrgFilterColumns = onFilters;
+                                    mrgFilterOpKinds = OperatorClassifier.Classify(mrg.MergeSpecification.SearchCondition).ToList();
+                                }
+                            }
+                        }
+
+                        AddLink(ctx, condStack, "MERGE", mrgTarget, stmt, cteNames, cteBaseTables, columns: mrgColumns, columnLineage: mrgLineage, extraReads: mrgExtraReads,
+                            filterColumnsOverride: mrgFilterColumns, filterOpKindsOverride: mrgFilterOpKinds);
                     }
                     break;
 
@@ -625,6 +680,15 @@ public static class AstWalker
             // later step - the community-edge-cases gate for recursive-cte caught it by
             // reporting the expected READS_FROM on #step0 arriving on #step2 instead.
             EmitCteFilterSteps(ctx, condStack, stmt, cteNames, cteBaseTables);
+
+            // Same idea, for a derived table's own WHERE ("FROM (SELECT ... WHERE X)
+            // alias" in a SELECT/UPDATE/DELETE's FROM) - a QueryDerivedTable is a
+            // different AST node from the ScalarSubquery that ExtractFilterColumnsCore's
+            // nested-subquery handling covers (EXISTS/IN/scalar comparison), so it was
+            // never reached: "X" belongs to the derived table's own base table, not to
+            // the outer alias, and was silently dropped entirely. Emitted after the
+            // statement for the same step-ordinal reason as EmitCteFilterSteps above.
+            EmitDerivedTableFilterSteps(ctx, condStack, stmt, cteNames, cteBaseTables);
         }
     }
 
@@ -881,6 +945,99 @@ public static class AstWalker
     }
 
     /// <summary>
+    /// Finds every QueryDerivedTable ("(SELECT ...) alias") directly reachable from a
+    /// FROM-clause table reference, recursing through JOIN/PIVOT/UNPIVOT wrappers the
+    /// same way CollectTableRefsInto does. Does NOT recurse into a found derived
+    /// table's own FROM clause - EmitDerivedTableFilterSteps below does that itself via
+    /// FlattenQuerySpecifications on each derived table's own QueryExpression, one
+    /// nesting level at a time.
+    /// </summary>
+    private static void FindDerivedTables(TableReference tref, List<QueryDerivedTable> found)
+    {
+        switch (tref)
+        {
+            case QueryDerivedTable qdt:
+                found.Add(qdt);
+                break;
+            case QualifiedJoin qj:
+                FindDerivedTables(qj.FirstTableReference, found);
+                FindDerivedTables(qj.SecondTableReference, found);
+                break;
+            case UnqualifiedJoin uqj:
+                FindDerivedTables(uqj.FirstTableReference, found);
+                FindDerivedTables(uqj.SecondTableReference, found);
+                break;
+            case PivotedTableReference pvt:
+                FindDerivedTables(pvt.TableReference, found);
+                break;
+            case UnpivotedTableReference unpvt:
+                FindDerivedTables(unpvt.TableReference, found);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Emits one extra "SELECT" step per WHERE-bearing branch of every derived table
+    /// ("FROM (SELECT ... WHERE X) alias") reachable from this statement's own FROM
+    /// clause(s) - mirrors <see cref="EmitCteFilterSteps"/>, but for a QueryDerivedTable
+    /// instead of a CTE (a different AST node, not walked by ExtractFilterColumnsCore's
+    /// EXISTS/IN/scalar-subquery handling, which only recurses through ScalarSubquery).
+    ///
+    /// Resolved against the derived table's OWN FROM tables (CollectTableRefs on its own
+    /// QuerySpecification), never against the outer query's tables - a derived table's
+    /// WHERE is evaluated before the outer query ever sees its rows, so "X" always
+    /// belongs to the derived table's own source, never to the outer alias.
+    /// </summary>
+    private static void EmitDerivedTableFilterSteps(WalkContext ctx, List<Condition> condStack, TSqlStatement stmt, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    {
+        List<FromClause?> fromClauses = stmt switch
+        {
+            SelectStatement { QueryExpression: { } qe } => FlattenQuerySpecifications(qe).Select(q => (FromClause?)q.FromClause).ToList(),
+            UpdateStatement upd => new List<FromClause?> { upd.UpdateSpecification?.FromClause },
+            DeleteStatement del => new List<FromClause?> { del.DeleteSpecification?.FromClause },
+            _ => new List<FromClause?>(),
+        };
+
+        foreach (var fromClause in fromClauses)
+        {
+            if (fromClause == null)
+                continue;
+
+            var derivedTables = new List<QueryDerivedTable>();
+            foreach (var tref in fromClause.TableReferences)
+                FindDerivedTables(tref, derivedTables);
+
+            foreach (var qdt in derivedTables)
+            {
+                foreach (var qs in FlattenQuerySpecifications(qdt.QueryExpression))
+                {
+                    if (qs.WhereClause == null || qs.FromClause == null)
+                        continue;
+
+                    var ownTableRefs = CollectTableRefs(qs.FromClause, cteNames, cteBaseTables);
+                    if (ownTableRefs.Count == 0)
+                        continue;
+
+                    var (filterColumns, _, filterOpKinds, filterText, filterKind) =
+                        ExtractFilterColumnsCore(qs.WhereClause, qs.FromClause.TableReferences, ownTableRefs, cteNames, cteBaseTables, tn => ResolveAllColumns(tn, ctx));
+
+                    if (filterColumns.Count == 0)
+                        continue; // nothing this branch contributes - don't manufacture an empty step
+
+                    // Empty target, same reasoning as EmitCteFilterSteps: the derived
+                    // table's own base table already gets its READS_FROM from the
+                    // outer statement's normal FROM-flattening (CollectTableRefsInto's
+                    // QueryDerivedTable case) - this step exists only to carry the
+                    // WHERE that would otherwise be dropped entirely.
+                    AddLink(ctx, condStack, "SELECT", "", stmt, cteNames, cteBaseTables,
+                        filterColumnsOverride: filterColumns, filterOpKindsOverride: filterOpKinds,
+                        filterTextOverride: filterText, filterKindOverride: filterKind);
+                }
+            }
+        }
+    }
+
+    /// <summary>
     /// Short subtype label for an ALTER TABLE statement (e.g. "DROP PERIOD",
     /// "SET SYSTEM_VERSIONING=OFF", "ADD CONSTRAINT"), so two ALTERs on the same
     /// table (a common pattern for temporal tables: SET SYSTEM_VERSIONING=OFF
@@ -1072,13 +1229,25 @@ public static class AstWalker
         var filterRefs = new List<(string? Qualifier, string Column)>();
         var nestedTableRefs = new List<(string Alias, string Table)>();
         var opKinds = new SortedSet<string>(StringComparer.Ordinal);
+        // Per-nested-subquery column resolutions (own scope first, see
+        // ResolveScopedColumns) - kept separate from filterRefs/mergedTableRefs so an
+        // unqualified name shared by an outer and an inner table (e.g. "ModuleDefID" in
+        // both dbo.Permission and dbo.ModuleDefinitions) resolves in EACH scope on its
+        // own instead of colliding into one "ambiguous, drop both" lookup. Root cause of
+        // 58/140 blind column refs measured on the DNN corpus (eval/column-recall/
+        // blind-refs.md, causa #1) - see ScopedColumnCollector/ResolveScopedColumns.
+        var nestedResolved = new List<TableColumnRef>();
 
         void CollectFrom(TSqlFragment? fragment)
         {
             if (fragment == null)
                 return;
 
-            var collector = new QualifiedColumnCollector();
+            // Outer-scope refs only: ScopedColumnCollector stops at a nested
+            // ScalarSubquery's boundary, so a column that only exists inside the
+            // subquery never reaches this list (and can't collide with the outer
+            // resolution below).
+            var collector = new ScopedColumnCollector();
             fragment.Accept(collector);
             filterRefs.AddRange(collector.Refs);
 
@@ -1093,9 +1262,17 @@ public static class AstWalker
             {
                 if (nestedQs.FromClause == null)
                     continue;
-                foreach (var nestedRef in CollectTableRefs(nestedQs.FromClause, cteNames, cteBaseTables))
+                var ownTableRefs = CollectTableRefs(nestedQs.FromClause, cteNames, cteBaseTables);
+                foreach (var nestedRef in ownTableRefs)
                     if (!nestedTableRefs.Contains(nestedRef))
                         nestedTableRefs.Add(nestedRef);
+
+                // The subquery's own SELECT/WHERE/etc columns, collected and resolved in
+                // its own FROM scope (falling back to the outer tableRefs only for a
+                // correlated reference) - NOT merged into filterRefs above.
+                var ownCollector = new ScopedColumnCollector();
+                nestedQs.Accept(ownCollector);
+                nestedResolved.AddRange(ResolveScopedColumns(ownCollector.Refs, ownTableRefs, tableRefs, columnsOf));
             }
         }
 
@@ -1106,13 +1283,41 @@ public static class AstWalker
         foreach (var expr in joinConditions)
             CollectFrom(expr);
 
-        var mergedTableRefs = nestedTableRefs.Count > 0 ? tableRefs.Concat(nestedTableRefs).ToList() : tableRefs;
-        var (primaryCols, extras) = SplitColumnsByTable(filterRefs, mergedTableRefs, columnsOf);
+        // filterRefs is outer-scope-only now (ScopedColumnCollector stops at a nested
+        // subquery's boundary), so nestedTableRefs can never change which TABLE an outer
+        // ref resolves to. It is still folded into the candidate pool here, though: when
+        // a nested subquery resolves to the SAME real table as the outer query (common
+        // for a CTE referenced both in FROM and inside a correlated subquery, e.g. "FROM
+        // ArchiveBox ... WHERE RowNumber BETWEEN (SELECT ... FROM ArchiveBox WHERE ...)"),
+        // padding the pool past a single entry routes an unqualified outer ref through
+        // ResolveUnqualified's schema-checked path instead of the count==1 shortcut's
+        // unconditional guess - which matters because "RowNumber" there is a CTE-computed
+        // alias, not a real column of the base table, and the count==1 shortcut doesn't
+        // consult the schema catalog at all. Measured: dropping this padding introduced 4
+        // new false positives on the DNN corpus precision gate (all this exact shape).
+        var outerResolutionPool = nestedTableRefs.Count > 0 ? tableRefs.Concat(nestedTableRefs).ToList() : tableRefs;
+        var (primaryCols, extras) = SplitColumnsByTable(filterRefs, outerResolutionPool, columnsOf);
 
         var result = new List<TableColumnRef>();
         if (primaryCols.Count > 0 && tableRefs.Count > 0)
             result.Add(new TableColumnRef(tableRefs[0].Table, primaryCols));
         result.AddRange(extras);
+
+        // Merge the nested subqueries' own resolutions in, combining with any table that
+        // already has an entry (e.g. a correlated ref that landed back on tableRefs[0] or
+        // on an extras table already touched by the outer predicate) instead of adding a
+        // second TableColumnRef for the same table.
+        foreach (var nr in nestedResolved)
+        {
+            var idx = result.FindIndex(r => string.Equals(r.Table, nr.Table, StringComparison.OrdinalIgnoreCase));
+            if (idx < 0)
+            {
+                result.Add(nr);
+                continue;
+            }
+            var merged = result[idx].Columns.Concat(nr.Columns).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+            result[idx] = new TableColumnRef(result[idx].Table, merged);
+        }
 
         // WHERE-only text/classification - deliberately excludes the JOIN ON
         // predicates folded into filterRefs/opKinds above, so a step's :BusinessRule
@@ -1145,6 +1350,135 @@ public static class AstWalker
             if (node.QueryExpression is QuerySpecification qs)
                 Subqueries.Add(qs);
         }
+    }
+
+    /// <summary>
+    /// Same (qualifier, column) collection as <see cref="QualifiedColumnCollector"/>, but
+    /// stops at a nested ScalarSubquery's boundary instead of descending into it - unlike
+    /// <c>Visit</c>, overriding <c>ExplicitVisit</c> (and not calling into the subquery's
+    /// children) actually prevents ScriptDom's default traversal from walking in.
+    ///
+    /// Used by ExtractFilterColumnsCore to collect a predicate's OWN column refs (outer
+    /// WHERE/JOIN-ON, or one specific nested subquery's own SELECT/WHERE) without also
+    /// picking up refs that belong to a *different* scope. Applied twice: once at the
+    /// outer predicate (root call), and once per nested subquery found by
+    /// NestedSubqueryCollector (so each subquery's own refs are collected and resolved
+    /// against its own FROM tables, not flattened together with the outer query's).
+    /// </summary>
+    private sealed class ScopedColumnCollector : TSqlFragmentVisitor
+    {
+        public List<(string? Qualifier, string Column)> Refs { get; } = new();
+
+        public override void Visit(ColumnReferenceExpression node)
+        {
+            var ids = node.MultiPartIdentifier?.Identifiers;
+            if (ids is not { Count: > 0 })
+                return;
+            var column = ids[^1].Value;
+            var qualifier = ids.Count > 1 ? ids[^2].Value : null;
+            Refs.Add((qualifier, column));
+        }
+
+        // Mirrors QualifiedColumnCollector.Visit(FunctionCall) - see there for why.
+        public override void Visit(FunctionCall node)
+        {
+            if (node.CallTarget is not MultiPartIdentifierCallTarget { MultiPartIdentifier.Identifiers: { Count: > 0 } ids })
+                return;
+            if (!IsXmlAccessorMethod(node.FunctionName?.Value))
+                return;
+            var column = ids[^1].Value;
+            var qualifier = ids.Count > 1 ? ids[^2].Value : null;
+            Refs.Add((qualifier, column));
+        }
+
+        public override void ExplicitVisit(ScalarSubquery node)
+        {
+            // Boundary: don't descend. The subquery's own refs are collected separately
+            // by a fresh ScopedColumnCollector rooted at its own QuerySpecification.
+        }
+    }
+
+    /// <summary>
+    /// Resolves a nested subquery's OWN (qualifier, column) refs against its own FROM
+    /// tables (innermost-scope-wins, the real SQL binding rule): a QUALIFIED ref may
+    /// still resolve to the outer query's tables (a correlated reference, e.g. "EXISTS
+    /// (SELECT 1 FROM T2 WHERE T2.X = o.Y)" - "o" is the outer alias), but an
+    /// UNQUALIFIED ref that isn't satisfied by the subquery's own scope is dropped
+    /// rather than guessed onto the outer table (see the no-fallback comment below).
+    ///
+    /// Without this scope order, resolving the subquery's refs together with the outer
+    /// query's refs against their UNION (the previous behavior) made any unqualified name
+    /// that happens to exist in both scopes "ambiguous" by ResolveUnqualified's
+    /// deliberately-conservative rule, silently dropping it from BOTH scopes - even though
+    /// each occurrence is perfectly resolvable on its own. This is extremely common for FK
+    /// id columns (e.g. "ModuleDefID" existing in both an outer permissions table and the
+    /// inner table it's filtered against) - see AstWalker root-cause note on
+    /// ExtractFilterColumnsCore for the real corpus example that exposed it.
+    /// </summary>
+    private static List<TableColumnRef> ResolveScopedColumns(
+        IEnumerable<(string? Qualifier, string Column)> refs,
+        List<(string Alias, string Table)> ownTableRefs,
+        List<(string Alias, string Table)> outerTableRefs,
+        Func<string, List<string>?>? columnsOf)
+    {
+        var buckets = new List<(string Table, List<string> Columns, HashSet<string> Seen)>();
+
+        void Add(string table, string column)
+        {
+            if (table.Length == 0)
+                return;
+            var idx = buckets.FindIndex(b => string.Equals(b.Table, table, StringComparison.OrdinalIgnoreCase));
+            if (idx < 0)
+            {
+                buckets.Add((table, new List<string>(), new HashSet<string>(StringComparer.OrdinalIgnoreCase)));
+                idx = buckets.Count - 1;
+            }
+            if (buckets[idx].Seen.Add(column))
+                buckets[idx].Columns.Add(column);
+        }
+
+        foreach (var (qualifier, column) in refs)
+        {
+            if (qualifier != null)
+            {
+                var i = ownTableRefs.FindIndex(t => string.Equals(t.Alias, qualifier, StringComparison.OrdinalIgnoreCase));
+                if (i >= 0) { Add(ownTableRefs[i].Table, column); continue; }
+                var j = outerTableRefs.FindIndex(t => string.Equals(t.Alias, qualifier, StringComparison.OrdinalIgnoreCase));
+                if (j >= 0) Add(outerTableRefs[j].Table, column);
+                continue;
+            }
+
+            if (ownTableRefs.Count == 1 && ownTableRefs[0].Table.Length > 0)
+            {
+                // Unlike SplitColumnsByTable's identical single-table shortcut (which never
+                // consults the schema catalog, by long-standing design), this one DOES when
+                // the catalog knows the table - because the subquery's single FROM table is
+                // very often a CTE resolved back to its base table (CollectTableRefs), and
+                // the CTE may expose a COMPUTED column (an alias, e.g. "ROW_NUMBER() OVER(...)
+                // AS RowNumber") that the base table never had. Guessing that onto the base
+                // table is a genuine false positive, not a conservative default - measured on
+                // the DNN corpus precision gate (a "RowNumber BETWEEN (SELECT RowNumber ...
+                // FROM ArchiveBoxCte WHERE ...) ..." pattern). Schema unknown (null) keeps the
+                // old unconditional behavior so schema-less callers/tests are unaffected.
+                var knownCols = columnsOf?.Invoke(ownTableRefs[0].Table);
+                if (knownCols == null || knownCols.Contains(column, StringComparer.OrdinalIgnoreCase))
+                    Add(ownTableRefs[0].Table, column);
+                continue;
+            }
+            if (columnsOf != null && ResolveUnqualified(column, ownTableRefs, columnsOf) is { } hit) { Add(ownTableRefs[hit].Table, column); continue; }
+
+            // Deliberately NOT falling back to outerTableRefs here: an unqualified column
+            // that isn't satisfied by the subquery's own scope is not automatically a
+            // correlated outer reference - it could just as well be an uncataloged column
+            // of the subquery's own table (columnsOf returning null/no-match isn't proof
+            // the table lacks it). Guessing it onto the outer table risks a false
+            // READS_FROM/FILTERS_ON edge; dropping it keeps the same "don't guess"
+            // contract SplitColumnsByTable already uses elsewhere. A real correlated
+            // reference is virtually always qualified in practice (e.g. "o.Y"), and that
+            // case is already handled above via the qualifier branch.
+        }
+
+        return buckets.Select(b => new TableColumnRef(b.Table, b.Columns)).ToList();
     }
 
     /// <summary>Recursively collects every JOIN's ON predicate from a list of table references (both sides of nested JOINs).</summary>
@@ -1318,6 +1652,16 @@ public static class AstWalker
         return result;
     }
 
+    /// <summary>
+    /// True for "xmlCol.nodes(xquery)" / "alias.xmlCol.nodes(xquery)" - same AST shape as a
+    /// schema-qualified TVF call (SchemaObjectFunctionTableReference), but it is an XML shred
+    /// that BuildXmlApplyMap already resolves to its real base column; last identifier "nodes",
+    /// at least "column.nodes" (2 identifiers).
+    /// </summary>
+    private static bool IsXmlNodesMethodCall(SchemaObjectFunctionTableReference fn) =>
+        fn.SchemaObject?.Identifiers is { Count: >= 2 } ids &&
+        ids[^1].Value.Equals("nodes", StringComparison.OrdinalIgnoreCase);
+
     private static void CollectTableRefsInto(TableReference tref, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables, List<(string Alias, string Table)> result)
     {
         switch (tref)
@@ -1373,16 +1717,13 @@ public static class AstWalker
             case UnpivotedTableReference unpvt:
                 CollectTableRefsInto(unpvt.TableReference, cteNames, cteBaseTables, result);
                 break;
-            case SchemaObjectFunctionTableReference fn when fn.SchemaObject != null && IsCatalogSchema(fn.SchemaObject):
-                // "FROM sys.dm_io_virtual_file_stats(...)", "JOIN sys.dm_os_volume_stats(...)":
-                // a catalog table-valued function (sys.dm_*/sys.fn_*). It is never an analyzed
-                // SqlObject (there's no CREATE FUNCTION for it in any corpus), so unlike a
-                // user-defined TVF - already surfaced via a CALLS edge, see
-                // FunctionCallCollector/GraphExporter, and deliberately NOT added here to avoid
-                // a twin :Table node for the same object - it would otherwise vanish from the
-                // lineage entirely. Registering it as a plain table reference routes it through
-                // the normal READS_FROM/GetOrCreateTable machinery, same as "sys.databases".
-                // Columns stay unresolved: the function is opaque, exactly like any other TVF.
+            case SchemaObjectFunctionTableReference fn when fn.SchemaObject != null && !IsXmlNodesMethodCall(fn):
+                // TVF as row source (FROM/JOIN/CROSS APPLY func(...)), catalog or user-defined:
+                // registers alias->function name so "alias.col" resolves like any other table.
+                // Excludes "xmlCol.nodes(...)" (IsXmlNodesMethodCall) - same syntax shape as a
+                // schema-qualified TVF call, but it is an XML shred already resolved to its real
+                // base column by BuildXmlApplyMap; registering it here too would shadow that
+                // with a symbolic "ref" pseudo-column and lose the real DERIVES_FROM chain.
                 result.Add((fn.Alias?.Value ?? fn.SchemaObject.BaseIdentifier?.Value ?? "", SqlText.Generate(fn.SchemaObject)));
                 break;
             case OpenJsonTableReference ojtr when !IsColumnShreddedElsewhere(ojtr):
@@ -1433,11 +1774,9 @@ public static class AstWalker
             //    unresolved OPENQUERY above.
             //  - BulkOpenRowset (OPENROWSET(BULK 'file.csv', ...)): points at a file, not a
             //    database object - no catalog identity exists to attach a node to.
-            //  - User-defined TVFs (SchemaObjectFunctionTableReference outside "sys"),
-            //    pivots/derived tables with a non-QuerySpecification body, etc.: no
-            //    alias->table mapping is possible, so columns qualified with their alias
-            //    simply won't resolve below. User-defined TVFs still reach the graph as a
-            //    CALLS edge (object-level, via FunctionCallCollector) - see the case above.
+            //  - Pivots/derived tables with a non-QuerySpecification body: no alias->table
+            //    mapping is possible, so columns qualified with their alias simply won't
+            //    resolve below.
         }
     }
 
@@ -1451,15 +1790,6 @@ public static class AstWalker
     /// </summary>
     private static bool IsColumnShreddedElsewhere(OpenJsonTableReference ojtr) =>
         ojtr.Variable is ColumnReferenceExpression { MultiPartIdentifier.Identifiers.Count: >= 1 };
-
-    /// <summary>
-    /// True if a (possibly multi-part) schema object name lives in the "sys" catalog schema
-    /// (e.g. "sys.dm_io_virtual_file_stats", "somedb.sys.dm_exec_sql_text") - used to route
-    /// catalog table-valued functions through READS_FROM (see CollectTableRefsInto) instead of
-    /// the CALLS edge used for user-defined ones, since they are never analyzed SqlObjects.
-    /// </summary>
-    private static bool IsCatalogSchema(SchemaObjectName name) =>
-        name.SchemaIdentifier != null && name.SchemaIdentifier.Value.Equals("sys", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Maps each CROSS/OUTER APPLY ...nodes() alias to the base XML column it shreds, so
@@ -1498,12 +1828,10 @@ public static class AstWalker
                 continue;
             var alias = fn.Alias?.Value;
             var ids = fn.SchemaObject?.Identifiers;
-            // Last identifier is the method ("nodes"); need at least "column.nodes".
-            if (alias is not { Length: > 0 } || ids is not { Count: >= 2 } ||
-                !ids[^1].Value.Equals("nodes", StringComparison.OrdinalIgnoreCase))
+            if (alias is not { Length: > 0 } || !IsXmlNodesMethodCall(fn))
                 continue;
 
-            var column = ids[^2].Value;
+            var column = ids![^2].Value;
             var qualifier = ids.Count >= 3 ? ids[^3].Value : null;
             (string Table, string Column)? src =
                 qualifier != null && map.TryGetValue(qualifier, out var chained) ? chained
@@ -1892,23 +2220,12 @@ public static class AstWalker
     /// against the target (alias-qualified or unqualified) plus the USING source table(s);
     /// the target's own prior value is dropped as a self-loop.
     /// </summary>
-    private static List<ColumnDerivation> MergeLineage(MergeStatement mrg, string mrgTarget, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    private static List<ColumnDerivation> MergeLineage(MergeStatement mrg, string mrgTarget, List<(string Alias, string Table)> tableRefs)
     {
         var lineage = new List<ColumnDerivation>();
         var spec = mrg.MergeSpecification;
         if (spec == null || mrgTarget.Length == 0)
             return lineage;
-
-        // Target first (so t.-qualified / unqualified refs resolve to it), then USING source(s).
-        var tableRefs = new List<(string Alias, string Table)> { (spec.TableAlias?.Value ?? mrgTarget, mrgTarget) };
-        if (spec.TableReference != null)
-        {
-            var srcRefs = new List<(string Alias, string Table)>();
-            CollectTableRefsInto(spec.TableReference, cteNames, cteBaseTables, srcRefs);
-            foreach (var r in srcRefs)
-                if (!tableRefs.Any(x => string.Equals(x.Alias, r.Alias, StringComparison.OrdinalIgnoreCase) && string.Equals(x.Table, r.Table, StringComparison.OrdinalIgnoreCase)))
-                    tableRefs.Add(r);
-        }
 
         void AddFrom(string targetCol, ScalarExpression expr)
         {
@@ -1946,6 +2263,47 @@ public static class AstWalker
             }
         }
         return lineage;
+    }
+
+    /// <summary>
+    /// Every column a WHEN MATCHED UPDATE SET actually assigns, independent of whether
+    /// MergeLineage could trace that assignment's right-hand side back to a real source
+    /// table. Mirrors UpdateColumns() for a plain UPDATE, which lists every SET target
+    /// unconditionally: WRITES_COLUMN should reflect "this column got written", not "this
+    /// column's lineage happened to be resolvable". See the call site's comment (the
+    /// MergeStatement case in Walk()) for the real corpus example this fixes.
+    ///
+    /// Deliberately UPDATE-only, NOT WHEN NOT MATCHED INSERT's column list too (tried and
+    /// measured): sys.dm_sql_referenced_entities - the oracle eval/column-recall/blind-refs.md
+    /// is measured against - reliably reports a MERGE's UPDATE SET targets but NOT its INSERT
+    /// column list (unlike a plain INSERT, where it does). Adding INSERT columns here made 7
+    /// DNN procedures (UpdateHostSetting, UpdateModuleSetting, UpdatePortalSetting,
+    /// UpdateRoleSetting, UpdateTabModuleSetting, UpdateTabSetting, AuthCookies_Update) emit
+    /// WRITES_COLUMN for CreatedByUserID/CreatedOnDate/UserID/CreatedOn that the oracle never
+    /// references, dropping the "direct" precision floor from 99.7846% to 99.5% (measured).
+    /// The columns are likely real writes - this is an oracle blind spot, not a false claim -
+    /// but the invariant is "never guess past what's measured", so this stays scoped to the
+    /// branch the oracle actually corroborates. A resolvable INSERT source (a real table, e.g.
+    /// "INSERT (Id, Price) VALUES (s.Id, s.Price)") is still covered via mrgLineage above,
+    /// unaffected by this scoping.
+    /// </summary>
+    private static List<string> MergeTargetColumns(MergeStatement mrg)
+    {
+        var result = new List<string>();
+        var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var clause in mrg.MergeSpecification?.ActionClauses ?? Enumerable.Empty<MergeActionClause>())
+        {
+            if (clause.Action is not UpdateMergeAction uma)
+                continue;
+            foreach (var sc in uma.SetClauses)
+                if (sc is AssignmentSetClause { Column: not null } asc)
+                {
+                    var name = ColumnName(asc.Column);
+                    if (name.Length > 0 && seen.Add(name))
+                        result.Add(name);
+                }
+        }
+        return result;
     }
 
     /// <summary>

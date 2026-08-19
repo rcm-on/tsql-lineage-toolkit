@@ -21,8 +21,8 @@
         "min_column_edges": 5000
       },
       "floors": {
-        "strict_recall": 0.9658,
-        "loose_recall": 0.9808,
+        "strict_recall": 0.9735,
+        "loose_recall": 0.9876,
         "precision_by_class": {
           "direct": 0.9978,
           "star_expanded": 0.9888

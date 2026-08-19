@@ -82,6 +82,10 @@ public static class GraphExporter
         // entity that a consumer (and the DMV oracle) actually expects it on.
         var viewObjectIds = new HashSet<string>(StringComparer.Ordinal);
 
+        // Same idea as viewObjectIds, for a user-defined TVF used as a row source: lets
+        // the TARGETS branch below also emit READS_COLUMN for a TVF, not just a VIEW.
+        var tvfObjectIds = new HashSet<string>(StringComparer.Ordinal);
+
         foreach (var r in results)
         {
             var (db, plain) = SplitName(r.ObjectName);
@@ -95,6 +99,9 @@ public static class GraphExporter
             // not as an object reference (TARGETS) that would shadow the READS_FROM.
             if (r.ObjectType != "SYNONYM")
                 byPlainName[(NormalizeRef(db), NormalizeRef(plain))] = r.ObjectName;
+
+            if (r.ObjectType is "TABLE_VALUED_FUNCTION" or "INLINE_TABLE_FUNCTION")
+                tvfObjectIds.Add(r.ObjectName);
 
             if (r.ObjectType == "VIEW")
             {
@@ -499,7 +506,7 @@ public static class GraphExporter
                     // so a view that renames a source column in its SELECT list is still
                     // matched by its OWN name - not just by the base table's original name,
                     // which is all via_view can offer.
-                    if (fl.ConsequenceType == "SELECT" && viewObjectIds.Contains(targetObjId) && includeColumns)
+                    if (fl.ConsequenceType == "SELECT" && (viewObjectIds.Contains(targetObjId) || tvfObjectIds.Contains(targetObjId)) && includeColumns)
                     {
                         var (viewDb, viewPlain) = SplitName(targetObjId);
                         var (viewTableId, viewTableName) = GetOrCreateTable(graph, tableIds, tableShortNames, viewDb, viewPlain);

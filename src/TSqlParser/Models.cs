@@ -321,6 +321,8 @@ public class ObjectResult
     public Dictionary<string, List<string>> VariableOpKinds { get; } = new();
     /// <summary>For a VIEW: each output column paired with the base table column(s) its value comes from (see <see cref="OperatorClassifier"/> for ops). Empty for non-views. Surfaced as DERIVES_FROM off the view's own :Column nodes.</summary>
     public List<ColumnDerivation> ViewColumnLineage { get; } = new();
+    /// <summary>For a TABLE_VALUED_FUNCTION/INLINE_TABLE_FUNCTION: its output column names (from RETURNS TABLE's SELECT list, or the declared RETURNS @t TABLE(...) columns). Empty otherwise. Lets InputAnalyzer register the function in the table-columns catalog so callers can expand "SELECT * FROM func()".</summary>
+    public List<string> TvfOutputColumns { get; } = new();
     /// <summary>Triggers this object's body CREATEs (usually via resolved dynamic SQL). Surfaced as a :Trigger node with CREATES/ON edges. See <see cref="TriggerCreationInfo"/>.</summary>
     public List<TriggerCreationInfo> CreatedTriggers { get; } = new();
     public bool HasTransaction { get; set; }
