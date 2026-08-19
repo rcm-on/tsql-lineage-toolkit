@@ -1,4 +1,4 @@
-// TSqlParser: ScriptDom-based AST parser for T-SQL stored procedures / functions / triggers.
+﻿// TSqlParser: ScriptDom-based AST parser for T-SQL stored procedures / functions / triggers.
 //
 // Reads a JSON array of { "name": "Database::Schema.Object", "sql": "CREATE PROCEDURE ..." }
 // and writes a graph (nodes + relationships) in the same shape as
@@ -438,61 +438,31 @@ if (workflowsOutputPath != null)
 var graph = GraphExporter.Build(results, includeColumns, tableSchemas);
 Utf8Io.WriteAllText(graphOutputPath, JsonSerializer.Serialize(graph, jsonOptions));
 
-// --graphify: also emit the flat { meta, stats, nodes, edges } shape that
-// src/exporter.py produces, so the same graph loads into Graphify (which can
-// itself convert nodes+edges -> Cypher for Neo4j). Written alongside the Neo4j
-// output as "<graphOutputPath without .json>.graphify.json".
-if (emitGraphify)
+// Cada formato opcional es un IGraphSink registrado en GraphSinks.Default; el flag que
+// lo activa y la extensión de salida los declara él. Un formato nuevo no toca este fichero.
+var dbName = results.Select(o => o.ObjectName.Split("::", 2)).FirstOrDefault(p => p.Length == 2)?[0] ?? "";
+var exportContext = new ExportContext
 {
-    var db = results.Select(o => o.ObjectName.Split("::", 2)).FirstOrDefault(p => p.Length == 2)?[0] ?? "";
-    var graphify = GraphifyExporter.ToGraphify(graph, db);
-    var graphifyPath = graphOutputPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-        ? graphOutputPath[..^5] + ".graphify.json"
-        : graphOutputPath + ".graphify.json";
-    Utf8Io.WriteAllText(graphifyPath, JsonSerializer.Serialize(graphify, jsonOptions));
-    Console.WriteLine($"Graphify: {graphify.Nodes.Count} nodes, {graphify.Edges.Count} edges -> {graphifyPath}");
-}
-
-// --graphml: also emit GraphML (graph XML) for Gephi / yEd / Cytoscape, written
-// as "<graphOutputPath without .json>.graphml".
-if (emitGraphml)
-{
-    var graphmlPath = graphOutputPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-        ? graphOutputPath[..^5] + ".graphml"
-        : graphOutputPath + ".graphml";
-    Utf8Io.WriteAllText(graphmlPath, GraphMlExporter.ToGraphMl(graph));
-    Console.WriteLine($"GraphML: {graph.Nodes.Count} nodes, {graph.Relationships.Count} edges -> {graphmlPath}");
-}
-
-// --nodestore: also write "<graphOutputPath without .json>.nodes/" - a
-// navigable, incremental node store (index.json, model.json, manifest.json,
-// objects/<obj>/object.json, shared/<category>/<slug>.json). See NodeStoreExporter.
-if (emitNodeStore)
-{
-    var db = results.Select(o => o.ObjectName.Split("::", 2)).FirstOrDefault(p => p.Length == 2)?[0] ?? "";
-    var nodeStorePath = graphOutputPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-        ? graphOutputPath[..^5] + ".nodes"
-        : graphOutputPath + ".nodes";
-    var nodeStoreStats = NodeStoreExporter.Write(graph, nodeStorePath, db, jsonOptions);
-    Console.WriteLine($"NodeStore: {nodeStoreStats.Objects} objects, {nodeStoreStats.SharedNodes} shared nodes, {nodeStoreStats.Edges} edges -> {nodeStorePath}");
-    if (verifyAudit) return AuditVerifier.Verify(nodeStorePath);
-}
-
-// --sqlite: also write "<graphOutputPath without .json>.db" - a single queryable
-// SQLite database (nodes + edges, with per-object scalars rolled up) for agents/
-// LLMs that answer with one SQL query instead of scanning JSON. See SqliteExporter
-// and scripts/lineage-queries.sql.
-if (emitSqlite)
-{
-    var dbPath = graphOutputPath.EndsWith(".json", StringComparison.OrdinalIgnoreCase)
-        ? graphOutputPath[..^5] + ".db"
-        : graphOutputPath + ".db";
-    var sqliteDb = results.Select(o => o.ObjectName.Split("::", 2)).FirstOrDefault(p => p.Length == 2)?[0] ?? "";
+    GraphOutputPath = graphOutputPath,
+    Database = dbName,
     // --project=<name> identifies the analysis project; defaults to the database name.
-    var project = args.FirstOrDefault(a => a.StartsWith("--project="))?["--project=".Length..] ?? sqliteDb;
-    SqliteExporter.Write(graph, dbPath, sqliteDb, project);
-    Console.WriteLine($"SQLite: {graph.Nodes.Count} nodes, {graph.Relationships.Count} edges (db={sqliteDb}, project={project}) -> {dbPath}");
+    Project = args.FirstOrDefault(a => a.StartsWith("--project="))?["--project=".Length..] ?? dbName,
+    JsonOptions = jsonOptions,
+};
+
+string? nodeStorePath = null;
+foreach (var sink in GraphSinks.Default.Where(s => args.Contains(s.Flag)))
+{
+    var sinkResult = sink.Write(graph, exportContext);
+    Console.WriteLine(sinkResult.Summary);
+    if (sink.Flag == "--nodestore")
+        nodeStorePath = sinkResult.OutputPath;
 }
+
+// --verify-audit valida los invariantes del audit_report.json que escribe el nodestore;
+// sin --nodestore no hay nada que verificar.
+if (verifyAudit && nodeStorePath != null)
+    return AuditVerifier.Verify(nodeStorePath);
 
 var ok = results.Count(r => r.Error == null);
 Console.WriteLine($"Analyzed {results.Count} objects ({ok} ok, {results.Count - ok} parse errors)");
