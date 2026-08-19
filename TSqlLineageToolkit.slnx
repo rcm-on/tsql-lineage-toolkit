@@ -3,6 +3,7 @@
     <Project Path="src/Parser.Contracts/Parser.Contracts.csproj" />
     <Project Path="src/TSqlParser/TSqlParser.csproj" />
     <Project Path="src/NetParser/NetParser.csproj" />
+    <Project Path="src/Parser.Graph/Parser.Graph.csproj" />
     <Project Path="src/ParserGeneral/ParserGeneral.csproj" />
   </Folder>
   <Folder Name="/tests/">

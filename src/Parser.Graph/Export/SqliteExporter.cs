@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.Data.Sqlite;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
 /// <summary>
 /// Writes the in-memory <see cref="GraphPayload"/> as a single queryable SQLite

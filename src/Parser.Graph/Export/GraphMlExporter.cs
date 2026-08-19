@@ -1,7 +1,7 @@
 using System.Text;
 using System.Xml;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
 /// <summary>
 /// Serializes the Neo4j-shaped GraphPayload to GraphML (graph XML), the lingua

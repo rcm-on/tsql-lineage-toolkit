@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Parser.Contracts\Parser.Contracts.csproj" />
+    <ProjectReference Include="..\Parser.Graph\Parser.Graph.csproj" />
   </ItemGroup>
 
   <ItemGroup>

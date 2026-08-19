@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
 /// <summary>
 /// Converts the Neo4j-shaped GraphPayload ({ Nodes, Relationships }) into the

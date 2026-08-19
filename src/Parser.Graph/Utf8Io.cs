@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
 /// <summary>
 /// Single choke point for writing text artifacts (JSON, GraphML, markdown, etc.)
