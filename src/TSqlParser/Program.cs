@@ -137,6 +137,45 @@ if (positional.Count >= 1 && positional[0] == "corpus")
     return 1;
 }
 
+// "blind-refs <corpusId> <salida.csv>": vuelca la LISTA de referencias (módulo, columna) que el
+// oráculo de eval/corpora.json ve y el grafo no reproduce (el conjunto laxo de
+// ColumnRecallGateTests) - el gate solo imprime el agregado, esto imprime el detalle para poder
+// clasificar cada ciega manualmente. <corpusId> se resuelve por CorpusManifest ("dnn", "wwidw",
+// ...); la comparación es EXACTAMENTE la del gate (BlindRefs.Compute), así que las dos medidas
+// no pueden divergir.
+if (positional.Count >= 1 && positional[0] == "blind-refs")
+{
+    if (positional.Count < 3)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser blind-refs <corpusId> <salida.csv>");
+        return 1;
+    }
+    var blindRepoRoot = CorpusManifest.FindRepoRoot(Directory.GetCurrentDirectory())
+                        ?? CorpusManifest.FindRepoRoot(AppContext.BaseDirectory);
+    if (blindRepoRoot == null)
+    {
+        Console.Error.WriteLine($"No se encontró {CorpusManifest.RelPath} subiendo desde {Directory.GetCurrentDirectory()}");
+        return 1;
+    }
+    var blindManifest = CorpusManifest.Load(blindRepoRoot);
+    var blindCorpus = blindManifest.Find(positional[1]);
+    if (blindCorpus == null)
+    {
+        Console.Error.WriteLine($"No hay corpus '{positional[1]}' en {CorpusManifest.RelPath}. Declarados: " +
+            string.Join(", ", blindManifest.Corpora.Select(c => c.Id)));
+        return 1;
+    }
+    if (blindCorpus.Oracle == null)
+    {
+        Console.Error.WriteLine($"El corpus '{blindCorpus.Id}' no declara oráculo de columna, no se puede calcular blind-refs.");
+        return 1;
+    }
+    var blindResult = BlindRefs.Compute(blindCorpus.InputPath(blindRepoRoot), blindCorpus.OraclePath(blindRepoRoot));
+    BlindRefs.WriteCsv(blindResult, positional[2]);
+    Console.WriteLine(BlindRefs.Summarize(blindCorpus.Id, blindResult, positional[2]));
+    return 0;
+}
+
 // "extract-tables <graph.json> <input.json> [--server <server>]": for every
 // :Table node in graph.json, fetches its CREATE TABLE DDL (columns, types,
 // PK, FK) from the live database and appends it to input.json.
@@ -361,6 +400,7 @@ if (positional.Count < 2)
     Console.Error.WriteLine("       TSqlParser update-nodestore <input.json> <store_dir.nodes> [--columns]");
     Console.Error.WriteLine("       TSqlParser diff-change-map <store_before.nodes> <store_after.nodes> <output.json> [--fail-on-new-impact]");
     Console.Error.WriteLine("       TSqlParser bench-make <store_dir.nodes> <bench_dir>  |  bench-grade <bench_dir> <answers_dir>");
+    Console.Error.WriteLine("       TSqlParser blind-refs <corpusId> <salida.csv>");
     return 1;
 }
 

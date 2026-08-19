@@ -48,8 +48,9 @@ public class ColumnRecallGateTests
     /// no suben el recall ni una décima y desploman la precisión (66,9 % -> 42,7 %). No son
     /// referencias en el sentido del oráculo.
     /// </summary>
-    private static readonly HashSet<string> ColumnRefEdges =
-        new(StringComparer.Ordinal) { "READS_COLUMN", "FILTERS_ON", "WRITES_COLUMN" };
+    // Movida a TSqlParser.BlindRefs.ColumnRefEdges: la usa tanto este fichero (BuildGraphRefsByClass,
+    // más abajo) como el subcomando "blind-refs", y solo puede haber una lista.
+    private static readonly HashSet<string> ColumnRefEdges = BlindRefs.ColumnRefEdges;
 
     // Los suelos viven en eval/corpora.json, uno por corpus. Están TRUNCADOS por debajo del
     // valor medido, no redondeados: el informe imprime un decimal y poner el suelo en el valor
@@ -62,75 +63,20 @@ public class ColumnRecallGateTests
     // ColumnLineage_MeetsMeasuredFloors): mezcla clases y esconde que la extracción directa
     // acierta el 99,78 %.
 
-    /// <summary>Una fila del oráculo: módulo, entidad referenciada y columna, todo en minúsculas.</summary>
-    private readonly record struct Ref(string Module, string Entity, string Column);
-
-    private static HashSet<Ref> LoadOracle(CorpusEntry corpus)
-    {
-        var set = new HashSet<Ref>();
-        foreach (var line in File.ReadLines(corpus.OraclePath(EvalCorpora.RepoRoot())))
-        {
-            var p = line.Split('|');
-            if (p.Length == 3)
-                set.Add(new Ref(p[0], p[1], p[2]));
-        }
-        return set;
-    }
+    // LoadOracle / BuildGraphRefs / Plain() se movieron a TSqlParser.BlindRefs: es la misma
+    // comparación que ahora también usa el subcomando "blind-refs", y una sola fuente de verdad
+    // es justo el punto (ver el comentario de clase de BlindRefs). ColumnRef sustituye al "Ref"
+    // que antes era privado de este fichero.
 
     /// <summary>
-    /// Extrae del grafo las lecturas de columna a nivel (módulo, entidad, columna). Las aristas
-    /// salen de Steps, así que se resuelven a su objeto propietario por HAS_STEP (misma regla
-    /// que NodeStoreExporter.OwnerOf).
-    /// </summary>
-    private static HashSet<Ref> BuildGraphRefs(GraphPayload graph)
-    {
-        var owner = graph.Relationships
-            .Where(r => r.Type == "HAS_STEP")
-            .GroupBy(r => r.EndNodeId)
-            .ToDictionary(g => g.Key, g => g.First().StartNodeId, StringComparer.Ordinal);
-
-        static string Prop(Dictionary<string, object> p, string key) =>
-            p.TryGetValue(key, out var v) && v is not null ? v.ToString() ?? "" : "";
-
-        static string Plain(string s) => s.Replace("[", "").Replace("]", "").ToLowerInvariant();
-
-        // nodeId de columna -> (entidad, columna)
-        var columns = new Dictionary<string, (string Entity, string Column)>(StringComparer.Ordinal);
-        foreach (var n in graph.Nodes)
-        {
-            if (!n.Labels.Contains("Column")) continue;
-            var table = Plain(Prop(n.Properties, "table"));
-            var col = Plain(Prop(n.Properties, "name"));
-            if (table.Length == 0 || col.Length == 0) continue;
-            columns[n.Id] = (table.Contains('.') ? table : "dbo." + table, col);
-        }
-
-        static string ModuleOf(string id)
-        {
-            var idx = id.IndexOf("::", StringComparison.Ordinal);
-            return Plain(idx >= 0 ? id[(idx + 2)..] : id);
-        }
-
-        var refs = new HashSet<Ref>();
-        foreach (var r in graph.Relationships)
-        {
-            if (!ColumnRefEdges.Contains(r.Type)) continue;
-            if (!columns.TryGetValue(r.EndNodeId, out var col)) continue;
-            var objId = owner.TryGetValue(r.StartNodeId, out var o) ? o : r.StartNodeId.Split("#step")[0];
-            refs.Add(new Ref(ModuleOf(objId), col.Entity, col.Column));
-        }
-        return refs;
-    }
-
-    /// <summary>
-    /// Igual que <see cref="BuildGraphRefs"/> pero agrupando por CÓMO se supo cada arista.
+    /// Igual que <see cref="BlindRefs.BuildGraphRefs"/> pero agrupando por CÓMO se supo cada arista.
     /// Una precisión global engaña: mezcla lecturas escritas literalmente en el SQL con
     /// lecturas alcanzadas atravesando una vista, y el oráculo (que se para en la vista)
     /// no puede contener estas últimas. Sin separar clases, la global daba 67,8 % y la
     /// expansión de estrella parecía la peor clase del motor (43,7 %) cuando en realidad
     /// es de las mejores. Cada clase lleva su propio suelo.
     /// </summary>
-    private static Dictionary<string, HashSet<Ref>> BuildGraphRefsByClass(GraphPayload graph)
+    private static Dictionary<string, HashSet<ColumnRef>> BuildGraphRefsByClass(GraphPayload graph)
     {
         var owner = graph.Relationships
             .Where(r => r.Type == "HAS_STEP")
@@ -165,7 +111,7 @@ public class ColumnRecallGateTests
             return Plain(idx >= 0 ? id[(idx + 2)..] : id);
         }
 
-        var byClass = new Dictionary<string, HashSet<Ref>>(StringComparer.Ordinal);
+        var byClass = new Dictionary<string, HashSet<ColumnRef>>(StringComparer.Ordinal);
         foreach (var r in graph.Relationships)
         {
             if (!ColumnRefEdges.Contains(r.Type)) continue;
@@ -174,8 +120,8 @@ public class ColumnRecallGateTests
                     : starSteps.Contains(r.StartNodeId) ? "star_expanded"
                     : "direct";
             var objId = owner.TryGetValue(r.StartNodeId, out var o) ? o : r.StartNodeId.Split("#step")[0];
-            (byClass.TryGetValue(cls, out var set) ? set : byClass[cls] = new HashSet<Ref>())
-                .Add(new Ref(ModuleOf(objId), col.Entity, col.Column));
+            (byClass.TryGetValue(cls, out var set) ? set : byClass[cls] = new HashSet<ColumnRef>())
+                .Add(new ColumnRef(ModuleOf(objId), col.Entity, col.Column));
         }
         return byClass;
     }
@@ -186,8 +132,11 @@ public class ColumnRecallGateTests
         return GraphExporter.Build(results, includeColumns: true, tableSchemas);
     }
 
-    private static (HashSet<Ref> Oracle, HashSet<Ref> Graph) Measure(CorpusEntry corpus) =>
-        (LoadOracle(corpus), BuildGraphRefs(BuildGraph(corpus)));
+    private static HashSet<ColumnRef> LoadOracle(CorpusEntry corpus) =>
+        BlindRefs.LoadOracle(corpus.OraclePath(EvalCorpora.RepoRoot()));
+
+    private static (HashSet<ColumnRef> Oracle, HashSet<ColumnRef> Graph) Measure(CorpusEntry corpus) =>
+        (LoadOracle(corpus), BlindRefs.BuildGraphRefs(BuildGraph(corpus)));
 
     [Theory]
     [MemberData(nameof(EvalCorpora.GatedCorpusIds), MemberType = typeof(EvalCorpora))]
@@ -273,7 +222,7 @@ public class ColumnRecallGateTests
         {
             var edges = byClass.TryGetValue(cls, out var set)
                 ? set.Where(r => modulesSeen.Contains(r.Module)).ToHashSet()
-                : new HashSet<Ref>();
+                : new HashSet<ColumnRef>();
             Assert.True(edges.Count > 0, $"La clase '{cls}' no produjo ninguna arista: la clasificación está rota.");
             var precision = (double)edges.Count(oracle.Contains) / edges.Count;
             report.Add($"  {cls,-14} {edges.Count,6} aristas   precisión {precision:P1}  (suelo {floor:P1})");
