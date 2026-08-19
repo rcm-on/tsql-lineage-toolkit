@@ -5,6 +5,15 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>tsql-lineage</ToolCommandName>
+    <PackageId>TsqlLineageToolkit.Cli</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Ramón Campos Martín</Authors>
+    <Description>Deterministic T-SQL lineage and impact engine for Microsoft SQL Server.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/rcm-on/tsql-lineage-toolkit</RepositoryUrl>
+    <PackageTags>sql-server;tsql;lineage;impact-analysis;static-analysis</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
