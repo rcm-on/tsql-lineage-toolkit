@@ -1,5 +1,7 @@
 # T-SQL Lineage Toolkit
 
+*Read this in [English](README.en.md).*
+
 [![CI](https://github.com/rcm-on/tsql-lineage-toolkit/actions/workflows/ci.yml/badge.svg)](https://github.com/rcm-on/tsql-lineage-toolkit/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![.NET](https://img.shields.io/badge/.NET-10-512BD4.svg)](https://dotnet.microsoft.com/)
 
 **Motor determinista de lineage e impacto para Microsoft SQL Server (T-SQL).** Apúntalo a tus procedimientos —desde un SQL Server vivo o desde ficheros `.sql`— y construye un mapa consultable de *qué lee qué, qué escribe dónde y qué se rompe si lo cambias*. Hasta la columna. A través del SQL dinámico. Sin base de datos en marcha a la hora de consultar.
@@ -53,7 +55,7 @@ Es una **herramienta de utilidad**, hecha por una persona, no un producto de gob
 **Dónde no aporta, o directamente hay opciones mejores:**
 
 - **Es monodialecto.** Solo T-SQL. Si necesitas varios motores, [SQLGlot](https://github.com/tobymao/sqlglot) es más completo y más maduro — de hecho lo usamos **como oráculo** para validar nuestro propio lineage de columna (ver [`eval/sqlglot-oracle/`](eval/sqlglot-oracle/)).
-- **El lineage de columna no es completo.** 97,9 % de cobertura medida sobre corpus grande, y 161 referencias que no vemos. Están [documentadas](eval/column-recall/).
+- **El lineage de columna no es completo.** 98,8 % de cobertura sobre un corpus grande de producción, y 90 referencias que no vemos, clasificadas por causa raíz en [`eval/column-recall/`](eval/column-recall/).
 - **No es gobierno del dato.** Sin catálogo, glosario, permisos, ni linaje entre sistemas.
 - **No hay soporte ni garantías.** Es MIT, se publica tal cual.
 
@@ -83,25 +85,24 @@ No es solo WideWorldImporters. Se ejecuta contra **cinco corpus**, tres de ellos
 | Columnas de salida de vistas | 32 / 32 | 251 / 251 |
 
 > **Cuidado con leer esos 32/32 y 251/251 como "100 % de cobertura".** Son muestras
-> pequeñas y de una construcción concreta (columnas de salida de vistas). Medido
-> sobre un corpus grande de T-SQL de producción —679 procedimientos de DNN
-> Platform, **7.786** referencias de columna según `sys.dm_sql_referenced_entities`—
-> la cobertura real es del **97,9 %**, y quedan **161 referencias que el motor no
-> ve**. El detalle, el corpus y el gate que lo mide están en
-> [`eval/column-recall/`](eval/column-recall/).
+> pequeñas y de una construcción concreta (columnas de salida de vistas). Sobre un
+> corpus grande de producción —679 procedimientos de DNN Platform, 7.786 filas de
+> `sys.dm_sql_referenced_entities`, que deduplicadas por (módulo, columna) son **7.302**
+> referencias— la cobertura es del **98,77 %** y quedan **90 que el motor no ve**,
+> clasificadas una a una por causa en [`eval/column-recall/`](eval/column-recall/).
 
 Sobre la precisión, medida por clase de evidencia en ese mismo corpus:
 
-| Cómo se supo la lectura | Aristas | Respaldadas por el oráculo |
-| --- | ---: | ---: |
-| Escrita literalmente en el SQL | 3.870 | **99,8 %** |
-| Expandida de un `SELECT *` | 1.697 | **98,2 %** |
-| Alcanzada atravesando una vista | 2.398 | 4,2 % |
+| Cómo se supo la lectura | Respaldadas por el oráculo |
+| --- | ---: |
+| Escrita literalmente en el SQL | **99,79 %** |
+| Expandida de un `SELECT *` | **98,89 %** |
+| Alcanzada atravesando una vista | 4,2 % |
 
 La tercera fila **no es un fallo**: son lecturas que resolvemos hasta la tabla base
 mientras el oráculo se para en la vista. Van marcadas con `via_view` en el grafo
 para que se puedan distinguir. Medir sin separarlas daba una precisión global del
-67,8 % que escondía que la extracción directa acierta el 99,8 %.
+67,8 % que escondía que la extracción directa acierta el 99,79 %.
 
 Y contra corpus con oráculo propio:
 
@@ -110,7 +111,7 @@ Y contra corpus con oráculo propio:
 - **Construcciones complejas (`eval/community-edge-cases/`):** `MERGE`, CTEs recursivas, SQL dinámico, cursores.
 - **Lineage de columna (`eval/view-lineage/`):** contrastado contra `sys.dm_sql_referenced_entities`.
 
-Además, **184 pruebas unitarias (xUnit)** cubren el parser. **181 corren como gate en CI**; las 3 restantes son de categoría `Oracle` —contrastan contra un SQL Server vivo con WideWorldImporters y AdventureWorks2019— y hoy solo se ejecutan en local: un runner de GitHub no tiene instancia con esas bases restauradas, y el conector usa autenticación integrada de Windows, que un contenedor de SQL Server no admite. Está documentado en `.github/workflows/ci.yml`, no silenciado.
+Además, **239 pruebas (xUnit)** cubren el parser y **todas corren como gate en CI**. Tres son de categoría `Oracle` y se contrastan contra un SQL Server vivo: en CI se levanta un contenedor con WideWorldImporters y AdventureWorks2019 restauradas ([`scripts/ci/restore-oracle-databases.sh`](scripts/ci/restore-oracle-databases.sh)).
 
 > **Qué encontró esa validación.** Correr los corpus nuevos destapó **doce defectos** en el propio motor, **todos corregidos** —entre ellos uno grave: con cierto patrón de `UPDATE` la identidad de una tabla se partía en dos nodos y *"¿quién escribe aquí?"* devolvía cero teniendo tres escritores. El detalle, con la reproducción de cada uno, está en [`docs/corpus-multibase.md`](docs/corpus-multibase.md). Se publica porque un fallo encontrado y documentado dice más de la fiabilidad de una herramienta que una tabla en verde.
 
@@ -267,7 +268,7 @@ El `change_map_diff.json` queda como artefacto: qué objetos cambiaron y a quié
 - **Sin scoring de confianza todavía**: una arista cierta y una inferida se ven igual. La base ya está medida —precisión por clase de evidencia, arriba— pero aún no se expone en la respuesta.
 - **El SQL dinámico parametrizado sí se puede recuperar, pero necesita runtime.** Estáticamente es imposible: si el nombre de la tabla se construye con `QUOTENAME(@TableName)`, no hay forma de saberlo sin ejecutar. Con `capture-plans` (sesión de Extended Events + `enrich-from-plans`) sí: sobre `Sequences.ReseedSequenceBeyondTableValues` de WideWorldImportersDW se recupera la arista a `Dimension.City`, invisible al análisis estático. **El coste es que hay que ejecutar la carga de trabajo**, y la cobertura depende de qué caminos se ejecuten — un plan es prueba de presencia, nunca de ausencia.
 - **Ojo al elegir dónde medirlo.** Sobre el First Responder Kit descubre 906 aristas y **ninguna es una tabla de negocio** (60 % temporales, 36 % internas de SQL Server): el FRK es tooling de DBA y su SQL dinámico ataca DMVs. Cualquier cifra de "aristas recuperadas" hay que leerla desglosada por tipo de destino.
-- **El lineage de columna es del 97,9 %, no del 100 %.** Medido sobre 7.786 referencias de un corpus de producción (DNN Platform), y 161 referencias que no se ven. La ausencia de una arista es "no detectada", no "probado que no existe". Ver [`eval/column-recall/`](eval/column-recall/).
+- **El lineage de columna es del 98,8 %, no del 100 %.** Medido sobre 7.302 referencias deduplicadas de un corpus de producción (DNN Platform); 90 no se ven, clasificadas por causa. La ausencia de una arista es "no detectada", no "probado que no existe". Ver [`eval/column-recall/`](eval/column-recall/).
 - **Te da el mapa de dependencias, no el plan de migración.** Responde qué depende de qué; la semántica, la calidad del dato y las reglas de negocio siguen siendo trabajo tuyo.
 - **Probado a la escala de estos cinco corpus** (el mayor por objetos: 739 módulos de DNN Platform; el mayor por tamaño de un solo procedimiento: `sp_Blitz`, 478 KB y 10.659 líneas). No hay todavía medición sobre una base de miles de procedimientos.
 
