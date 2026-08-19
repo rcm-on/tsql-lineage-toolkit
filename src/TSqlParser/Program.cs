@@ -137,6 +137,20 @@ if (positional.Count >= 1 && positional[0] == "corpus")
     return 1;
 }
 
+// "mcp --store <graph_full.db>": speaks MCP (JSON-RPC 2.0 over stdio) so an agent can
+// query the graph live - resolve_object (name -> canonical id) and impact (transitive
+// blast radius) - instead of scanning graph_full.json. Read-only. See McpServer.
+if (positional.Count >= 1 && positional[0] == "mcp")
+{
+    var mcpStoreIdx = Array.IndexOf(args, "--store");
+    if (mcpStoreIdx < 0 || mcpStoreIdx + 1 >= args.Length)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser mcp --store <graph_full.db>");
+        return 1;
+    }
+    return McpServer.Run(args[mcpStoreIdx + 1]);
+}
+
 // "blind-refs <corpusId> <salida.csv>": vuelca la LISTA de referencias (módulo, columna) que el
 // oráculo de eval/corpora.json ve y el grafo no reproduce (el conjunto laxo de
 // ColumnRecallGateTests) - el gate solo imprime el agregado, esto imprime el detalle para poder
@@ -401,6 +415,7 @@ if (positional.Count < 2)
     Console.Error.WriteLine("       TSqlParser diff-change-map <store_before.nodes> <store_after.nodes> <output.json> [--fail-on-new-impact]");
     Console.Error.WriteLine("       TSqlParser bench-make <store_dir.nodes> <bench_dir>  |  bench-grade <bench_dir> <answers_dir>");
     Console.Error.WriteLine("       TSqlParser blind-refs <corpusId> <salida.csv>");
+    Console.Error.WriteLine("       TSqlParser mcp --store <graph_full.db>");
     return 1;
 }
 
