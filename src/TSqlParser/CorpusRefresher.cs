@@ -219,7 +219,7 @@ public static class CorpusRefresher
         try
         {
             using var conn = new SqlConnection(
-                $"Server={server};Database={database};Integrated Security=true;TrustServerCertificate=true;Connection Timeout=10;");
+                SqlConnections.Build(server, database, 10, SqlConnections.FromEnvironment()));
             conn.Open();
             using var cmd = new SqlCommand(sql, conn) { CommandTimeout = 300 };
             using var reader = cmd.ExecuteReader();
@@ -246,7 +246,7 @@ public static class CorpusRefresher
         try
         {
             using var conn = new SqlConnection(
-                $"Server={server};Database=master;Integrated Security=true;TrustServerCertificate=true;Connection Timeout=10;");
+                SqlConnections.Build(server, "master", 10, SqlConnections.FromEnvironment()));
             conn.Open();
             using var cmd = new SqlCommand("SELECT compatibility_level FROM sys.databases WHERE name = @db;", conn);
             cmd.Parameters.AddWithValue("@db", database);

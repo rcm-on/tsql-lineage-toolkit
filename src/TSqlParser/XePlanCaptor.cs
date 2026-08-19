@@ -427,7 +427,7 @@ public static class XePlanCaptor
 
     private static SqlConnection? Connect(string server, string database)
     {
-        var connStr = $"Server={server};Database={database};Integrated Security=true;TrustServerCertificate=true;Connection Timeout=15;";
+        var connStr = SqlConnections.Build(server, database, 15, SqlConnections.FromEnvironment());
         try
         {
             var conn = new SqlConnection(connStr);

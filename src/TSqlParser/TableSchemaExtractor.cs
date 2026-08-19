@@ -190,7 +190,7 @@ public static class TableSchemaExtractor
 
     private static SqlConnection? Connect(string server, string database)
     {
-        var connStr = $"Server={server};Database={database};Integrated Security=true;TrustServerCertificate=true;Connection Timeout=10;";
+        var connStr = SqlConnections.Build(server, database, 10, SqlConnections.FromEnvironment());
         try
         {
             var conn = new SqlConnection(connStr);
