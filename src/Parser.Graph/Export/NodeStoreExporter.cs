@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
 /// <summary>
 /// Writes the in-memory <see cref="GraphPayload"/> (the same nodes/relationships

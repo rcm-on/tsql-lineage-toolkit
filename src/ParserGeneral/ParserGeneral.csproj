@@ -11,6 +11,7 @@
     <ProjectReference Include="..\Parser.Contracts\Parser.Contracts.csproj" />
     <ProjectReference Include="..\TSqlParser\TSqlParser.csproj" />
     <ProjectReference Include="..\NetParser\NetParser.csproj" />
+    <ProjectReference Include="..\Parser.Graph\Parser.Graph.csproj" />
   </ItemGroup>
 
 </Project>
