@@ -3,8 +3,8 @@
 -- SQL Server. Una fila por tripleta: modulo|entidad|columna, en minusculas.
 --
 -- Uso:
---   sqlcmd -S localhost\SQLEXPRESS -E -C -d DnnCorpus -h-1 -W -i extract-oracle.sql ^
---     | findstr "|" > oracle-columns.psv
+--   sqlcmd -S localhost\SQLEXPRESS -E -C -d DnnCorpus -h-1 -W -i extract-catalog.sql ^
+--     | findstr "|" > catalog-columns.psv
 --
 -- El cursor es necesario porque dm_sql_referenced_entities es una funcion con
 -- parametro de objeto: no se puede aplicar en bloque sobre sys.objects. El

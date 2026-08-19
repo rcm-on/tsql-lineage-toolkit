@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    name: Build & test (non-Oracle)
+    name: Build & test (non-LiveSql)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,15 +21,15 @@ jobs:
       - name: Build
         run: dotnet build src/TSqlParser/TSqlParser.csproj -c Release
 
-      - name: Test (Category!=Oracle)
-        run: dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category!=Oracle"
+      - name: Test (Category!=LiveSql)
+        run: dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category!=LiveSql"
 
-      - name: Test NetParser (Category!=Oracle)
-        run: dotnet test tests/NetParser.Tests/NetParser.Tests.csproj -c Release --filter "Category!=Oracle"
+      - name: Test NetParser (Category!=LiveSql)
+        run: dotnet test tests/NetParser.Tests/NetParser.Tests.csproj -c Release --filter "Category!=LiveSql"
 
-  # Oracle tests (ViewLineageOracleTests, AuditorChallengeGateTests) compare against a
+  # LiveSql tests (ViewLineageCatalogTests, AuditorChallengeGateTests) compare against a
   # live SQL Server holding WideWorldImporters + AdventureWorks2019, and are excluded
-  # from the job above via the Category!=Oracle filter (see docs/task-gates-dotnet.md,
+  # from the job above via the Category!=LiveSql filter (see docs/task-gates-dotnet.md,
   # Paso 3).
   #
   # This job used to be a stub: mcr.microsoft.com/mssql/server (the only official SQL
@@ -40,20 +40,20 @@ jobs:
   # TSQL_SQL_USER + TSQL_SQL_PASSWORD are both set, falling back to integrated security
   # otherwise (unchanged default). Verified locally 2026-08-16 against
   # mcr.microsoft.com/mssql/server:2022-latest with both databases restored from the
-  # public microsoft/sql-server-samples releases (scripts/ci/restore-oracle-databases.sh)
+  # public microsoft/sql-server-samples releases (scripts/ci/restore-sample-databases.sh)
   # and a SA password containing ';' and '"' (exercises SqlConnections.Quote) — all 3
-  # Oracle tests passed.
+  # LiveSql tests passed.
   #
   # Left out of scope by this change: the PIVOT gap in
   # Sales.vSalesPersonSalesByFiscalYears (already documented and excluded via
-  # ViewLineageOracleTests.KnownGaps); the Windows Integrated Security path itself is
+  # ViewLineageCatalogTests.KnownGaps); the Windows Integrated Security path itself is
   # not exercised by this job, only by developers running locally against SQLEXPRESS.
   #
   # Requires a repo secret TSQL_SQL_SA_PASSWORD: the SA password used to start the
   # mssql service container below (must satisfy SQL Server's password complexity
   # policy — upper+lower+digit+symbol, 8+ chars).
-  oracle-tests:
-    name: Oracle tests (WWI + AdventureWorks2019)
+  live-sql-tests:
+    name: LiveSql tests (WWI + AdventureWorks2019)
     runs-on: ubuntu-latest
     services:
       mssql:
@@ -71,13 +71,13 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
-      - name: Restore Oracle databases (WideWorldImporters + AdventureWorks2019)
-        run: bash scripts/ci/restore-oracle-databases.sh
+      - name: Restore sample databases (WideWorldImporters + AdventureWorks2019)
+        run: bash scripts/ci/restore-sample-databases.sh
         env:
           MSSQL_SA_PASSWORD: ${{ secrets.TSQL_SQL_SA_PASSWORD }}
 
-      - name: Test (Category=Oracle)
-        run: dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category=Oracle"
+      - name: Test (Category=LiveSql)
+        run: dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category=LiveSql"
         env:
           TSQLPARSER_SQL_SERVER: localhost,1433
           TSQL_SQL_USER: sa

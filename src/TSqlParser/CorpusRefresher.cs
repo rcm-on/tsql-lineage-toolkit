@@ -17,7 +17,7 @@ namespace TSqlParser;
 ///
 /// Lo que <c>--write</c> actualiza y lo que NO, a propósito:
 /// <list type="bullet">
-///   <item>Sí: los ficheros del corpus y <c>expected.oracle_rows</c>, que es una invariante de
+///   <item>Sí: los ficheros del corpus y <c>expected.catalog_rows</c>, que es una invariante de
 ///   FORMA derivada mecánicamente del fichero nuevo.</item>
 ///   <item>No: <c>floors</c>. Un suelo es una cifra MEDIDA corriendo el gate; copiarla desde una
 ///   regeneración sería fijar como invariante lo que el motor haga ese día, que es exactamente
@@ -41,8 +41,8 @@ public static class CorpusRefresher
             Console.WriteLine($"  {c.Id,-12} {c.Kind,-15} {(c.IsGated ? "GATEADO" : "no gateado"),-11} {db}");
             Console.WriteLine($"               {c.Name}  [{c.License}]");
             Console.WriteLine($"               input:  {c.Input}  {(File.Exists(c.InputPath(repoRoot)) ? "" : "  <-- NO EXISTE")}");
-            if (c.Oracle != null)
-                Console.WriteLine($"               oracle: {c.Oracle} ({(File.Exists(c.OraclePath(repoRoot)) ? $"{CountLines(c.OraclePath(repoRoot))} filas" : "NO EXISTE")})");
+            if (c.Catalog != null)
+                Console.WriteLine($"               catalog: {c.Catalog} ({(File.Exists(c.CatalogPath(repoRoot)) ? $"{CountLines(c.CatalogPath(repoRoot))} filas" : "NO EXISTE")})");
             if (c.Floors != null)
                 Console.WriteLine($"               suelos: estricto {c.Floors.StrictRecall:P2}  laxo {c.Floors.LooseRecall:P2}  " +
                                   string.Join("  ", c.Floors.PrecisionByClass.Select(kv => $"{kv.Key} {kv.Value:P2}")));
@@ -69,9 +69,9 @@ public static class CorpusRefresher
             Console.Error.WriteLine($"El corpus '{corpus.Id}' no declara source_db: no hay base viva desde la que regenerarlo.");
             return ExitError;
         }
-        if (corpus.Oracle == null || corpus.OracleQuery == null)
+        if (corpus.Catalog == null || corpus.CatalogQuery == null)
         {
-            Console.Error.WriteLine($"El corpus '{corpus.Id}' no declara oracle/oracle_query: no se puede regenerar su oráculo.");
+            Console.Error.WriteLine($"El corpus '{corpus.Id}' no declara catalog/catalog_query: no se puede regenerar su catálogo.");
             return ExitError;
         }
 
@@ -86,7 +86,7 @@ public static class CorpusRefresher
         var tmpDir = Path.Combine(Path.GetTempPath(), "tsql-corpus-refresh", $"{corpus.Id}-{database}");
         Directory.CreateDirectory(tmpDir);
         var newInput = Path.Combine(tmpDir, "input.json");
-        var newOracle = Path.Combine(tmpDir, "oracle.psv");
+        var newCatalog = Path.Combine(tmpDir, "catalog.psv");
 
         var compatWarning = CheckCompatibilityLevel(server, database, corpus.SourceDb.CompatibilityLevel);
 
@@ -98,11 +98,11 @@ public static class CorpusRefresher
         rc = TableSchemaExtractor.RunAll(database, newInput, server);
         if (rc != 0) return rc;
 
-        var oracleRows = RunOracleQuery(server, database, File.ReadAllText(corpus.OracleQueryPath(repoRoot)));
-        if (oracleRows == null) return ExitError;
-        Utf8Io.WriteAllText(newOracle, string.Join("\n", oracleRows) + "\n");
+        var catalogRows = RunCatalogQuery(server, database, File.ReadAllText(corpus.CatalogQueryPath(repoRoot)));
+        if (catalogRows == null) return ExitError;
+        Utf8Io.WriteAllText(newCatalog, string.Join("\n", catalogRows) + "\n");
 
-        var drift = Compare(corpus, repoRoot, newInput, newOracle, oracleRows.Count);
+        var drift = Compare(corpus, repoRoot, newInput, newCatalog, catalogRows.Count);
 
         if (compatWarning != null)
         {
@@ -121,14 +121,14 @@ public static class CorpusRefresher
         }
 
         File.Copy(newInput, corpus.InputPath(repoRoot), overwrite: true);
-        File.Copy(newOracle, corpus.OraclePath(repoRoot), overwrite: true);
+        File.Copy(newCatalog, corpus.CatalogPath(repoRoot), overwrite: true);
 
-        var updated = corpus with { Expected = new CorpusExpected(oracleRows.Count, corpus.Expected?.MinColumnEdges ?? 0) };
+        var updated = corpus with { Expected = new CorpusExpected(catalogRows.Count, corpus.Expected?.MinColumnEdges ?? 0) };
         manifest.Corpora[manifest.Corpora.FindIndex(c => c.Id == corpus.Id)] = updated;
         Utf8Io.WriteAllText(Path.Combine(repoRoot, "eval", CorpusManifest.FileName), manifest.Serialize());
 
         Console.WriteLine();
-        Console.WriteLine($"Escritos {corpus.Input}, {corpus.Oracle} y expected.oracle_rows={oracleRows.Count}.");
+        Console.WriteLine($"Escritos {corpus.Input}, {corpus.Catalog} y expected.catalog_rows={catalogRows.Count}.");
         Console.WriteLine(
             "NO se han tocado los suelos (floors): son cifras MEDIDAS, no derivadas. Corre el gate de\n" +
             "recall, lee las cifras del informe y súbelas a mano si han mejorado.\n" +
@@ -138,7 +138,7 @@ public static class CorpusRefresher
     }
 
     /// <summary>Compara lo regenerado contra lo congelado. Devuelve true si hay deriva.</summary>
-    private static bool Compare(CorpusEntry corpus, string repoRoot, string newInput, string newOracle, int newOracleCount)
+    private static bool Compare(CorpusEntry corpus, string repoRoot, string newInput, string newCatalog, int newCatalogCount)
     {
         var drift = false;
 
@@ -151,20 +151,20 @@ public static class CorpusRefresher
         Report("ya no en la base", removedObjs);
         drift |= addedObjs.Count > 0 || removedObjs.Count > 0;
 
-        var oldRefs = File.Exists(corpus.OraclePath(repoRoot))
-            ? File.ReadLines(corpus.OraclePath(repoRoot)).Where(l => l.Length > 0).ToHashSet(StringComparer.Ordinal)
+        var oldRefs = File.Exists(corpus.CatalogPath(repoRoot))
+            ? File.ReadLines(corpus.CatalogPath(repoRoot)).Where(l => l.Length > 0).ToHashSet(StringComparer.Ordinal)
             : new HashSet<string>(StringComparer.Ordinal);
-        var newRefs = File.ReadLines(newOracle).Where(l => l.Length > 0).ToHashSet(StringComparer.Ordinal);
+        var newRefs = File.ReadLines(newCatalog).Where(l => l.Length > 0).ToHashSet(StringComparer.Ordinal);
         var addedRefs = newRefs.Except(oldRefs).OrderBy(x => x).ToList();
         var removedRefs = oldRefs.Except(newRefs).OrderBy(x => x).ToList();
-        Console.WriteLine($"  oráculo congelado={oldRefs.Count} filas      base viva={newRefs.Count}   (+{addedRefs.Count} / -{removedRefs.Count})");
+        Console.WriteLine($"  catálogo congelado={oldRefs.Count} filas      base viva={newRefs.Count}   (+{addedRefs.Count} / -{removedRefs.Count})");
         Report("referencias nuevas", addedRefs);
         Report("referencias perdidas", removedRefs);
         drift |= addedRefs.Count > 0 || removedRefs.Count > 0;
 
-        if (corpus.Expected != null && corpus.Expected.OracleRows != newOracleCount)
+        if (corpus.Expected != null && corpus.Expected.CatalogRows != newCatalogCount)
         {
-            Console.WriteLine($"  expected.oracle_rows declara {corpus.Expected.OracleRows}, la base viva da {newOracleCount}");
+            Console.WriteLine($"  expected.catalog_rows declara {corpus.Expected.CatalogRows}, la base viva da {newCatalogCount}");
             drift = true;
         }
         return drift;
@@ -210,11 +210,11 @@ public static class CorpusRefresher
     }
 
     /// <summary>
-    /// Ejecuta el script de oráculo (un lote único con cursor y tabla temporal, sin GO) y devuelve
+    /// Ejecuta el script de catálogo (un lote único con cursor y tabla temporal, sin GO) y devuelve
     /// su única columna de resultado, ordenada y sin duplicados — el mismo contenido que producía
     /// la receta de sqlcmd, pero sin depender de sqlcmd ni de filtrar su cabecera con findstr.
     /// </summary>
-    private static List<string>? RunOracleQuery(string server, string database, string sql)
+    private static List<string>? RunCatalogQuery(string server, string database, string sql)
     {
         try
         {
@@ -231,14 +231,14 @@ public static class CorpusRefresher
         }
         catch (SqlException ex)
         {
-            Console.Error.WriteLine($"Falló la consulta de oráculo contra {server}/{database}: {ex.Message}");
+            Console.Error.WriteLine($"Falló la consulta de catálogo contra {server}/{database}: {ex.Message}");
             return null;
         }
     }
 
     /// <summary>
-    /// El nivel de compatibilidad cambia cómo resuelven las DMV, así que un oráculo extraído bajo
-    /// otro nivel no es el mismo oráculo. No es motivo para fallar (la base puede haberse migrado
+    /// El nivel de compatibilidad cambia cómo resuelven las DMV, así que un catálogo extraído bajo
+    /// otro nivel no es el mismo catálogo. No es motivo para fallar (la base puede haberse migrado
     /// a propósito), sí para decirlo en voz alta.
     /// </summary>
     private static string? CheckCompatibilityLevel(string server, string database, int declared)
@@ -253,7 +253,7 @@ public static class CorpusRefresher
             var actual = cmd.ExecuteScalar();
             if (actual is byte b && b != declared)
                 return $"AVISO: compatibility_level declarado {declared}, el de la base es {b}. " +
-                       "Las DMV pueden resolver distinto; el oráculo regenerado no es comparable al congelado.";
+                       "Las DMV pueden resolver distinto; el catálogo regenerado no es comparable al congelado.";
             return null;
         }
         catch (SqlException)

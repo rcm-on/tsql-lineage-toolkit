@@ -33,7 +33,7 @@ largo de veinte años. La señal simplemente no existía antes.
 | Fichero | Qué es |
 |---|---|
 | `dnn-corpus.json` | 739 módulos + 128 tablas de DNN Platform, en el formato de entrada del pipeline. |
-| `oracle-columns.psv` | 7786 filas `módulo\|entidad\|columna`, todo en minúsculas. El ground-truth. |
+| `catalog-columns.psv` | 7786 filas `módulo\|entidad\|columna`, todo en minúsculas. La verdad de referencia, extraída del catálogo de SQL Server. |
 
 ## Procedencia y licencia
 

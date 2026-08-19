@@ -6,11 +6,11 @@ namespace TSqlParser;
 
 /// <summary>
 /// Modelo de <c>eval/corpora.json</c>: la lista de corpus de evaluación con su procedencia, su
-/// oráculo y los suelos medidos que los gates no pueden bajar.
+/// catálogo y los suelos medidos que los gates no pueden bajar.
 ///
 /// Vive en el motor y no en el proyecto de tests porque hay DOS consumidores y el esquema tiene
 /// que ser uno solo: el gate de recall de columna (que lee los suelos) y el comando
-/// <c>corpus</c> (que regenera corpus y oráculo contra la base viva). Dos copias del esquema
+/// <c>corpus</c> (que regenera corpus y catálogo contra la base viva). Dos copias del esquema
 /// divergirían en el primer campo nuevo, y la divergencia sería invisible hasta que un gate
 /// midiera contra un manifiesto que ya no es el que la herramienta escribe.
 /// </summary>
@@ -59,7 +59,7 @@ public sealed record CorpusManifest(int SchemaVersion, string? Doc, List<CorpusE
 }
 
 /// <param name="Kind">
-/// <c>schema-real</c> = tiene esquema propio y por tanto oráculo de columna posible; es el único
+/// <c>schema-real</c> = tiene esquema propio y por tanto catálogo de columna posible; es el único
 /// tipo que se gatea. <c>parser-torture</c> = código que lee DMVs y escribe en temporales (Ola
 /// Hallengren, First Responder Kit): estresa el parser pero NO tiene columnas catalogadas contra
 /// las que medir, así que ponerle un suelo de recall produciría un número sin significado.
@@ -71,22 +71,22 @@ public sealed record CorpusEntry(
     string License,
     string Provenance,
     string Input,
-    string? Oracle,
-    string? OracleQuery,
+    string? Catalog,
+    string? CatalogQuery,
     CorpusSourceDb? SourceDb,
     CorpusExpected? Expected,
     CorpusFloors? Floors)
 {
     public string InputPath(string repoRoot) => Resolve(repoRoot, Input);
 
-    public string OraclePath(string repoRoot) => Resolve(repoRoot, Oracle
-        ?? throw new InvalidOperationException($"El corpus '{Id}' no declara oráculo."));
+    public string CatalogPath(string repoRoot) => Resolve(repoRoot, Catalog
+        ?? throw new InvalidOperationException($"El corpus '{Id}' no declara catálogo."));
 
-    public string OracleQueryPath(string repoRoot) => Resolve(repoRoot, OracleQuery
-        ?? throw new InvalidOperationException($"El corpus '{Id}' no declara consulta de oráculo."));
+    public string CatalogQueryPath(string repoRoot) => Resolve(repoRoot, CatalogQuery
+        ?? throw new InvalidOperationException($"El corpus '{Id}' no declara consulta de catálogo."));
 
     /// <summary>
-    /// Se gatea un corpus solo si tiene esquema real, oráculo, expectativas y suelos medidos.
+    /// Se gatea un corpus solo si tiene esquema real, catálogo, expectativas y suelos medidos.
     ///
     /// <c>[JsonIgnore]</c> no es cosmético: es una propiedad DERIVADA, y al serializar el
     /// manifiesto (lo hace <c>corpus refresh --write</c>) aparecía como <c>"is_gated": true</c>
@@ -94,7 +94,7 @@ public sealed record CorpusEntry(
     /// ponerlo a <c>false</c> no tendría ningún efecto porque al releer se recalcula.
     /// </summary>
     [JsonIgnore]
-    public bool IsGated => Kind == "schema-real" && Oracle != null && Floors != null && Expected != null;
+    public bool IsGated => Kind == "schema-real" && Catalog != null && Floors != null && Expected != null;
 
     public static string Resolve(string repoRoot, string relPath) =>
         Path.Combine(repoRoot, relPath.Replace('/', Path.DirectorySeparatorChar));
@@ -104,10 +104,10 @@ public sealed record CorpusSourceDb(string Name, string Server, int Compatibilit
 
 /// <summary>
 /// Invariantes de FORMA del corpus congelado, no umbrales de calidad: detectan que el fichero se
-/// truncó o se regeneró contra otra base. <paramref name="OracleRows"/> se comprueba con igualdad
+/// truncó o se regeneró contra otra base. <paramref name="CatalogRows"/> se comprueba con igualdad
 /// exacta, así que actualizar un corpus obliga a tocar el manifiesto — que es justo la disciplina
 /// buscada: si el corpus y el motor se mueven en el mismo commit, la cifra nueva no atribuye nada.
 /// </summary>
-public sealed record CorpusExpected(int OracleRows, int MinColumnEdges);
+public sealed record CorpusExpected(int CatalogRows, int MinColumnEdges);
 
 public sealed record CorpusFloors(double StrictRecall, double LooseRecall, Dictionary<string, double> PrecisionByClass);

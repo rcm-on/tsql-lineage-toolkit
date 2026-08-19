@@ -16,7 +16,7 @@ public class EvalCorporaManifestTests
     {
         var gated = EvalCorpora.All().Where(c => c.IsGated).ToList();
         Assert.True(gated.Count > 0,
-            "Ningún corpus del manifiesto está gateado (kind=schema-real + oracle + floors + expected). " +
+            "Ningún corpus del manifiesto está gateado (kind=schema-real + catalog + floors + expected). " +
             "Los Theory de recall se ejecutarían en vacío y pasarían sin medir nada. " +
             "Declarados: " + string.Join(", ", EvalCorpora.All().Select(c => $"{c.Id} (kind={c.Kind})")));
     }
@@ -43,7 +43,7 @@ public class EvalCorporaManifestTests
         var missing = new List<string>();
         foreach (var c in EvalCorpora.All())
         {
-            foreach (var rel in new[] { c.Input, c.Oracle, c.OracleQuery })
+            foreach (var rel in new[] { c.Input, c.Catalog, c.CatalogQuery })
             {
                 if (rel is null) continue;
                 if (!File.Exists(EvalCorpora.Resolve(rel)))
@@ -63,10 +63,10 @@ public class EvalCorporaManifestTests
     {
         var incomplete = EvalCorpora.All()
             .Where(c => c.Kind == "schema-real" && !c.IsGated)
-            .Select(c => $"{c.Id} (oracle={c.Oracle is not null}, floors={c.Floors is not null}, expected={c.Expected is not null})")
+            .Select(c => $"{c.Id} (catalog={c.Catalog is not null}, floors={c.Floors is not null}, expected={c.Expected is not null})")
             .ToList();
         Assert.True(incomplete.Count == 0,
-            "Corpus schema-real sin oráculo, suelos o expectativas — no se están gateando:\n  " +
+            "Corpus schema-real sin catálogo, suelos o expectativas — no se están gateando:\n  " +
             string.Join("\n  ", incomplete));
     }
 

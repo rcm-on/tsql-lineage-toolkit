@@ -24,7 +24,7 @@ Requiere el binario Release compilado y [`uv`](https://docs.astral.sh/uv/) en PA
 
 ```bash
 # desde tsql-lineage-toolkit/
-node eval/sqlglot-oracle/compare.mjs
+node eval/sqlglot-reference/compare.mjs
 ```
 
 Cada `cases/*.sql` es un SELECT puro: el comparador lo envuelve como `CREATE VIEW` para

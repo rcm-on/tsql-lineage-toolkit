@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 # Downloads WideWorldImporters-Full.bak and AdventureWorks2019.bak from the public
 # microsoft/sql-server-samples releases, copies them into the running mssql service
-# container (see .github/workflows/ci.yml, job oracle-tests), and RESTOREs both
-# databases so ViewLineageOracleTests / AuditorChallengeGateTests can run against them.
+# container (see .github/workflows/ci.yml, job live-sql-tests), and RESTOREs both
+# databases so ViewLineageCatalogTests / AuditorChallengeGateTests can run against them.
 #
 # Requires:
 #   - a SQL Server container already running and reachable on localhost:1433
-#     (the `mssql` service in the oracle-tests job), discoverable via
+#     (the `mssql` service in the live-sql-tests job), discoverable via
 #     `docker ps --filter publish=1433`
 #   - MSSQL_SA_PASSWORD env var: the sa password the container was started with
 #
 # Verified locally on 2026-08-16 against mcr.microsoft.com/mssql/server:2022-latest,
-# both databases restored and all 3 Oracle-tagged tests passing, using a SA password
+# both databases restored and all 3 LiveSql-tagged tests passing, using a SA password
 # containing ';' and '"' (exercises SqlConnections.Quote in src/TSqlParser).
 set -euo pipefail
 

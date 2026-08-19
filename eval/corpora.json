@@ -9,15 +9,15 @@
       "license": "MIT",
       "provenance": "github.com/dnnsoftware/Dnn.Platform - DNN Platform/Website/Providers/DataProviders/SqlDataProvider/DotNetNuke.Schema.SqlDataProvider, sustituyendo {databaseOwner}->dbo. y {objectQualifier}->(vacio). Congelado el 2026-08-01.",
       "input": "eval/column-recall/dnn-corpus.json",
-      "oracle": "eval/column-recall/oracle-columns.psv",
-      "oracle_query": "eval/column-recall/extract-oracle.sql",
+      "catalog": "eval/column-recall/catalog-columns.psv",
+      "catalog_query": "eval/column-recall/extract-catalog.sql",
       "source_db": {
         "name": "DnnCorpus",
         "server": "localhost\\SQLEXPRESS",
         "compatibility_level": 170
       },
       "expected": {
-        "oracle_rows": 7786,
+        "catalog_rows": 7786,
         "min_column_edges": 5000
       },
       "floors": {
@@ -36,15 +36,15 @@
       "license": "MIT (Microsoft SQL Server Samples)",
       "provenance": "github.com/microsoft/sql-server-samples - WideWorldImportersDW-Standard.bak restaurado en SQLEXPRESS. Usar la variante -Standard: la -Full NO restaura en SQLEXPRESS por el filegroup In-Memory (error 3414). Congelado el 2026-08-08.",
       "input": "eval/column-recall/wwidw-corpus.json",
-      "oracle": "eval/column-recall/wwidw-oracle.psv",
-      "oracle_query": "eval/column-recall/extract-oracle.sql",
+      "catalog": "eval/column-recall/wwidw-catalog.psv",
+      "catalog_query": "eval/column-recall/extract-catalog.sql",
       "source_db": {
         "name": "WideWorldImportersDW",
         "server": "localhost\\SQLEXPRESS",
         "compatibility_level": 130
       },
       "expected": {
-        "oracle_rows": 627,
+        "catalog_rows": 627,
         "min_column_edges": 400
       },
       "floors": {

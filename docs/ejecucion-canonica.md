@@ -140,7 +140,7 @@ Correctas! - Con error:     0, Superado:   182, Omitido:     0, Total:   182, Du
 
 **182 casos de prueba, 0 fallos** (frente a 136 en la primera ejecución
 canónica). De esos 182, **179 corren como gate en CI**; los 3 restantes son
-`Oracle` y solo corren en local contra SQL Server vivo (ver README).
+`LiveSql` y solo corren en local contra SQL Server vivo (ver README).
 
 ### 2.4 `enrich-from-plans` (Paso 3 del artículo) — no reproducido en esta sesión
 

@@ -13,8 +13,8 @@ public readonly record struct BlindRef(string Module, string Column);
 /// <summary>Resultado de <see cref="BlindRefs.Compute"/>: los conteos que ya imprimía el gate más la
 /// lista ordenada de referencias ciegas, que el gate solo agregaba.</summary>
 public sealed record BlindRefsResult(
-    int OracleRows,
-    int OracleLooseRows,
+    int CatalogRows,
+    int CatalogLooseRows,
     int GraphRows,
     int GraphLooseRows,
     double LooseRecall,
@@ -45,11 +45,11 @@ public static class BlindRefs
 
     internal static string Plain(string s) => s.Replace("[", "").Replace("]", "").ToLowerInvariant();
 
-    /// <summary>Lee el oráculo PSV (módulo|entidad|columna) tal cual lo escribe extract-oracle.sql.</summary>
-    internal static HashSet<ColumnRef> LoadOracle(string oraclePsvPath)
+    /// <summary>Lee el catálogo PSV (módulo|entidad|columna) tal cual lo escribe extract-catalog.sql.</summary>
+    internal static HashSet<ColumnRef> LoadCatalog(string catalogPsvPath)
     {
         var set = new HashSet<ColumnRef>();
-        foreach (var line in File.ReadLines(oraclePsvPath))
+        foreach (var line in File.ReadLines(catalogPsvPath))
         {
             var p = line.Split('|');
             if (p.Length == 3)
@@ -102,14 +102,14 @@ public static class BlindRefs
     }
 
     /// <summary>
-    /// Analiza <paramref name="corpusJsonPath"/>, lo compara contra <paramref name="oraclePsvPath"/>
+    /// Analiza <paramref name="corpusJsonPath"/>, lo compara contra <paramref name="catalogPsvPath"/>
     /// al nivel laxo (módulo, columna) — la cobertura real, según razona el comentario de clase de
     /// <c>ColumnRecallGateTests</c> — y devuelve tanto los conteos agregados como la lista ORDENADA
-    /// de referencias del oráculo que el grafo no reproduce.
+    /// de referencias del catálogo que el grafo no reproduce.
     /// </summary>
-    public static BlindRefsResult Compute(string corpusJsonPath, string oraclePsvPath)
+    public static BlindRefsResult Compute(string corpusJsonPath, string catalogPsvPath)
     {
-        var oracle = LoadOracle(oraclePsvPath);
+        var oracle = LoadCatalog(catalogPsvPath);
         var (results, tableSchemas) = InputAnalyzer.Analyze(corpusJsonPath);
         var graph = GraphExporter.Build(results, includeColumns: true, tableSchemas);
         var graphRefs = BuildGraphRefs(graph);
@@ -129,8 +129,8 @@ public static class BlindRefs
             : (double)oracleLoose.Count(graphLoose.Contains) / oracleLoose.Count;
 
         return new BlindRefsResult(
-            OracleRows: oracle.Count,
-            OracleLooseRows: oracleLoose.Count,
+            CatalogRows: oracle.Count,
+            CatalogLooseRows: oracleLoose.Count,
             GraphRows: graphRefs.Count,
             GraphLooseRows: graphLoose.Count,
             LooseRecall: looseRecall,
@@ -153,7 +153,7 @@ public static class BlindRefs
 
     /// <summary>Resumen de una línea, el mismo formato que imprimen los demás subcomandos.</summary>
     public static string Summarize(string corpusId, BlindRefsResult result, string outputPath) =>
-        $"blind-refs {corpusId}: oráculo={result.OracleRows} (laxo {result.OracleLooseRows}) " +
+        $"blind-refs {corpusId}: catálogo={result.CatalogRows} (laxo {result.CatalogLooseRows}) " +
         $"grafo_laxo={result.GraphLooseRows} recall_laxo={result.LooseRecall:P4} " +
         $"ciegas={result.BlindCount} -> {outputPath}";
 }

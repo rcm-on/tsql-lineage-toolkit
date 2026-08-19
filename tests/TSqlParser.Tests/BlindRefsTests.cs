@@ -52,7 +52,7 @@ public class BlindRefsTests
     public void Compute_OnDnnCorpus_MatchesFrozenClassification()
     {
         var corpus = DnnCorpus();
-        var result = BlindRefs.Compute(corpus.InputPath(EvalCorpora.RepoRoot()), corpus.OraclePath(EvalCorpora.RepoRoot()));
+        var result = BlindRefs.Compute(corpus.InputPath(EvalCorpora.RepoRoot()), corpus.CatalogPath(EvalCorpora.RepoRoot()));
 
         Assert.Equal(90, result.BlindCount);
         Assert.Equal(90, result.Blind.Count);
@@ -66,8 +66,8 @@ public class BlindRefsTests
 
     /// <summary>
     /// El conjunto de ciegas de <see cref="BlindRefs.Compute"/> tiene que ser EXACTAMENTE el mismo
-    /// que "oráculo laxo menos grafo laxo" calculado por las piezas que usa
-    /// <c>ColumnRecallGateTests.ColumnLineage_MeetsMeasuredFloors</c> (BlindRefs.LoadOracle +
+    /// que "catálogo laxo menos grafo laxo" calculado por las piezas que usa
+    /// <c>ColumnRecallGateTests.ColumnLineage_MeetsMeasuredFloors</c> (BlindRefs.LoadCatalog +
     /// BlindRefs.BuildGraphRefs, que es la función que el gate llama). Si algún día alguien añade
     /// un paso intermedio solo al subcomando (o solo al gate), este test detecta la divergencia
     /// antes de que las dos cifras publicadas dejen de significar lo mismo.
@@ -78,11 +78,11 @@ public class BlindRefsTests
         var corpus = DnnCorpus();
         var repoRoot = EvalCorpora.RepoRoot();
 
-        var result = BlindRefs.Compute(corpus.InputPath(repoRoot), corpus.OraclePath(repoRoot));
+        var result = BlindRefs.Compute(corpus.InputPath(repoRoot), corpus.CatalogPath(repoRoot));
 
-        // Misma ruta que Measure() en ColumnRecallGateTests: cargar oráculo + construir grafo por
+        // Misma ruta que Measure() en ColumnRecallGateTests: cargar catálogo + construir grafo por
         // separado, y derivar el conjunto laxo no cubierto exactamente como hace el gate.
-        var oracle = BlindRefs.LoadOracle(corpus.OraclePath(repoRoot));
+        var oracle = BlindRefs.LoadCatalog(corpus.CatalogPath(repoRoot));
         var (results, tableSchemas) = InputAnalyzer.Analyze(corpus.InputPath(repoRoot));
         var graph = GraphExporter.Build(results, includeColumns: true, tableSchemas);
         var graphRefs = BlindRefs.BuildGraphRefs(graph);

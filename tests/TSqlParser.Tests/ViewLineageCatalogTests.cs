@@ -13,11 +13,11 @@ namespace TSqlParser.Tests;
 /// SqlObject id, or a Step id prefixed with "<objId>#".
 ///
 /// Needs localhost\SQLEXPRESS (or TSQLPARSER_SQL_SERVER) with WideWorldImporters and
-/// AdventureWorks2019 restored - not portable to a plain CI runner, hence the Oracle trait
-/// (`dotnet test --filter Category!=Oracle` skips this class).
+/// AdventureWorks2019 restored - not portable to a plain CI runner, hence the LiveSql trait
+/// (`dotnet test --filter Category!=LiveSql` skips this class).
 /// </summary>
-[Trait("Category", "Oracle")]
-public class ViewLineageOracleTests : IDisposable
+[Trait("Category", "LiveSql")]
+public class ViewLineageCatalogTests : IDisposable
 {
     private readonly List<string> _tempDirs = new();
 
@@ -33,7 +33,7 @@ public class ViewLineageOracleTests : IDisposable
 
     private string NewTempDir()
     {
-        var dir = Path.Combine(Path.GetTempPath(), "view-lineage-oracle-tests", Guid.NewGuid().ToString("n"));
+        var dir = Path.Combine(Path.GetTempPath(), "view-lineage-catalog-tests", Guid.NewGuid().ToString("n"));
         Directory.CreateDirectory(dir);
         _tempDirs.Add(dir);
         return dir;
@@ -84,7 +84,7 @@ public class ViewLineageOracleTests : IDisposable
 
     [Theory]
     [MemberData(nameof(Databases))]
-    public void Views_MatchSqlServerOracle(string database)
+    public void Views_MatchSqlServerCatalog(string database)
     {
         var root = RepoRoot();
         var rows = LoadGroundTruth(Path.Combine(root, "eval", "view-lineage", "ground-truth.csv"))

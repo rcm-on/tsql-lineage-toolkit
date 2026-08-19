@@ -66,7 +66,7 @@ T-SQL, que resultó ser un proyecto de 5 estrellas, con bugs de léxico ya
 documentados en su propio README, y que revienta en una condición tan básica
 como `WHERE Id = 1` (verificado con un caso mínimo: `SELECT Id FROM
 dbo.Customers;` parsea limpio, la misma consulta con `WHERE Id = 1` añadido
-produce un nodo `ERROR` justo ahí). Ver `docs/oracle-parsers-comparativa/`
+produce un nodo `ERROR` justo ahí). Ver `docs/parsers-comparativa/`
 para el detalle de cómo se verificó que el fallo era del grammar y no de
 nuestra compilación (build sin *scanner* externo, flags iguales a las
 oficiales, casos de control que sí parsean limpio).
@@ -168,9 +168,9 @@ elemental hasta el SQL dinámico reconstruido.
 
 ```bash
 pip install tree-sitter tree-sitter-language-pack sqlglot
-python docs/oracle-parsers-comparativa/ts_compare_corpus.py <input.json>
-python docs/oracle-parsers-comparativa/sqlglot_classify.py <input.json>
+python docs/parsers-comparativa/ts_compare_corpus.py <input.json>
+python docs/parsers-comparativa/sqlglot_classify.py <input.json>
 ```
 
-(Los dos scripts de comparación quedan en `docs/oracle-parsers-comparativa/`
+(Los dos scripts de comparación quedan en `docs/parsers-comparativa/`
 para que cualquiera pueda repetir la medición sobre otro corpus.)

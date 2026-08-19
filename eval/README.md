@@ -25,10 +25,10 @@ ejecutan una vez por corpus gateado.
 | `kind` | `schema-real` o `parser-torture`. Ver abajo — no es decorativo. |
 | `license` / `provenance` | De dónde sale el corpus y bajo qué licencia se congela en el repo. Solo se congela lo permisivo. |
 | `input` | El corpus en el formato de entrada del pipeline (`[{ "Name": ..., "Sql": ... }]`), con el DDL de las tablas incluido. |
-| `oracle` | Ground-truth `módulo\|entidad\|columna`, en minúsculas. |
-| `oracle_query` | El SQL que lo genera contra la base viva. |
+| `catalog` | Verdad de referencia `módulo\|entidad\|columna`, en minúsculas. |
+| `catalog_query` | El SQL que lo genera contra la base viva. |
 | `source_db` | Base, servidor y `compatibility_level` con el que se extrajo. |
-| `expected` | Invariantes de **forma** (`oracle_rows` exacto, `min_column_edges`). |
+| `expected` | Invariantes de **forma** (`catalog_rows` exacto, `min_column_edges`). |
 | `floors` | Suelos **medidos** de recall y de precisión por clase de evidencia. |
 
 ### `kind` es un guardarraíl, no una etiqueta
@@ -44,7 +44,7 @@ de quedarse fuera de los gates sin que nadie se entere.
 
 ### `expected` y `floors` no son lo mismo, y por eso se actualizan distinto
 
-- **`expected`** son invariantes de forma, **derivadas** del fichero. `oracle_rows` se
+- **`expected`** son invariantes de forma, **derivadas** del fichero. `catalog_rows` se
   comprueba con **igualdad exacta**: si el fichero congelado cambia de tamaño, o se
   regeneró contra otra base o se truncó, y en ambos casos los suelos dejan de
   referirse a lo que se está midiendo.
@@ -65,7 +65,7 @@ congelada **se ha separado** de la base viva. Sale con **código 2** si hay deri
 que sirve tal cual como comprobación de CI. Escribir hay que pedirlo: una regeneración
 mueve las cifras de los gates, y eso tiene que ser una decisión.
 
-`--write` actualiza los ficheros del corpus y `expected.oracle_rows` (derivado
+`--write` actualiza los ficheros del corpus y `expected.catalog_rows` (derivado
 mecánicamente), y **NO toca `floors`**. Un suelo es una cifra medida; copiarla desde
 una regeneración sería fijar como invariante lo que el motor haga ese día, que es
 justo como un trinquete deja de serlo.

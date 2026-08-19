@@ -165,12 +165,12 @@ if (positional.Count >= 1 && positional[0] == "blind-refs")
             string.Join(", ", blindManifest.Corpora.Select(c => c.Id)));
         return 1;
     }
-    if (blindCorpus.Oracle == null)
+    if (blindCorpus.Catalog == null)
     {
-        Console.Error.WriteLine($"El corpus '{blindCorpus.Id}' no declara oráculo de columna, no se puede calcular blind-refs.");
+        Console.Error.WriteLine($"El corpus '{blindCorpus.Id}' no declara catálogo de columna, no se puede calcular blind-refs.");
         return 1;
     }
-    var blindResult = BlindRefs.Compute(blindCorpus.InputPath(blindRepoRoot), blindCorpus.OraclePath(blindRepoRoot));
+    var blindResult = BlindRefs.Compute(blindCorpus.InputPath(blindRepoRoot), blindCorpus.CatalogPath(blindRepoRoot));
     BlindRefs.WriteCsv(blindResult, positional[2]);
     Console.WriteLine(BlindRefs.Summarize(blindCorpus.Id, blindResult, positional[2]));
     return 0;

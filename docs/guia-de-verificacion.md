@@ -102,9 +102,9 @@ nuevo, añade su fila aquí en el mismo cambio.
 |---|---|:---:|
 | `LineageTests.cs` | Suite de regresión de patrones de lineage — el grueso de la cobertura (80 casos): SELECT/INSERT/UPDATE/DELETE/MERGE, SQL dinámico, cursores, CTEs | No |
 | `NodeStoreUpdateTests.cs` | `NodeStoreExporter.Update` (reescritura incremental) vs. `Write` completo — que ambos caminos den el mismo resultado | No |
-| `ColumnRecallGateTests.cs` | Lineage de columna contra oráculo externo, corpus DNN Platform/DotNetNuke (739 módulos + 128 tablas) — el trinquete más grande del proyecto | **Sí** (`Oracle`) |
-| `ViewLineageOracleTests.cs` | Lineage a través de vistas vs. `sys.dm_sql_referenced_entities` en vivo | **Sí** (`Oracle`) |
-| `AuditorChallengeGateTests.cs` | Contrasta afirmaciones en prosa de `docs/claude-audit-report.md`/`docs/gemini-audit-report.md` contra cifras reales | **Sí** (`Oracle`) |
+| `ColumnRecallGateTests.cs` | Lineage de columna contra catálogo externo, corpus DNN Platform/DotNetNuke (739 módulos + 128 tablas) — el trinquete más grande del proyecto | **Sí** (`LiveSql`) |
+| `ViewLineageCatalogTests.cs` | Lineage a través de vistas vs. `sys.dm_sql_referenced_entities` en vivo | **Sí** (`LiveSql`) |
+| `AuditorChallengeGateTests.cs` | Contrasta afirmaciones en prosa de `docs/claude-audit-report.md`/`docs/gemini-audit-report.md` contra cifras reales | **Sí** (`LiveSql`) |
 | `BadPracticesGateTests.cs` | Gate del corpus `eval/bad-practices/` (anti-patrones con oráculo `expected-findings.json`) | No |
 | `CommunityEdgeCaseGateTests.cs` | Gate del corpus `eval/community-edge-cases/` (MERGE, CTEs recursivas, SQL dinámico, cursores) | No |
 | `CteUnionFilterTests.cs` | `WHERE` dentro de CTE o de una rama de `UNION` (arreglo #11) | No |
@@ -120,7 +120,7 @@ nuevo, añade su fila aquí en el mismo cambio.
 | `AgentBenchTests.cs` | `bench-make`/`bench-grade`, el autotest del benchmark de agentes | No |
 | `ChatGpt/*.cs` | Fuzzing, pruebas de estrés, casos límite del First Responder Kit y mejoras puntuales aportadas por otro modelo — tratar como regresión general | No |
 
-Los marcados **Sí** necesitan `.\SQLEXPRESS` con WideWorldImporters/AdventureWorks2019 restauradas y viven detrás del trait `Oracle` — es el motivo de que CI (`.github/workflows/ci.yml`) corra menos pruebas que en local (ver cifra exacta en `docs/ejecucion-canonica.md`).
+Los marcados **Sí** necesitan `.\SQLEXPRESS` con WideWorldImporters/AdventureWorks2019 restauradas y viven detrás del trait `LiveSql` — es el motivo de que CI (`.github/workflows/ci.yml`) corra menos pruebas que en local (ver cifra exacta en `docs/ejecucion-canonica.md`).
 
 ---
 

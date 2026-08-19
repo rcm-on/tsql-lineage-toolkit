@@ -63,7 +63,7 @@ public class ColumnRecallGateTests
     // ColumnLineage_MeetsMeasuredFloors): mezcla clases y esconde que la extracción directa
     // acierta el 99,78 %.
 
-    // LoadOracle / BuildGraphRefs / Plain() se movieron a TSqlParser.BlindRefs: es la misma
+    // LoadCatalog / BuildGraphRefs / Plain() se movieron a TSqlParser.BlindRefs: es la misma
     // comparación que ahora también usa el subcomando "blind-refs", y una sola fuente de verdad
     // es justo el punto (ver el comentario de clase de BlindRefs). ColumnRef sustituye al "Ref"
     // que antes era privado de este fichero.
@@ -71,7 +71,7 @@ public class ColumnRecallGateTests
     /// <summary>
     /// Igual que <see cref="BlindRefs.BuildGraphRefs"/> pero agrupando por CÓMO se supo cada arista.
     /// Una precisión global engaña: mezcla lecturas escritas literalmente en el SQL con
-    /// lecturas alcanzadas atravesando una vista, y el oráculo (que se para en la vista)
+    /// lecturas alcanzadas atravesando una vista, y el catálogo (que se para en la vista)
     /// no puede contener estas últimas. Sin separar clases, la global daba 67,8 % y la
     /// expansión de estrella parecía la peor clase del motor (43,7 %) cuando en realidad
     /// es de las mejores. Cada clase lleva su propio suelo.
@@ -132,11 +132,11 @@ public class ColumnRecallGateTests
         return GraphExporter.Build(results, includeColumns: true, tableSchemas);
     }
 
-    private static HashSet<ColumnRef> LoadOracle(CorpusEntry corpus) =>
-        BlindRefs.LoadOracle(corpus.OraclePath(EvalCorpora.RepoRoot()));
+    private static HashSet<ColumnRef> LoadCatalog(CorpusEntry corpus) =>
+        BlindRefs.LoadCatalog(corpus.CatalogPath(EvalCorpora.RepoRoot()));
 
-    private static (HashSet<ColumnRef> Oracle, HashSet<ColumnRef> Graph) Measure(CorpusEntry corpus) =>
-        (LoadOracle(corpus), BlindRefs.BuildGraphRefs(BuildGraph(corpus)));
+    private static (HashSet<ColumnRef> Catalog, HashSet<ColumnRef> Graph) Measure(CorpusEntry corpus) =>
+        (LoadCatalog(corpus), BlindRefs.BuildGraphRefs(BuildGraph(corpus)));
 
     [Theory]
     [MemberData(nameof(EvalCorpora.GatedCorpusIds), MemberType = typeof(EvalCorpora))]
@@ -144,30 +144,30 @@ public class ColumnRecallGateTests
     {
         var corpus = EvalCorpora.Get(corpusId);
         var floors = corpus.Floors!;
-        var (oracle, graph) = Measure(corpus);
+        var (catalog, graph) = Measure(corpus);
 
-        var strictHits = oracle.Count(graph.Contains);
-        var strictRecall = (double)strictHits / oracle.Count;
+        var strictHits = catalog.Count(graph.Contains);
+        var strictRecall = (double)strictHits / catalog.Count;
 
-        var oracleLoose = oracle.Select(r => (r.Module, r.Column)).ToHashSet();
+        var catalogLoose = catalog.Select(r => (r.Module, r.Column)).ToHashSet();
         var graphLoose = graph.Select(r => (r.Module, r.Column)).ToHashSet();
-        var looseRecall = (double)oracleLoose.Count(graphLoose.Contains) / oracleLoose.Count;
+        var looseRecall = (double)catalogLoose.Count(graphLoose.Contains) / catalogLoose.Count;
 
-        // La precisión se mide SOLO sobre módulos para los que el oráculo aporta alguna
+        // La precisión se mide SOLO sobre módulos para los que el catálogo aporta alguna
         // columna. En el resto (típicamente por una tabla #temp, que impide a las DMV
-        // resolver dependencias a nivel columna) el ciego es el oráculo, y contar ahí
+        // resolver dependencias a nivel columna) el ciego es el catálogo, y contar ahí
         // nuestras aristas como falsos positivos castiga al motor por un límite ajeno.
         //
         // No es cosmético: al expandir SELECT * sobre vistas, la precisión global "bajó"
         // de 68,06 % a 67,91 % mientras que la medida sobre módulos visibles SUBÍA de
         // 69,96 % a 70,24 %. La caída era puro efecto de mezcla. Es además el mismo
         // criterio que ya usa ColumnLineage_PrecisionPerEvidenceClass.
-        var modulesSeenHere = oracle.Select(r => r.Module).ToHashSet(StringComparer.Ordinal);
+        var modulesSeenHere = catalog.Select(r => r.Module).ToHashSet(StringComparer.Ordinal);
         var judgeable = graph.Where(r => modulesSeenHere.Contains(r.Module)).ToHashSet();
-        var precision = (double)judgeable.Count(oracle.Contains) / judgeable.Count;
+        var precision = (double)judgeable.Count(catalog.Contains) / judgeable.Count;
 
         var report =
-            $"corpus {corpus.Id} ({corpus.Name}): oráculo={oracle.Count} aristas_grafo={graph.Count}\n" +
+            $"corpus {corpus.Id} ({corpus.Name}): catálogo={catalog.Count} aristas_grafo={graph.Count}\n" +
             $"  recall estricto (módulo,ENTIDAD,columna) = {strictRecall:P1}  (suelo {floors.StrictRecall:P1})\n" +
             $"  recall laxo     (módulo,columna)         = {looseRecall:P1}  (suelo {floors.LooseRecall:P1})\n" +
             $"  precisión                                = {precision:P1}  (informativa, no gateada)\n" +
@@ -208,13 +208,13 @@ public class ColumnRecallGateTests
     public void ColumnLineage_PrecisionPerEvidenceClass(string corpusId)
     {
         var corpus = EvalCorpora.Get(corpusId);
-        var oracle = LoadOracle(corpus);
+        var catalog = LoadCatalog(corpus);
         var byClass = BuildGraphRefsByClass(BuildGraph(corpus));
 
-        // Módulos para los que el oráculo no aporta NINGUNA columna (typically por una tabla
+        // Módulos para los que el catálogo no aporta NINGUNA columna (typically por una tabla
         // #temp, que impide a las DMV resolver dependencias a nivel columna). Ahí el ciego es
-        // el oráculo: juzgar nuestras aristas contra él sería contarlas mal.
-        var modulesSeen = oracle.Select(r => r.Module).ToHashSet(StringComparer.Ordinal);
+        // el catálogo: juzgar nuestras aristas contra él sería contarlas mal.
+        var modulesSeen = catalog.Select(r => r.Module).ToHashSet(StringComparer.Ordinal);
 
         var report = new List<string> { $"corpus {corpus.Id} ({corpus.Name}):" };
         var failures = new List<string>();
@@ -224,7 +224,7 @@ public class ColumnRecallGateTests
                 ? set.Where(r => modulesSeen.Contains(r.Module)).ToHashSet()
                 : new HashSet<ColumnRef>();
             Assert.True(edges.Count > 0, $"La clase '{cls}' no produjo ninguna arista: la clasificación está rota.");
-            var precision = (double)edges.Count(oracle.Contains) / edges.Count;
+            var precision = (double)edges.Count(catalog.Contains) / edges.Count;
             report.Add($"  {cls,-14} {edges.Count,6} aristas   precisión {precision:P1}  (suelo {floor:P1})");
             if (precision < floor)
                 failures.Add(cls);
@@ -316,14 +316,14 @@ public class ColumnRecallGateTests
     public void Measurement_IsSensitive_ControlThatMustCollapse(string corpusId)
     {
         var corpus = EvalCorpora.Get(corpusId);
-        var (oracle, graph) = Measure(corpus);
+        var (catalog, graph) = Measure(corpus);
 
-        // Igualdad EXACTA, no un ">": el oráculo es un fichero congelado. Si cambia de tamaño,
+        // Igualdad EXACTA, no un ">": el catálogo es un fichero congelado. Si cambia de tamaño,
         // o se regeneró contra otra base o se truncó, y en cualquiera de los dos casos los
         // suelos de este corpus dejan de referirse a lo que se está midiendo. Actualizar el
         // corpus obliga a tocar el manifiesto, que es exactamente la disciplina que se busca.
-        Assert.True(oracle.Count == corpus.Expected!.OracleRows,
-            $"El oráculo de '{corpus.Id}' declara {corpus.Expected.OracleRows} filas y tiene {oracle.Count}. " +
+        Assert.True(catalog.Count == corpus.Expected!.CatalogRows,
+            $"El catálogo de '{corpus.Id}' declara {corpus.Expected.CatalogRows} filas y tiene {catalog.Count}. " +
             "Si el corpus se ha regenerado a propósito, actualiza eval/corpora.json en un commit " +
             "SEPARADO de cualquier cambio del motor.");
         // El suelo sale del manifiesto, no de un "> 1000" clavado aquí. Ese 1000 era una
@@ -334,11 +334,11 @@ public class ColumnRecallGateTests
             $"El grafo de '{corpus.Id}' debería emitir al menos {corpus.Expected.MinColumnEdges} " +
             $"lecturas de columna, emite {graph.Count}.");
 
-        var perturbed = oracle.Select(r => r with { Column = r.Column + "_zzz_no_existe" }).ToHashSet();
+        var perturbed = catalog.Select(r => r with { Column = r.Column + "_zzz_no_existe" }).ToHashSet();
         var perturbedRecall = (double)perturbed.Count(graph.Contains) / perturbed.Count;
 
         Assert.True(perturbedRecall < 0.001,
-            $"La medición no distingue un oráculo falso: recall con columnas inexistentes = {perturbedRecall:P2}. " +
+            $"La medición no distingue un catálogo falso: recall con columnas inexistentes = {perturbedRecall:P2}. " +
             "La comparación está rota y los umbrales del otro test no significan nada.");
     }
 }

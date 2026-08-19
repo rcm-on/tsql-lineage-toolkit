@@ -12,7 +12,7 @@ namespace TSqlParser.Tests;
 /// AdventureWorks, a fix to a gap in docs/extraction-gaps.md, a real regeneration of out/)
 /// breaks it audibly instead of leaving the audit reports silently stale.
 ///
-/// Same in-process mechanism as ViewLineageOracleTests, but this test extracts the WHOLE
+/// Same in-process mechanism as ViewLineageCatalogTests, but this test extracts the WHOLE
 /// WideWorldImporters database (ObjectExtractor.Run with no --object/--like filter, so every
 /// procedure/function/trigger/view) instead of a fixed list of views, because the metrics it
 /// checks (a procedure's cyclomatic_complexity/dynamic-SQL resolution, its WRITES_TO fan-out,
@@ -25,10 +25,10 @@ namespace TSqlParser.Tests;
 /// temp dir&gt;` run is expected to report the identical numbers (JS/C# parity).
 ///
 /// Needs localhost\SQLEXPRESS (or TSQLPARSER_SQL_SERVER) with WideWorldImporters restored -
-/// not portable to a plain CI runner, hence the Oracle trait (`dotnet test --filter
-/// Category!=Oracle` skips this class).
+/// not portable to a plain CI runner, hence the LiveSql trait (`dotnet test --filter
+/// Category!=LiveSql` skips this class).
 /// </summary>
-[Trait("Category", "Oracle")]
+[Trait("Category", "LiveSql")]
 public class AuditorChallengeGateTests : IDisposable
 {
     private readonly List<string> _tempDirs = new();
