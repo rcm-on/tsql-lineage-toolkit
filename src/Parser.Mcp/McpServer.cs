@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Data.Sqlite;
 
-namespace TSqlParser;
+namespace Parser.Mcp;
 
 /// <summary>
 /// Hand-rolled MCP transport: newline-delimited JSON-RPC 2.0 over stdin/stdout.

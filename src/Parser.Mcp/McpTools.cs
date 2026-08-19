@@ -1,6 +1,6 @@
 using Microsoft.Data.Sqlite;
 
-namespace TSqlParser;
+namespace Parser.Mcp;
 
 /// <summary>Signals a rejected/failed tool call (bad arguments, unknown id) - never an
 /// uncaught exception, always surfaced by the transport as a normal tools/call result
