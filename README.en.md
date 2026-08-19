@@ -54,7 +54,7 @@ It's a **utility tool**, built by one person, not a data-governance product. It 
 
 **Where it doesn't add much, or there are simply better options:**
 
-- **It's single-dialect.** T-SQL only. If you need multiple engines, [SQLGlot](https://github.com/tobymao/sqlglot) is more complete and more mature — in fact we use it **as an oracle** to validate our own column lineage (see [`eval/sqlglot-oracle/`](eval/sqlglot-oracle/)).
+- **It's single-dialect.** T-SQL only. If you need multiple engines, [SQLGlot](https://github.com/tobymao/sqlglot) is more complete and more mature — in fact we use it **as a reference** to validate our own column lineage (see [`eval/sqlglot-reference/`](eval/sqlglot-reference/)).
 - **Column lineage isn't complete.** 98.8 % recall on a large production corpus, and 90 references we don't see, classified by root cause in [`eval/column-recall/`](eval/column-recall/).
 - **It isn't data governance.** No catalog, glossary, permissions, or cross-system lineage.
 - **No support or warranties.** It's MIT, published as-is.
@@ -112,11 +112,11 @@ And against corpora with their own oracle:
 - **Complex constructs (`eval/community-edge-cases/`):** `MERGE`, recursive CTEs, dynamic SQL, cursors.
 - **Column lineage (`eval/view-lineage/`):** checked against `sys.dm_sql_referenced_entities`.
 
-In addition, **239 tests (xUnit)** cover the parser and **all of them run as a gate in CI**. Three are in the `Oracle` category and check against a live SQL Server: CI spins up a container with WideWorldImporters and AdventureWorks2019 restored ([`scripts/ci/restore-oracle-databases.sh`](scripts/ci/restore-oracle-databases.sh)).
+In addition, **239 tests (xUnit)** cover the parser and **all of them run as a gate in CI**. Three are in the `LiveSql` category and check against a live SQL Server: CI spins up a container with WideWorldImporters and AdventureWorks2019 restored ([`scripts/ci/restore-sample-databases.sh`](scripts/ci/restore-sample-databases.sh)).
 
 > **What that validation found.** Running the new corpora uncovered **twelve defects** in the engine itself, **all fixed** —among them one serious one: with a certain `UPDATE` pattern, a table's identity split into two nodes and *"who writes here?"* returned zero when there were three writers. The detail, with the reproduction of each one, is in [`docs/corpus-multibase.md`](docs/corpus-multibase.md). It's published because a bug found and documented says more about a tool's reliability than an all-green table.
 
-**Also checked against other parsers**, not just the catalog: over 253 objects (WideWorldImporters + AdventureWorks2019 + Ola Hallengren + First Responder Kit + DarlingData —another third-party corpus, distinct from the DNN Platform above), neither a generic tree-sitter SQL grammar (0.4% clean) nor the only T-SQL-specific tree-sitter grammar that exists (0% clean, breaks on a `WHERE` with an equality) comes close to `ScriptDom`. `sqlglot` with the T-SQL dialect set explicitly reaches 63.6%, but breaks on `RETURN`, `THROW`, or `SET TRANSACTION ISOLATION LEVEL` before it even gets to the dynamic SQL. And against [Graphify](https://github.com/Graphify-Labs/graphify)'s own code (multi-language code graph, tree-sitter) itself: its SQL extractor leaves **65% of WWI's procedures with no lineage edge at all** —100% on DarlingData—, because when its generic parser doesn't recognize a `CREATE PROCEDURE`, the design (reasonably) decides not to guess at relationships and keeps only the name. Full detail, methodology, and how each figure was verified are in [`docs/oracle-parsers-comparativa.md`](docs/oracle-parsers-comparativa.md).
+**Also checked against other parsers**, not just the catalog: over 253 objects (WideWorldImporters + AdventureWorks2019 + Ola Hallengren + First Responder Kit + DarlingData —another third-party corpus, distinct from the DNN Platform above), neither a generic tree-sitter SQL grammar (0.4% clean) nor the only T-SQL-specific tree-sitter grammar that exists (0% clean, breaks on a `WHERE` with an equality) comes close to `ScriptDom`. `sqlglot` with the T-SQL dialect set explicitly reaches 63.6%, but breaks on `RETURN`, `THROW`, or `SET TRANSACTION ISOLATION LEVEL` before it even gets to the dynamic SQL. And against [Graphify](https://github.com/Graphify-Labs/graphify)'s own code (multi-language code graph, tree-sitter) itself: its SQL extractor leaves **65% of WWI's procedures with no lineage edge at all** —100% on DarlingData—, because when its generic parser doesn't recognize a `CREATE PROCEDURE`, the design (reasonably) decides not to guess at relationships and keeps only the name. Full detail, methodology, and how each figure was verified are in [`docs/parsers-comparativa.md`](docs/parsers-comparativa.md).
 
 ## Use cases — where this problem shows up
 
@@ -173,6 +173,18 @@ dotnet run -- ../../input.json ../../graph_full.json --columns --sqlite --nodest
 ```
 
 Outputs: **`graph_full.json`** (canonical, diffable graph — version it), **`graph_full.db`** (SQLite database queryable with SQL), and the **NodeStore** (`--nodestore`, a representation optimized for AI agents).
+
+### Reproducing the verification against SQL Server
+
+The figures above are checked against a real SQL Server. Reproducing that takes nothing but
+Docker:
+
+```bash
+bash scripts/ci/restore-sample-databases.sh          # starts the container, restores WWI + AdventureWorks2019
+dotnet test tests/TSqlParser.Tests --filter "Category=LiveSql"
+```
+
+It is exactly what CI runs on every push.
 
 ### Querying impact with SQL
 
