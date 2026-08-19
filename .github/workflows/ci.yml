@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   test:
@@ -27,33 +27,58 @@ jobs:
       - name: Test NetParser (Category!=Oracle)
         run: dotnet test tests/NetParser.Tests/NetParser.Tests.csproj -c Release --filter "Category!=Oracle"
 
-  # Oracle tests (ViewLineageOracleTests) compare against a live SQL Server holding
-  # WideWorldImporters + AdventureWorks2019, and are excluded from the job above via
-  # the Category!=Oracle filter (see docs/task-gates-dotnet.md, Paso 3).
+  # Oracle tests (ViewLineageOracleTests, AuditorChallengeGateTests) compare against a
+  # live SQL Server holding WideWorldImporters + AdventureWorks2019, and are excluded
+  # from the job above via the Category!=Oracle filter (see docs/task-gates-dotnet.md,
+  # Paso 3).
   #
-  # TODO: this job is NOT implemented. Investigated for Paso 4 (2026-07-04) and found
-  # genuinely blocked, not just fiddly:
-  #   - src/TSqlParser/{DbValidator,ObjectExtractor,TableSchemaExtractor}.cs build the
-  #     connection string with "Integrated Security=true" (Windows auth), hardcoded.
-  #     That file is off-limits for this task (invariant 1 in task-gates-dotnet.md:
-  #     zero behavior changes in src/TSqlParser/), so the connection mode can't be
-  #     swapped to SQL auth to accommodate a container.
-  #   - mcr.microsoft.com/mssql/server (Linux container, the only official SQL Server
-  #     image runnable on a hosted GitHub Actions runner) only supports SQL auth,
-  #     not Windows Integrated Security — there is no AD/Kerberos setup available in
-  #     an ephemeral hosted runner to make Integrated Security work against it.
-  #   - A windows-latest runner has no preinstalled SQL Server instance, and standing
-  #     one up plus restoring both WideWorldImporters-Full.bak and an
-  #     AdventureWorks2019 backup (from the public microsoft/sql-server-samples and
-  #     Microsoft docs releases respectively) with paths matching what RESTORE
-  #     DATABASE expects is a separate, sizeable piece of work on its own.
+  # This job used to be a stub: mcr.microsoft.com/mssql/server (the only official SQL
+  # Server image runnable on a hosted runner) only supports SQL auth, while
+  # {DbValidator,ObjectExtractor,TableSchemaExtractor} hardcoded "Integrated
+  # Security=true" (Windows auth). That blocker is gone — src/TSqlParser/SqlConnections.cs
+  # now builds the connection string centrally and switches to SQL auth whenever
+  # TSQL_SQL_USER + TSQL_SQL_PASSWORD are both set, falling back to integrated security
+  # otherwise (unchanged default). Verified locally 2026-08-16 against
+  # mcr.microsoft.com/mssql/server:2022-latest with both databases restored from the
+  # public microsoft/sql-server-samples releases (scripts/ci/restore-oracle-databases.sh)
+  # and a SA password containing ';' and '"' (exercises SqlConnections.Quote) — all 3
+  # Oracle tests passed.
   #
-  # Until TSqlParser accepts a SQL-auth connection string (or a self-hosted runner
-  # with a pre-provisioned instance is available), this job stays a stub. Do not
-  # wire it up by weakening the Oracle trait filter in the job above.
+  # Left out of scope by this change: the PIVOT gap in
+  # Sales.vSalesPersonSalesByFiscalYears (already documented and excluded via
+  # ViewLineageOracleTests.KnownGaps); the Windows Integrated Security path itself is
+  # not exercised by this job, only by developers running locally against SQLEXPRESS.
+  #
+  # Requires a repo secret TSQL_SQL_SA_PASSWORD: the SA password used to start the
+  # mssql service container below (must satisfy SQL Server's password complexity
+  # policy — upper+lower+digit+symbol, 8+ chars).
   oracle-tests:
-    name: "Oracle tests (WWI + AdventureWorks2019) — TODO, not implemented"
-    if: false
-    runs-on: windows-latest
+    name: Oracle tests (WWI + AdventureWorks2019)
+    runs-on: ubuntu-latest
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: ${{ secrets.TSQL_SQL_SA_PASSWORD }}
+        ports:
+          - 1433:1433
     steps:
-      - run: echo "See TODO comment above oracle-tests in this file."
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore Oracle databases (WideWorldImporters + AdventureWorks2019)
+        run: bash scripts/ci/restore-oracle-databases.sh
+        env:
+          MSSQL_SA_PASSWORD: ${{ secrets.TSQL_SQL_SA_PASSWORD }}
+
+      - name: Test (Category=Oracle)
+        run: dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category=Oracle"
+        env:
+          TSQLPARSER_SQL_SERVER: localhost,1433
+          TSQL_SQL_USER: sa
+          TSQL_SQL_PASSWORD: ${{ secrets.TSQL_SQL_SA_PASSWORD }}
