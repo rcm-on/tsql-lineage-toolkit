@@ -24,9 +24,10 @@ public static class McpTools
     /// BudgetGateTests) - this is a design gate, not a soft guideline.</summary>
     public const int ResponseBudgetBytes = 2048;
 
-    private static readonly string[] ImpactEdgeTypes =
-        ["CALLS", "READS_FROM", "WRITES_TO", "DERIVES_FROM", "READS_COLUMN", "WRITES_COLUMN"];
+    private static readonly IReadOnlyList<string> ImpactEdgeTypes = StoreSchema.ImpactEdgeTypes;
     private static readonly string ImpactEdgeTypesLabel = string.Join("/", ImpactEdgeTypes);
+    private static readonly string AddressableLabelsCsv =
+        string.Join(",", StoreSchema.AddressableLabels.Select(l => $"'{l}'"));
 
     // Defensive ceiling on BFS size so a pathological depth/limit combination on a huge
     // graph can't turn one tool call into an unbounded scan; independent of `limit`.
@@ -50,7 +51,7 @@ public static class McpTools
             // Action/Variable/Rule/etc. are graph-internal plumbing, not addressable objects.
             cmd.CommandText =
                 "SELECT id, label, name FROM nodes " +
-                "WHERE label IN ('SqlObject','Table','Column') " +
+                $"WHERE label IN ({AddressableLabelsCsv}) " +
                 "  AND (lower(name) LIKE '%' || $n || '%' ESCAPE '\\' " +
                 "       OR lower(id) LIKE '%' || $n || '%' ESCAPE '\\')";
             cmd.Parameters.AddWithValue("$n", EscapeLike(needleLower));
@@ -218,19 +219,11 @@ public static class McpTools
             while (reader.Read())
             {
                 var raw = reader.GetString(0);
-                var v = otherColumn == "src" ? RollUpStep(raw) : raw;
+                var v = otherColumn == "src" ? StoreSchema.RollUpStep(raw) : raw;
                 if (seen.Add(v))
                     yield return v;
             }
         }
-    }
-
-    /// <summary>A Step id ("&lt;objId&gt;#stepN") rolled up to its owning SqlObject; any
-    /// other id (Table/Column/SqlObject) passes through unchanged.</summary>
-    private static string RollUpStep(string id)
-    {
-        var hash = id.IndexOf('#');
-        return hash > 0 ? id[..hash] : id;
     }
 
     private static Dictionary<string, (string Label, string Name)> LookupNodes(SqliteConnection conn, IEnumerable<string> ids)
