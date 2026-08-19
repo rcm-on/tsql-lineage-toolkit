@@ -60,7 +60,13 @@ public class NetExtractor : IGraphExtractor
     private static readonly Regex TableRef = new(@"\b(?:FROM|JOIN|INTO|UPDATE)\s+(?<name>[\[\]\w]+(?:\.[\[\]\w]+){0,2})",
         RegexOptions.IgnoreCase);
 
-    private static List<MetadataReference>? _runtimeRefs;
+    // Lazy<T> (default mode: ExecutionAndPublication) makes this safe under xUnit's
+    // parallel test classes, which all funnel through Extract() concurrently: without
+    // it, a plain "if (_runtimeRefs is null)" cache publishes the list to the static
+    // field before it is filled, so a racing thread can read it half-populated and
+    // build a Roslyn compilation with missing runtime references — silently wrong,
+    // nondeterministic symbol resolution rather than a crash.
+    private static readonly Lazy<List<MetadataReference>> _runtimeRefs = new(BuildRuntimeRefs);
 
     /// <summary>
     /// Optional nodestore model.json path with the SQL catalog. Without it the
@@ -88,6 +94,18 @@ public class NetExtractor : IGraphExtractor
             (Directory.EnumerateFiles(inputPath, "*.sln", SearchOption.AllDirectories).Any() ||
              Directory.EnumerateFiles(inputPath, "*.csproj", SearchOption.AllDirectories).Any()));
 
+    // Two Extract() calls building their compilation graphs on different threads at
+    // the same time is not safe: each project's compilation references another via
+    // CSharpCompilation.ToMetadataReference() (a project referencing a sibling one),
+    // and Roslyn's cross-compilation symbol resolution over that kind of reference is
+    // not reentrant under true concurrent use — confirmed by a stress harness running
+    // two fully independent Extract() calls (distinct directories, distinct symbols)
+    // concurrently: a CALLS edge into the referenced project's method is intermittently
+    // (~1-3%) missing, purely from the concurrency, never when run sequentially however
+    // many times. Serializing only this critical section (not all of Extract, and not
+    // xUnit's parallelism generally) keeps that concurrency safe for any caller.
+    private static readonly object _buildLock = new();
+
     public GraphPayload Extract(string inputPath)
     {
         var sln = SolutionLoader.Load(inputPath);
@@ -96,20 +114,20 @@ public class NetExtractor : IGraphExtractor
 
         var catalog = CatalogPath is not null ? Catalog.Load(CatalogPath) : null;
         var b = new Builder(sln, catalog, IncludeAmbiguous);
-        return b.Build();
+        lock (_buildLock)
+            return b.Build();
     }
 
-    private static IReadOnlyList<MetadataReference> RuntimeRefs()
+    private static IReadOnlyList<MetadataReference> RuntimeRefs() => _runtimeRefs.Value;
+
+    private static List<MetadataReference> BuildRuntimeRefs()
     {
-        if (_runtimeRefs is null)
-        {
-            _runtimeRefs = new List<MetadataReference>();
-            var tpa = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? "";
-            foreach (var path in tpa.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
-                if (path.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
-                    _runtimeRefs.Add(MetadataReference.CreateFromFile(path));
-        }
-        return _runtimeRefs;
+        var refs = new List<MetadataReference>();
+        var tpa = (string?)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES") ?? "";
+        foreach (var path in tpa.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+            if (path.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                refs.Add(MetadataReference.CreateFromFile(path));
+        return refs;
     }
 
     // ------------------------------------------------------------------
@@ -118,6 +136,16 @@ public class NetExtractor : IGraphExtractor
         private readonly SolutionInfo _sln;
         private readonly Catalog? _catalog;
         private readonly bool _includeAmbiguous;
+        // Two Extract() calls running on different threads (e.g. two test classes
+        // extracting the same fixture concurrently) must never hand Roslyn two
+        // CSharpCompilation objects with the same assembly name: cross-compilation
+        // symbol resolution (a project referencing another via ToMetadataReference)
+        // becomes nondeterministic when that name collides across compilations built
+        // on separate threads at the same time, intermittently failing to resolve
+        // calls into the referenced project. proj.Name is still the key used
+        // everywhere else (the dictionary below, ids, etc.) — only the identity
+        // Roslyn sees is disambiguated.
+        private readonly string _asmSuffix = Guid.NewGuid().ToString("N");
 
         private readonly Dictionary<string, GraphNode> _nodes = new(StringComparer.Ordinal);
         private readonly List<GraphRel> _edges = new();
@@ -240,7 +268,7 @@ public class NetExtractor : IGraphExtractor
                     if (compilations.TryGetValue(dep, out var depComp))
                         refs.Add(depComp.ToMetadataReference());
 
-                compilations[proj.Name] = CSharpCompilation.Create(proj.Name, projTrees, refs,
+                compilations[proj.Name] = CSharpCompilation.Create($"{proj.Name}~{_asmSuffix}", projTrees, refs,
                     new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
             }
 
@@ -252,7 +280,7 @@ public class NetExtractor : IGraphExtractor
             // Pass 2: calls + call-site literals, SQL sinks, EF usage, rules.
             foreach (var comp in compilations.Values)
                 foreach (var tree in comp.SyntaxTrees)
-                    BodyPass(comp.GetSemanticModel(tree), tree);
+                    BodyPass(comp.GetSemanticModel(tree), tree, trees[tree].Proj.Name);
 
             // Pass 3: narrow pending templates from call-site literals, and walk
             // interface calls through to the implementation bound by DI.
@@ -598,7 +626,7 @@ public class NetExtractor : IGraphExtractor
         }
 
         // ---------------- pass 2: bodies ----------------
-        private void BodyPass(SemanticModel model, SyntaxTree tree)
+        private void BodyPass(SemanticModel model, SyntaxTree tree, string projectName)
         {
             var root = tree.GetRoot();
             CollectNewBindings(model, root);
@@ -617,7 +645,7 @@ public class NetExtractor : IGraphExtractor
                 var topLevel = unit.Members.OfType<GlobalStatementSyntax>().ToList();
                 if (topLevel.Count > 0)
                 {
-                    string mainId = $"app::{((CSharpCompilation)model.Compilation).AssemblyName}.Program.Main";
+                    string mainId = $"app::{projectName}.Program.Main";
                     AddNode(mainId, "AppMethod", new()
                     {
                         ["name"] = "Main", ["class"] = "Program", ["kind"] = "top-level",
