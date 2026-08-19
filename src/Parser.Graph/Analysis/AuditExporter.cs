@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
 /// <summary>
 /// Generates audit_report.json alongside index.json in the node store root.
@@ -17,7 +17,7 @@ namespace TSqlParser;
 /// roll up those edges to the owning SqlObject before counting degree or
 /// building the writes/reads lists.
 /// </summary>
-internal static class AuditExporter
+public static class AuditExporter
 {
     public static string Generate(
         GraphPayload graph,

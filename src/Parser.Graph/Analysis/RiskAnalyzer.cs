@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
 /// <summary>One bad-practice / risk finding over the graph. Severities: crit | high | med | low | info.
 /// Categories: Seguridad, Robustez, Rendimiento, Mantenibilidad, Integridad, Diseño.</summary>

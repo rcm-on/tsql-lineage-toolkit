@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
 /// <summary>
 /// Diffs two already-generated node stores (a "before" and an "after") into a

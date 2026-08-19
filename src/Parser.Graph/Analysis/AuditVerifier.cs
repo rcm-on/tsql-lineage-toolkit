@@ -1,8 +1,8 @@
 using System.Text.Json;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
-internal static class AuditVerifier
+public static class AuditVerifier
 {
     public static int Verify(string nodeStoreDir)
     {

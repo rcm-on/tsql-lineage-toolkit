@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
 /// <summary>
 /// Builds change_map.json - the precomputed "what runs from here / whom do I impact"
