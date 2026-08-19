@@ -148,7 +148,7 @@ if (positional.Count >= 1 && positional[0] == "mcp")
         Console.Error.WriteLine("Usage: TSqlParser mcp --store <graph_full.db>");
         return 1;
     }
-    return McpServer.Run(args[mcpStoreIdx + 1]);
+    return new McpServer().Run(args[mcpStoreIdx + 1]);
 }
 
 // "blind-refs <corpusId> <salida.csv>": vuelca la LISTA de referencias (módulo, columna) que el

@@ -5,17 +5,23 @@ using Microsoft.Data.Sqlite;
 namespace Parser.Mcp;
 
 /// <summary>
-/// Hand-rolled MCP transport: newline-delimited JSON-RPC 2.0 over stdin/stdout.
-/// Methods: initialize, tools/list, tools/call (resolve_object, impact) - see
-/// McpTools for the actual query logic. No official SDK dependency; see
-/// notes/checkpoints for why.
+/// Transporte MCP a mano: JSON-RPC 2.0 delimitado por saltos de línea sobre stdin/stdout.
+/// Métodos: initialize, tools/list, tools/call. Las herramientas vienen del registro
+/// inyectado, así que el transporte no sabe cuáles hay. Sin SDK oficial; el porqué está en
+/// notes/checkpoints/T16.md.
 /// </summary>
-public static class McpServer
+public sealed class McpServer
 {
     private const string ProtocolVersion = "2025-06-18";
     private static readonly JsonSerializerOptions WireOptions = new() { WriteIndented = false };
 
-    public static int Run(string storePath)
+    private readonly IReadOnlyList<IMcpTool> _tools;
+
+    /// <param name="tools">Registro a servir. Por defecto <see cref="McpToolRegistry.Default"/>;
+    /// los tests inyectan el suyo sin tocar el registro real.</param>
+    public McpServer(IReadOnlyList<IMcpTool>? tools = null) => _tools = tools ?? McpToolRegistry.Default;
+
+    public int Run(string storePath)
     {
         if (!File.Exists(storePath))
         {
@@ -34,7 +40,7 @@ public static class McpServer
                 continue;
             var response = HandleLine(conn, line);
             if (response == null)
-                continue; // notification: no response per JSON-RPC 2.0
+                continue; // notificación: sin respuesta, según JSON-RPC 2.0
             Console.Out.Write(response);
             Console.Out.Write('\n');
             Console.Out.Flush();
@@ -42,10 +48,10 @@ public static class McpServer
         return 0;
     }
 
-    /// <summary>One JSON-RPC request/notification in, one response line out (or null
-    /// for a notification). Never throws - every failure path becomes a JSON-RPC
-    /// error object so a malformed message can't kill the stdio loop.</summary>
-    internal static string? HandleLine(SqliteConnection conn, string line)
+    /// <summary>Una petición/notificación entra, una línea de respuesta sale (o null si es
+    /// notificación). Nunca lanza: cualquier fallo se convierte en un error JSON-RPC, para
+    /// que un mensaje malformado no mate el bucle de stdio.</summary>
+    internal string? HandleLine(SqliteConnection conn, string line)
     {
         JsonNode? root;
         try
@@ -97,108 +103,29 @@ public static class McpServer
         ["serverInfo"] = new Dictionary<string, object?> { ["name"] = "tsql-lineage-mcp", ["version"] = "0.1.0" },
     };
 
-    private static Dictionary<string, object?> ToolsList() => new()
+    private Dictionary<string, object?> ToolsList() => new()
     {
-        ["tools"] = new object[]
+        ["tools"] = _tools.Select(t => new Dictionary<string, object?>
         {
-            new Dictionary<string, object?>
-            {
-                ["name"] = "resolve_object",
-                // Read by a model deciding whether to call this - concrete, with examples.
-                ["description"] =
-                    "Resolves a loose or ambiguous SQL object/table/column name (e.g. 'OrderLines', " +
-                    "'sales.orderlines', 'usp_GetCustomer') into the canonical node ids this graph " +
-                    "actually uses (e.g. 'MyDb:table:sales.orderlines'). Call this FIRST, before " +
-                    "'impact' - impact needs an exact id and will not guess one from a plain name. " +
-                    "Matches are ranked most-specific-first (exact > suffix > substring); when exactly " +
-                    "one exact match exists the result carries exact:true.",
-                ["inputSchema"] = new Dictionary<string, object?>
-                {
-                    ["type"] = "object",
-                    ["properties"] = new Dictionary<string, object?>
-                    {
-                        ["name"] = new Dictionary<string, object?>
-                        {
-                            ["type"] = "string",
-                            ["description"] = "Loose or partial object/table/column name to resolve, e.g. 'OrderLines'.",
-                        },
-                        ["limit"] = new Dictionary<string, object?>
-                        {
-                            ["type"] = "integer",
-                            ["description"] = "Max matches to return (default 10).",
-                        },
-                    },
-                    ["required"] = new object[] { "name" },
-                },
-            },
-            new Dictionary<string, object?>
-            {
-                ["name"] = "impact",
-                ["description"] =
-                    "Given a canonical node id (get one from resolve_object first), walks the call/data " +
-                    "lineage edges (CALLS, READS_FROM, WRITES_TO, DERIVES_FROM, READS_COLUMN, " +
-                    "WRITES_COLUMN) up to `depth` hops and returns who is affected, grouped by hop " +
-                    "distance. direction='downstream' answers 'what breaks if I change this' (its " +
-                    "callers/consumers, the default); direction='upstream' answers 'what does this " +
-                    "depend on' (its callees/sources). For a TABLE specifically: downstream = which " +
-                    "procs/views read or write it; upstream = where its data comes from (usually empty - " +
-                    "tables rarely have outgoing lineage edges of their own). Example: impact with id " +
-                    "'MyDb::dbo.usp_UpdateOrders', direction 'downstream', depth 2 finds procs that " +
-                    "would break two calls away if usp_UpdateOrders changed. An empty 'affected' always " +
-                    "carries a 'reason' (why it's empty) and, when the other direction would answer, a " +
-                    "'hint' - never treat a bare empty result as 'nothing depends on this'.",
-                ["inputSchema"] = new Dictionary<string, object?>
-                {
-                    ["type"] = "object",
-                    ["properties"] = new Dictionary<string, object?>
-                    {
-                        ["id"] = new Dictionary<string, object?>
-                        {
-                            ["type"] = "string",
-                            ["description"] = "Canonical node id, from resolve_object.",
-                        },
-                        ["direction"] = new Dictionary<string, object?>
-                        {
-                            ["type"] = "string",
-                            ["enum"] = new object[] { "downstream", "upstream" },
-                            ["description"] = "downstream = what breaks if this changes (default); upstream = what this depends on.",
-                        },
-                        ["depth"] = new Dictionary<string, object?>
-                        {
-                            ["type"] = "integer",
-                            ["description"] = "Hops to traverse, 1-5 (default 1).",
-                        },
-                        ["limit"] = new Dictionary<string, object?>
-                        {
-                            ["type"] = "integer",
-                            ["description"] = "Max affected nodes to return (default 50).",
-                        },
-                    },
-                    ["required"] = new object[] { "id" },
-                },
-            },
-        },
+            ["name"] = t.Name,
+            ["description"] = t.Description,
+            ["inputSchema"] = t.InputSchema,
+        }).ToList(),
     };
 
-    private static Dictionary<string, object?> ToolsCall(SqliteConnection conn, JsonObject? @params)
+    private Dictionary<string, object?> ToolsCall(SqliteConnection conn, JsonObject? @params)
     {
         var toolName = @params?["name"]?.GetValue<string>();
         if (string.IsNullOrEmpty(toolName))
             throw new McpInvalidParamsException("tools/call requiere 'name'.");
-        var args = @params?["arguments"] as JsonObject ?? new JsonObject();
 
+        var tool = _tools.FirstOrDefault(t => t.Name == toolName)
+                   ?? throw new McpInvalidParamsException($"Herramienta desconocida: '{toolName}'.");
+
+        var args = @params?["arguments"] as JsonObject ?? new JsonObject();
         try
         {
-            Dictionary<string, object?>? data = toolName switch
-            {
-                "resolve_object" => McpTools.ResolveObject(conn, ArgString(args, "name") ?? "", ArgInt(args, "limit") ?? 10),
-                "impact" => McpTools.Impact(conn, ArgString(args, "id") ?? "", ArgString(args, "direction") ?? "downstream", ArgInt(args, "depth") ?? 1, ArgInt(args, "limit") ?? 50),
-                _ => null,
-            };
-            if (data == null)
-                throw new McpInvalidParamsException($"Herramienta desconocida: '{toolName}'.");
-
-            return ToolResult(JsonSerializer.Serialize(data, WireOptions), isError: false);
+            return ToolResult(JsonSerializer.Serialize(tool.Handle(conn, args), WireOptions), isError: false);
         }
         catch (McpToolException ex)
         {
@@ -211,12 +138,6 @@ public static class McpServer
         ["content"] = new object[] { new Dictionary<string, object?> { ["type"] = "text", ["text"] = text } },
         ["isError"] = isError,
     };
-
-    private static string? ArgString(JsonObject args, string key) =>
-        args[key] is JsonValue v && v.TryGetValue<string>(out var s) ? s : null;
-
-    private static int? ArgInt(JsonObject args, string key) =>
-        args[key] is JsonValue v && v.TryGetValue<int>(out var i) ? i : null;
 
     private static string Envelope(JsonNode? id, object? result = null, object? error = null)
     {
