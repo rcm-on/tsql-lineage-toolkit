@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace TSqlParser;
+namespace Parser.Graph;
 
 /// <summary>
 /// Store-agnostic agent benchmark ("bench-make" / "bench-grade"): measures how well
