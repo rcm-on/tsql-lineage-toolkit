@@ -1,4 +1,4 @@
----
+﻿---
 title: Arquitectura
 description: Mapa de la solución — qué proyecto existe, qué contiene y qué puede depender de qué.
 read_when: Antes de mover o crear un fichero, o de tocar el servidor MCP o el contrato del store.
@@ -22,9 +22,9 @@ El glosario del grafo (nodos, aristas, ids, granularidad de Step) vive aparte en
                    (modelo, vocabulario, StoreSchema)
                      cero dependencias externas
                               ▲
-              ┌───────────────┼───────────────┐
-              │               │               │
-        Parser.Graph     Parser.Mcp      NetParser
+              ┌───────────────┴───────────────┐
+              │                               │
+        Parser.Graph  ◄── Parser.Mcp      NetParser
       (capa agnóstica)   (servidor MCP)  (extractor C#)
               ▲               ▲               ▲
               │               │               │
@@ -40,13 +40,17 @@ ni `NetParser`, y eso no es una convención: no está la referencia en el `.cspr
 el compilador lo impide. Si un cambio parece necesitar esa referencia, lo que hay que
 mover es el código, no la referencia.
 
+`Parser.Mcp` **sí** referencia a `Parser.Graph` (desde `diff_impact`, que reutiliza
+`ChangeMapDiff`). No invierte nada: el MCP consume la capa agnóstica, y la capa agnóstica
+sigue sin saber que el MCP existe.
+
 ## 2. Qué vive dónde
 
 | Proyecto | Contiene | Puede depender de |
 |---|---|---|
 | **Parser.Contracts** | `GraphNode`/`GraphRel`/`GraphPayload`, `Vocab` (labels y aristas conocidas), `Boundary`, `IGraphExtractor`, `StoreSchema` | nada |
 | **Parser.Graph** | `Export/` (Sqlite, NodeStore, Graphify, GraphMl), `Analysis/` (Risk, Audit, AuditVerifier), `ChangeMap/`, `Bench/`, `Utf8Io` | Contracts, `Microsoft.Data.Sqlite` |
-| **Parser.Mcp** | `McpServer` (JSON-RPC sobre stdio), `McpTools` (consultas puras), `IMcpTool` + `Tools/` + `McpToolRegistry` | Contracts, `Microsoft.Data.Sqlite` |
+| **Parser.Mcp** | `McpServer` (JSON-RPC sobre stdio), `McpTools` y los `*Queries` (consultas puras), `IMcpTool` + `Tools/` + `McpToolRegistry` | Contracts, **Graph**, `Microsoft.Data.Sqlite` |
 | **TSqlParser** | `AstWalker`, `GraphExporter`, `SqlAnalyzer`, `TableAnalyzer`, `SqlText`, `SqlFileLoader`, clasificadores, `Models`, `InputAnalyzer`, `BlindRefs`, `ReportGenerator`, acceso a SQL Server vivo, `Program.cs` (CLI) | Contracts, Graph, Mcp, `ScriptDom`, `Microsoft.Data.SqlClient` |
 | **NetParser** | extractor de C# con Roslyn | Contracts |
 | **ParserGeneral** | fusiona los `GraphPayload` de ambos extractores | Contracts, Graph, TSqlParser, NetParser |
