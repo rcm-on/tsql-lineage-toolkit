@@ -10,5 +10,7 @@ public static class McpToolRegistry
     [
         new ResolveObjectTool(),
         new ImpactTool(),
+        new ColumnProvenanceTool(),
+        new ColumnImpactTool(),
     ];
 }

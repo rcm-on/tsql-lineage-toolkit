@@ -180,6 +180,208 @@ public static class McpTools
         return result;
     }
 
+    /// <summary>
+    /// De dónde viene el VALOR de una columna: DERIVES_FROM hacia delante (src = columna
+    /// alcanzada, dst = fuente de la que se calcula). Ordenado de más profundo a más
+    /// cercano, que es el orden de remediación: se arregla primero el origen.
+    /// </summary>
+    public static Dictionary<string, object?> ColumnProvenance(SqliteConnection conn, string id, int depth, int limit)
+        => ColumnChain(conn, id, depth, limit, haciaFuentes: true);
+
+    /// <summary>
+    /// Qué se rompe si cambio una columna. Dos respuestas distintas que no hay que
+    /// mezclar: qué OBJETOS la referencian (con su confianza) y qué COLUMNAS se calculan
+    /// a partir de ella. Más el descargo de los objetos cuyo SQL dinámico no resolvió:
+    /// podrían tocarla y el motor no puede probarlo ni descartarlo.
+    /// </summary>
+    public static Dictionary<string, object?> ColumnImpact(SqliteConnection conn, string id, int depth, int limit)
+    {
+        ValidarColumna(conn, id, "column_impact", out var db);
+        if (depth < 1 || depth > 5) throw new McpToolException("column_impact: depth debe estar entre 1 y 5.");
+        if (limit <= 0) limit = 15;
+        limit = Math.Min(limit, 200);
+
+        // Confianza por objeto: una referencia directa basta, por muchas aristas débiles
+        // que tenga el mismo objeto a la misma columna. Nunca se promedian ni se
+        // multiplican: los errores están correlacionados, se toma el mejor caso.
+        var porObjeto = new Dictionary<string, (bool Directa, bool ViaVista, bool Estrella)>(StringComparer.Ordinal);
+        using (var cmd = conn.CreateCommand())
+        {
+            var tipos = string.Join(",", StoreSchema.ColumnRefEdgeTypes.Select(t => $"'{t}'"));
+            cmd.CommandText =
+                $"SELECT src, json_extract(props,'$.resolution'), json_extract(props,'$.via_view') " +
+                $"FROM edges WHERE dst = $id AND type IN ({tipos})";
+            cmd.Parameters.AddWithValue("$id", id);
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                var obj = StoreSchema.RollUpStep(reader.GetString(0));
+                var res = reader.IsDBNull(1) ? "" : reader.GetString(1);
+                var viaVista = !reader.IsDBNull(2);
+                porObjeto.TryGetValue(obj, out var v);
+                porObjeto[obj] = (v.Directa || res == StoreSchema.Resolution.Direct,
+                                  v.ViaVista || viaVista || res == StoreSchema.Resolution.ViaView,
+                                  v.Estrella || res == StoreSchema.Resolution.StarExpanded);
+            }
+        }
+
+        var info = LookupNodes(conn, porObjeto.Keys);
+        var objetos = porObjeto
+            .Where(p => info.TryGetValue(p.Key, out var i) && i.Label == "SqlObject")
+            .OrderByDescending(p => p.Value.Directa)
+            .ThenBy(p => info[p.Key].Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var pagina = objetos.Take(limit).Select(p =>
+        {
+            var d = new Dictionary<string, object?>
+            {
+                ["id"] = p.Key,
+                ["name"] = info[p.Key].Name,
+                ["confianza"] = p.Value.Directa ? "seguro" : "probable",
+            };
+            if (!p.Value.Directa)
+                d["motivo"] = p.Value.ViaVista ? "via vista" : "de SELECT *";
+            return d;
+        }).ToList();
+
+        var columnas = RecorrerDerives(conn, id, depth, haciaFuentes: false);
+        var columnasPagina = columnas.Take(limit)
+            .Select(c => new Dictionary<string, object?> { ["id"] = c.Id, ["hops"] = c.Hops })
+            .ToList();
+
+        var result = new Dictionary<string, object?>
+        {
+            ["id"] = id,
+            ["objects"] = pagina,
+            ["objects_total"] = objetos.Count,
+            ["columns"] = columnasPagina,
+            ["columns_total"] = columnas.Count,
+        };
+        if (objetos.Count > limit || columnas.Count > limit) result["truncated"] = true;
+
+        // Descargo incondicional, no "no hay impacto": si supiéramos qué tocan, el SQL
+        // habría resuelto. Se declara aunque haya resultados.
+        var ciegos = ContarDinamicoSinResolver(conn, db);
+        if (ciegos > 0)
+            result["desconocido"] = new Dictionary<string, object?>
+            {
+                ["objetos"] = ciegos,
+                ["motivo"] = "objetos de la misma base con SQL dinámico sin resolver: podrían referenciar esta columna y el motor no tiene arista que lo pruebe ni lo descarte.",
+            };
+
+        if (objetos.Count == 0 && columnas.Count == 0)
+            result["reason"] = "ningún objeto la referencia y ninguna columna se calcula a partir de ella en este grafo.";
+
+        return result;
+    }
+
+    private static Dictionary<string, object?> ColumnChain(SqliteConnection conn, string id, int depth, int limit, bool haciaFuentes)
+    {
+        var nombre = haciaFuentes ? "column_provenance" : "column_impact";
+        ValidarColumna(conn, id, nombre, out _);
+        if (depth < 1 || depth > 20) throw new McpToolException($"{nombre}: depth debe estar entre 1 y 20.");
+        if (limit <= 0) limit = 20;
+        limit = Math.Min(limit, 200);
+
+        var encontrados = RecorrerDerives(conn, id, depth, haciaFuentes);
+        // Más profundo primero: es el orden en que hay que arreglar, no el de descubrimiento.
+        var ordenados = encontrados.OrderByDescending(e => e.Hops).ThenBy(e => e.Id, StringComparer.Ordinal).ToList();
+        var pagina = ordenados.Take(limit)
+            .Select(e => new Dictionary<string, object?> { ["id"] = e.Id, ["hops"] = e.Hops })
+            .ToList();
+
+        var result = new Dictionary<string, object?>
+        {
+            ["id"] = id,
+            ["depth"] = depth,
+            ["sources"] = pagina,
+            ["total"] = ordenados.Count,
+        };
+        if (ordenados.Count > limit) result["truncated"] = true;
+
+        if (ordenados.Count == 0)
+        {
+            result["reason"] = "sin aristas DERIVES_FROM: el valor de esta columna no se calcula a partir de otras en este grafo (columna base, o el cálculo no se pudo resolver).";
+            var contraria = RecorrerDerives(conn, id, 1, !haciaFuentes).Count;
+            if (contraria > 0)
+                result["hint"] = haciaFuentes
+                    ? $"0 fuentes, pero {contraria} columna(s) SÍ se calculan a partir de esta - prueba column_impact."
+                    : $"0 derivadas, pero esta columna SÍ se calcula a partir de {contraria} - prueba column_provenance.";
+        }
+        return result;
+    }
+
+    /// <summary>BFS sobre DERIVES_FROM. haciaFuentes: src=frontera, se recogen dst (de
+    /// dónde viene). Al revés: dst=frontera, se recogen src (quién la consume).</summary>
+    private static List<(string Id, int Hops)> RecorrerDerives(SqliteConnection conn, string id, int depth, bool haciaFuentes)
+    {
+        var desde = haciaFuentes ? "src" : "dst";
+        var hacia = haciaFuentes ? "dst" : "src";
+
+        var visitados = new HashSet<string>(StringComparer.Ordinal) { id };
+        var frontera = new List<string> { id };
+        var salida = new List<(string, int)>();
+
+        for (var hop = 1; hop <= depth && frontera.Count > 0 && salida.Count < SafetyCap; hop++)
+        {
+            var siguiente = new List<string>();
+            for (var offset = 0; offset < frontera.Count; offset += SqliteInBatchSize)
+            {
+                var lote = frontera.Skip(offset).Take(SqliteInBatchSize).ToList();
+                using var cmd = conn.CreateCommand();
+                var marcas = string.Join(",", lote.Select((_, i) => $"$p{i}"));
+                cmd.CommandText = $"SELECT DISTINCT {hacia} FROM edges WHERE {desde} IN ({marcas}) AND type = 'DERIVES_FROM'";
+                for (var i = 0; i < lote.Count; i++) cmd.Parameters.AddWithValue($"$p{i}", lote[i]);
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    var otro = reader.GetString(0);
+                    if (!visitados.Add(otro)) continue;   // guarda de ciclos: una columna calculada de sí misma no cuelga
+                    siguiente.Add(otro);
+                    salida.Add((otro, hop));
+                }
+            }
+            frontera = siguiente;
+        }
+        return salida;
+    }
+
+    private static void ValidarColumna(SqliteConnection conn, string id, string herramienta, out string db)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            throw new McpToolException($"{herramienta}: 'id' no puede estar vacío.");
+
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT label, db FROM nodes WHERE id = $id LIMIT 1";
+        cmd.Parameters.AddWithValue("$id", id);
+        using var reader = cmd.ExecuteReader();
+        if (!reader.Read())
+            throw new McpToolException($"{herramienta}: no existe ningún nodo con id '{id}'. Resuélvelo antes con resolve_object.");
+
+        var label = reader.IsDBNull(0) ? "" : reader.GetString(0);
+        if (label != "Column")
+            throw new McpToolException($"{herramienta}: '{id}' es un nodo {label}, no una Column. Para objetos y tablas usa impact.");
+
+        // nodes.db viene NULL en los nodos Column (solo se rellena en SqlObject), así que
+        // caer al prefijo del id: "Db:table:esquema.tabla:column:Col". Sin esto el descargo
+        // de SQL dinámico no salía nunca y un 0 silencioso pasaba por "no hay riesgo".
+        db = reader.IsDBNull(1) ? "" : reader.GetString(1);
+        if (db.Length == 0)
+        {
+            var corte = id.IndexOf(':');
+            if (corte > 0) db = id[..corte];
+        }
+    }
+
+    private static int ContarDinamicoSinResolver(SqliteConnection conn, string db)
+    {
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT COUNT(*) FROM nodes WHERE label = 'SqlObject' AND db = $db AND unresolved_dynamic_sql_steps > 0";
+        cmd.Parameters.AddWithValue("$db", db);
+        return Convert.ToInt32(cmd.ExecuteScalar());
+    }
+
     private static bool HasAnyEdge(SqliteConnection conn, string id, string matchColumn)
     {
         using var cmd = conn.CreateCommand();
