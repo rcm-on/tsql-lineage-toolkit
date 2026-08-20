@@ -18,6 +18,43 @@ queda el árbol y cuál es el siguiente paso concreto.
 
 ---
 
+## 2026-08-19 (T19 + info) — El MCP cierra el bucle: seis herramientas
+
+**Estado**: `main`, árbol limpio. **297/297** y **43/43**. Publicado.
+
+Dos tareas en paralelo, con rutas disjuntas y prohibición explícita de tocar el índice de
+git —la corrección del fallo de esta mañana, ya aplicada como rutina—:
+
+- **T19**: sección del servidor MCP en los dos README. Lo primero que dice es que **el MCP
+  no se conecta a SQL Server**, porque es la confusión típica: quien no lo entienda buscará
+  dónde poner la cadena de conexión en el cliente.
+- **`store_info` + `describe_object`**. Cierran el bucle del agente: hasta ahora resolvía un
+  id y solo podía preguntar por su impacto, no **leer** el objeto ni saber si el grafo era
+  de hace una hora o de hace tres meses.
+
+Seis herramientas: `store_info`, `resolve_object`, `describe_object`, `impact`,
+`column_provenance`, `column_impact`.
+
+### Lo que no estaba previsto
+
+- El gate del registro llamaba a `store_info` contra un fixture sin tabla `meta`, y salía
+  una `SqliteException` cruda como error de protocolo en vez de `isError:true`. Envuelta en
+  `McpToolException`: un store con esquema incompleto falla ahora con mensaje claro en vez
+  de escupir SQL. Endurecimiento genuino, no parche para pasar el test.
+- **Los gates del registro volvieron a cubrir solos** las herramientas nuevas: 4 pruebas de
+  las 15 aparecieron sin que nadie las escribiera. Segunda vez que pasa hoy.
+
+### Sobre la verificación
+
+El informe de un agente es una afirmación; un comando es un hecho. Cuatro capas: el agente
+se verifica porque el encargo se lo exige con `verificacion_ejecutada` pidiendo el resultado
+**real**; se repiten los comandos; se prueba contra el store real, que es donde el corpus
+sintético no llega; y los gates cubren lo que nadie escribió. El `tablas_leidas: []` de
+`Website.ChangePassword` se comprobó contra las aristas antes de darlo por bueno: el objeto
+solo escribe. #leccion
+
+---
+
 ## 2026-08-19 (T17) — Herramientas de columna del MCP
 
 **Estado**: `main` en `a29405b`, árbol limpio. **282/282** y **43/43**.

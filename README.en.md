@@ -1,4 +1,4 @@
-# T-SQL Lineage Toolkit
+﻿# T-SQL Lineage Toolkit
 
 *Read this in [Spanish](README.md).*
 
@@ -261,13 +261,15 @@ claude mcp add tsql-lineage -- dotnet "<absolute-path>/src/TSqlParser/bin/Releas
 
 **Note:** `--columns` is **mandatory** if you want access to the column tools (`column_provenance`, `column_impact`).
 
-### The four MCP tools
+### The six MCP tools
 
 | Tool | What it does |
 | --- | --- |
+| `store_info` | A fact sheet for the graph itself: database, generation date, counts per node and edge type, and how many objects have unresolved dynamic SQL. Warns when the graph is over 30 days old: **a stale store lies silently**. |
 | `resolve_object` | Converts a loose name (e.g. `OrderLines`, `usp_GetCustomer`) into the canonical id the graph uses (e.g. `MyDb:table:sales.orderlines`). **Use this first**: the other tools need an exact id and don't guess. |
 | `impact` | Given a canonical id, walks the lineage graph (CALLS, READS_FROM, WRITES_TO, READS_COLUMN, WRITES_COLUMN) and answers *"what breaks if I change this?"* (downstream) or *"what does this depend on?"* (upstream). |
 | `column_provenance` | Given a column id, answers *"where does the value of this column come from?"*: traces DERIVES_FROM back to the base columns it's computed from. |
+| `describe_object` | An object's fact sheet: type, complexity, step count, whether it has error handling, cursors or transactions, which tables it reads and writes, and who it calls and who calls it. |
 | `column_impact` | Given a column id, answers *"what breaks if I change this column?"*: returns both the objects that reference it AND the columns whose value depends on it. |
 
 ### Demo in 30 seconds

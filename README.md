@@ -1,4 +1,4 @@
-# T-SQL Lineage Toolkit
+﻿# T-SQL Lineage Toolkit
 
 *Read this in [English](README.en.md).*
 
@@ -260,13 +260,15 @@ claude mcp add tsql-lineage -- dotnet "<ruta-absoluta>/src/TSqlParser/bin/Releas
 
 **Nota:** `--columns` es **obligatorio** si quieres acceso a las herramientas de columna (`column_provenance`, `column_impact`).
 
-### Las cuatro herramientas MCP
+### Las seis herramientas MCP
 
 | Herramienta | Qué hace |
 | --- | --- |
+| `store_info` | Ficha del propio grafo: base, fecha de generación, conteos por tipo de nodo y arista, y cuántos objetos tienen SQL dinámico sin resolver. Avisa si el grafo lleva más de 30 días sin regenerarse: **un store viejo miente en silencio**. |
 | `resolve_object` | Convierte un nombre suelto (e.g. `OrderLines`, `usp_GetCustomer`) en el id canónico que el grafo usa (e.g. `MyDb:table:sales.orderlines`). **Úsalo primero**: las demás herramientas necesitan un id exacto y no adivinan. |
 | `impact` | Dado un id canónico, camina el grafo de lineage (CALLS, READS_FROM, WRITES_TO, READS_COLUMN, WRITES_COLUMN) y responde *"¿qué se rompe si cambio esto?"* (downstream) o *"¿qué depende esto?"* (upstream). |
 | `column_provenance` | Dado un id de columna, responde *"¿de dónde sale el valor de esta columna?"*: remonta DERIVES_FROM hasta las columnas base de las que se computa. |
+| `describe_object` | La ficha de un objeto: tipo, complejidad, número de pasos, si tiene manejo de errores, cursores o transacciones, qué tablas lee y escribe, y a quién llama y quién le llama. |
 | `column_impact` | Dado un id de columna, responde *"¿qué se rompe si cambio esta columna?"*: devuelve los objetos que la referencian Y las columnas cuyo valor depende de ella. |
 
 ### Demo en 30 segundos
