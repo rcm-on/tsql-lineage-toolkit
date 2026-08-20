@@ -276,6 +276,205 @@ public static class McpTools
         return result;
     }
 
+    /// <summary>
+    /// Vistazo del store: metadatos de generación, tamaño por label/type, y cuánto SQL
+    /// dinámico quedó sin resolver. La razón de ser es el aviso de antigüedad: un store
+    /// generado hace semanas responde con normalidad a cualquier consulta y miente en
+    /// silencio sobre el estado actual de la base.
+    /// </summary>
+    public static Dictionary<string, object?> StoreInfo(SqliteConnection conn)
+    {
+        Dictionary<string, string> meta;
+        List<(string Name, int Count)> nodosPorLabel, aristasPorType;
+        int ciegos;
+        try
+        {
+            meta = ReadMeta(conn);
+            nodosPorLabel = GroupCount(conn, "nodes", "label");
+            aristasPorType = GroupCount(conn, "edges", "type");
+            ciegos = ScalarInt(conn,
+                "SELECT COUNT(*) FROM nodes WHERE label = 'SqlObject' AND unresolved_dynamic_sql_steps > 0");
+        }
+        catch (SqliteException ex)
+        {
+            // Un store sin la tabla meta o sin las columnas esperadas no es "0 en silencio":
+            // es un esquema distinto o incompleto, y hay que decirlo, no fingir que no hay datos.
+            throw new McpToolException($"store_info: el esquema del store no es el esperado ({ex.Message}).");
+        }
+
+        var truncated = nodosPorLabel.Count > 8 || aristasPorType.Count > 8;
+
+        var result = new Dictionary<string, object?>
+        {
+            [StoreSchema.MetaKeys.Database] = meta.GetValueOrDefault(StoreSchema.MetaKeys.Database),
+            [StoreSchema.MetaKeys.Project] = meta.GetValueOrDefault(StoreSchema.MetaKeys.Project),
+            [StoreSchema.MetaKeys.GeneratedAt] = meta.GetValueOrDefault(StoreSchema.MetaKeys.GeneratedAt),
+            [StoreSchema.MetaKeys.Format] = meta.GetValueOrDefault(StoreSchema.MetaKeys.Format),
+            [StoreSchema.MetaKeys.NodeCount] = ParseIntOr(meta.GetValueOrDefault(StoreSchema.MetaKeys.NodeCount)),
+            [StoreSchema.MetaKeys.EdgeCount] = ParseIntOr(meta.GetValueOrDefault(StoreSchema.MetaKeys.EdgeCount)),
+            ["nodes_by_label"] = nodosPorLabel.Take(8)
+                .Select(x => new Dictionary<string, object?> { ["label"] = x.Name, ["count"] = x.Count }).ToList(),
+            ["edges_by_type"] = aristasPorType.Take(8)
+                .Select(x => new Dictionary<string, object?> { ["type"] = x.Name, ["count"] = x.Count }).ToList(),
+            ["objetos_con_dinamico_sin_resolver"] = ciegos,
+        };
+        if (truncated) result["truncated"] = true;
+
+        if (meta.TryGetValue(StoreSchema.MetaKeys.GeneratedAt, out var genRaw) &&
+            DateTimeOffset.TryParse(genRaw, out var generadoEn))
+        {
+            var dias = (int)(DateTimeOffset.Now - generadoEn).TotalDays;
+            result["dias_desde_generado"] = dias;
+            if (dias > 30)
+                result["aviso"] = $"el store se generó hace {dias} días: puede no reflejar el estado actual de la base. Considera regenerarlo.";
+        }
+
+        return result;
+    }
+
+    private enum EscalarTipo { Texto, Entero, Booleano }
+
+    private static readonly (string Column, EscalarTipo Tipo)[] ObjectScalarColumns =
+    [
+        ("object_type", EscalarTipo.Texto),
+        ("schema_name", EscalarTipo.Texto),
+        ("cyclomatic_complexity", EscalarTipo.Entero),
+        ("total_steps", EscalarTipo.Entero),
+        ("dynamic_sql_steps", EscalarTipo.Entero),
+        ("unresolved_dynamic_sql_steps", EscalarTipo.Entero),
+        ("max_nesting", EscalarTipo.Entero),
+        ("has_error_handling", EscalarTipo.Booleano),
+        ("has_cursor", EscalarTipo.Booleano),
+        ("has_transaction", EscalarTipo.Booleano),
+    ];
+
+    /// <summary>
+    /// La ficha de un SqlObject: lo que resolve_object no puede darte porque solo apunta
+    /// ids, y lo que impact tampoco porque solo camina aristas. Escalares del nodo (NULLs
+    /// omitidos), tablas leídas/escritas y a quién llama / quién lo llama.
+    /// </summary>
+    public static Dictionary<string, object?> DescribeObject(SqliteConnection conn, string id, int limit)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+            throw new McpToolException("describe_object: 'id' no puede estar vacío.");
+        if (limit <= 0) limit = 10;
+        limit = Math.Min(limit, 200);
+
+        string label, name;
+        var columnasSql = string.Join(", ", ObjectScalarColumns.Select(c => c.Column));
+        var escalares = new Dictionary<string, object?>();
+        using (var cmd = conn.CreateCommand())
+        {
+            cmd.CommandText = $"SELECT label, name, {columnasSql} FROM nodes WHERE id = $id LIMIT 1";
+            cmd.Parameters.AddWithValue("$id", id);
+            using var reader = cmd.ExecuteReader();
+            if (!reader.Read())
+                throw new McpToolException($"describe_object: no existe ningún nodo con id '{id}'. Resuélvelo antes con resolve_object.");
+
+            label = reader.IsDBNull(0) ? "" : reader.GetString(0);
+            name = reader.IsDBNull(1) ? id : reader.GetString(1);
+
+            if (label != "SqlObject")
+                throw new McpToolException(
+                    $"describe_object: '{id}' es un nodo {label}, no un SqlObject. Para Table usa impact; para Column usa column_impact o column_provenance.");
+
+            for (var i = 0; i < ObjectScalarColumns.Length; i++)
+            {
+                var (columna, tipo) = ObjectScalarColumns[i];
+                var ordinal = 2 + i;
+                if (reader.IsDBNull(ordinal)) continue;
+                escalares[columna] = tipo switch
+                {
+                    EscalarTipo.Texto => reader.GetString(ordinal),
+                    EscalarTipo.Booleano => reader.GetInt32(ordinal) != 0,
+                    _ => (object)reader.GetInt64(ordinal),
+                };
+            }
+        }
+
+        var result = new Dictionary<string, object?> { ["id"] = id, ["name"] = name };
+        foreach (var kv in escalares) result[kv.Key] = kv.Value;
+
+        var truncated = false;
+        AgregarLista(result, "tablas_leidas", NombresDeAristas(conn, id, "READS_FROM", srcEsObjeto: false), limit, ref truncated);
+        AgregarLista(result, "tablas_escritas", NombresDeAristas(conn, id, "WRITES_TO", srcEsObjeto: false), limit, ref truncated);
+        AgregarLista(result, "llama_a", NombresDeAristas(conn, id, "CALLS", srcEsObjeto: true), limit, ref truncated);
+        AgregarLista(result, "llamado_por", NombresDeAristasInversa(conn, id, "CALLS"), limit, ref truncated);
+        if (truncated) result["truncated"] = true;
+
+        return result;
+    }
+
+    private static void AgregarLista(Dictionary<string, object?> result, string clave, List<string> nombres, int limit, ref bool truncated)
+    {
+        var ordenados = nombres.Distinct(StringComparer.Ordinal).OrderBy(n => n, StringComparer.OrdinalIgnoreCase).ToList();
+        result[clave] = ordenados.Take(limit).ToList();
+        if (ordenados.Count > limit) truncated = true;
+    }
+
+    // WRITES_TO/READS_FROM llevan src granular a Step ("<objId>#stepN"); CALLS engancha
+    // el SqlObject directamente en src.
+    private static List<string> NombresDeAristas(SqliteConnection conn, string id, string type, bool srcEsObjeto)
+    {
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = srcEsObjeto
+            ? "SELECT DISTINCT dst FROM edges WHERE src = $id AND type = $type"
+            : "SELECT DISTINCT dst FROM edges WHERE (src = $id OR src LIKE $id || '#%') AND type = $type";
+        cmd.Parameters.AddWithValue("$id", id);
+        cmd.Parameters.AddWithValue("$type", type);
+        var ids = new List<string>();
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read()) ids.Add(reader.GetString(0));
+
+        var info = LookupNodes(conn, ids);
+        return ids.Select(i => info.TryGetValue(i, out var v) ? v.Name : i).ToList();
+    }
+
+    private static List<string> NombresDeAristasInversa(SqliteConnection conn, string id, string type)
+    {
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT DISTINCT src FROM edges WHERE dst = $id AND type = $type";
+        cmd.Parameters.AddWithValue("$id", id);
+        cmd.Parameters.AddWithValue("$type", type);
+        var ids = new List<string>();
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read()) ids.Add(reader.GetString(0));
+
+        var info = LookupNodes(conn, ids);
+        return ids.Select(i => info.TryGetValue(i, out var v) ? v.Name : i).ToList();
+    }
+
+    private static Dictionary<string, string> ReadMeta(SqliteConnection conn)
+    {
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = "SELECT key, value FROM meta";
+        var result = new Dictionary<string, string>(StringComparer.Ordinal);
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+            result[reader.GetString(0)] = reader.IsDBNull(1) ? "" : reader.GetString(1);
+        return result;
+    }
+
+    private static object? ParseIntOr(string? s) => int.TryParse(s, out var n) ? n : s;
+
+    private static int ScalarInt(SqliteConnection conn, string sql)
+    {
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = sql;
+        return Convert.ToInt32(cmd.ExecuteScalar());
+    }
+
+    private static List<(string Name, int Count)> GroupCount(SqliteConnection conn, string table, string column)
+    {
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = $"SELECT {column}, COUNT(*) FROM {table} GROUP BY {column} ORDER BY COUNT(*) DESC, {column} ASC";
+        var result = new List<(string, int)>();
+        using var reader = cmd.ExecuteReader();
+        while (reader.Read())
+            result.Add((reader.IsDBNull(0) ? "" : reader.GetString(0), reader.GetInt32(1)));
+        return result;
+    }
+
     private static Dictionary<string, object?> ColumnChain(SqliteConnection conn, string id, int depth, int limit, bool haciaFuentes)
     {
         var nombre = haciaFuentes ? "column_provenance" : "column_impact";

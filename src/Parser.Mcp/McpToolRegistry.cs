@@ -12,5 +12,7 @@ public static class McpToolRegistry
         new ImpactTool(),
         new ColumnProvenanceTool(),
         new ColumnImpactTool(),
+        new StoreInfoTool(),
+        new DescribeObjectTool(),
     ];
 }
