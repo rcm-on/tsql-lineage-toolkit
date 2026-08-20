@@ -18,6 +18,47 @@ queda el árbol y cuál es el siguiente paso concreto.
 
 ---
 
+## 2026-08-19 (T17) — Herramientas de columna del MCP
+
+**Estado**: `main` en `a29405b`, árbol limpio. **282/282** y **43/43**.
+
+`column_provenance` y `column_impact`, nacidas ya dentro de `IMcpTool`. Son dos preguntas
+distintas y a propósito no se mezclan: de dónde sale el **valor** de una columna
+(`DERIVES_FROM` hacia las fuentes, ordenado de más profundo a más cercano = orden de
+remediación), frente a qué se rompe al cambiarla (objetos que la referencian con su
+confianza, más columnas derivadas). La confianza por objeto toma el **mejor caso**: una
+referencia directa basta por muchas aristas débiles que tenga el mismo objeto.
+
+### Lo que no estaba previsto
+
+- **`nodes.db` viene NULL en los nodos `Column`.** El descargo de SQL dinámico sin resolver
+  contaba 0 y **no se emitía nunca**: un "no hay riesgo" silencioso, exactamente el fallo
+  que la regla del cero culpable existe para cazar. La base se deduce ahora del prefijo del
+  id. Hay test que lo fija. #leccion
+- **`out/graph_full.db` del repo está obsoleto**: esquema anterior, sin `resolution` ni
+  `unresolved_dynamic_sql_steps`. La primera inspección salió con 409 aristas y `resolution`
+  a NULL, y era el instrumento, no el dato. Hay que regenerarlo.
+- **Los ids de tabla van en minúsculas** (`dbo.origen`); el nombre de columna conserva su
+  caja. Seis tests rojos hasta darse cuenta.
+- **Los gates del registro se aplicaron solos** a las dos herramientas nuevas: 14 pruebas
+  más en vez de 10. Era el motivo de escribirlos recorriendo `McpToolRegistry.Default`.
+
+### Verificado contra el store real
+
+`LineProfit` sale de `PickedQuantity`, `UnitPrice` y `LastCostPrice` — la fórmula del
+beneficio. Respuestas de 745 y 353 bytes, dentro del presupuesto de 2 KB.
+
+### Siguiente
+
+`describe_object` antes que T18: hoy el agente resuelve un id y **no puede leer el objeto**.
+Es el peldaño que falta y es barato. Luego T18 (`diff_impact`), T19 y T20.
+
+**Aparcado**: `agent-context-kit` (repo aparte). La investigación del estado del arte tumbó
+su tesis — `AGENTS.md` ya es estándar de la Linux Foundation y `ctxlint`/`agents-lint` ya
+validan contexto contra el código. Queda como está, sin trabajo pendiente aquí.
+
+---
+
 ## 2026-08-19 (cierre) — Fase 0 completa: 0.8, 0.9 y documentación multi-modelo
 
 **Estado**: `main` en `f478048`, árbol limpio. **268/268** y **43/43**.
