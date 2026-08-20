@@ -223,6 +223,71 @@ WHERE label='Step' AND action IN ('DELETE','TRUNCATE','DROP') GROUP BY action;
 
 Consultas listas en `scripts/lineage-queries.sql` (`node scripts/run-query.js @audit_dynamic_sql`), o abre `graph_full.db` en DB Browser / DBeaver.
 
+## Servidor MCP — preguntas a través de Claude Code
+
+**¿Qué es?** Un servidor que expone el grafo ya generado a través de JSON-RPC sobre stdio, para que un agente (Claude Code, Cursor…) consulte el lineage sin cargar el fichero en su contexto. Responde preguntas en lenguaje natural como *"¿qué se rompe si cambio esta columna?"* o *"¿de dónde sale su valor?"* contra `graph_full.db` — el grafo compilado en SQLite.
+
+**Aviso importante: el MCP NO se conecta a SQL Server.** Solo abre en lectura el `graph_full.db` que ya existe. La conexión a la base ocurre antes, en la fase de extracción (`extract` o `from-sql`). Si buscas dónde poner la cadena de conexión en el cliente, no la encontrarás porque no existe — el grafo es el único artefacto que necesita.
+
+### Las tres etapas
+
+```
+Origen (BD viva o .sql)
+  ↓
+Análisis: --columns --sqlite
+  ↓ (produce graph_full.db)
+Servidor MCP: mcp --store
+  ↓ (disponible en Claude Code)
+Preguntas en lenguaje natural
+```
+
+1. **Extraer** desde una BD viva (`extract`) o desde ficheros SQL (`from-sql`).
+2. **Analizar** con `--columns --sqlite` para producir el `graph_full.db` consultable.
+3. **Exponer** con `mcp --store` para que Claude y otros agentes formulen preguntas contra él.
+
+### Comandos exactos
+
+```bash
+# Construir el proyecto
+dotnet build ParserGeneral.sln -c Release
+
+# Generar el grafo con columnas y base SQLite (obligatorio --columns para herramientas de columna)
+dotnet src/TSqlParser/bin/Release/net10.0/TSqlParser.dll input.json out/graph_full.json --columns --sqlite
+
+# Registrar el servidor MCP en Claude Code
+claude mcp add tsql-lineage -- dotnet "<ruta-absoluta>/src/TSqlParser/bin/Release/net10.0/TSqlParser.dll" mcp --store "<ruta-absoluta>/out/graph_full.db"
+```
+
+**Nota:** `--columns` es **obligatorio** si quieres acceso a las herramientas de columna (`column_provenance`, `column_impact`).
+
+### Las cuatro herramientas MCP
+
+| Herramienta | Qué hace |
+| --- | --- |
+| `resolve_object` | Convierte un nombre suelto (e.g. `OrderLines`, `usp_GetCustomer`) en el id canónico que el grafo usa (e.g. `MyDb:table:sales.orderlines`). **Úsalo primero**: las demás herramientas necesitan un id exacto y no adivinan. |
+| `impact` | Dado un id canónico, camina el grafo de lineage (CALLS, READS_FROM, WRITES_TO, READS_COLUMN, WRITES_COLUMN) y responde *"¿qué se rompe si cambio esto?"* (downstream) o *"¿qué depende esto?"* (upstream). |
+| `column_provenance` | Dado un id de columna, responde *"¿de dónde sale el valor de esta columna?"*: remonta DERIVES_FROM hasta las columnas base de las que se computa. |
+| `column_impact` | Dado un id de columna, responde *"¿qué se rompe si cambio esta columna?"*: devuelve los objetos que la referencian Y las columnas cuyo valor depende de ella. |
+
+### Demo en 30 segundos
+
+```
+Usuario: ¿Qué es la columna UnitPrice en OrderLines?
+Claude (con resolve_object): Encontré: WideWorldImporters:table:sales.orderlines:column:UnitPrice
+
+Usuario: ¿Qué se rompe si cambio UnitPrice?
+Claude (con column_impact): Se afectan 5 procedimientos y 3 columnas derivadas.
+
+Usuario: ¿De dónde viene el valor de UnitPrice?
+Claude (con column_provenance): Es una columna base; nada la computa.
+```
+
+### Dos avisos de honestidad
+
+1. **Un resultado vacío siempre lleva contexto.** Toda respuesta vacía (sin objetos afectados, sin fuentes) viene con un campo `reason` explicando por qué. Si la pregunta contraria sí tiene respuesta, viene un `hint` sugiriendo qué preguntar. **Nunca leas un vacío como "no hay impacto"** — es una herramienta rota si no dice por qué está vacía.
+
+2. **`column_impact` puede devolver `desconocido`.** Son objetos en la misma base cuyo SQL dinámico nunca se resolvió estáticamente, así que *podrían* tocar la columna sin que exista arista que lo pruebe o lo descarte. No es "no se encontró nada" — es un descargo permanente sobre lo que el análisis estático **no puede ver**.
+
 ## Dashboard visual (offline, sin build)
 
 Abre [`dashboard/index.html`](dashboard/) con doble clic, **arrastra tu `graph_full.json`** y explora al instante:

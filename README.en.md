@@ -224,6 +224,71 @@ WHERE label='Step' AND action IN ('DELETE','TRUNCATE','DROP') GROUP BY action;
 
 Ready-made queries in `scripts/lineage-queries.sql` (`node scripts/run-query.js @audit_dynamic_sql`), or open `graph_full.db` in DB Browser / DBeaver.
 
+## MCP Server — ask questions through Claude Code
+
+**What is it?** A server that exposes the already-built graph through JSON-RPC over stdio, so an agent (Claude Code, Cursor…) can query the lineage without loading the file into its context. It answers natural-language questions like *"what breaks if I change this column?"* or *"where does its value come from?"* against `graph_full.db` — the compiled SQLite graph.
+
+**Important note: the MCP does NOT connect to SQL Server.** It only opens `graph_full.db` for reading — the graph you've already built. The connection to the database happens earlier, in the extraction phase (`extract` or `from-sql`). If you're looking for where to put a connection string in the client, you won't find one — the graph is the only artifact you need.
+
+### The three stages
+
+```
+Source (live DB or .sql files)
+  ↓
+Analysis: --columns --sqlite
+  ↓ (produces graph_full.db)
+MCP server: mcp --store
+  ↓ (available in Claude Code)
+Natural-language questions
+```
+
+1. **Extract** from a live database (`extract`) or from SQL files (`from-sql`).
+2. **Analyze** with `--columns --sqlite` to produce the queryable `graph_full.db`.
+3. **Expose** with `mcp --store` so Claude and other agents can ask questions against it.
+
+### Exact commands
+
+```bash
+# Build the project
+dotnet build ParserGeneral.sln -c Release
+
+# Generate the graph with columns and SQLite database (--columns is mandatory for column tools)
+dotnet src/TSqlParser/bin/Release/net10.0/TSqlParser.dll input.json out/graph_full.json --columns --sqlite
+
+# Register the MCP server with Claude Code
+claude mcp add tsql-lineage -- dotnet "<absolute-path>/src/TSqlParser/bin/Release/net10.0/TSqlParser.dll" mcp --store "<absolute-path>/out/graph_full.db"
+```
+
+**Note:** `--columns` is **mandatory** if you want access to the column tools (`column_provenance`, `column_impact`).
+
+### The four MCP tools
+
+| Tool | What it does |
+| --- | --- |
+| `resolve_object` | Converts a loose name (e.g. `OrderLines`, `usp_GetCustomer`) into the canonical id the graph uses (e.g. `MyDb:table:sales.orderlines`). **Use this first**: the other tools need an exact id and don't guess. |
+| `impact` | Given a canonical id, walks the lineage graph (CALLS, READS_FROM, WRITES_TO, READS_COLUMN, WRITES_COLUMN) and answers *"what breaks if I change this?"* (downstream) or *"what does this depend on?"* (upstream). |
+| `column_provenance` | Given a column id, answers *"where does the value of this column come from?"*: traces DERIVES_FROM back to the base columns it's computed from. |
+| `column_impact` | Given a column id, answers *"what breaks if I change this column?"*: returns both the objects that reference it AND the columns whose value depends on it. |
+
+### Demo in 30 seconds
+
+```
+User: What is the UnitPrice column in OrderLines?
+Claude (with resolve_object): Found: WideWorldImporters:table:sales.orderlines:column:UnitPrice
+
+User: What breaks if I change UnitPrice?
+Claude (with column_impact): 5 procedures and 3 derived columns are affected.
+
+User: Where does UnitPrice's value come from?
+Claude (with column_provenance): It's a base column; nothing computes it.
+```
+
+### Two honesty disclaimers
+
+1. **An empty result always comes with context.** Every empty response (no affected objects, no sources) carries a `reason` field explaining why. If the opposite question would have an answer, it includes a `hint` suggesting what to ask instead. **Never read an empty result as "no impact"** — it's a broken tool if it doesn't tell you why it's empty.
+
+2. **`column_impact` may return `desconocido` (unknown).** These are objects in the same database whose dynamic SQL never resolved statically, so they *could* touch the column without an edge to prove or disprove it. It's not "nothing found" — it's a standing disclaimer about what static analysis **cannot see**.
+
 ## Visual dashboard (offline, no build)
 
 Double-click to open [`dashboard/index.html`](dashboard/), **drag your `graph_full.json`** onto it, and explore instantly:
