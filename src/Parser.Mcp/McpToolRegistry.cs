@@ -14,6 +14,7 @@ public static class McpToolRegistry
         new ColumnImpactTool(),
         new BlindSpotsTool(),
         new DiffImpactTool(),
+        new RiskTool(),
         new StoreInfoTool(),
         new DescribeObjectTool(),
     ];

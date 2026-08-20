@@ -183,9 +183,12 @@ public static class SqliteExporter
                 // Full property bag as JSON so the .db is lossless vs graph_full.json:
                 // every node detail (condition_path, target_name, ...) stays queryable
                 // via json_extract(props,...) - including the promoted keys above.
-                pProps.Value = n.Properties.Count > 0
-                    ? JsonSerializer.Serialize(n.Properties)
-                    : (object)DBNull.Value;
+                // "labels" is added here (not stored in n.Properties): the `label` column
+                // only ever kept Labels[0], so a node with two labels (e.g. SqlObject +
+                // Process) silently lost the second one. Additive: existing stores/readers
+                // that only look at `label` are unaffected.
+                var propsWithLabels = new Dictionary<string, object>(n.Properties) { ["labels"] = n.Labels };
+                pProps.Value = JsonSerializer.Serialize(propsWithLabels);
                 nc.ExecuteNonQuery();
             }
         }
