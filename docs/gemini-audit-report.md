@@ -1,10 +1,10 @@
-# Informe de Auditoría — Gemini
+﻿# Informe de Auditoría — Gemini
 
 **Ejercicio:** `docs/auditor-challenge.md`. Generado en ciego (sin ver el informe de Claude).
 **Fuentes usadas:**
 - `out/graph_full.nodes/` — NodeStore de WideWorldImporters.
 - `eval/bad-practices/graph_full.nodes/` — NodeStore del corpus `BadPracticesDB` (generado por Claude).
-- `eval/bad-practices/expected-findings.json` — Oráculo de severidad.
+- `eval/bad-practices/expected-findings.json` — Referencia de severidad.
 
 ---
 

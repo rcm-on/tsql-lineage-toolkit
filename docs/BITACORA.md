@@ -1,4 +1,4 @@
----
+﻿---
 title: Bitácora
 description: Qué cambió en cada sesión, lo más reciente arriba.
 read_when: Para saber qué pasó en las últimas sesiones antes de continuar el trabajo.
@@ -70,7 +70,7 @@ diagnóstico a mano.
 
 ### SIGUIENTE TAREA, y es más importante que las 40 restantes
 
-**El usuario final no tiene el oráculo.** Nosotros medimos el recall contra DNN y WWI
+**El usuario final no tiene la referencia de contraste.** Nosotros medimos el recall contra DNN y WWI
 porque tenemos su catálogo. Un cliente ejecuta el motor sobre su base y **no sabe si le
 faltan 40 o 400**: el motor emite lo que ve y calla lo que no. Es un silencio en el
 producto, no en el desarrollo — y más grave que las 40, porque las 40 ya las conocemos.

@@ -40,6 +40,6 @@ Detalle completo del plan en `docs/plan-arquitectura.md`, y de la última sesió
 
 - `test/pr-impact-demo`: única copia publicada de documentos que hoy solo viven en
   `notes/`. Rescatar a `docs/` o dejar como archivo.
-- Blog (`quarz-blog`): 35 sustituciones aplicadas y sin commitear; falta decidir el rótulo
-  `Gate / Oráculo` del diagrama Mermaid.
+- Blog (`quarz-blog`): 35 sustituciones aplicadas y sin commitear. El rótulo del diagrama
+  Mermaid queda **`Gate / Referencia`**, coherente con la terminología del repositorio.
 - NuGet: aparcado. Cuando toque, `0.1.0-preview.1`.

@@ -1,4 +1,4 @@
-# Guía de verificación — qué hace falta para dar el OK a un cambio
+﻿# Guía de verificación — qué hace falta para dar el OK a un cambio
 
 Checklist operativo, pensado para que **cualquier modelo** (no hace falta uno caro)
 pueda ejecutarlo mecánicamente: cada paso trae el comando exacto, la salida
@@ -105,7 +105,7 @@ nuevo, añade su fila aquí en el mismo cambio.
 | `ColumnRecallGateTests.cs` | Lineage de columna contra catálogo externo, corpus DNN Platform/DotNetNuke (739 módulos + 128 tablas) — el trinquete más grande del proyecto | **Sí** (`LiveSql`) |
 | `ViewLineageCatalogTests.cs` | Lineage a través de vistas vs. `sys.dm_sql_referenced_entities` en vivo | **Sí** (`LiveSql`) |
 | `AuditorChallengeGateTests.cs` | Contrasta afirmaciones en prosa de `docs/claude-audit-report.md`/`docs/gemini-audit-report.md` contra cifras reales | **Sí** (`LiveSql`) |
-| `BadPracticesGateTests.cs` | Gate del corpus `eval/bad-practices/` (anti-patrones con oráculo `expected-findings.json`) | No |
+| `BadPracticesGateTests.cs` | Gate del corpus `eval/bad-practices/` (anti-patrones con referencia `expected-findings.json`) | No |
 | `CommunityEdgeCaseGateTests.cs` | Gate del corpus `eval/community-edge-cases/` (MERGE, CTEs recursivas, SQL dinámico, cursores) | No |
 | `CteUnionFilterTests.cs` | `WHERE` dentro de CTE o de una rama de `UNION` (arreglo #11) | No |
 | `DynamicExecViaVariableTests.cs` | `EXECUTE @variable` cross-database (patrón de Ola Hallengren) | No |

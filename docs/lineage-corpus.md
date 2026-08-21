@@ -1,8 +1,8 @@
-# Corpus Externos para Validación de Lineage
+﻿# Corpus Externos para Validación de Lineage
 
-Este documento cataloga repositorios y herramientas externas que pueden servir como oráculos o corpus de prueba para validar y mejorar la completitud y corrección de nuestro analizador de lineage T-SQL.
+Este documento cataloga repositorios y herramientas externas que pueden servir como referencia de contraste o corpus de prueba para validar y mejorar la completitud y corrección de nuestro analizador de lineage T-SQL.
 
-| Repositorio / Herramienta | URL | Formato Ground-Truth | ¿Oráculo Independiente? | Cómo nos sirve | Esfuerzo de Integración |
+| Repositorio / Herramienta | URL | Formato Ground-Truth | ¿Referencia independiente? | Cómo nos sirve | Esfuerzo de Integración |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **dbt Core** | [github.com/dbt-labs/dbt-core](https://github.com/dbt-labs/dbt-core) | `manifest.json` (JSON) | **Sí** | **Validación de lineage de tabla/vista a gran escala.** El `manifest.json` contiene un grafo de dependencias (`depends_on`) entre todos los modelos de un proyecto. Podemos comparar nuestro grafo de `READS_FROM` a nivel de objeto con el suyo. | **Medio:** Requiere ejecutar un proyecto `dbt` para generar el manifest. Luego, un script debe parsear el JSON y mapear los IDs de `dbt` a nuestros IDs de `SqlObject`/`Table`. |
 | **sqlglot** | github.com/tobymao/sqlglot | `tests/fixtures/optimizer/lineage.json` (JSON) | **Sí** (muy robusto) | **Validación de lineage de columna (alta prioridad).** Este fichero contiene cientos de casos de prueba con SQL y el lineage de columna esperado en un formato estructurado (`"downstream": "col", "upstreams": ["col1", "col2"]`). Es ideal para crear un gate de regresión específico para `DERIVES_FROM`. | **Bajo:** El formato JSON es fácil de parsear. Se puede crear un script (`node` o `dotnet`) que itere sobre los casos, ejecute nuestro analizador y compare el resultado con el esperado. |

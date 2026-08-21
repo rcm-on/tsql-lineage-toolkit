@@ -36,5 +36,10 @@ updated: 2026-08-19
   convergencia". Medido: los cuatro patrones ciegos de columna eran un solo mecanismo al
   que le faltaba la mitad, y arreglarlo ahí se llevó de golpe lo que iban a ser cuatro
   cambios.
+- **Terminología: "referencia", nunca "oráculo".** La fuente de verdad contra la que se
+  contrasta se llama **catálogo** cuando es el de SQL Server, y **referencia** o **fuente de
+  referencia** en general; la categoría de pruebas contra base viva es `LiveSql`. "Oráculo"
+  suena a adivinación y describe justo lo contrario de lo que hace: un contraste
+  determinista y verificable. La palabra ya se retiró una vez y volvió a colarse.
 - **Nada de atribución de IA** en commits ni PRs. Autor: Ramón Campos Martín.
 - **Comentarios escuetos.** El porqué va al commit o a `notes/`, no a un bloque de `///`.
