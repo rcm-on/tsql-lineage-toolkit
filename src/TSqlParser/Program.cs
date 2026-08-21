@@ -450,6 +450,12 @@ if (positional.Count < 2)
     Console.Error.WriteLine("       TSqlParser bench-make <store_dir.nodes> <bench_dir>  |  bench-grade <bench_dir> <answers_dir>");
     Console.Error.WriteLine("       TSqlParser blind-refs <corpusId> <salida.csv>");
     Console.Error.WriteLine("       TSqlParser mcp --store <graph_full.db>");
+
+    Console.Error.WriteLine("       TSqlParser recall <database> [--server <server>] [--out <ciegas.csv>]");
+    Console.Error.WriteLine("       TSqlParser corpus [list | refresh <id> [--server <server>] [--write]]");
+    Console.Error.WriteLine("       TSqlParser capture-plans <database> <outputDir> [--server <server>] [--exec-file <path.sql>] [--wait-seconds N]");
+    Console.Error.WriteLine("       TSqlParser enrich-from-plans <graph.json> <output_graph.json> <plan1.xml> [plan2.xml ...]");
+    Console.Error.WriteLine("       TSqlParser plan-summary <plan.xml> [plan2.xml ...]");
     return 1;
 }
 
