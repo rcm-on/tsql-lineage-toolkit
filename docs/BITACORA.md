@@ -18,6 +18,91 @@ queda el árbol y cuál es el siguiente paso concreto.
 
 ---
 
+## 2026-08-19 (tarde) — Nueve herramientas MCP y diagnóstico de las 90 ciegas
+
+**Estado al cortar**: `main` en `daaa5a3`. Publicado hasta `a4cb3eb`. **330/330** en la
+última pasada estable (`e1594b8`). Hay un agente de `AstWalker` **en vuelo**: ver abajo.
+
+### Herramientas MCP: de 2 a 9
+
+`blind_spots`, `diff_impact` y `risks` sobre las seis anteriores.
+
+`risks` era el bloqueante del informe de auditoría, y exigía una decisión: `RiskAnalyzer`
+trabaja sobre `GraphPayload` y el MCP solo tiene SQLite. Se decidió **rehidratar**, no
+reescribir las reglas en SQL (dos copias divergen). La cadena completa:
+
+1. `SqliteExporter` guardaba solo `Labels[0]`; en el grafo real hay **108 nodos con dos
+   labels**. Ahora `props` lleva la lista entera.
+2. `GraphRehydrator` en `Parser.Graph`, al lado del exportador.
+3. **Gate de fidelidad**, que es lo que lo convierte en hecho: la prueba fuerte es que
+   `RiskAnalyzer` produce el **mismo conjunto exacto de hallazgos** sobre el grafo original
+   y sobre el rehidratado.
+4. `risks` con la procedencia de la evidencia en el contrato desde el primer día:
+   `datos_de_ejecucion` detectado por las props de `PlanEnricher`, y advertencia explícita
+   de que sin planes el orden es estructural.
+
+`Parser.Mcp` pasa a referenciar `Parser.Graph` (por `ChangeMapDiff`). No invierte la
+flecha. `docs/ARQUITECTURA.md` actualizado.
+
+### Diagnóstico de las 90 ciegas — el hallazgo del día
+
+**79 de 90 aparecen literalmente en el SQL**: no son casos exóticos, es que el walker no
+recorre el constructo. Reproducido con 5 procedimientos mínimos:
+
+| Patrón | Estado | Ciegas en DNN |
+|---|---|---|
+| Subconsulta escalar en la lista `SELECT` | **CIEGO** | 38 |
+| `IF EXISTS(SELECT ...)` | **CIEGO** | 12 |
+| `ORDER BY col` | **CIEGO** | 6 |
+| `OUTPUT inserted.col` | **CIEGO** | 1 |
+| `IN (SELECT ...)` | funciona | — |
+
+**57 de 79 explicadas por cuatro patrones.** Hipótesis confirmada: el walker entra en
+subconsultas alcanzables desde DML, y ni la escalar de la lista `SELECT` ni la de
+`IF EXISTS` (control de flujo) lo son.
+
+Y el dato que justifica arreglarlo: las columnas ciegas están en **posiciones de filtro y
+orden** (`WHERE h.Estado = 0`, `ORDER BY Creado`), no de proyección. Son las que al
+cambiarlas alteran **qué filas devuelve** el procedimiento, en silencio. #leccion
+
+Gate ya commiteado (`daaa5a3`), y su ground-truth empírico coincidió al 100% con el
+diagnóstico a mano.
+
+### EN VUELO al cortar
+
+Un agente arreglando **`OUTPUT` y `ORDER BY`** en `AstWalker.cs` / `GraphExporter.cs`, con
+prueba por mutación y midiendo `blind-refs dnn` antes y después. Si dejó cambios sin
+commitear, **revisarlos antes de nada**: `git status`, y verificar que ningún gate de
+precisión bajó. La regla que se le dio: si la precisión cae, se acota la rama, **nunca se
+relaja el gate**.
+
+### Aviso de entorno nuevo y serio
+
+Un agente reportó **62 pruebas en rojo por `FileLoadException 0x800711C7` sobre
+`Parser.Mcp.dll`** — Smart App Control. Tiene sentido: es un ensamblado **creado hoy**, sin
+reputación. Yo corrí la suite en verde varias veces, así que es intermitente.
+
+**Consecuencia práctica**: el criterio de terminado de cualquier agente puede dar **falso
+rojo** en las 7 clases de pruebas de herramientas MCP. Hay que confirmarlo y, si persiste,
+documentarlo en `docs/VERIFICACION.md`.
+
+### Siguiente
+
+1. Verificar/commitear lo que dejó el agente de `AstWalker`.
+2. Confirmar si el bloqueo de SAC sobre `Parser.Mcp.dll` persiste.
+3. **`IF EXISTS(SELECT...)`** (12 ciegas) y luego **subconsulta escalar en `SELECT`** (38).
+   Van **solos**, nunca en paralelo: mismo fichero, y son los de ambigüedad de scope.
+4. Rúbrica de severidades y reclasificación de las 22 reglas a **ISO/IEC 5055 + CWE**
+   (5055 se construye sobre 138 CWE; no forzar CWE donde no lo haya).
+5. Ampliar controles negativos de bad-practices: hoy son **2** de 24 componentes, y son lo
+   único que mide falsos positivos.
+
+**Decidido y no volver a discutir**: no competir en anchura de reglas de estilo (tsqllint
+tiene 28 y es gratis; SQL Enlight 260+ y es comercial y bueno). Crecer solo en reglas que
+exijan el grafo. `agent-context-kit` queda aparcado en su repo.
+
+---
+
 ## 2026-08-19 (T19 + info) — El MCP cierra el bucle: seis herramientas
 
 **Estado**: `main`, árbol limpio. **297/297** y **43/43**. Publicado.
