@@ -68,6 +68,47 @@ cambiarlas alteran **qué filas devuelve** el procedimiento, en silencio. #lecci
 Gate ya commiteado (`daaa5a3`), y su ground-truth empírico coincidió al 100% con el
 diagnóstico a mano.
 
+### SIGUIENTE TAREA, y es más importante que las 40 restantes
+
+**El usuario final no tiene el oráculo.** Nosotros medimos el recall contra DNN y WWI
+porque tenemos su catálogo. Un cliente ejecuta el motor sobre su base y **no sabe si le
+faltan 40 o 400**: el motor emite lo que ve y calla lo que no. Es un silencio en el
+producto, no en el desarrollo — y más grave que las 40, porque las 40 ya las conocemos.
+
+**Los ingredientes ya existen.** `eval/column-recall/extract-catalog.sql` extrae el
+ground-truth de **cualquier base viva**, no solo del corpus. Falta cablearlo para el
+usuario: un subcomando y su herramienta MCP que respondan
+
+> «sobre TU base, el motor ve el 99,2 % de las referencias de columna; estas 37 no las ve,
+> y son de estos objetos».
+
+Tercera pata de la honestidad, junto a `store_info` (¿de cuándo es el grafo?) y
+`blind_spots` (¿dónde no puedo afirmar nada?). **Ninguna herramienta de análisis publica su
+propio recall sobre la base del cliente.**
+
+**Límite que hay que publicar con la cifra, siempre:** el catálogo de SQL Server también es
+ciego al SQL dinámico. Una columna que solo se toca dentro de un `EXEC(@sql)` sin resolver
+no aparece ni en el catálogo ni en el grafo, así que **no cuenta como ciega**: ese hueco no
+lo ve ninguna de las dos partes. Publicar el recall solo, sin `blind_spots`, sería la clase
+de media verdad que este proyecto persigue. #leccion
+
+### Reclasificación de las 40 (regla nueva aplicada)
+
+| Categoría | Ciegas |
+|---|---|
+| Sin referencia literal | 11 (28 %) |
+| Lista `SELECT` | 8 |
+| `JOIN ON` | 6 |
+| Alias de derivada/CTE | 5 |
+| Otros | 4 |
+| `ORDER BY` | 3 |
+| `OVER()` ventana | 2 |
+| `WHERE` | 1 |
+
+Cambió el reparto respecto al diagnóstico sobre 89: **"sin referencia literal" pasa a ser
+el grupo mayor** y sigue sin diagnosticar — probablemente `SELECT *` o el catálogo contando
+algo distinto. Es lo primero que hay que mirar, y no lo era antes de reclasificar.
+
 ### RESULTADO: 90 → 40 ciegas, recall 98,7675 % → 99,4522 %
 
 Cuatro cambios, precisión intacta en **todos** (`ColumnRecallGateTests` 8/8 en cada paso):
