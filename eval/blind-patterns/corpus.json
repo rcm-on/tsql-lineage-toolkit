@@ -1,0 +1,42 @@
+[
+  {
+    "Name": "BlindPatternsDb::dbo.EscalarEnSelect",
+    "Sql": "CREATE PROCEDURE dbo.EscalarEnSelect AS BEGIN SELECT m.Id, (SELECT COUNT(*) FROM dbo.Hijos h WHERE h.Estado = 0) AS N FROM dbo.Madre m; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.EscalarEnSelectCorrelacionada",
+    "Sql": "CREATE PROCEDURE dbo.EscalarEnSelectCorrelacionada AS BEGIN SELECT m.Id, (SELECT MAX(h.Fecha) FROM dbo.Hijos h WHERE h.MadreId = m.Id) AS UltimaFecha FROM dbo.Madre m; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.IfExists",
+    "Sql": "CREATE PROCEDURE dbo.IfExists AS BEGIN IF EXISTS(SELECT 1 FROM dbo.Listas WHERE Nombre = 'x') SELECT 1; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.IfNotExists",
+    "Sql": "CREATE PROCEDURE dbo.IfNotExists AS BEGIN IF NOT EXISTS(SELECT 1 FROM dbo.Listas WHERE Codigo = 'y') INSERT INTO dbo.Listas (Nombre) VALUES ('nueva'); END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.InSelect",
+    "Sql": "CREATE PROCEDURE dbo.InSelect AS BEGIN SELECT Id FROM dbo.Madre WHERE Id IN (SELECT PadreId FROM dbo.Hijos); END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.InSelectConWhereDentro",
+    "Sql": "CREATE PROCEDURE dbo.InSelectConWhereDentro AS BEGIN SELECT Id FROM dbo.Madre WHERE Id IN (SELECT PadreId FROM dbo.Hijos WHERE Estado = 1); END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.OrderByCol",
+    "Sql": "CREATE PROCEDURE dbo.OrderByCol AS BEGIN SELECT Id FROM dbo.Madre ORDER BY Creado; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.OrderByDosColumnasConAlias",
+    "Sql": "CREATE PROCEDURE dbo.OrderByDosColumnasConAlias AS BEGIN SELECT m.Id AS Ident FROM dbo.Madre m ORDER BY m.Creado, m.Nombre DESC; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.OutputIns",
+    "Sql": "CREATE PROCEDURE dbo.OutputIns AS BEGIN INSERT INTO dbo.Madre (Id) OUTPUT inserted.Codigo VALUES (1); END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.OutputDel",
+    "Sql": "CREATE PROCEDURE dbo.OutputDel AS BEGIN DELETE FROM dbo.Madre OUTPUT deleted.Nombre WHERE Id = 1; END"
+  }
+]

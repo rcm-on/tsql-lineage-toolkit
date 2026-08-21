@@ -1,0 +1,178 @@
+[
+  {
+    "Module": "dbo.escalarenselect",
+    "Table": "dbo.hijos",
+    "Column": "estado",
+    "Status": "ciego",
+    "Pattern": "subconsulta-escalar-select",
+    "Reason": "WHERE h.Estado=0 vive dentro de la subconsulta escalar de la lista SELECT; el walker no baja ahi."
+  },
+  {
+    "Module": "dbo.escalarenselect",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "subconsulta-escalar-select",
+    "Reason": "control: m.Id esta en el SELECT list exterior, fuera de la subconsulta, siempre funciono."
+  },
+  {
+    "Module": "dbo.escalarenselectcorrelacionada",
+    "Table": "dbo.hijos",
+    "Column": "fecha",
+    "Status": "ciego",
+    "Pattern": "subconsulta-escalar-select",
+    "Reason": "MAX(h.Fecha) esta dentro de la subconsulta escalar correlacionada."
+  },
+  {
+    "Module": "dbo.escalarenselectcorrelacionada",
+    "Table": "dbo.hijos",
+    "Column": "madreid",
+    "Status": "ciego",
+    "Pattern": "subconsulta-escalar-select",
+    "Reason": "predicado de correlacion h.MadreId=m.Id, dentro de la subconsulta escalar."
+  },
+  {
+    "Module": "dbo.escalarenselectcorrelacionada",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "subconsulta-escalar-select",
+    "Reason": "control: m.Id tambien aparece en el SELECT list exterior, fuera de la subconsulta."
+  },
+  {
+    "Module": "dbo.ifexists",
+    "Table": "dbo.listas",
+    "Column": "nombre",
+    "Status": "ciego",
+    "Pattern": "if-exists",
+    "Reason": "WHERE Nombre='x' vive dentro del SELECT de un IF EXISTS(...)."
+  },
+  {
+    "Module": "dbo.ifnotexists",
+    "Table": "dbo.listas",
+    "Column": "codigo",
+    "Status": "ciego",
+    "Pattern": "if-exists",
+    "Reason": "WHERE Codigo='y' vive dentro del SELECT de un IF NOT EXISTS(...)."
+  },
+  {
+    "Module": "dbo.ifnotexists",
+    "Table": "dbo.listas",
+    "Column": "nombre",
+    "Status": "cubierto",
+    "Pattern": "if-exists",
+    "Reason": "control: columna del INSERT posterior, sin relacion con el IF NOT EXISTS, ya funcionaba."
+  },
+  {
+    "Module": "dbo.inselect",
+    "Table": "dbo.hijos",
+    "Column": "padreid",
+    "Status": "cubierto",
+    "Pattern": "in-select",
+    "Reason": "IN (SELECT PadreId FROM dbo.Hijos): ya funciona (ver SubqueryColumnLineageTests.InSelect_*)."
+  },
+  {
+    "Module": "dbo.inselect",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "in-select",
+    "Reason": "control: WHERE Id IN (...) sobre la tabla exterior, predicado normal."
+  },
+  {
+    "Module": "dbo.inselectconwheredentro",
+    "Table": "dbo.hijos",
+    "Column": "padreid",
+    "Status": "cubierto",
+    "Pattern": "in-select",
+    "Reason": "misma columna del IN que en dbo.inselect."
+  },
+  {
+    "Module": "dbo.inselectconwheredentro",
+    "Table": "dbo.hijos",
+    "Column": "estado",
+    "Status": "cubierto",
+    "Pattern": "in-select",
+    "Reason": "WHERE Estado=1 es el WHERE propio de la subconsulta del IN, no un predicado exterior."
+  },
+  {
+    "Module": "dbo.inselectconwheredentro",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "in-select",
+    "Reason": "control: WHERE Id IN (...) sobre la tabla exterior."
+  },
+  {
+    "Module": "dbo.orderbycol",
+    "Table": "dbo.madre",
+    "Column": "creado",
+    "Status": "ciego",
+    "Pattern": "order-by",
+    "Reason": "ORDER BY Creado: el walker no visita la clausula ORDER BY en absoluto."
+  },
+  {
+    "Module": "dbo.orderbycol",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "order-by",
+    "Reason": "control: Id esta en el SELECT list, no en el ORDER BY."
+  },
+  {
+    "Module": "dbo.orderbydoscolumnasconalias",
+    "Table": "dbo.madre",
+    "Column": "creado",
+    "Status": "ciego",
+    "Pattern": "order-by",
+    "Reason": "ORDER BY m.Creado, primera columna, forma cualificada con alias."
+  },
+  {
+    "Module": "dbo.orderbydoscolumnasconalias",
+    "Table": "dbo.madre",
+    "Column": "nombre",
+    "Status": "ciego",
+    "Pattern": "order-by",
+    "Reason": "ORDER BY m.Nombre DESC, segunda columna del ORDER BY."
+  },
+  {
+    "Module": "dbo.orderbydoscolumnasconalias",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "order-by",
+    "Reason": "control: m.Id esta en el SELECT list (como Ident), no en el ORDER BY."
+  },
+  {
+    "Module": "dbo.outputins",
+    "Table": "dbo.madre",
+    "Column": "codigo",
+    "Status": "ciego",
+    "Pattern": "output-inserted-deleted",
+    "Reason": "OUTPUT inserted.Codigo: referencia a la pseudo-tabla inserted, el walker no la resuelve."
+  },
+  {
+    "Module": "dbo.outputins",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "output-inserted-deleted",
+    "Reason": "control: Id es la columna de la lista INSERT INTO dbo.Madre (Id), ya funcionaba."
+  },
+  {
+    "Module": "dbo.outputdel",
+    "Table": "dbo.madre",
+    "Column": "nombre",
+    "Status": "ciego",
+    "Pattern": "output-inserted-deleted",
+    "Reason": "OUTPUT deleted.Nombre: referencia a la pseudo-tabla deleted, el walker no la resuelve."
+  },
+  {
+    "Module": "dbo.outputdel",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "output-inserted-deleted",
+    "Reason": "control: WHERE Id=1 es un predicado normal del DELETE, fuera del OUTPUT."
+  }
+]
