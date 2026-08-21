@@ -68,7 +68,32 @@ cambiarlas alteran **qué filas devuelve** el procedimiento, en silencio. #lecci
 Gate ya commiteado (`daaa5a3`), y su ground-truth empírico coincidió al 100% con el
 diagnóstico a mano.
 
-### EN VUELO al cortar
+### Resultado negativo del primer intento — léelo antes de reintentar
+
+El agente de `AstWalker` murió por cuota, pero dejó trabajo medible y **el veredicto es que
+no sirve tal cual**. Guardado en `git stash@{0}`, no borrado.
+
+| Métrica | Antes | Después |
+|---|---|---|
+| Ciegas (DNN) | 90 | **86** |
+| Recall laxo | 98,7675 % | **98,8222 %** |
+| Precisión `direct` y `star_expanded` | en verde | **CAE** |
+
+Bajó el contador **emitiendo aristas de más**. Es justo el modo de fallo contra el que se
+puso la regla en el encargo: *si un gate de precisión se pone en rojo, se acota la rama,
+nunca se relaja el gate*. Un motor que inventa aristas no vale para firmar una migración,
+que es exactamente lo que lo hace útil. #leccion
+
+**Lo que sí quedó demostrado**: el arreglo de `ORDER BY` funciona, y **el gate nuevo lo
+cazó solo**, fallando con *"`dbo.madre.creado` ya no es ciega: actualiza
+expected-columns.json a cubierto"*. El instrumento cumplió en su primer uso real, en la
+dirección menos evidente de las dos.
+
+**Al reintentar**: el problema no es visitar `ORDER BY`, es **a qué tabla se atribuye la
+columna** cuando hay varias en el `FROM` o alias de por medio. Empezar por acotar el scope,
+y medir precisión *antes* que ciegas.
+
+### EN VUELO al cortar (ya resuelto)
 
 Un agente arreglando **`OUTPUT` y `ORDER BY`** en `AstWalker.cs` / `GraphExporter.cs`, con
 prueba por mutación y midiendo `blind-refs dnn` antes y después. Si dejó cambios sin
