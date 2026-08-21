@@ -1383,14 +1383,65 @@ public static class AstWalker
     /// ("col = (SELECT ...)"), the contents of EXISTS(...)/IN(...), and a parenthesized
     /// SET assignment. Recurses naturally (doesn't stop descending once one is found),
     /// so a subquery nested inside another subquery is also collected.
+    ///
+    /// Ademas de ScalarSubquery, tambien recoge el cuerpo de una tabla derivada
+    /// ("(SELECT ...) alias" en un FROM, QueryDerivedTable) y el de un CTE ("WITH x AS
+    /// (SELECT ...)", CommonTableExpression). Ninguno de los dos ES un ScalarSubquery,
+    /// asi que quedaban fuera aunque EmitSubqueryReads visita el fragmento entero de la
+    /// sentencia: sus columnas propias (lista SELECT, JOIN...ON) no tenian scope donde
+    /// resolverse y se descartaban en silencio. FlattenQuerySpecifications cubre el caso
+    /// UNION en cualquiera de los dos.
+    ///
+    /// Casos reales DNN: dbo.CoreMessaging_ConvertLegacyMessages, cursor sobre "WITH
+    /// messageItems AS (SELECT [MessageID],[PortalID],... FROM dbo.Messaging_Messages)
+    /// SELECT * FROM messageItems ..." - las columnas del propio SELECT del CTE (6 en
+    /// total) no llegaban a ningun sitio. Y dbo.Journal_ListForGroup, con una tabla
+    /// derivada cuyo JOIN interno "...ON js.JournalId = j.JournalId" tampoco resolvia.
+    ///
+    /// El seguimiento de tabla derivada y de CTE es opcional (por defecto los dos
+    /// apagados, para no tocar el comportamiento de los llamadores que ya existian:
+    /// ProcesarSubconsultasDePredicado y ScopedRefsFromSelectList solo necesitan
+    /// ScalarSubquery). Solo EmitSubqueryReads los activa, y el de CTE encima SOLO para
+    /// un DECLARE CURSOR - el unico sitio donde el WITH queda genuinamente ciego (ver el
+    /// porque alli). Fuera de un cursor ya hay cobertura (WHERE via EmitCteFilterSteps,
+    /// columnas propias via el flattening normal de la sentencia que consume el CTE), y
+    /// seguirlo ahi tambien solo producia pasos redundantes: medido con
+    /// CteUnionFilterTests.Governs_IsUnchangedByFilterExtraction, que paso de 2 a 3
+    /// GOVERNS. La tabla derivada no tiene ese problema, así que EmitSubqueryReads la
+    /// sigue siempre.
     /// </summary>
     private sealed class NestedSubqueryCollector : TSqlFragmentVisitor
     {
+        private readonly bool _followDerivedTable;
+        private readonly bool _followCte;
+
+        public NestedSubqueryCollector(bool followDerivedTable = false, bool followCte = false)
+        {
+            _followDerivedTable = followDerivedTable;
+            _followCte = followCte;
+        }
+
         public List<QuerySpecification> Subqueries { get; } = new();
 
         public override void Visit(ScalarSubquery node)
         {
             if (node.QueryExpression is QuerySpecification qs)
+                Subqueries.Add(qs);
+        }
+
+        public override void Visit(QueryDerivedTable node)
+        {
+            if (!_followDerivedTable)
+                return;
+            foreach (var qs in FlattenQuerySpecifications(node.QueryExpression))
+                Subqueries.Add(qs);
+        }
+
+        public override void Visit(CommonTableExpression node)
+        {
+            if (!_followCte)
+                return;
+            foreach (var qs in FlattenQuerySpecifications(node.QueryExpression))
                 Subqueries.Add(qs);
         }
     }
@@ -1438,6 +1489,17 @@ public static class AstWalker
         {
             // Boundary: don't descend. The subquery's own refs are collected separately
             // by a fresh ScopedColumnCollector rooted at its own QuerySpecification.
+        }
+
+        // Mismo corte para una tabla derivada anidada dentro de otra ("(SELECT ... FROM
+        // (SELECT ...) inner) outer"): trae su propio FROM/scope. Sin este boundary,
+        // ScopedColumnCollector mezclaria sus columnas con las del scope que la contiene,
+        // violando la regla de ambito. NestedSubqueryCollector ya la recoge aparte (via
+        // su propio Visit(QueryDerivedTable)) para resolverla con su propia
+        // ResolveScopedColumns. Un CTE no necesita el mismo corte: T-SQL no permite un
+        // WITH anidado dentro de una tabla derivada o de otro cuerpo de CTE.
+        public override void ExplicitVisit(QueryDerivedTable node)
+        {
         }
     }
 
@@ -1797,7 +1859,25 @@ public static class AstWalker
     {
         if (fragment == null)
             return;
-        var collector = new ScalarSubqueryTableCollector(cteNames, cteBaseTables);
+
+        // Seguir el cuerpo de un CTE aqui esta restringido a un DECLARE CURSOR: es el
+        // UNICO sitio donde el WITH queda genuinamente ciego (GetStatementCtes no
+        // reconoce DeclareCursorStatement, asi que ni CollectCteNames ni
+        // EmitCteFilterSteps lo ven - el WITH cuelga de dcs.CursorDefinition.Select, no
+        // del propio stmt). Fuera de un cursor (un SELECT/INSERT/UPDATE/DELETE/MERGE
+        // normal con WITH), el cuerpo del CTE YA tiene cobertura: EmitCteFilterSteps
+        // cubre su WHERE, y la sentencia que consume el CTE ya cubre sus columnas
+        // propias via el flattening normal a traves de cteBaseTables. Medido con el
+        // repro de CteUnionFilterTests.Governs_IsUnchangedByFilterExtraction: sin esta
+        // restriccion, "WITH c AS (SELECT Id FROM T4 WHERE Borrado=0) SELECT Id FROM c"
+        // generaba un tercer paso 100% redundante (Id ya en el paso del SELECT externo,
+        // Borrado ya en el paso de EmitCteFilterSteps) que inflaba GOVERNS de 2 a 3.
+        // La tabla derivada NO tiene este problema: EmitDerivedTableFilterSteps solo
+        // cubre su WHERE, nunca su JOIN...ON, y ninguna sentencia "de fuera" flatten-ea
+        // sus columnas propias - por eso QueryDerivedTable se sigue siempre.
+        var followCte = stmt is DeclareCursorStatement;
+
+        var collector = new ScalarSubqueryTableCollector(cteNames, cteBaseTables, followCte);
         fragment.Accept(collector);
         if (collector.Tables.Count == 0)
             return;
@@ -1816,7 +1896,7 @@ public static class AstWalker
         // anidado. Resolver en el scope propio, con el exterior solo como respaldo para
         // referencias correlacionadas, ES la regla de ambito de T-SQL: no adivina.
         var porTabla = new List<TableColumnRef>();
-        var anidadas = new NestedSubqueryCollector();
+        var anidadas = new NestedSubqueryCollector(followDerivedTable: true, followCte: followCte);
         fragment.Accept(anidadas);
         var sinScopeExterior = new List<(string Alias, string Table)>();
         foreach (var nqs in anidadas.Subqueries)
@@ -1824,6 +1904,14 @@ public static class AstWalker
             if (nqs.FromClause == null)
                 continue;
             var propias = CollectTableRefs(nqs.FromClause, cteNames, cteBaseTables);
+            // Un alias de TVF ("dbo.Fn(...) as t") CollectTableRefsInto SI lo registra
+            // como "tabla" (para que la propia funcion participe en el grafo), pero no
+            // conoce sus columnas de salida: filtrarlo aqui, antes de resolver por
+            // scope, para que "t.col" se descarte en vez de atribuirse a la funcion
+            // como si fuera una tabla real con esa columna. Caso real DNN:
+            // dbo.Journal_ListForGroup, "...JOIN dbo.Journal_User_Permissions(...) as t
+            // ON t.seckey = js.SecurityKey ...": "t.seckey" no tiene de donde salir.
+            propias = WithoutTvfAliases(nqs.FromClause, propias);
             if (propias.Count == 0)
                 continue;
             var colector = new ScopedColumnCollector();
@@ -1840,25 +1928,105 @@ public static class AstWalker
 
     /// <summary>Collects the real source tables of every scalar/EXISTS/IN subquery
     /// (each a <see cref="ScalarSubquery"/>) reachable in a fragment, descending into
-    /// nested subqueries automatically; CTE references are skipped.</summary>
+    /// nested subqueries automatically; CTE references are skipped.
+    ///
+    /// Tambien recoge las de una tabla derivada (QueryDerivedTable) y, si
+    /// <paramref name="followCte"/> esta activo, las de un cuerpo de CTE
+    /// (CommonTableExpression) - el mismo par que NestedSubqueryCollector, y por la misma
+    /// razon: EmitSubqueryReads solo hace algo cuando Tables no esta vacio (su unica senal
+    /// de "hay trabajo"), asi que sin esto una sentencia SIN ningun ScalarSubquery real
+    /// pero CON un CTE o una tabla derivada (los dos casos reales de esta tanda,
+    /// messageItems y Journal_ListForGroup - ninguno trae una ScalarSubquery consigo)
+    /// volvia inmediatamente y nunca llegaba a mirarlos. followCte solo se activa para un
+    /// DECLARE CURSOR (ver el porque en EmitSubqueryReads).
+    ///
+    /// Deduplicado POR TABLA (no por alias): una CTE recursiva referenciandose a si misma
+    /// substituye el self-ref via cteBaseTables bajo un alias DISTINTO al de la propia
+    /// query ("e" vs el alias original del ancla), asi que la misma tabla real podia
+    /// colarse dos veces en Tables. BuildExtraReads solo deduplica sus PROPIAS entradas,
+    /// no contra el target (Tables[0]), asi que una tabla repetida producia un READS_FROM
+    /// duplicado. Caso real: CommunityEdgeCaseGateTests "recursive-cte" (dbo.vOrgChart),
+    /// que emitia dbo.Employees dos veces en el mismo paso.
+    /// </summary>
     private sealed class ScalarSubqueryTableCollector : TSqlFragmentVisitor
     {
         public readonly List<(string Alias, string Table)> Tables = new();
         private readonly HashSet<string> _cteNames;
         private readonly Dictionary<string, List<(string Alias, string Table)>> _cteBaseTables;
+        private readonly bool _followCte;
 
-        public ScalarSubqueryTableCollector(HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+        public ScalarSubqueryTableCollector(HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables, bool followCte)
         {
             _cteNames = cteNames;
             _cteBaseTables = cteBaseTables;
+            _followCte = followCte;
         }
 
-        public override void Visit(ScalarSubquery node)
+        private void AddTables(IEnumerable<FromClause> fromClauses)
         {
-            foreach (var fc in QueryFromClauses(node.QueryExpression))
+            foreach (var fc in fromClauses)
                 foreach (var t in CollectTableRefs(fc, _cteNames, _cteBaseTables))
-                    Tables.Add(t);
+                    if (!Tables.Any(x => string.Equals(x.Table, t.Table, StringComparison.OrdinalIgnoreCase)))
+                        Tables.Add(t);
         }
+
+        public override void Visit(ScalarSubquery node) => AddTables(QueryFromClauses(node.QueryExpression));
+
+        public override void Visit(QueryDerivedTable node) => AddTables(QueryFromClauses(node.QueryExpression));
+
+        public override void Visit(CommonTableExpression node)
+        {
+            if (_followCte)
+                AddTables(QueryFromClauses(node.QueryExpression));
+        }
+    }
+
+    /// <summary>
+    /// Quita de <paramref name="refs"/> (ya calculada por CollectTableRefs) los alias que
+    /// en <paramref name="fromClause"/> son una funcion con valores de tabla
+    /// (SchemaObjectFunctionTableReference) - CollectTableRefsInto SI la registra como
+    /// "tabla" (para que la propia funcion participe en el grafo por su nombre), pero eso
+    /// no significa que se conozcan sus columnas de salida: "alias.col" sobre esa entrada
+    /// no debe atribuirse a la funcion como si fuera una tabla real con esa columna. Caso
+    /// real DNN: dbo.Journal_ListForGroup, "...JOIN dbo.Journal_User_Permissions(...) as t
+    /// ON t.seckey = js.SecurityKey ...": "t.seckey" no tiene de donde salir, "SecurityKey"
+    /// (calificada por "js", una tabla real) si.
+    /// </summary>
+    private static List<(string Alias, string Table)> WithoutTvfAliases(FromClause? fromClause, List<(string Alias, string Table)> refs)
+    {
+        if (fromClause == null || refs.Count == 0)
+            return refs;
+
+        var tvfAliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        void Collect(TableReference tref)
+        {
+            switch (tref)
+            {
+                case SchemaObjectFunctionTableReference fn:
+                    var alias = fn.Alias?.Value ?? fn.SchemaObject?.BaseIdentifier?.Value;
+                    if (!string.IsNullOrEmpty(alias))
+                        tvfAliases.Add(alias);
+                    break;
+                case QualifiedJoin qj:
+                    Collect(qj.FirstTableReference);
+                    Collect(qj.SecondTableReference);
+                    break;
+                case UnqualifiedJoin uqj:
+                    Collect(uqj.FirstTableReference);
+                    Collect(uqj.SecondTableReference);
+                    break;
+                case PivotedTableReference pvt:
+                    Collect(pvt.TableReference);
+                    break;
+                case UnpivotedTableReference unpvt:
+                    Collect(unpvt.TableReference);
+                    break;
+            }
+        }
+        foreach (var tref in fromClause.TableReferences)
+            Collect(tref);
+
+        return tvfAliases.Count == 0 ? refs : refs.Where(r => !tvfAliases.Contains(r.Alias)).ToList();
     }
 
     private static List<(string Alias, string Table)> CollectTableRefs(FromClause? fromClause, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
