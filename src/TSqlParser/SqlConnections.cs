@@ -36,6 +36,14 @@ internal static class SqlConnections
         return needsQuoting ? "\"" + value.Replace("\"", "\"\"") + "\"" : value;
     }
 
+    /// <summary>
+    /// Mensaje del último fallo de conexión. Los gates LiveSql solo ven un código de
+    /// retorno; sin esto el fallo en CI es "¿SQL Server no disponible?" sin causa.
+    /// </summary>
+    public static string? LastError { get; private set; }
+
+    public static void RecordFailure(Exception ex) => LastError = ex.Message;
+
     public static SqlCredentials? FromEnvironment() =>
         FromEnvironment(Environment.GetEnvironmentVariable("TSQL_SQL_USER"), Environment.GetEnvironmentVariable("TSQL_SQL_PASSWORD"));
 

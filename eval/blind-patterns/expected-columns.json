@@ -147,9 +147,9 @@
     "Module": "dbo.outputins",
     "Table": "dbo.madre",
     "Column": "codigo",
-    "Status": "ciego",
+    "Status": "cubierto",
     "Pattern": "output-inserted-deleted",
-    "Reason": "OUTPUT inserted.Codigo: referencia a la pseudo-tabla inserted, el walker no la resuelve."
+    "Reason": "OUTPUT inserted.Codigo: referencia a la pseudo-tabla inserted, resuelta a la tabla objetivo del DML desde 2026-08-19; ScriptDom la expone en OutputClause, no en OutputIntoClause."
   },
   {
     "Module": "dbo.outputins",
@@ -163,9 +163,9 @@
     "Module": "dbo.outputdel",
     "Table": "dbo.madre",
     "Column": "nombre",
-    "Status": "ciego",
+    "Status": "cubierto",
     "Pattern": "output-inserted-deleted",
-    "Reason": "OUTPUT deleted.Nombre: referencia a la pseudo-tabla deleted, el walker no la resuelve."
+    "Reason": "OUTPUT deleted.Nombre: referencia a la pseudo-tabla deleted, resuelta a la tabla objetivo del DML desde 2026-08-19; ScriptDom la expone en OutputClause, no en OutputIntoClause."
   },
   {
     "Module": "dbo.outputdel",

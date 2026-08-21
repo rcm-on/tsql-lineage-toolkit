@@ -134,6 +134,7 @@ WHERE t.parent_class = 0;";
         }
         catch (SqlException ex)
         {
+            SqlConnections.RecordFailure(ex);
             Console.Error.WriteLine($"Connection failed: {ex.Message}");
             return null;
         }

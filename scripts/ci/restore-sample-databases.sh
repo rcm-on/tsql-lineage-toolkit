@@ -52,7 +52,9 @@ if [ -z "$CONTAINER_ID" ]; then
   exit 1
 fi
 
-SQLCMD=(docker exec "$CONTAINER_ID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C)
+# -b: sqlcmd devuelve 0 aunque el lote T-SQL falle, asi que sin esto un RESTORE roto
+# deja el paso en verde y los tests fallan despues con un "no se pudo conectar" opaco.
+SQLCMD=(docker exec "$CONTAINER_ID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -b)
 
 echo "Esperando a que SQL Server acepte conexiones..."
 ready=0
@@ -66,12 +68,17 @@ for i in $(seq 1 30); do
 done
 if [ "$ready" -ne 1 ]; then
   echo "SQL Server no respondió tras 30 intentos (~5 min)" >&2
+  docker logs "$CONTAINER_ID" 2>&1 | tail -n 50 >&2
   exit 1
 fi
 
 docker exec "$CONTAINER_ID" mkdir -p /var/opt/mssql/backup
 docker cp "$(host_path "$WORKDIR/WideWorldImporters-Full.bak")" "$CONTAINER_ID":/var/opt/mssql/backup/WideWorldImporters-Full.bak
 docker cp "$(host_path "$WORKDIR/AdventureWorks2019.bak")" "$CONTAINER_ID":/var/opt/mssql/backup/AdventureWorks2019.bak
+
+# docker cp deja los ficheros como root; el proceso de SQL Server corre como mssql y
+# el RESTORE fallaria con "Operating system error 5 (Access is denied)".
+docker exec -u 0 "$CONTAINER_ID" chown mssql /var/opt/mssql/backup/WideWorldImporters-Full.bak /var/opt/mssql/backup/AdventureWorks2019.bak || true
 
 # Logical file names confirmed via RESTORE FILELISTONLY against these exact backups
 # (2026-08-16): WWI_Primary/WWI_UserData/WWI_Log/WWI_InMemory_Data_1 and
@@ -110,5 +117,11 @@ echo "Restaurando WideWorldImporters..."
 
 echo "Restaurando AdventureWorks2019..."
 "${SQLCMD[@]}" -i /var/opt/mssql/backup/restore-aw.sql
+
+echo "Comprobando que ambas bases quedaron ONLINE..."
+"${SQLCMD[@]}" -Q "SET NOCOUNT ON;
+SELECT name, state_desc FROM sys.databases WHERE database_id > 4;
+IF (SELECT COUNT(*) FROM sys.databases WHERE name IN ('WideWorldImporters','AdventureWorks2019') AND state_desc = 'ONLINE') <> 2
+  RAISERROR('Faltan bases restauradas u ONLINE (WideWorldImporters / AdventureWorks2019)', 16, 1);"
 
 echo "Ambas bases restauradas."

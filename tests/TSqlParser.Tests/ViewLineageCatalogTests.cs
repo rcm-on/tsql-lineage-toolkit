@@ -94,9 +94,9 @@ public class ViewLineageCatalogTests : IDisposable
 
         var inputPath = Path.Combine(NewTempDir(), "input.json");
         var extractResult = ObjectExtractor.Run(database, inputPath, Server, rows.Select(r => r.View).ToList());
-        Assert.True(extractResult == 0, $"No se pudo extraer vistas de {Server}/{database} (¿SQL Server no disponible?)");
+        Assert.True(extractResult == 0, $"No se pudo extraer vistas de {Server}/{database}: {SqlConnections.LastError ?? "sin error de conexión registrado"}");
         Assert.True(TableSchemaExtractor.RunAll(database, inputPath, Server) == 0,
-            $"No se pudieron extraer tablas base de {Server}/{database}");
+            $"No se pudieron extraer tablas base de {Server}/{database}: {SqlConnections.LastError ?? "sin error de conexión registrado"}");
 
         var (results, tableSchemas) = InputAnalyzer.Analyze(inputPath);
         var graph = GraphExporter.Build(results, includeColumns: true, tableSchemas);

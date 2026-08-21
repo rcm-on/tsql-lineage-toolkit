@@ -55,6 +55,9 @@ jobs:
   live-sql-tests:
     name: LiveSql tests (WWI + AdventureWorks2019)
     runs-on: ubuntu-latest
+    # Los secrets no llegan a los PR desde un fork: sin TSQL_SQL_SA_PASSWORD el
+    # contenedor arranca sin sa y el job solo puede fallar, asi que no se lanza.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     services:
       mssql:
         image: mcr.microsoft.com/mssql/server:2022-latest
@@ -71,10 +74,31 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
+      - name: Check the SA password secret is set
+        env:
+          MSSQL_SA_PASSWORD: ${{ secrets.TSQL_SQL_SA_PASSWORD }}
+        run: |
+          if [ -z "$MSSQL_SA_PASSWORD" ]; then
+            echo "::error::Falta el secret TSQL_SQL_SA_PASSWORD; el contenedor mssql arranca sin sa y los tests LiveSql no pueden conectar."
+            exit 1
+          fi
+
       - name: Restore sample databases (WideWorldImporters + AdventureWorks2019)
         run: bash scripts/ci/restore-sample-databases.sh
         env:
           MSSQL_SA_PASSWORD: ${{ secrets.TSQL_SQL_SA_PASSWORD }}
+
+      # El restore habla con el contenedor por `docker exec` (red interna); los tests
+      # entran desde el host por localhost:1433. Este sondeo recorre exactamente el
+      # camino de los tests, para que un fallo de red/auth se vea aqui y no como un
+      # "¿SQL Server no disponible?" del assert.
+      - name: Probe SQL Server from the runner host
+        env:
+          MSSQL_SA_PASSWORD: ${{ secrets.TSQL_SQL_SA_PASSWORD }}
+        run: |
+          docker run --rm --network host mcr.microsoft.com/mssql/server:2022-latest \
+            /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P "$MSSQL_SA_PASSWORD" -C -b \
+            -Q "SELECT name, state_desc FROM sys.databases WHERE database_id > 4;"
 
       - name: Test (Category=LiveSql)
         run: dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category=LiveSql"
@@ -82,3 +106,7 @@ jobs:
           TSQLPARSER_SQL_SERVER: localhost,1433
           TSQL_SQL_USER: sa
           TSQL_SQL_PASSWORD: ${{ secrets.TSQL_SQL_SA_PASSWORD }}
+
+      - name: Dump mssql container logs
+        if: failure()
+        run: docker logs "$(docker ps -a --filter publish=1433 -q | head -n1)" 2>&1 | tail -n 100

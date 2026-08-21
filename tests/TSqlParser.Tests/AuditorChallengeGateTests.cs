@@ -76,9 +76,9 @@ public class AuditorChallengeGateTests : IDisposable
         // Extract the WHOLE database (no objectNames/likePattern filter) plus every base
         // table's DDL, exactly like `TSqlParser extract WideWorldImporters input.json --tables`.
         var extractResult = ObjectExtractor.Run(Database, inputPath, Server);
-        Assert.True(extractResult == 0, $"No se pudo extraer objetos de {Server}/{Database} (¿SQL Server no disponible?)");
+        Assert.True(extractResult == 0, $"No se pudo extraer objetos de {Server}/{Database}: {SqlConnections.LastError ?? "sin error de conexión registrado"}");
         Assert.True(TableSchemaExtractor.RunAll(Database, inputPath, Server) == 0,
-            $"No se pudieron extraer tablas base de {Server}/{Database}");
+            $"No se pudieron extraer tablas base de {Server}/{Database}: {SqlConnections.LastError ?? "sin error de conexión registrado"}");
 
         var (results, tableSchemas) = InputAnalyzer.Analyze(inputPath);
         var graph = GraphExporter.Build(results, includeColumns: true, tableSchemas);

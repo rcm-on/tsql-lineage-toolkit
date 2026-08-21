@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Microsoft.SqlServer.TransactSql.ScriptDom;
 
 namespace TSqlParser;
@@ -175,7 +175,7 @@ public static class AstWalker
                         if (insColumns.Count == 0)
                             insColumns = ResolveAllColumns(insTarget, ctx) ?? insColumns;
                         var (lineage, insExtraReads, insFilterInfo) = InsertSelectLineage(ins, insColumns, cteNames, cteBaseTables, ctx);
-                        ProcessOutputClause(ins.InsertSpecification?.OutputIntoClause, insTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+                        ProcessOutputClause((TSqlFragment?)ins.InsertSpecification?.OutputIntoClause ?? ins.InsertSpecification?.OutputClause, insTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
 
                         // Mirror AddLink's own nested-subquery bridging (see its NestedTableRefs
                         // handling): since we pass filterColumnsOverride explicitly below, AddLink's
@@ -237,7 +237,7 @@ public static class AstWalker
                                 updExtraReads = BuildExtraReads(partners, new List<TableColumnRef>(), skipFirst: false);
                         }
 
-                        ProcessOutputClause(upd.UpdateSpecification?.OutputIntoClause, updTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+                        ProcessOutputClause((TSqlFragment?)upd.UpdateSpecification?.OutputIntoClause ?? upd.UpdateSpecification?.OutputClause, updTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
 
                         var updLineage = UpdateSetLineage(upd, updTarget, cteNames, cteBaseTables);
                         AddLink(ctx, condStack, "UPDATE", updTarget, stmt, cteNames, cteBaseTables, columns: updColumns, columnLineage: updLineage, extraReads: updExtraReads);
@@ -261,7 +261,7 @@ public static class AstWalker
                                 delExtraReads = BuildExtraReads(partners, new List<TableColumnRef>(), skipFirst: false);
                         }
 
-                        ProcessOutputClause(del.DeleteSpecification?.OutputIntoClause, delTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+                        ProcessOutputClause((TSqlFragment?)del.DeleteSpecification?.OutputIntoClause ?? del.DeleteSpecification?.OutputClause, delTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
                         AddLink(ctx, condStack, "DELETE", delTarget, stmt, cteNames, cteBaseTables, extraReads: delExtraReads);
                     }
                     break;
@@ -290,7 +290,7 @@ public static class AstWalker
                             mrgExtraReads = BuildExtraReads(refs, new List<TableColumnRef>(), skipFirst: false);
                         }
 
-                        ProcessOutputClause(mrg.MergeSpecification?.OutputIntoClause, mrgTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+                        ProcessOutputClause((TSqlFragment?)mrg.MergeSpecification?.OutputIntoClause ?? mrg.MergeSpecification?.OutputClause, mrgTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
 
                         var mrgLineage = MergeLineage(mrg, mrgTarget, mrgTableRefs);
                         // WRITES_COLUMN must cover every column actually assigned by a WHEN
@@ -1505,10 +1505,87 @@ public static class AstWalker
     /// inserted/deleted pseudo-tables (mapped here to the real actionTarget, since
     /// that's the only table whose columns they actually mirror).
     /// </summary>
+
+    /// <summary>
+    /// OUTPUT sin INTO: "INSERT ... OUTPUT inserted.MessageId VALUES(...)", que devuelve los
+    /// valores al llamador en vez de volcarlos a una tabla. Es la forma mas comun de OUTPUT y
+    /// quedaba ENTERA fuera del walker, porque ScriptDom la expone en OutputClause y aqui solo
+    /// se leia OutputIntoClause. Caso real: DNN dbo.AddRedirectMessage, cuya referencia a
+    /// MessageId era una de las 90 ciegas del corpus.
+    ///
+    /// No hay lineage de derivacion posible (no existe tabla destino cuyas columnas nombrar),
+    /// pero si hay LECTURAS, y su atribucion es inequivoca: inserted/deleted son pseudo-tablas
+    /// que reflejan las columnas del objetivo del DML. Por eso este caso NO comparte el riesgo
+    /// de precision de ORDER BY ni de las subconsultas, donde hay que decidir a cual de varias
+    /// tablas del FROM pertenece la columna.
+    ///
+    /// Restringido a los calificadores inserted/deleted a proposito: T-SQL exige el prefijo en
+    /// OUTPUT (lo unico sin calificar que admite es $action), asi que cualquier otra cosa no es
+    /// una columna del objetivo y atribuirsela seria inventar una arista.
+    /// </summary>
+    private static void ProcessOutputSinInto(IList<SelectElement> selectColumns, string actionTarget, WalkContext ctx, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>>? cteBaseTables, List<Condition> condStack, TSqlStatement stmt)
+    {
+        if (string.IsNullOrEmpty(actionTarget))
+            return;
+
+        var refsSueltas = new List<(string? Qualifier, string Column)>();
+        foreach (var element in selectColumns.OfType<SelectScalarExpression>())
+        {
+            var collectorSuelto = new QualifiedColumnCollector();
+            element.Expression.Accept(collectorSuelto);
+            refsSueltas.AddRange(collectorSuelto.Refs);
+        }
+
+        var columnasObjetivo = refsSueltas
+            .Where(r => string.Equals(r.Qualifier, "inserted", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(r.Qualifier, "deleted", StringComparison.OrdinalIgnoreCase))
+            .Select(r => r.Column)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (columnasObjetivo.Count == 0)
+            return;
+
+        AddLink(ctx, condStack, "OUTPUT", actionTarget, stmt, cteNames, cteBaseTables,
+                extraReads: new List<TableColumnRef> { new(actionTarget, columnasObjetivo) });
+    }
+
     private static void ProcessOutputClause(TSqlFragment? output, string actionTarget, WalkContext ctx, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>>? cteBaseTables, List<Condition> condStack, TSqlStatement stmt)
     {
-        if (output is not OutputIntoClause outputInto || outputInto.IntoTable == null)
+        // ScriptDom modela OUTPUT en DOS propiedades distintas: OutputIntoClause para
+        // "OUTPUT ... INTO tabla" y OutputClause para "OUTPUT ..." a secas. El codigo solo
+        // leia la primera, asi que el OUTPUT sin INTO -la forma mas comun- no llegaba
+        // siquiera a esta funcion.
+        if (output is OutputClause outputSuelto)
+        {
+            ProcessOutputSinInto(outputSuelto.SelectColumns, actionTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
             return;
+        }
+
+        if (output is not OutputIntoClause outputInto)
+            return;
+
+        // OUTPUT SIN "INTO" - "INSERT ... OUTPUT inserted.MessageId VALUES(...)", que
+        // devuelve los valores al llamador en vez de volcarlos a una tabla. Es la forma mas
+        // comun de OUTPUT y quedaba ENTERA fuera: el metodo salia en la guarda de arriba
+        // antes de mirar una sola columna. Caso real: DNN dbo.AddRedirectMessage, cuya
+        // referencia a MessageId era una de las 90 ciegas del corpus.
+        //
+        // No hay lineage de derivacion posible (no existe tabla destino cuyas columnas
+        // nombrar), pero si hay LECTURAS, y su atribucion es inequivoca: inserted/deleted
+        // son pseudo-tablas que reflejan las columnas del objetivo del DML. Por eso este
+        // caso no comparte el riesgo de precision de ORDER BY o de las subconsultas, donde
+        // hay que decidir a cual de varias tablas del FROM pertenece la columna.
+        //
+        // Restringido a los calificadores inserted/deleted a proposito: T-SQL exige el
+        // prefijo en OUTPUT (lo unico sin calificar que admite es $action), asi que
+        // cualquier otra cosa no es una columna del objetivo y atribuirsela seria inventar
+        // una arista.
+        if (outputInto.IntoTable == null)
+        {
+            ProcessOutputSinInto(outputInto.SelectColumns, actionTarget, ctx, cteNames, cteBaseTables, condStack, stmt);
+            return;
+        }
 
         string outputTargetName;
         if (outputInto.IntoTable is NamedTableReference ntr)

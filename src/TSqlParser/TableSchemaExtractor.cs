@@ -197,8 +197,10 @@ public static class TableSchemaExtractor
             conn.Open();
             return conn;
         }
-        catch (SqlException)
+        catch (SqlException ex)
         {
+            SqlConnections.RecordFailure(ex);
+            Console.Error.WriteLine($"Connection failed: {ex.Message}");
             return null;
         }
     }
