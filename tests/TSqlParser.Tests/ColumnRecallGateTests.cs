@@ -1,17 +1,17 @@
-using TSqlParser;
+﻿using TSqlParser;
 
 namespace TSqlParser.Tests;
 
 /// <summary>
-/// Trinquete del lineage de columna medido contra un oráculo externo, sobre corpus grandes de
-/// T-SQL real. Los corpus, sus oráculos y sus suelos NO están aquí: se declaran en
+/// Trinquete del lineage de columna medido contra una referencia externo, sobre corpus grandes de
+/// T-SQL real. Los corpus, sus referencias y sus suelos NO están aquí: se declaran en
 /// <c>eval/corpora.json</c> y los lee <see cref="EvalCorpora"/>. Cada test es un
 /// <c>[Theory]</c> que se ejecuta una vez por corpus gateado, así que añadir una base es
 /// añadir una entrada de datos, no duplicar esta clase (ver el porqué en EvalCorpora).
 ///
-/// A diferencia de <see cref="ViewLineageOracleTests"/>, este gate NO necesita SQL Server:
-/// tanto el corpus como el oráculo están congelados en el repo, así que corre en cualquier
-/// runner. El oráculo se generó con sys.dm_sql_referenced_entities (referenced_minor_id &gt; 0)
+/// A diferencia de <see cref="ViewLineageCatalogTests"/>, este gate NO necesita SQL Server:
+/// tanto el corpus como la referencia están congelados en el repo, así que corre en cualquier
+/// runner. El referencia se generó con sys.dm_sql_referenced_entities (referenced_minor_id &gt; 0)
 /// sobre la base restaurada; ver eval/README.md para regenerarlo.
 ///
 /// Mide TRES cosas, no una. El recall solo mide lo que falta; sin precisión, un motor que
@@ -20,14 +20,14 @@ namespace TSqlParser.Tests;
 /// simetría es deliberada:
 ///
 ///   - recall laxo      (módulo, columna): la COBERTURA REAL. Qué fracción de las columnas
-///     que ve el oráculo ve también el motor, sin importar de qué entidad las cuelgue.
-///   - recall estricto  (módulo, ENTIDAD, columna): concordancia literal con el oráculo.
+///     que ve la referencia ve también el motor, sin importar de qué entidad las cuelgue.
+///   - recall estricto  (módulo, ENTIDAD, columna): concordancia literal con la referencia.
 ///   - precisión        (módulo, ENTIDAD, columna): qué fracción de lo que emite está
-///     respaldada por el oráculo.
+///     respaldada por la referencia.
 ///
 /// OJO con la diferencia entre laxo y estricto. La primera lectura fue "el motor atribuye
 /// mal", y los datos la refutaron: de las 1983 pérdidas con la columna vista pero colgada de
-/// otra entidad, 1896 son oráculo=VISTA / motor=TABLA. El motor atraviesa la vista hasta las
+/// otra entidad, 1896 son referencia=VISTA / motor=TABLA. El motor atraviesa la vista hasta las
 /// tablas base y la DMV se para en la vista. Son convenciones distintas, no un defecto, y
 /// para análisis de impacto la del motor es la útil. Por eso el recall estricto NO mide
 /// calidad: es un detector de cambios en esa convención. La medida de calidad es el laxo.
@@ -39,14 +39,14 @@ public class ColumnRecallGateTests
 {
     /// <summary>
     /// Aristas del grafo que cuentan como "este módulo referencia esta columna", para casar con
-    /// la semántica del oráculo: dm_sql_referenced_entities con minor_id &gt; 0 no distingue
+    /// la semántica de la referencia: dm_sql_referenced_entities con minor_id &gt; 0 no distingue
     /// lectura de escritura, reporta cualquier referencia a la columna. Omitir WRITES_COLUMN
     /// (el error de la primera versión de este gate) descarta las columnas destino de todo
     /// UPDATE ... SET y hunde la medida 20 puntos.
     ///
     /// CONSTRAINS, ASSIGNED_FROM, DERIVES_FROM y compañía se quedan FUERA a propósito: medido,
     /// no suben el recall ni una décima y desploman la precisión (66,9 % -> 42,7 %). No son
-    /// referencias en el sentido del oráculo.
+    /// referencias en el sentido de la referencia.
     /// </summary>
     // Movida a TSqlParser.BlindRefs.ColumnRefEdges: la usa tanto este fichero (BuildGraphRefsByClass,
     // más abajo) como el subcomando "blind-refs", y solo puede haber una lista.
@@ -179,7 +179,7 @@ public class ColumnRecallGateTests
 
         // La precisión GLOBAL se informa pero NO se gatea, y conviene saber por qué:
         // mezcla clases y su movimiento lo domina la proporción de aristas via_view, cuya
-        // precisión contra este oráculo es del 4 % por construcción (la DMV se para en la
+        // precisión contra este referencia es del 4 % por construcción (la DMV se para en la
         // vista). Cada vez que el motor mejora y resuelve más lecturas a través de vistas,
         // la global BAJA aunque no empeore ni una clase. Pasó dos veces seguidas: al
         // expandir SELECT * sobre vistas (70,24 -> 70,05) y al recuperar las columnas
@@ -198,7 +198,7 @@ public class ColumnRecallGateTests
     /// sobre este corpus, no un número puesto a ojo.
     ///
     /// `via_view` queda deliberadamente FUERA de los suelos: son lecturas alcanzadas
-    /// atravesando una vista hasta su tabla base, y el oráculo se para en la vista, así que
+    /// atravesando una vista hasta su tabla base, y la referencia se para en la vista, así que
     /// por construcción casi ninguna está respaldada (~4 %). No es un fallo, es otra
     /// convención — y meterla en un suelo sería fijar como invariante un artefacto de la
     /// comparación. Se informa, no se gatea.
@@ -308,7 +308,7 @@ public class ColumnRecallGateTests
     /// <summary>
     /// Control negativo: si la comparación estuviera rota (clave de join mal formada, conjuntos
     /// vacíos, normalización que iguala todo), el test de arriba pasaría sin medir nada. Aquí se
-    /// perturba el oráculo renombrando cada columna y se exige que el recall se DESPLOME. Un gate
+    /// perturba la referencia renombrando cada columna y se exige que el recall se DESPLOME. Un gate
     /// que no puede fallar no es un gate.
     /// </summary>
     [Theory]

@@ -152,7 +152,7 @@ if (positional.Count >= 1 && positional[0] == "mcp")
 }
 
 // "blind-refs <corpusId> <salida.csv>": vuelca la LISTA de referencias (módulo, columna) que el
-// oráculo de eval/corpora.json ve y el grafo no reproduce (el conjunto laxo de
+// referencia de eval/corpora.json ve y el grafo no reproduce (el conjunto laxo de
 // ColumnRecallGateTests) - el gate solo imprime el agregado, esto imprime el detalle para poder
 // clasificar cada ciega manualmente. <corpusId> se resuelve por CorpusManifest ("dnn", "wwidw",
 // ...); la comparación es EXACTAMENTE la del gate (BlindRefs.Compute), así que las dos medidas

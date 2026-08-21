@@ -1,4 +1,4 @@
-using TSqlParser;
+﻿using TSqlParser;
 
 namespace TSqlParser.Tests;
 
@@ -22,7 +22,7 @@ namespace TSqlParser.Tests;
 /// MergeLineage), y MergeTargetColumns() añade a mrgColumns todo el SET de un WHEN MATCHED
 /// UPDATE aunque MergeLineage no pudiera trazar el lado derecho a una tabla real (deliberadamente
 /// SIN el WHEN NOT MATCHED INSERT - ver el comentario de MergeTargetColumns: incluirlo hundía la
-/// precisión "direct" del 99,7846 % al 99,5 %, por debajo del suelo, porque el oráculo
+/// precisión "direct" del 99,7846 % al 99,5 %, por debajo del suelo, porque la referencia
 /// sys.dm_sql_referenced_entities no reporta la lista de columnas INSERT de un MERGE). Medido:
 /// 122 -&gt; 99 ciegas (exactamente las 23 de causa #2, verificado cruzando el CSV de blind-refs
 /// antes/después: 23 caen, 0 nuevas), recall laxo 98,3292 % -&gt; 98,6442 %, sin regresión en

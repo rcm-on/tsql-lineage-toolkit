@@ -1,13 +1,13 @@
-namespace TSqlParser;
+﻿namespace TSqlParser;
 
 /// <summary>
-/// Una fila del oráculo o del grafo, a nivel (módulo, entidad, columna), todo en minúsculas. Único
-/// tipo de clave que usa la comparación contra el oráculo de <c>eval/corpora.json</c>; ver
+/// Una fila de la referencia o del grafo, a nivel (módulo, entidad, columna), todo en minúsculas. Único
+/// tipo de clave que usa la comparación contra la referencia de <c>eval/corpora.json</c>; ver
 /// <see cref="BlindRefs"/> para el porqué de que viva en el motor y no en los tests.
 /// </summary>
 public readonly record struct ColumnRef(string Module, string Entity, string Column);
 
-/// <summary>Una referencia (módulo, columna) del oráculo que el grafo NO reproduce, en el conjunto laxo.</summary>
+/// <summary>Una referencia (módulo, columna) de la referencia que el grafo NO reproduce, en el conjunto laxo.</summary>
 public readonly record struct BlindRef(string Module, string Column);
 
 /// <summary>Resultado de <see cref="BlindRefs.Compute"/>: los conteos que ya imprimía el gate más la
@@ -24,7 +24,7 @@ public sealed record BlindRefsResult(
 }
 
 /// <summary>
-/// Carga del oráculo de columna, construcción de las referencias del grafo y cálculo del recall
+/// Carga de la referencia de columna, construcción de las referencias del grafo y cálculo del recall
 /// laxo — la MISMA lógica que usa <c>ColumnRecallGateTests</c> para medir el recall laxo, movida
 /// aquí para que el subcomando <c>blind-refs</c> (que vuelca la LISTA de lo que falta, no solo el
 /// agregado) no la reimplemente en paralelo. Dos copias de esta comparación divergirían en el
@@ -35,7 +35,7 @@ public static class BlindRefs
 {
     /// <summary>
     /// Aristas del grafo que cuentan como "este módulo referencia esta columna", para casar con
-    /// la semántica del oráculo: dm_sql_referenced_entities con minor_id &gt; 0 no distingue
+    /// la semántica de la referencia: dm_sql_referenced_entities con minor_id &gt; 0 no distingue
     /// lectura de escritura, reporta cualquier referencia a la columna. Omitir WRITES_COLUMN
     /// descarta las columnas destino de todo UPDATE ... SET y hunde la medida 20 puntos. Ver
     /// ColumnRecallGateTests para el resto del razonamiento (esta lista es la misma).

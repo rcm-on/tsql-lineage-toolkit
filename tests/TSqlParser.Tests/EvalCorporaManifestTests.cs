@@ -1,4 +1,4 @@
-namespace TSqlParser.Tests;
+﻿namespace TSqlParser.Tests;
 
 /// <summary>
 /// Comprobaciones del propio manifiesto <c>eval/corpora.json</c>.
@@ -54,7 +54,7 @@ public class EvalCorporaManifestTests
     }
 
     /// <summary>
-    /// Un corpus con esquema real y oráculo pero SIN suelos queda fuera de los gates sin que
+    /// Un corpus con esquema real y referencia pero SIN suelos queda fuera de los gates sin que
     /// nadie se entere: se añade el corpus, los tests siguen en verde y no se mide. Este test
     /// obliga a que esa combinación sea deliberada — o pones suelos, o marcas kind=parser-torture.
     /// </summary>
