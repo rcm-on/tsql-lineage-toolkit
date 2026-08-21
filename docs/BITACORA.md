@@ -68,6 +68,60 @@ cambiarlas alteran **qué filas devuelve** el procedimiento, en silencio. #lecci
 Gate ya commiteado (`daaa5a3`), y su ground-truth empírico coincidió al 100% con el
 diagnóstico a mano.
 
+### HECHO: subcomando `recall` — el motor mide cuánto ve sobre la base del usuario
+
+`recall <database> [--server X] [--out csv]`. Extrae los módulos de la base viva, los
+analiza y contrasta contra `sys.dm_sql_referenced_entities` de esa misma base.
+
+Devuelve **las tres cosas juntas, nunca una sola**: el porcentaje, la **lista nominal**
+`módulo,columna` de lo que no ve —que es lo accionable—, y los objetos con SQL dinámico sin
+resolver, que el catálogo tampoco ve. Publicar el porcentaje sin esa advertencia sería
+media verdad.
+
+Verificado end-to-end contra SQL Server **en contenedor** (ya no hay SQL local): base mínima
+de 4 procedimientos → catálogo 6, el motor ve 5, recall 83,3333 %, y la única ciega es
+`dbo.orderbycol.creado` — exactamente el patrón que hoy se descartó por precisión. **Que la
+limitación conocida sea justo lo que la medición detecta es la prueba de que mide de
+verdad.**
+
+Receta de verificación, minutos en vez de la media hora del script de backups:
+
+```bash
+docker run -d --name recalltest -e ACCEPT_EULA=Y -e MSSQL_SA_PASSWORD=... -p 14333:1433 \
+  mcr.microsoft.com/mssql/server:2022-latest
+# crear una base mínima con los casos que interesen
+TSQL_SQL_USER=sa TSQL_SQL_PASSWORD=... dotnet ...TSqlParser.dll recall <db> --server localhost,14333
+```
+
+### SIGUIENTE: el SQL dinámico, y en este orden
+
+El hueco que ni el motor ni el catálogo ven. Tres vías, y **el orden importa**: empezar por
+la última gasta contexto adivinando lo que las dos primeras dan con certeza.
+
+**1. Observar lo que se ejecutó** (determinista). `capture-plans` y `XePlanCaptor` ya
+existen: una sentencia dinámica que corre deja un plan **con las tablas reales**. No es
+conjetura, es observación. Recordar que la atribución solo sale con XE + `event_file`
+(`nest_level`); Query Store devuelve `object_id=0`.
+
+**2. Ampliar la resolución estática** (determinista). `QUOTENAME`, `NCHAR`, `COALESCE` y
+`CASE` ya están. Cada función que se sepa evaluar es dinámico que deja de serlo para
+siempre, sin coste por ejecución.
+
+**3. Hipótesis de LLM**, solo para lo que sobreviva a 1 y 2.
+
+Sobre el 3, la regla que lo hace admisible: **nunca como arista del grafo.** El motor vale
+porque es determinista; una inferencia de LLM es no determinista y aquí además
+**infalsificable**, porque el catálogo tampoco ve esa zona. Mezclarla con `direct` o
+`via_view` destruiría las clases de confianza.
+
+Entra como capa aparte con `confianza: hipótesis`, con la evidencia para confirmarla de un
+vistazo (objeto, línea y las asignaciones de la variable que alimenta el `EXEC`, que ya
+están en las aristas `BUILDS_SQL_FROM`). Mismo patrón que `risks` con `evidencia:
+estructural` y `datos_de_ejecucion`.
+
+Y se mide como todo lo demás: **cuántas hipótesis confirma un humano**. Sin esa cifra sería
+otra media verdad, solo que más cara. #leccion
+
 ### SIGUIENTE TAREA, y es más importante que las 40 restantes
 
 **El usuario final no tiene la referencia de contraste.** Nosotros medimos el recall contra DNN y WWI
