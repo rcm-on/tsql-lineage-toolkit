@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -20,6 +20,12 @@
     <ProjectReference Include="..\Parser.Contracts\Parser.Contracts.csproj" />
     <ProjectReference Include="..\Parser.Graph\Parser.Graph.csproj" />
     <ProjectReference Include="..\Parser.Mcp\Parser.Mcp.csproj" />
+  </ItemGroup>
+
+  <!-- El script del catalogo se embebe: el tool instalado no tiene el repositorio al lado.
+       eval/column-recall/extract-catalog.sql sigue siendo la unica copia. -->
+  <ItemGroup>
+    <EmbeddedResource Include="../../eval/column-recall/extract-catalog.sql" LogicalName="TSqlParser.extract-catalog.sql" />
   </ItemGroup>
 
   <ItemGroup>

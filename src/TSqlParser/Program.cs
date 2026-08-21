@@ -1,4 +1,4 @@
-﻿// TSqlParser: ScriptDom-based AST parser for T-SQL stored procedures / functions / triggers.
+// TSqlParser: ScriptDom-based AST parser for T-SQL stored procedures / functions / triggers.
 //
 // Reads a JSON array of { "name": "Database::Schema.Object", "sql": "CREATE PROCEDURE ..." }
 // and writes a graph (nodes + relationships) in the same shape as
@@ -157,6 +157,40 @@ if (positional.Count >= 1 && positional[0] == "mcp")
 // clasificar cada ciega manualmente. <corpusId> se resuelve por CorpusManifest ("dnn", "wwidw",
 // ...); la comparación es EXACTAMENTE la del gate (BlindRefs.Compute), así que las dos medidas
 // no pueden divergir.
+// "recall <database> [--server X] [--out ciegas.csv]": cuanto ve el motor sobre TU base.
+// Extrae los modulos, los analiza y contrasta contra el propio resolvedor de dependencias
+// de SQL Server en esa misma base. Escribe la lista NOMINAL de lo que no ve, no solo un
+// porcentaje: un numero sin los nombres no se puede accionar.
+if (positional.Count >= 1 && positional[0] == "recall")
+{
+    if (positional.Count < 2)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser recall <database> [--server <server>] [--out <ciegas.csv>]");
+        return 1;
+    }
+    var srvIdx = Array.IndexOf(args, "--server");
+    var srv = srvIdx >= 0 && srvIdx + 1 < args.Length ? args[srvIdx + 1] : @".\SQLEXPRESS";
+    var outIdx = Array.IndexOf(args, "--out");
+    var salida = outIdx >= 0 && outIdx + 1 < args.Length ? args[outIdx + 1] : $"recall-{positional[1]}-ciegas.csv";
+
+    try
+    {
+        var recall = CatalogRecall.Compute(positional[1], srv);
+        BlindRefs.WriteCsv(recall.Refs, salida);
+        Console.WriteLine(CatalogRecall.Summarize(recall, salida));
+        return 0;
+    }
+    catch (Exception ex)
+    {
+        // Un fallo de conexion o de permisos es un caso previsto, no un error del programa:
+        // se explica y se sale con codigo, sin traza.
+        Console.Error.WriteLine($"recall: {ex.Message}");
+        Console.Error.WriteLine("Comprueba el servidor, el nombre de la base y que el usuario " +
+                                "tenga VIEW DEFINITION sobre ella (lo exige dm_sql_referenced_entities).");
+        return 1;
+    }
+}
+
 if (positional.Count >= 1 && positional[0] == "blind-refs")
 {
     if (positional.Count < 3)
