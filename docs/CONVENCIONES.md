@@ -25,5 +25,16 @@ updated: 2026-08-19
   hizo, qué se aprendió que no estaba previsto, en qué estado queda el árbol y cuál es el
   siguiente paso concreto. Sin excepciones, aunque la sesión haya sido corta o haya
   fracasado — una sesión sin entrada hay que reconstruirla leyendo commits.
+- **Reclasificar siempre antes de seguir arreglando.** Después de cada arreglo que mueva
+  el contador, la clasificación anterior **ya no describe lo que queda**: se vuelve a medir
+  el reparto antes de tocar nada. Un diagnóstico caducado lleva a arreglar el síntoma que
+  ya no es el mayor. Y clasificar dos veces cuesta minutos; arreglar lo que no tocaba,
+  horas.
+- **Diagnosticar desde el código, no desde los síntomas.** Cuando el mismo fallo aparece en
+  varios sitios, buscar el punto donde convergen **antes** de arreglar el primero. El
+  corpus dice "cuatro patrones" y lleva a cuatro parches; el código dice "un punto de
+  convergencia". Medido: los cuatro patrones ciegos de columna eran un solo mecanismo al
+  que le faltaba la mitad, y arreglarlo ahí se llevó de golpe lo que iban a ser cuatro
+  cambios.
 - **Nada de atribución de IA** en commits ni PRs. Autor: Ramón Campos Martín.
 - **Comentarios escuetos.** El porqué va al commit o a `notes/`, no a un bloque de `///`.
