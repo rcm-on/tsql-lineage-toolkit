@@ -68,6 +68,48 @@ cambiarlas alteran **qué filas devuelve** el procedimiento, en silencio. #lecci
 Gate ya commiteado (`daaa5a3`), y su ground-truth empírico coincidió al 100% con el
 diagnóstico a mano.
 
+### CAUSA RAÍZ de las ciegas: una sola, medida — léelo antes de tocar nada
+
+No son cuatro patrones: son **cuatro síntomas de un mecanismo**. Medido sobre las 89:
+
+| Causa | Ciegas | % |
+|---|---|---|
+| Solo scope anidado | 60 | 67 % |
+| Ambas (scope + calificador no-tabla) | 8 | 9 % |
+| Solo calificador no-tabla | 1 | 1 % |
+| Sin referencia literal | 11 | 12 % |
+| Ninguna de las dos | 9 | 10 % |
+
+**69 de 89 (78 %) por un solo mecanismo.**
+
+> El walker resuelve columnas contra una **lista plana de tablas del scope exterior**.
+> Cuando una columna vive en un scope anidado —subconsulta escalar, `IF EXISTS`, tabla
+> derivada, CTE— su propio `FROM` no está en esa lista, no casa con nada y se descarta por
+> fallo cerrado.
+
+Por eso `IN (SELECT)` sí funciona: se arregló como **caso particular**, no como mecanismo.
+Seguir arreglando patrones de uno en uno es perseguir síntomas. #leccion
+
+**Solución: pila de scopes.** Cada `QuerySpecification` apila un scope con su propio `FROM`
+(alias → tabla real, o alias → mapa de columnas si es derivada/CTE); resolver una columna
+es recorrer la pila de dentro hacia fuera; lo irresoluble se sigue descartando.
+
+Dos razones por las que esto **no** repetirá la caída de precisión del intento con
+`ORDER BY`:
+
+1. Es **la regla de ámbito del propio T-SQL**, incluidas las subconsultas correlacionadas
+   que ven el scope exterior. No adivina: implementa la especificación.
+2. **Clasificación por construcción**: resuelta en el scope actual → `direct`; resuelta
+   atravesando derivada o CTE → clase deducida, como ya hace `via_view`. Un error de
+   resolución no puede contaminar la clase de máxima confianza.
+
+Precedente en el código: `GraphExporter.viewBaseTables` ya hace el mapeo por columna a
+través de una capa, y marca `via_view`. Falta lo mismo para derivadas y CTEs — hoy
+`cteBaseTables` mapea a tablas base, **no por columna**.
+
+**No cubre**: `ORDER BY` (7), que es alias de **salida** del SELECT, otro problema; ni las
+11 sin referencia literal ni las 9 sin causa. Cobertura esperada: 69 de 89.
+
 ### Resultado negativo del primer intento — léelo antes de reintentar
 
 El agente de `AstWalker` murió por cuota, pero dejó trabajo medible y **el veredicto es que
