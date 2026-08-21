@@ -1,4 +1,4 @@
-﻿using TSqlParser;
+using TSqlParser;
 
 namespace TSqlParser.Tests;
 
@@ -57,9 +57,9 @@ public class BlindRefsTests
         // 90 -> 89 el 2026-08-21: OUTPUT sin INTO. ScriptDom lo expone en OutputClause y el
         // walker solo leia OutputIntoClause, asi que esa forma -la mas comun- no llegaba a
         // procesarse. Caso real del corpus: dbo.AddRedirectMessage.MessageId.
-        Assert.Equal(40, result.BlindCount);
-        Assert.Equal(40, result.Blind.Count);
-        Assert.Equal(0.9945220, result.LooseRecall, 6);
+        Assert.Equal(31, result.BlindCount);
+        Assert.Equal(31, result.Blind.Count);
+        Assert.Equal(0.9957546, result.LooseRecall, 6);
 
         // Sin duplicados: Compute() sale de un HashSet<(Module,Column)>, así que esto es una
         // comprobación de que nada aguas abajo (ToList, orden) introdujo una copia.

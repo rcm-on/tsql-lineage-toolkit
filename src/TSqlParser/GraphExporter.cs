@@ -1550,6 +1550,15 @@ public static class GraphExporter
                         StartNodeId = r.ObjectName,
                         EndNodeId = outColId,
                     });
+
+                // Salida sin origen trazable (función niládica / alias de subconsulta
+                // derivada - ver el comentario en AstWalker.ViewColumnLineage): el nombre
+                // ya quedó registrado arriba (HAS_COLUMN), pero no hay tabla fuente real
+                // de la que colgar un DERIVES_FROM. Sin este corte, SourceTable="" crearía
+                // un :Table fantasma de nombre vacío.
+                if (deriv.SourceColumns.Count == 0)
+                    continue;
+
                 var (srcTableId, srcTableName) = GetOrCreateTable(graph, tableIds, tableShortNames,db, deriv.SourceTable);
                 foreach (var srcCol in deriv.SourceColumns)
                 {

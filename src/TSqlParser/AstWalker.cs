@@ -2580,8 +2580,6 @@ public static class AstWalker
 
                 var collector = new QualifiedColumnCollector();
                 sse.Expression.Accept(collector);
-                if (collector.Refs.Count == 0)
-                    continue;   // constant/parameter expression - no column source
 
                 // Split off references whose qualifier is a CROSS APPLY alias: resolve
                 // those through the apply map to their base XML column; the rest go
@@ -2599,6 +2597,7 @@ public static class AstWalker
                 var (primaryCols, extras) = SplitColumnsByTable(normalRefs, tableRefs);
                 var exprText = SqlText.Generate(sse.Expression);
                 var exprOps = OperatorClassifier.Classify(sse.Expression);
+                var beforeCount = lineage.Count;
                 if (primaryCols.Count > 0)
                     lineage.Add(new ColumnDerivation(outName, tableRefs[0].Table, primaryCols, exprText, exprOps));
                 foreach (var extra in extras)
@@ -2606,6 +2605,19 @@ public static class AstWalker
                 foreach (var grp in xmlResolved.GroupBy(x => x.Table, StringComparer.OrdinalIgnoreCase))
                     lineage.Add(new ColumnDerivation(outName, grp.Key,
                         grp.Select(x => x.Column).Distinct(StringComparer.OrdinalIgnoreCase).ToList(), exprText, exprOps));
+
+                // El nombre de salida es cierto aunque no se pueda trazar su origen: una
+                // función niládica ("dbo.SuperUserTabID() AS SuperTabId", sin ninguna
+                // columna referenciada) o una columna calificada por un alias de
+                // subconsulta derivada ("S.MaxSortOrder" donde S es "(SELECT ... ) S",
+                // que SplitColumnsByTable descarta por no ser una tabla real) dejan esta
+                // vuelta sin ninguna ColumnDerivation. Sin registrar el nombre, un
+                // consumidor con "SELECT * FROM estaVista" nunca sabe que esa columna
+                // existe. Se registra sin fuente (SourceTable="") - no hay DERIVES_FROM
+                // que dibujar, pero el nombre no se inventa: viene literal del alias/nombre
+                // de columna de la propia vista.
+                if (lineage.Count == beforeCount)
+                    lineage.Add(new ColumnDerivation(outName, "", Array.Empty<string>(), exprText, exprOps));
             }
         }
         return lineage;
