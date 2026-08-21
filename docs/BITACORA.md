@@ -68,6 +68,54 @@ cambiarlas alteran **qué filas devuelve** el procedimiento, en silencio. #lecci
 Gate ya commiteado (`daaa5a3`), y su ground-truth empírico coincidió al 100% con el
 diagnóstico a mano.
 
+### RESULTADO: 90 → 40 ciegas, recall 98,7675 % → 99,4522 %
+
+Cuatro cambios, precisión intacta en **todos** (`ColumnRecallGateTests` 8/8 en cada paso):
+
+| # | Cambio | Ciegas | Commit |
+|---|---|---|---|
+| 1 | `OUTPUT` sin `INTO` | 90 → 89 | `7f5a42e` |
+| 2 | Scope en la lista `SELECT` | 89 → 76 | `898cf73` |
+| 3 | Scope en el predicado de `IF`/`WHILE` | 76 → 67 | `aed46ee` |
+| 4 | **Consolidación en `EmitSubqueryReads`** | 67 → **40** | `babc05d` |
+
+Y uno **descartado**: `ORDER BY` bajaba a 86 pero tumbaba la precisión. En `stash@{0}`.
+
+#### El hallazgo que vale más que los números
+
+El mecanismo estaba **entero, en dos mitades que nunca se encontraron**:
+
+- `EmitSubqueryReads` sabía **qué tablas** toca una subconsulta anidada, y ya estaba
+  cableado a `IF`, `WHILE` y cualquier sentencia. Pero llamaba a `BuildExtraReads` con una
+  lista de columnas **vacía**.
+- `ScopedColumnCollector` / `ResolveScopedColumns` sabían resolver **columnas en su propio
+  scope**, pero solo vivían en `ExtractFilterColumnsCore`: solo `WHERE`.
+
+Unirlas en el punto de convergencia cubrió de golpe lista `SELECT`, argumentos de función,
+`RETURN` de función escalar, cuerpos de CTE y predicados de control de flujo. Los cambios
+2 y 3 fueron parches que el 4 dejó en gran parte redundantes.
+
+**Ese `new List<TableColumnRef>()` era un hueco silencioso**: no fallaba, no avisaba, no
+dejaba un TODO. Registraba media verdad, y una lista vacía se lee igual que "aquí no hay
+columnas". Es el mismo modo de fallo que el producto persigue —un cero que parece una
+respuesta— reproducido dentro del propio motor. #leccion
+
+#### Error de método, para no repetirlo
+
+Diagnostiqué desde el **corpus** (qué patrones fallan) en vez de desde el **código** (qué
+scopes reciben resolución de columnas). El corpus decía "cuatro patrones" y llevaba a
+arreglarlos de uno en uno; el código decía "un punto de convergencia".
+
+**Ante un fallo repetido en varios sitios, buscar el punto donde convergen antes de
+arreglar el primero.** #leccion
+
+#### Lo que queda de las 40
+
+El reparto anterior ya **no describe** lo que hay: hay que reclasificar antes de tocar.
+Pendientes conocidos: tabla derivada (~8, necesita mapeo alias → columna de salida, el
+único diseño nuevo que falta), `ORDER BY` (~4, necesita detectar alias de salida), y ~11
+sin referencia literal, sin diagnosticar.
+
 ### CAUSA RAÍZ de las ciegas: una sola, medida — léelo antes de tocar nada
 
 No son cuatro patrones: son **cuatro síntomas de un mecanismo**. Medido sobre las 89:
