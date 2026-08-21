@@ -4,7 +4,7 @@ description: Nodos, aristas, ids, dirección actor->recurso, granularidad de Ste
 read_when: Al leer o escribir código que construye o consulta el grafo (exportadores, MCP, dashboard).
 related: [docs/ARQUITECTURA.md]
 stability: durable
-updated: 2026-08-19
+updated: 2026-08-21
 ---
 
 # Glosario del grafo

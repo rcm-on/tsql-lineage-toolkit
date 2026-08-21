@@ -5,7 +5,7 @@
     "Column": "estado",
     "Status": "cubierto",
     "Pattern": "subconsulta-escalar-select",
-    "Reason": "WHERE h.Estado=0 vive dentro de la subconsulta escalar de la lista SELECT; el walker no baja ahi. RESUELTO 2026-08-19: ScopedRefsFromSelectList lleva la resolucion por scope, que ya existia para WHERE, tambien a la lista SELECT."
+    "Reason": "WHERE h.Estado=0 vive dentro de la subconsulta escalar de la lista SELECT; el walker no baja ahi. RESUELTO 2026-08-21: ScopedRefsFromSelectList lleva la resolucion por scope, que ya existia para WHERE, tambien a la lista SELECT."
   },
   {
     "Module": "dbo.escalarenselect",
@@ -21,7 +21,7 @@
     "Column": "fecha",
     "Status": "cubierto",
     "Pattern": "subconsulta-escalar-select",
-    "Reason": "MAX(h.Fecha) esta dentro de la subconsulta escalar correlacionada. RESUELTO 2026-08-19: ScopedRefsFromSelectList lleva la resolucion por scope, que ya existia para WHERE, tambien a la lista SELECT."
+    "Reason": "MAX(h.Fecha) esta dentro de la subconsulta escalar correlacionada. RESUELTO 2026-08-21: ScopedRefsFromSelectList lleva la resolucion por scope, que ya existia para WHERE, tambien a la lista SELECT."
   },
   {
     "Module": "dbo.escalarenselectcorrelacionada",
@@ -29,7 +29,7 @@
     "Column": "madreid",
     "Status": "cubierto",
     "Pattern": "subconsulta-escalar-select",
-    "Reason": "predicado de correlacion h.MadreId=m.Id, dentro de la subconsulta escalar. RESUELTO 2026-08-19: ScopedRefsFromSelectList lleva la resolucion por scope, que ya existia para WHERE, tambien a la lista SELECT."
+    "Reason": "predicado de correlacion h.MadreId=m.Id, dentro de la subconsulta escalar. RESUELTO 2026-08-21: ScopedRefsFromSelectList lleva la resolucion por scope, que ya existia para WHERE, tambien a la lista SELECT."
   },
   {
     "Module": "dbo.escalarenselectcorrelacionada",
@@ -45,7 +45,7 @@
     "Column": "nombre",
     "Status": "cubierto",
     "Pattern": "if-exists",
-    "Reason": "WHERE Nombre='x' vive dentro del SELECT de un IF EXISTS(...). RESUELTO 2026-08-19: ProcesarSubconsultasDePredicado lleva la resolucion por scope al predicado de IF/WHILE."
+    "Reason": "WHERE Nombre='x' vive dentro del SELECT de un IF EXISTS(...). RESUELTO 2026-08-21: ProcesarSubconsultasDePredicado lleva la resolucion por scope al predicado de IF/WHILE."
   },
   {
     "Module": "dbo.ifnotexists",
@@ -53,7 +53,7 @@
     "Column": "codigo",
     "Status": "cubierto",
     "Pattern": "if-exists",
-    "Reason": "WHERE Codigo='y' vive dentro del SELECT de un IF NOT EXISTS(...). RESUELTO 2026-08-19: mismo arreglo del predicado; IF NOT EXISTS pasa por la misma via."
+    "Reason": "WHERE Codigo='y' vive dentro del SELECT de un IF NOT EXISTS(...). RESUELTO 2026-08-21: mismo arreglo del predicado; IF NOT EXISTS pasa por la misma via."
   },
   {
     "Module": "dbo.ifnotexists",
@@ -149,7 +149,7 @@
     "Column": "codigo",
     "Status": "cubierto",
     "Pattern": "output-inserted-deleted",
-    "Reason": "OUTPUT inserted.Codigo: referencia a la pseudo-tabla inserted, resuelta a la tabla objetivo del DML desde 2026-08-19; ScriptDom la expone en OutputClause, no en OutputIntoClause."
+    "Reason": "OUTPUT inserted.Codigo: referencia a la pseudo-tabla inserted, resuelta a la tabla objetivo del DML desde 2026-08-21; ScriptDom la expone en OutputClause, no en OutputIntoClause."
   },
   {
     "Module": "dbo.outputins",
@@ -165,7 +165,7 @@
     "Column": "nombre",
     "Status": "cubierto",
     "Pattern": "output-inserted-deleted",
-    "Reason": "OUTPUT deleted.Nombre: referencia a la pseudo-tabla deleted, resuelta a la tabla objetivo del DML desde 2026-08-19; ScriptDom la expone en OutputClause, no en OutputIntoClause."
+    "Reason": "OUTPUT deleted.Nombre: referencia a la pseudo-tabla deleted, resuelta a la tabla objetivo del DML desde 2026-08-21; ScriptDom la expone en OutputClause, no en OutputIntoClause."
   },
   {
     "Module": "dbo.outputdel",

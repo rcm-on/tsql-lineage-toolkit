@@ -4,7 +4,7 @@ description: Cómo se compone un informe de auditoría con el motor, qué puede 
 read_when: Antes de generar un informe de auditoría, o al añadir una categoría nueva.
 related: [docs/PROYECTO.md, docs/GLOSARIO-GRAFO.md, docs/VERIFICACION.md]
 stability: durable
-updated: 2026-08-19
+updated: 2026-08-21
 ---
 
 # Plantilla de informe de auditoría

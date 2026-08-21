@@ -4,7 +4,7 @@ description: Qué cambió en cada sesión, lo más reciente arriba.
 read_when: Para saber qué pasó en las últimas sesiones antes de continuar el trabajo.
 related: [docs/PROYECTO.md, docs/plan-arquitectura.md, docs/CONVENCIONES.md]
 stability: volatile
-updated: 2026-08-19
+updated: 2026-08-21
 ---
 
 # Bitácora
@@ -18,7 +18,7 @@ queda el árbol y cuál es el siguiente paso concreto.
 
 ---
 
-## 2026-08-19 (tarde) — Nueve herramientas MCP y diagnóstico de las 90 ciegas
+## 2026-08-21 (tarde) — Nueve herramientas MCP y diagnóstico de las 90 ciegas
 
 **Estado al cortar**: `main` en `daaa5a3`. Publicado hasta `a4cb3eb`. **330/330** en la
 última pasada estable (`e1594b8`). Hay un agente de `AstWalker` **en vuelo**: ver abajo.
@@ -137,7 +137,7 @@ una hipótesis vieja la generó un modelo que ya cambió):
 
 ```json
 { "source": "llm", "modelo": "...", "prompt_version": "...",
-  "generado": "2026-08-19", "confirmado_por": "" }
+  "generado": "2026-08-21", "confirmado_por": "" }
 ```
 
 `confirmado_por` vacío cumple la función del `revisado_por` del conocimiento destilado: **una
@@ -340,7 +340,7 @@ exijan el grafo. `agent-context-kit` queda aparcado en su repo.
 
 ---
 
-## 2026-08-19 (T19 + info) — El MCP cierra el bucle: seis herramientas
+## 2026-08-21 (T19 + info) — El MCP cierra el bucle: seis herramientas
 
 **Estado**: `main`, árbol limpio. **297/297** y **43/43**. Publicado.
 
@@ -377,7 +377,7 @@ solo escribe. #leccion
 
 ---
 
-## 2026-08-19 (T17) — Herramientas de columna del MCP
+## 2026-08-21 (T17) — Herramientas de columna del MCP
 
 **Estado**: `main` en `a29405b`, árbol limpio. **282/282** y **43/43**.
 
@@ -418,7 +418,7 @@ validan contexto contra el código. Queda como está, sin trabajo pendiente aqu�
 
 ---
 
-## 2026-08-19 (cierre) — Fase 0 completa: 0.8, 0.9 y documentación multi-modelo
+## 2026-08-21 (cierre) — Fase 0 completa: 0.8, 0.9 y documentación multi-modelo
 
 **Estado**: `main` en `f478048`, árbol limpio. **268/268** y **43/43**.
 
@@ -450,7 +450,7 @@ que usar `git commit -- <rutas>` o revisar `git status` antes de cada commit.
 
 ---
 
-## 2026-08-19 — Fase 0 de arquitectura: pasos 0.1 a 0.8
+## 2026-08-21 — Fase 0 de arquitectura: pasos 0.1 a 0.8
 
 **Estado al terminar**: `main`, árbol limpio, 7 commits nuevos sobre `a831fc1`.
 Suites **268/268** (era 256, +12 gates nuevos) y **43/43**. Build sin errores.

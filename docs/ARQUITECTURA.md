@@ -4,7 +4,7 @@ description: Mapa de la solución — qué proyecto existe, qué contiene y qué
 read_when: Antes de mover o crear un fichero, o de tocar el servidor MCP o el contrato del store.
 related: [docs/GLOSARIO-GRAFO.md, docs/PATRONES.md, docs/plan-arquitectura.md]
 stability: durable
-updated: 2026-08-19
+updated: 2026-08-21
 ---
 
 # Arquitectura

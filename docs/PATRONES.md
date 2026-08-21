@@ -4,7 +4,7 @@ description: Qué patrón va en cada sitio del motor y qué se descartó a prop�
 read_when: Antes de introducir una abstracción nueva o de tocar un sitio ya decidido.
 related: [docs/ARQUITECTURA.md, docs/plan-arquitectura.md]
 stability: durable
-updated: 2026-08-19
+updated: 2026-08-21
 ---
 
 # Patrones, y dónde NO aplicarlos

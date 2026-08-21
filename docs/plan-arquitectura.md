@@ -4,7 +4,7 @@ description: Plan de ejecución de la Fase 0/1/2 de la solución, con rutas, con
 read_when: Para saber qué queda por hacer y en qué orden, o antes de mover código entre proyectos.
 related: [docs/ARQUITECTURA.md, docs/PATRONES.md, docs/BITACORA.md]
 stability: volatile
-updated: 2026-08-19
+updated: 2026-08-21
 ---
 
 # Plan de diseño de la solución
@@ -13,7 +13,7 @@ Alcance: la solución completa (`Parser.Contracts`, `TSqlParser`, `NetParser`,
 `ParserGeneral`), no un rincón. Documento de ejecución: cada fase lleva rutas exactas,
 contrato y gate.
 
-## 0. Diagnóstico medido (2026-08-19)
+## 0. Diagnóstico medido (2026-08-21)
 
 Reparto real de `src/TSqlParser` (13.762 líneas), por dependencia técnica:
 

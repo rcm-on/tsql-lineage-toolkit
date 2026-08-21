@@ -4,7 +4,7 @@ description: Reglas de proceso del repo — gates, mutación, checkpoints, bitá
 read_when: Antes de empezar cualquier tarea en el repo, y al terminar una sesión.
 related: [docs/BITACORA.md, docs/VERIFICACION.md]
 stability: durable
-updated: 2026-08-19
+updated: 2026-08-21
 ---
 
 # Cómo se trabaja aquí

@@ -4,7 +4,7 @@ description: Los cuatro comandos de 30 segundos para dar el visto bueno a un cam
 read_when: Antes de dar por bueno cualquier cambio en el motor, como primer paso.
 related: [docs/guia-de-verificacion.md, docs/ejecucion-canonica.md]
 stability: durable
-updated: 2026-08-19
+updated: 2026-08-21
 ---
 
 # Verificación

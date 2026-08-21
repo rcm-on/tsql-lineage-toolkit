@@ -4,7 +4,7 @@ description: Qué es el producto, para quién y su objetivo real de soporte a la
 read_when: Antes de tocar cualquier parte del motor, para no perder de vista el objetivo real.
 related: [docs/ARQUITECTURA.md, docs/plan-arquitectura.md, docs/BITACORA.md]
 stability: durable
-updated: 2026-08-19
+updated: 2026-08-21
 ---
 
 # Proyecto

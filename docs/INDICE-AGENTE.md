@@ -4,7 +4,7 @@ description: Punto de entrada a la documentación — qué leer según lo que ne
 read_when: Siempre, como primer fichero de docs/ al empezar una sesión o tarea.
 related: [AGENTS.md]
 stability: durable
-updated: 2026-08-19
+updated: 2026-08-21
 ---
 
 # Índice de agente
