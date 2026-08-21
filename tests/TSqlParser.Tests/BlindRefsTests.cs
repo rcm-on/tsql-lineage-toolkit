@@ -57,9 +57,9 @@ public class BlindRefsTests
         // 90 -> 89 el 2026-08-19: OUTPUT sin INTO. ScriptDom lo expone en OutputClause y el
         // walker solo leia OutputIntoClause, asi que esa forma -la mas comun- no llegaba a
         // procesarse. Caso real del corpus: dbo.AddRedirectMessage.MessageId.
-        Assert.Equal(89, result.BlindCount);
-        Assert.Equal(89, result.Blind.Count);
-        Assert.Equal(0.9878116, result.LooseRecall, 6);
+        Assert.Equal(76, result.BlindCount);
+        Assert.Equal(76, result.Blind.Count);
+        Assert.Equal(0.9895919, result.LooseRecall, 6);
 
         // Sin duplicados: Compute() sale de un HashSet<(Module,Column)>, así que esto es una
         // comprobación de que nada aguas abajo (ToList, orden) introdujo una copia.

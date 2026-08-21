@@ -3,9 +3,9 @@
     "Module": "dbo.escalarenselect",
     "Table": "dbo.hijos",
     "Column": "estado",
-    "Status": "ciego",
+    "Status": "cubierto",
     "Pattern": "subconsulta-escalar-select",
-    "Reason": "WHERE h.Estado=0 vive dentro de la subconsulta escalar de la lista SELECT; el walker no baja ahi."
+    "Reason": "WHERE h.Estado=0 vive dentro de la subconsulta escalar de la lista SELECT; el walker no baja ahi. RESUELTO 2026-08-19: ScopedRefsFromSelectList lleva la resolucion por scope, que ya existia para WHERE, tambien a la lista SELECT."
   },
   {
     "Module": "dbo.escalarenselect",
@@ -19,17 +19,17 @@
     "Module": "dbo.escalarenselectcorrelacionada",
     "Table": "dbo.hijos",
     "Column": "fecha",
-    "Status": "ciego",
+    "Status": "cubierto",
     "Pattern": "subconsulta-escalar-select",
-    "Reason": "MAX(h.Fecha) esta dentro de la subconsulta escalar correlacionada."
+    "Reason": "MAX(h.Fecha) esta dentro de la subconsulta escalar correlacionada. RESUELTO 2026-08-19: ScopedRefsFromSelectList lleva la resolucion por scope, que ya existia para WHERE, tambien a la lista SELECT."
   },
   {
     "Module": "dbo.escalarenselectcorrelacionada",
     "Table": "dbo.hijos",
     "Column": "madreid",
-    "Status": "ciego",
+    "Status": "cubierto",
     "Pattern": "subconsulta-escalar-select",
-    "Reason": "predicado de correlacion h.MadreId=m.Id, dentro de la subconsulta escalar."
+    "Reason": "predicado de correlacion h.MadreId=m.Id, dentro de la subconsulta escalar. RESUELTO 2026-08-19: ScopedRefsFromSelectList lleva la resolucion por scope, que ya existia para WHERE, tambien a la lista SELECT."
   },
   {
     "Module": "dbo.escalarenselectcorrelacionada",

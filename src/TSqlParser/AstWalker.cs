@@ -534,6 +534,7 @@ public static class AstWalker
                             }
 
                             extraReads = BuildExtraReads(tableRefs, starExtras, skipFirst: true);
+                            FusionarLecturas(extraReads, ScopedRefsFromSelectList(qs, tableRefs, cteNames, cteBaseTables, ctx));
                         }
                         else
                         {
@@ -578,6 +579,7 @@ public static class AstWalker
                                         extras[idx] = new TableColumnRef(src.Table, extras[idx].Columns.Append(src.Column).ToArray());
                                 }
                             extraReads = BuildExtraReads(tableRefs, extras, skipFirst: true);
+                            FusionarLecturas(extraReads, ScopedRefsFromSelectList(qs, tableRefs, cteNames, cteBaseTables, ctx));
                         }
 
                         AddLink(ctx, condStack, "SELECT", selTarget, stmt, cteNames, cteBaseTables, columns: selColumns, extraReads: extraReads, selectStar: isSelectStar);
@@ -1415,6 +1417,73 @@ public static class AstWalker
     /// inner table it's filtered against) - see AstWalker root-cause note on
     /// ExtractFilterColumnsCore for the real corpus example that exposed it.
     /// </summary>
+
+    /// <summary>
+    /// Columnas de las subconsultas anidadas EN LA LISTA SELECT, resueltas cada una en su
+    /// propio scope. El mecanismo (ScopedColumnCollector + ResolveScopedColumns) ya existia,
+    /// pero solo se aplicaba en ExtractFilterColumnsCore, es decir solo a clausulas WHERE.
+    /// Por eso "WHERE x IN (SELECT ...)" resolvia y
+    /// "SELECT (SELECT COUNT(*) FROM h WHERE h.Estado=0) AS N FROM m" no: la columna Estado
+    /// se recogia con el colector normal, que desciende a todo, y se resolvia contra las
+    /// tablas del scope EXTERIOR, donde no casa con nada y se descartaba por fallo cerrado.
+    ///
+    /// Medido sobre el corpus DNN: 60 de las 89 ciegas restantes viven en un scope anidado,
+    /// y la subconsulta escalar de la lista SELECT es el grupo mayor.
+    ///
+    /// Resolver en el scope propio, con el exterior solo como respaldo para referencias
+    /// correlacionadas, es la regla de ambito del propio T-SQL: no adivina, la implementa.
+    /// </summary>
+    private static List<TableColumnRef> ScopedRefsFromSelectList(
+        QuerySpecification qs,
+        List<(string Alias, string Table)> tableRefs,
+        HashSet<string> cteNames,
+        Dictionary<string, List<(string Alias, string Table)>>? cteBaseTables,
+        WalkContext ctx)
+    {
+        var salida = new List<TableColumnRef>();
+        foreach (var el in qs.SelectElements)
+        {
+            var expr = el switch
+            {
+                SelectScalarExpression sse => sse.Expression,
+                SelectSetVariable ssv => ssv.Expression,
+                _ => null,
+            };
+            if (expr == null)
+                continue;
+
+            var anidadas = new NestedSubqueryCollector();
+            expr.Accept(anidadas);
+            foreach (var nqs in anidadas.Subqueries)
+            {
+                if (nqs.FromClause == null)
+                    continue;
+                var propias = CollectTableRefs(nqs.FromClause, cteNames, cteBaseTables);
+                if (propias.Count == 0)
+                    continue;
+                var colector = new ScopedColumnCollector();
+                nqs.Accept(colector);
+                salida.AddRange(ResolveScopedColumns(colector.Refs, propias, tableRefs, tn => ResolveAllColumns(tn, ctx)));
+            }
+        }
+        return salida;
+    }
+
+
+    /// <summary>Une lecturas por tabla sin duplicar columnas.</summary>
+    private static void FusionarLecturas(List<TableColumnRef> destino, List<TableColumnRef> nuevas)
+    {
+        foreach (var n in nuevas)
+        {
+            var i = destino.FindIndex(d => string.Equals(d.Table, n.Table, StringComparison.OrdinalIgnoreCase));
+            if (i < 0)
+                destino.Add(n);
+            else
+                destino[i] = new TableColumnRef(destino[i].Table,
+                    destino[i].Columns.Union(n.Columns, StringComparer.OrdinalIgnoreCase).ToArray());
+        }
+    }
+
     private static List<TableColumnRef> ResolveScopedColumns(
         IEnumerable<(string? Qualifier, string Column)> refs,
         List<(string Alias, string Table)> ownTableRefs,
