@@ -114,13 +114,40 @@ porque es determinista; una inferencia de LLM es no determinista y aquí además
 **infalsificable**, porque el catálogo tampoco ve esa zona. Mezclarla con `direct` o
 `via_view` destruiría las clases de confianza.
 
-Entra como capa aparte con `confianza: hipótesis`, con la evidencia para confirmarla de un
-vistazo (objeto, línea y las asignaciones de la variable que alimenta el `EXEC`, que ya
-están en las aristas `BUILDS_SQL_FROM`). Mismo patrón que `risks` con `evidencia:
-estructural` y `datos_de_ejecucion`.
+**Y no como un valor de `resolution`, sino como TIPO DE ARISTA PROPIO:**
+
+```
+READS_FROM              hecho, determinista
+INFERRED_READS_FROM     hipótesis de LLM sobre SQL dinámico sin resolver
+```
+
+El precedente del código apunta en la otra dirección y **hay que resistirlo**: `via_view` sí
+es un valor de `resolution` sobre una arista normal, y también es una deducción. Pero es una
+deducción **determinista y demostrable**, y por eso puede compartir tipo con `direct`. Una
+inferencia de LLM es de otra categoría: ni reproducible ni verificable contra nada.
+
+La razón de separar el tipo es **estructural, no estética**: `StoreSchema.ImpactEdgeTypes`
+decide qué se recorre, así que con un tipo aparte **consumirlo exige pedirlo por su nombre**
+y es imposible tragárselo por descuido. Con un valor de `resolution` haría falta que todos
+los consumidores recuerden filtrar — y confiar en que todos recuerden es justo lo que este
+proyecto no hace. #leccion
+
+**Procedencia obligatoria en las props**, o no es auditable ni reproducible (no sabrías si
+una hipótesis vieja la generó un modelo que ya cambió):
+
+```json
+{ "source": "llm", "modelo": "...", "prompt_version": "...",
+  "generado": "2026-08-19", "confirmado_por": "" }
+```
+
+`confirmado_por` vacío cumple la función del `revisado_por` del conocimiento destilado: **una
+hipótesis sin confirmar se lee como borrador, no como dato**.
+
+La evidencia para confirmarla de un vistazo ya existe: objeto, línea y las asignaciones de
+la variable que alimenta el `EXEC`, en las aristas `BUILDS_SQL_FROM`.
 
 Y se mide como todo lo demás: **cuántas hipótesis confirma un humano**. Sin esa cifra sería
-otra media verdad, solo que más cara. #leccion
+otra media verdad, solo que más cara.
 
 ### SIGUIENTE TAREA, y es más importante que las 40 restantes
 
