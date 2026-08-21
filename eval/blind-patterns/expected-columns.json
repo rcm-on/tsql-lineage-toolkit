@@ -43,17 +43,17 @@
     "Module": "dbo.ifexists",
     "Table": "dbo.listas",
     "Column": "nombre",
-    "Status": "ciego",
+    "Status": "cubierto",
     "Pattern": "if-exists",
-    "Reason": "WHERE Nombre='x' vive dentro del SELECT de un IF EXISTS(...)."
+    "Reason": "WHERE Nombre='x' vive dentro del SELECT de un IF EXISTS(...). RESUELTO 2026-08-19: ProcesarSubconsultasDePredicado lleva la resolucion por scope al predicado de IF/WHILE."
   },
   {
     "Module": "dbo.ifnotexists",
     "Table": "dbo.listas",
     "Column": "codigo",
-    "Status": "ciego",
+    "Status": "cubierto",
     "Pattern": "if-exists",
-    "Reason": "WHERE Codigo='y' vive dentro del SELECT de un IF NOT EXISTS(...)."
+    "Reason": "WHERE Codigo='y' vive dentro del SELECT de un IF NOT EXISTS(...). RESUELTO 2026-08-19: mismo arreglo del predicado; IF NOT EXISTS pasa por la misma via."
   },
   {
     "Module": "dbo.ifnotexists",

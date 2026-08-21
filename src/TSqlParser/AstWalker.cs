@@ -694,10 +694,52 @@ public static class AstWalker
         }
     }
 
+
+    /// <summary>
+    /// Subconsultas del predicado de un IF/WHILE ("IF EXISTS(SELECT 1 FROM t WHERE c=@x)").
+    /// WalkIf solo registraba el TEXTO de la condicion y recorria las ramas, asi que ni la
+    /// tabla ni las columnas del predicado llegaban al grafo: el control de flujo no es una
+    /// sentencia DML y ningun camino bajaba ahi.
+    ///
+    /// Es el mismo mecanismo de resolucion por scope que ya usan WHERE y la lista SELECT,
+    /// aplicado al scope que faltaba. Y es el caso mas seguro de los tres: la subconsulta de
+    /// un predicado de control de flujo trae SU PROPIO FROM y no hay scope exterior con el
+    /// que confundirse, asi que la atribucion es inequivoca.
+    ///
+    /// Medido sobre el corpus DNN: 10 ciegas viven en IF EXISTS.
+    /// </summary>
+    private static void ProcesarSubconsultasDePredicado(BooleanExpression? predicado, TSqlStatement stmt, List<Condition> condStack, WalkContext ctx, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
+    {
+        if (predicado == null)
+            return;
+
+        var anidadas = new NestedSubqueryCollector();
+        predicado.Accept(anidadas);
+        var sinScopeExterior = new List<(string Alias, string Table)>();
+
+        foreach (var nqs in anidadas.Subqueries)
+        {
+            if (nqs.FromClause == null)
+                continue;
+            var propias = CollectTableRefs(nqs.FromClause, cteNames, cteBaseTables);
+            if (propias.Count == 0)
+                continue;
+
+            var colector = new ScopedColumnCollector();
+            nqs.Accept(colector);
+            var resueltas = ResolveScopedColumns(colector.Refs, propias, sinScopeExterior, tn => ResolveAllColumns(tn, ctx));
+
+            AddLink(ctx, condStack, "SELECT", propias[0].Table, stmt, cteNames, cteBaseTables,
+                    extraReads: resueltas, detail: "predicado");
+        }
+    }
+
     private static void WalkIf(IfStatement ifs, List<Condition> condStack, WalkContext ctx, int depth, HashSet<string> cteNames, Dictionary<string, List<(string Alias, string Table)>> cteBaseTables)
     {
         ctx.DecisionCount++;
         var ifText = SqlText.Truncate(SqlText.Generate(ifs.Predicate), 140);
+
+        ProcesarSubconsultasDePredicado(ifs.Predicate, ifs, condStack, ctx, cteNames, cteBaseTables);
 
         condStack.Add(new Condition("IF", ifText, depth, ifs.StartLine));
         try
