@@ -18,6 +18,67 @@ queda el árbol y cuál es el siguiente paso concreto.
 
 ---
 
+## 2026-08-21 (cierre) — 90 → 22 ciegas y el MCP completo
+
+**Estado**: `main` en `6e2654d`, publicado, árbol limpio. **342/342** y **43/43**.
+39 commits en la sesión.
+
+### Ciegas de columna: seis tandas, precisión intacta en todas
+
+| Cambio | Ciegas | Recall |
+|---|---|---|
+| Inicio | 90 | 98,7675 % |
+| `OUTPUT` sin `INTO` | 89 | 98,7812 % |
+| Scope en la lista `SELECT` | 76 | 98,9592 % |
+| Scope en predicado de `IF`/`WHILE` | 67 | 99,0824 % |
+| Consolidación en `EmitSubqueryReads` | 40 | 99,4522 % |
+| `SELECT *` sobre vista analizada | 31 | 99,5755 % |
+| Scope en tabla derivada y cuerpo de CTE | **22** | **99,6987 %** |
+
+Y **uno descartado**: `ORDER BY` bajaba a 86 pero tumbaba la precisión de `direct`. En
+`stash@{0}`.
+
+**Las seis son el mismo mecanismo llegando a un sitio nuevo cada vez**, no seis arreglos.
+La resolución por scope ya existía y solo cubría `WHERE`.
+
+### Lo demás de la sesión
+
+- **MCP de 2 a 9 herramientas**: `store_info`, `describe_object`, `blind_spots`,
+  `diff_impact`, `risks` (con rehidratación del grafo y gate de fidelidad), más las de
+  columna. Bucle del agente cerrado.
+- **Arquitectura partida**: `Parser.Graph` y `Parser.Mcp`, con la frontera impuesta por el
+  compilador. `ParserGeneral` exporta ya el grafo unificado SQL + .NET.
+- **`recall <database>`**: el motor mide cuánto ve sobre la base del usuario. Verificado en
+  contenedor.
+- **T20**: empaquetado verificado; 9 herramientas por JSON-RPC desde el tool instalado.
+- **Ayuda del CLI**: omitía 5 subcomandos. Arreglada, con gate que falla en las dos
+  direcciones.
+- **Tres reglas nuevas** en `CONVENCIONES.md`: reclasificar siempre, diagnosticar desde el
+  código, y decir "referencia" y no "oráculo".
+
+### El patrón que se repitió cinco veces
+
+**Código que no falla, no avisa y descarta a medias.** Aparecido en:
+
+1. `EmitSubqueryReads` pasando una lista de columnas **vacía**.
+2. `EmitSubqueryReads` volviendo antes de mirar si no había ninguna `ScalarSubquery`.
+3. `ViewColumnLineage` tirando nombres de columna sin fuente rastreable.
+4. `nodes.db` a NULL en nodos `Column` → descargo de dinámico contando 0.
+5. Un `<see cref>` a una clase renombrada, que no rompe la compilación.
+
+Es el mismo defecto que el producto persigue en el SQL ajeno —un cero que parece una
+respuesta— reproducido cinco veces dentro del propio motor. **Buscarlo explícitamente al
+revisar código: `new List<>()` vacíos, `return` tempranos y `continue` sin registrar.**
+#leccion
+
+### Siguiente
+
+1. **Reclasificar las 22** antes de tocar nada (la regla).
+2. Conocido: `ORDER BY` (3, necesita alias de salida), `MERGE USING` + `SELECT *` sobre
+   tabla real (2), `OVER()` (2). El hueco de las **TVF** es legítimo y probablemente
+   permanente sin analizar el cuerpo de la función.
+3. Planes de ejecución sobre el dinámico, que es la vía determinista.
+
 ## 2026-08-21 (tarde) — Nueve herramientas MCP y diagnóstico de las 90 ciegas
 
 **Estado al cortar**: `main` en `daaa5a3`. Publicado hasta `a4cb3eb`. **330/330** en la
