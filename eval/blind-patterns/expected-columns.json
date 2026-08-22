@@ -174,5 +174,181 @@
     "Status": "cubierto",
     "Pattern": "output-inserted-deleted",
     "Reason": "control: WHERE Id=1 es un predicado normal del DELETE, fuera del OUTPUT."
+  },
+  {
+    "Module": "dbo.unionselectlist",
+    "Table": "dbo.hijos",
+    "Column": "nombre",
+    "Status": "ciego",
+    "Pattern": "union-select-list",
+    "Reason": "b.Nombre solo vive en la lista SELECT de una expresion UNION; con UNION esa lista no aporta ninguna arista de columna. Medido 2026-08-22, eval/column-recall/blind-refs.md causa A."
+  },
+  {
+    "Module": "dbo.unionselectlist",
+    "Table": "dbo.hijos",
+    "Column": "madreid",
+    "Status": "cubierto",
+    "Pattern": "union-select-list",
+    "Reason": "control: llega por el ON, que con UNION si se recorre."
+  },
+  {
+    "Module": "dbo.unionselectlist",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "union-select-list",
+    "Reason": "control: llega por el ON, que con UNION si se recorre."
+  },
+  {
+    "Module": "dbo.unionselectlist",
+    "Table": "dbo.madre",
+    "Column": "estado",
+    "Status": "cubierto",
+    "Pattern": "union-select-list",
+    "Reason": "control: llega por el WHERE, que con UNION si se recorre."
+  },
+  {
+    "Module": "dbo.unionsinunion",
+    "Table": "dbo.hijos",
+    "Column": "nombre",
+    "Status": "cubierto",
+    "Pattern": "union-select-list",
+    "Reason": "CONTROL NEGATIVO de la causa A: la misma lista SELECT sin UNION si resuelve. Si esta fila se pusiera ciega, el problema no seria el UNION."
+  },
+  {
+    "Module": "dbo.unionsinunion",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "union-select-list",
+    "Reason": "control: ON."
+  },
+  {
+    "Module": "dbo.tvfenderivada",
+    "Table": "dbo.permisos",
+    "Column": "clave",
+    "Status": "ciego",
+    "Pattern": "tvf-scope-anidado",
+    "Reason": "la TVF es origen de filas dentro de una tabla derivada; sus columnas de salida no entran en ese scope anidado. Causa C."
+  },
+  {
+    "Module": "dbo.tvfenderivada",
+    "Table": "dbo.madre",
+    "Column": "clave",
+    "Status": "cubierto",
+    "Pattern": "tvf-scope-anidado",
+    "Reason": "control: la tabla real del mismo ON si se resuelve dentro de la derivada."
+  },
+  {
+    "Module": "dbo.tvfenderivada",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "tvf-scope-anidado",
+    "Reason": "control: SELECT list de la derivada."
+  },
+  {
+    "Module": "dbo.tvfenjoinllano",
+    "Table": "dbo.permisos",
+    "Column": "clave",
+    "Status": "cubierto",
+    "Pattern": "tvf-scope-anidado",
+    "Reason": "CONTROL NEGATIVO de la causa C: el mismo ON sobre la misma TVF, sin scope anidado, si resuelve. Lo que rompe es el anidamiento, no la TVF."
+  },
+  {
+    "Module": "dbo.tvfenjoinllano",
+    "Table": "dbo.madre",
+    "Column": "clave",
+    "Status": "cubierto",
+    "Pattern": "tvf-scope-anidado",
+    "Reason": "control: ON."
+  },
+  {
+    "Module": "dbo.cteborradapordelete",
+    "Table": "dbo.hijos",
+    "Column": "madreid",
+    "Status": "ciego",
+    "Pattern": "cte-delete",
+    "Reason": "vive en el cuerpo de la CTE que consume un DELETE ... FROM cte. Causa D."
+  },
+  {
+    "Module": "dbo.cteborradapordelete",
+    "Table": "dbo.hijos",
+    "Column": "fecha",
+    "Status": "ciego",
+    "Pattern": "cte-delete",
+    "Reason": "vive en el OVER(... ORDER BY Fecha) del cuerpo de la CTE. Causa D."
+  },
+  {
+    "Module": "dbo.cteborradapordelete",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "cte-delete",
+    "Reason": "control: JOIN externo al DELETE."
+  },
+  {
+    "Module": "dbo.cteborradapordelete",
+    "Table": "dbo.madre",
+    "Column": "estado",
+    "Status": "cubierto",
+    "Pattern": "cte-delete",
+    "Reason": "control: WHERE externo al DELETE."
+  },
+  {
+    "Module": "dbo.joinentreparentesis",
+    "Table": "dbo.hijos",
+    "Column": "id",
+    "Status": "ciego",
+    "Pattern": "join-entre-parentesis",
+    "Reason": "el ON interior al parentesis no se recorre. Causa F."
+  },
+  {
+    "Module": "dbo.joinentreparentesis",
+    "Table": "dbo.nietos",
+    "Column": "hijoid",
+    "Status": "ciego",
+    "Pattern": "join-entre-parentesis",
+    "Reason": "el ON interior al parentesis no se recorre. Causa F."
+  },
+  {
+    "Module": "dbo.joinentreparentesis",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "cubierto",
+    "Pattern": "join-entre-parentesis",
+    "Reason": "control: la tabla de fuera del parentesis si resuelve."
+  },
+  {
+    "Module": "dbo.joinentreparentesis",
+    "Table": "dbo.hijos",
+    "Column": "madreid",
+    "Status": "ciego",
+    "Pattern": "join-entre-parentesis",
+    "Reason": "MAS AMPLIO DE LO SUPUESTO: h.MadreId esta en el ON EXTERIOR, y aun asi se pierde por apuntar a una tabla que vive dentro del parentesis. Descubierto por este gate el 2026-08-22, no por lectura del SQL."
+  },
+  {
+    "Module": "dbo.updatesetvariable",
+    "Table": "dbo.madre",
+    "Column": "id",
+    "Status": "ciego",
+    "Pattern": "update-set-variable",
+    "Reason": "lectura en UPDATE ... SET @variable = columna. Causa H."
+  },
+  {
+    "Module": "dbo.updatesetvariable",
+    "Table": "dbo.madre",
+    "Column": "nombre",
+    "Status": "cubierto",
+    "Pattern": "update-set-variable",
+    "Reason": "control: la asignacion a columna real del mismo SET si sale como WRITES_COLUMN."
+  },
+  {
+    "Module": "dbo.updatesetvariable",
+    "Table": "dbo.madre",
+    "Column": "estado",
+    "Status": "cubierto",
+    "Pattern": "update-set-variable",
+    "Reason": "control: WHERE."
   }
 ]

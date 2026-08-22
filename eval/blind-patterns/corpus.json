@@ -38,5 +38,33 @@
   {
     "Name": "BlindPatternsDb::dbo.OutputDel",
     "Sql": "CREATE PROCEDURE dbo.OutputDel AS BEGIN DELETE FROM dbo.Madre OUTPUT deleted.Nombre WHERE Id = 1; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.UnionSelectList",
+    "Sql": "CREATE PROCEDURE dbo.UnionSelectList AS BEGIN SELECT a.Id, b.Nombre FROM dbo.Madre a INNER JOIN dbo.Hijos b ON b.MadreId = a.Id WHERE a.Estado = 1 UNION SELECT a.Id, b.Nombre FROM dbo.Madre a INNER JOIN dbo.Hijos b ON b.MadreId = a.Id WHERE a.Estado = 2; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.UnionSinUnion",
+    "Sql": "CREATE PROCEDURE dbo.UnionSinUnion AS BEGIN SELECT a.Id, b.Nombre FROM dbo.Madre a INNER JOIN dbo.Hijos b ON b.MadreId = a.Id WHERE a.Estado = 1; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.TvfEnDerivada",
+    "Sql": "CREATE PROCEDURE dbo.TvfEnDerivada AS BEGIN SELECT d.Id FROM (SELECT DISTINCT s.Id FROM dbo.Madre s INNER JOIN dbo.Permisos(1) AS t ON t.Clave = s.Clave) AS d; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.TvfEnJoinLlano",
+    "Sql": "CREATE PROCEDURE dbo.TvfEnJoinLlano AS BEGIN SELECT s.Id FROM dbo.Madre s INNER JOIN dbo.Permisos(1) AS t ON t.Clave = s.Clave; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.CteBorradaPorDelete",
+    "Sql": "CREATE PROCEDURE dbo.CteBorradaPorDelete AS BEGIN ;WITH c AS (SELECT TOP(10) MadreId, ROW_NUMBER() OVER(PARTITION BY MadreId ORDER BY Fecha DESC) AS s FROM dbo.Hijos) DELETE x FROM c x INNER JOIN dbo.Madre m ON m.Id = x.MadreId WHERE m.Estado <> -1; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.JoinEntreParentesis",
+    "Sql": "CREATE PROCEDURE dbo.JoinEntreParentesis AS BEGIN SELECT m.Id FROM dbo.Madre m LEFT JOIN (dbo.Hijos h INNER JOIN dbo.Nietos n ON h.Id = n.HijoId) ON m.Id = h.MadreId; END"
+  },
+  {
+    "Name": "BlindPatternsDb::dbo.UpdateSetVariable",
+    "Sql": "CREATE PROCEDURE dbo.UpdateSetVariable AS BEGIN DECLARE @n int; UPDATE dbo.Madre SET @n = Id, Nombre = 'x' WHERE Estado = 1; END"
   }
 ]

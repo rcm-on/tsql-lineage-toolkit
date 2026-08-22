@@ -1,166 +1,209 @@
 # Referencias de columna ciegas — clasificación por causa (medición, no arreglo)
 
-Fecha de medición: **2026-08-16**. Solo mide; no se ha tocado `src/**` ni ningún test
-existente. Cifras medidas en esta sesión, no reutilizadas de notas previas.
+Fecha de medición: **2026-08-22**. Solo mide; no se ha tocado `src/**` del motor ni ningún
+test existente. Sustituye a la clasificación de 2026-08-16, hecha cuando había 140 ciegas:
+tras los arreglos de la sesión del 18/19 de agosto **esa clasificación ya no describe lo
+que queda**, que es justo el motivo de la regla de reclasificar antes de seguir arreglando.
 
 ## Comando de reproducción
 
-El **agregado** (recall laxo, suelo) es el que ya corre el gate:
+Ya no hace falta un programa de un solo uso: el listado sale del subcomando `blind-refs`.
+
+```bash
+dotnet build ParserGeneral.sln -c Release
+dotnet src/TSqlParser/bin/Release/net10.0/TSqlParser.dll blind-refs dnn ciegas.csv
+```
+
+El agregado lo sigue gateando la suite:
 
 ```bash
 dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release \
   --filter "FullyQualifiedName~ColumnRecallGateTests"
 ```
 
-Con eso en verde (8/8 esta sesión) se confirma que el corpus/oráculo congelados
-siguen intactos y que el recall laxo medido aquí no contradice el suelo del
-manifiesto (`eval/corpora.json`).
-
-El **listado** de qué (módulo, columna) del oráculo queda fuera del grafo —que
-el gate no vuelca, solo el conteo agregado— se obtuvo con un programa de un
-solo uso que reimplementaba
-literalmente `LoadOracle` + `BuildGraphRefs` de
-`tests/TSqlParser.Tests/ColumnRecallGateTests.cs` en un `Program.cs` de consola
-que referencia `src/TSqlParser/TSqlParser.csproj` como `ProjectReference`,
-llama a `InputAnalyzer.Analyze` + `GraphExporter.Build` sobre
-`eval/column-recall/dnn-corpus.json`, y vuelca a fichero
-`oracleLoose - graphLoose` (el conjunto laxo del oráculo que el motor no cubre).
-Reproducible copiando esa lógica a un proyecto consola cualquiera; no requiere
-SQL Server.
-
 ## DNN Platform — resultado agregado
 
 ```
-oráculo (bruto)          = 7786
-oráculo laxo (mod,col)   = 7302
-grafo (bruto)            = 10296
-grafo laxo (mod,col)     = 7638
-recall laxo              = 98,0827 %   (suelo del manifiesto: 98,08 %)
-BLIND (laxo)             = 140
+catálogo (bruto)         = 7786
+catálogo laxo (mod,col)  = 7302
+grafo laxo (mod,col)     = 7848
+recall laxo              = 99,6987 %
+BLIND (laxo)             = 22
 ```
 
-**Nota de discrepancia**: una nota anterior citaba "~161" ciegas de una nota anterior.
-Medido en esta sesión son **140**, no 161. La cifra 140 sí es coherente con el
-suelo publicado en `eval/corpora.json` (0,9808, truncado por debajo del valor
-medido — 140/7302 ciegas da exactamente 98,08 %), así que el número viejo
-(161) está desactualizado, no el instrumento de esta sesión.
+Evolución: **140** (2026-08-16) → **90** (2026-08-19) → **22** (hoy).
 
-## Clasificación por causa raíz (140 de 140, sin residuo)
+## Cómo se ha clasificado esta vez
 
-| # | Causa | Cuántas | % |
+La clasificación anterior se hizo leyendo el SQL y deduciendo la causa. Falló dos veces
+(la causa «otras, sin aislar» y la atribución equivocada de `registerassembly`). Esta vez
+cada causa está **confirmada por sonda ejecutada**: un fichero `.sql` mínimo con el patrón
+sospechoso, pasado por `from-sql` + `--columns`, comparando qué aristas de columna salen
+frente a la misma consulta sin el patrón. Una sonda que no reproduce el ciego invalida la
+hipótesis, y así se cayó una: los `major/minor/build` de `registerassembly` **no** son la
+TVF, son el `ORDER BY`.
+
+## Clasificación por causa raíz (22 de 22, sin residuo)
+
+| # | Causa | Ciegas | Confirmada por |
+|---|---|---:|---|
+| A | **Lista `SELECT` de una expresión `UNION`**: las columnas del `SELECT` no se resuelven en ninguna rama | 5 | `ProbeUnion` vs `ProbeNoUnion` |
+| B | **Columna solo en `ORDER BY`**, nunca en `SELECT`/`WHERE`/`ON` | 6 | `ProbeOrderByOnly`, `ProbeTvfOrderBy` |
+| C | **TVF como origen de filas dentro de un scope anidado** (tabla derivada o `EXISTS`): sus columnas de salida no entran en ese scope | 4 | `ProbeTvfInDerived`, `ProbeTvfJoinOnInExists` |
+| D | **Cuerpo de una CTE consumida por `DELETE ... FROM cte`** | 2 | `ProbeCteDelete` |
+| E | **`SELECT *` dentro del `USING (...)` de un `MERGE`**: no se expande | 2 | `ProbeMergeUsingStar` |
+| F | **Join anidado entre paréntesis**: se pierde su `ON` interior **y** las referencias del `ON` exterior a tablas de dentro | 1 | `ProbeParenJoin`, `dbo.JoinEntreParentesis` |
+| G | **`INSERT INTO @tablavar SELECT * FROM <tvf>`**: el `*` no se expande | 1 | `ProbeInsertTvVarSelectStar` |
+| H | **`UPDATE ... SET @variable = columna`** | 1 | `ProbeUpdateSetVar` |
+| | **Total** | **22** | |
+
+### Reparto por (módulo, columna)
+
+| Causa | Módulo | Columna |
+|---|---|---|
+| A | `dbo.getextensionurlproviders` | `tabid` |
+| A | `dbo.gettabcustomaliases` | `httpalias` |
+| A | `dbo.vw_contentworkflowusage` | `content`, `folderpath`, `metadatavalue` |
+| B | `dbo.getavailableusersforindex` | `vieworder` |
+| B | `dbo.getprofilefieldsql` | `vieworder` |
+| B | `dbo.gettaburls` | `taborder` |
+| B | `dbo.registerassembly` | `major`, `minor`, `build` |
+| C | `dbo.journal_get` | `seckey` |
+| C | `dbo.journal_listforgroup` | `seckey` |
+| C | `dbo.journal_listforprofile` | `seckey` |
+| C | `dbo.journal_listforsummary` | `seckey` |
+| D | `dbo.purgeeventlog` | `logconfigid`, `logcreatedate` |
+| E | `dbo.ensurelocalizationexists` | `issecure`, `portalsettingid` |
+| F | `dbo.getinstalledmodules` | `moduledefid` |
+| G | `dbo.getusersadvancedsearch` | `rownumber` |
+| H | `dbo.addfile` | `fileid` |
+
+### Sondas, con el resultado tal cual salió
+
+**A — `UNION`.** La misma consulta, con y sin `UNION`:
+
+```sql
+-- ProbeUnion:   SELECT t.TabId, trp.CultureCode, pa.HttpAlias FROM ... UNION SELECT (idem)
+-- ProbeNoUnion: SELECT t.TabId, trp.CultureCode, pa.HttpAlias FROM ...
+```
+
+| | `READS_FROM` | `FILTERS_ON` | `READS_COLUMN` |
+|---|---:|---:|---:|
+| `ProbeNoUnion` | 3 | 4 | **3** |
+| `ProbeUnion` | 6 | 8 | **0** |
+
+Con `UNION` las tablas y los predicados salen enteros y **la lista `SELECT` no aporta ni
+una arista**. Es un defecto general, no de estas cinco filas: solo produce 5 ciegas porque
+la mayoría de columnas de una consulta con `UNION` aparecen además en algún `ON` o `WHERE`,
+que sí se recorre. Las cinco que quedan son las que viven **únicamente** en el `SELECT`.
+
+**B — `ORDER BY`.** `SELECT dm.ModuleName FROM dbo.DesktopModules dm ORDER BY dm.IsAdmin`
+resuelve `ModuleName` y no `IsAdmin`. Ojo: esta es la causa que **B3 del plan ya intentó
+arreglar una vez y tumbó la precisión de la clase `direct`** (el intento está en
+`stash@{0}`). El listón para volver a tocarla sigue alto.
+
+**C — TVF en scope anidado.** `t.seckey` se resuelve en un `JOIN` llano y se pierde en
+cuanto ese mismo `JOIN` vive dentro de una tabla derivada o de un `EXISTS`:
+
+```
+ProbeTvfJoinOn          -> FILTERS_ON journal_user_permissions.seckey   ✓
+ProbeTvfJoinOnInExists  -> (ninguna arista a la TVF)                    ✗
+ProbeTvfInDerived       -> (ninguna arista a la TVF)                    ✗
+```
+
+Las cuatro ciegas de `seckey` son el mismo mecanismo: `journal_get` lo tiene bajo
+`NOT EXISTS`, los tres `journal_listfor*` bajo una tabla derivada.
+
+**D — CTE consumida por `DELETE`.** De `ProbeCteDelete` solo salen las columnas de
+`EventLogConfig` (la tabla del `JOIN` externo); `LogConfigID` y `LogCreateDate`, que viven
+en el cuerpo de la CTE, no aparecen.
+
+**E — `SELECT *` en `MERGE ... USING`.** `ProbeMergeUsingStar` devuelve solo `PortalID`,
+que viene del `WHERE`. Las columnas que solo aporta el `*` (`PortalSettingID`, `IsSecure`)
+se pierden. Contraste útil: `SELECT * FROM tvf()` a secas **sí** se expande
+(`ProbeTvfStar` resolvió las tres), así que el fallo está en el `USING`, no en el `*`.
+
+**F — Join anidado entre paréntesis.**
+
+```sql
+LEFT JOIN (dbo.[ModuleDefinitions] MDEF INNER JOIN dbo.[Modules] MODS ON MDEF.ModuleDefID = MODS.ModuleDefID)
+ON dm.DesktopModuleID = MDEF.DesktopModuleID
+```
+
+El `ON` de fuera se recorre, pero **solo para la tabla que está fuera del paréntesis**: al
+gatear este patrón salió que `h.MadreId`, que vive en el `ON` exterior, también se pierde
+por apuntar a una tabla de dentro. Eso no lo había visto leyendo el SQL; lo dijo el gate.
+
+**G — `INSERT INTO @tablavar SELECT * FROM <tvf>`.** `ProbeInsertTvVarSelectStar` no
+produce **ninguna** arista de columna, mientras que el mismo `SELECT * FROM tvf()` suelto
+resuelve las tres. El destino de tabla-variable mata la expansión.
+
+**H — `UPDATE ... SET @variable = columna`.** `ProbeUpdateSetVar` emite `WRITES_TO`,
+`WRITES_COLUMN` sobre `FileName` y `FILTERS_ON` sobre `FolderID`, pero la lectura de
+`FileId` en `@FileID = FileId` no se registra.
+
+## Gateado, no solo documentado
+
+Cinco de las ocho causas están ahora en `eval/blind-patterns/` con estado declarado, así que
+la suite las hace cumplir en los dos sentidos: si una ciega se arregla sin actualizar el
+ground-truth, el gate falla pidiendo la actualización; si una cubierta se rompe, falla como
+regresión. Ambas direcciones se han visto fallar a propósito.
+
+| Patrón | Entradas nuevas | Ciegas declaradas | Controles cubiertos |
 |---|---|---:|---:|
-| 1 | Subconsulta anidada en predicado o expresión (`EXISTS(...)`, `NOT EXISTS(...)`, `IN (SELECT ...)`, comparación escalar `= (SELECT ...)`, derived table en `FROM`/`UPDATE`) — sus propias columnas no se recorren | 58 | 41,4 % |
-| 2 | `MERGE`: ni la condición `ON` ni el `WHEN MATCHED THEN UPDATE SET` generan arista | 23 | 16,4 % |
-| 3 | Función de tabla (TVF) invocada como origen de filas (`FROM func(...)`, `CROSS/OUTER APPLY`, `JOIN func(...)`) — columnas de salida no resueltas | 17 | 12,1 % |
-| 4 | Vista cuya propia definición tiene una subconsulta o derived table anidada — la columna no se atribuye a la vista | 16 | 11,4 % |
-| 5 | `SELECT *` sobre una vista cuya expansión no incluye una columna concreta de esa vista (agregada vía derived table o `CASE`+subconsulta) | 8 | 5,7 % |
-| 6 | CTE consumida por `DELETE ... FROM cte` o por un cursor (`FETCH INTO`) — no todas las columnas de la CTE se propagan | 8 | 5,7 % |
-| 7 | Columna referenciada solo en `ORDER BY`, nunca en `SELECT`/`WHERE` | 3 | 2,1 % |
-| 8 | Otras — sin causa raíz aislada con confianza (ver nota) | 3 | 2,1 % |
-| 9 | Lectura dentro de una función escalar (UDF) invocada — el oráculo la atribuye al módulo llamante, el motor no la propaga | 2 | 1,4 % |
-| 10 | `OUTPUT inserted.<col>` — pseudo-tabla de un `INSERT` no resuelta | 1 | 0,7 % |
-| 11 | `UPDATE ... SET @variable = columna` (variante de `SELECT @var = columna`, no soportada en `UPDATE`) | 1 | 0,7 % |
-| | **Total** | **140** | **100 %** |
+| `union-select-list` | `dbo.UnionSelectList`, `dbo.UnionSinUnion` | 1 | 5 |
+| `tvf-scope-anidado` | `dbo.TvfEnDerivada`, `dbo.TvfEnJoinLlano` | 1 | 4 |
+| `cte-delete` | `dbo.CteBorradaPorDelete` | 2 | 2 |
+| `join-entre-parentesis` | `dbo.JoinEntreParentesis` | 3 | 1 |
+| `update-set-variable` | `dbo.UpdateSetVariable` | 1 | 2 |
 
-### Ejemplos (uno por causa, objeto + columna + fragmento ≤3 líneas)
+Los controles importan tanto como las ciegas: `dbo.UnionSinUnion` y `dbo.TvfEnJoinLlano` son
+**controles negativos** — la misma consulta sin el patrón sospechoso, que sí resuelve. Sin
+ellos, «el `UNION` rompe las columnas» sería una correlación, no un diagnóstico.
 
-**1. Subconsulta anidada en predicado/expresión** — `dbo.DeleteDesktopModule`, columna `moduledefid` (dbo.ModuleDefinitions):
-```sql
-DELETE FROM dbo.Permission
-WHERE moduledefid in (SELECT moduledefid FROM dbo.ModuleDefinitions WHERE desktopmoduleid = @DesktopModuleId)
-```
-
-**2. MERGE** — `dbo.UpdateHostSetting`, columna `settingvalue` (dbo.HostSettings):
-```sql
-MERGE INTO dbo.[HostSettings] S USING (SELECT @SettingName SN, @SettingValue SV, ...) Q ON (S.SettingName = Q.SN)
- WHEN MATCHED ... THEN UPDATE SET [SettingValue] = Q.SV, [LastModifiedByUserID] = @UserID, [LastModifiedOnDate] = GetDate()
-```
-
-**3. TVF como origen de filas** — `dbo.CoreMessaging_CreateMessageRecipientsForRole`, columna `item` (dbo.SplitStrings_CTE):
-```sql
-FROM dbo.[vw_UserRoles] ur
-INNER JOIN dbo.[SplitStrings_CTE](@RoleIDs,',') m on ur.RoleID = m.Item
-```
-
-**4. Vista con subconsulta/derived table anidada** — `dbo.vw_ApiTokens`, columna `portalname` (dbo.PortalLocalization):
-```sql
-LEFT JOIN (SELECT pl.PortalID, pl.PortalName FROM dbo.[Portals] p
- INNER JOIN dbo.[PortalLocalization] pl ON p.PortalID=pl.PortalID AND pl.CultureCode=p.DefaultLanguage) portals ON portals.PortalID=a.PortalId
-```
-
-**5. SELECT * sobre vista, columna no expuesta** — `dbo.GetPortals`, columna `supertabid` (dbo.vw_Portals):
-```sql
-SELECT * FROM dbo.[vw_Portals]
-WHERE CultureCode = CASE WHEN IsNull(@CultureCode, N'') = N'' THEN DefaultLanguage ELSE @CultureCode END
-```
-(`vw_Portals` sí calcula `SuperTabID`; el catálogo de columnas que expande el `*` lo pierde.)
-
-**6. CTE consumida por DELETE/cursor** — `dbo.PurgeEventLog`, columna `logconfigid` (dbo.EventLog):
-```sql
-;WITH logcounts AS (SELECT TOP(@PurgeBatchCount) LogConfigID, ROW_NUMBER() OVER(PARTITION BY LogConfigID ...) FROM dbo.[EventLog])
-DELETE lc FROM logcounts lc INNER JOIN dbo.[EventLogConfig] elc ON elc.ID = lc.LogConfigID
-```
-
-**7. Columna solo en ORDER BY** — `dbo.GetTabUrls`, columna `taborder` (dbo.Tabs):
-```sql
-FROM dbo.TabUrls tu INNER JOIN dbo.Tabs t on t.TabId = tu.TabId ...
-ORDER BY PortalId, TabOrder, tu.SeqNum
-```
-
-**8. Otras (sin causa aislada)** — `dbo.GetTabCustomAliases`, columna `httpalias` (dbo.PortalAlias):
-```sql
-SELECT t.TabId, Coalesce(trp.CultureCode, '') as CultureCode, pa.HttpAlias
-FROM dbo.Tabs t INNER JOIN dbo.TabUrls trp ON trp.TabId = t.ParentId INNER JOIN dbo.PortalAlias pa ON trp.PortalAliasId = pa.PortalAliasId
-```
-Es un `JOIN` llano dentro de una consulta con `UNION`; `CultureCode`/`TabId` de la misma
-lista de columnas SÍ se ven. No se aisló por qué justo `HttpAlias` no.
-
-**9. Lectura en UDF escalar no propagada al llamante** — `dbo.GetUsersAdvancedSearch`, columna `portalid` (dbo.ProfilePropertyDefinition):
-```sql
-DECLARE @pivotSql nvarchar(max) SELECT @pivotSql = dbo.GetProfileFieldSql(@PortalID, '')
-```
-(la lectura ocurre dentro del cuerpo de `GetProfileFieldSql`; el oráculo se la atribuye al llamante.)
-
-**10. OUTPUT inserted.col** — `dbo.AddRedirectMessage`, columna `messageid` (dbo.RedirectMessages):
-```sql
-INSERT INTO dbo.RedirectMessages (UserId, TabId, MessageText)
-OUTPUT inserted.MessageId
-VALUES(@UserId, @TabId, @Text)
-```
-
-**11. UPDATE ... SET @var = columna** — `dbo.AddFile`, columna `fileid` (dbo.Files):
-```sql
-UPDATE dbo.[Files]
-SET /* retrieves FileId from table */ @FileID = FileId, FileName = @FileName, ...
-```
+Las causas **B (`ORDER BY`)**, **E (`SELECT *` en `MERGE ... USING`)** y **G
+(`INSERT INTO @tablavar SELECT *`)** no entran en este gate: B ya estaba (patrón `order-by`,
+3 ciegas declaradas), y E y G necesitan esquema real de tabla (`CREATE TABLE`) para que
+haya un `*` que expandir, que es justo lo que el corpus de `blind-patterns` no lleva. Quedan
+documentadas y sin gatear, dicho explícitamente en vez de omitido.
 
 ## Comprobaciones de instrumento (regla del cero culpable)
 
-- Ninguna causa salió en 0; la más pequeña (10 y 11) tiene 1 caso cada una, verificado leyendo el SQL real, no inventado para rellenar.
-- Las 140 filas suman exactamente el total medido (sin residuo, sin duplicados, sin filas fantasma) — comprobado por script con verificación de conjuntos disjuntos.
-- El recall laxo medido (98,0827 %) es coherente con el suelo publicado en `eval/corpora.json` (0,9808, declarado como truncado por debajo del valor medido): 140/7302 ciegas da 98,08 % exacto.
-- Se corrió el gate real (`ColumnRecallGateTests`, 8/8 en verde) con el mismo build, para confirmar que el programa ad hoc no diverge del comportamiento oficial.
-- La comparación es sensible a mayúsculas/corchetes por construcción: se reutilizó literalmente `Plain()` (`.Replace("[","").Replace("]","").ToLowerInvariant()`) de `ColumnRecallGateTests.cs`, no una reimplementación propia.
-
-## WWI-DW — solo conteo (sin clasificar por causa, falta de tiempo)
-
-```
-oráculo (bruto)        = 627
-oráculo laxo (mod,col) = 364
-grafo (bruto)          = 480
-grafo laxo (mod,col)   = 310
-recall laxo            = 84,8901 %   (suelo del manifiesto: 84,80 %)
-BLIND (laxo)           = 55
-```
-
-Coherente con el suelo publicado (0,848). No se clasificaron las 55 por causa
-raíz — ver `followups`.
+- Las 22 filas del CSV suman exactamente 22 en la tabla de causas: sin residuo, sin
+  duplicados, sin categoría «otras». La causa «otras» de la clasificación anterior era
+  precisamente la señal de que faltaba diagnóstico, y esta vez se cerró (era A).
+- Ninguna causa salió en 0. La más pequeña (F, G, H) tiene 1 caso cada una, y cada uno
+  tiene sonda propia que lo reproduce.
+- **Una hipótesis se cayó por la sonda**, que es la prueba de que el instrumento discrimina:
+  `registerassembly.major/minor/build` parecía TVF (`CROSS APPLY dbo.fn_ParseVersion`) y es
+  `ORDER BY` — `ProbeTvfWhere` demostró que las columnas de una TVF **sí** se resuelven en
+  un `WHERE`, así que la TVF no era el bloqueo.
+- El recall medido (99,6987 %) sale del subcomando oficial `blind-refs`, el mismo binario
+  de Release que corre la suite, no de un programa ad hoc.
+- Las cinco causas gateadas se confirmaron **dos veces por caminos distintos**: las sondas
+  van por `from-sql` → `InputAnalyzer` → `GraphExporter`, y el gate por
+  `SqlAnalyzer.AnalyzeObject` → `GraphExporter` → `SqliteExporter`. Coinciden en las cinco.
+- El ground-truth del gate no se escribió a mano: se declaró todo «ciego» a propósito y se
+  dejó que el gate dijera cuáles no lo eran. De las 22 filas sondeadas, 14 salieron cubiertas
+  — incluidos los dos controles negativos.
 
 ## Qué atacar primero
 
-La causa #1 (subconsultas anidadas en predicados/expresiones) es el 41 % del
-ciego y, a juzgar por los ejemplos, es un único punto de extensión: el
-visitor de columnas no desciende dentro de `EXISTS`/`IN`/subconsultas
-escalares. MERGE (16 %) es el segundo candidato, igual de acotado (un solo
-tipo de sentencia). Juntas explican el 58 % del ciego con dos cambios
-localizados, sin tocar el resto del motor.
+Por relación entre ciegas y localización del arreglo:
+
+1. **A (`UNION`)** — 5 ciegas, pero es el único de la lista que es un **defecto general del
+   motor**, no un caso de borde: hoy ninguna consulta con `UNION` aporta columnas de su
+   lista `SELECT` en todo el corpus. El impacto real es mayor que 5 y el corpus no lo mide,
+   porque lo tapa la redundancia con `ON`/`WHERE`. Es también el más barato de gatear.
+2. **C (TVF en scope anidado)** — 4 ciegas y un punto de convergencia claro: el scope
+   anidado no hereda las columnas de salida de la TVF. Sospecha razonable de que comparte
+   mecanismo con el arreglo de subconsultas de la sesión anterior.
+3. **E, F, G** — 4 ciegas entre las tres, cada una un caso acotado de un tipo de sentencia.
+4. **B (`ORDER BY`)** — 6 ciegas, las más de todas, y aun así **la última**: ya tumbó la
+   precisión una vez. No entra sin un gate de precisión por clase delante.
+
+## WWI-DW — pendiente de reclasificar
+
+El conteo de 2026-08-16 (55 ciegas, 84,89 % de recall) es **anterior a los arreglos** y no
+se ha vuelto a medir. No usarlo como diagnóstico: por la misma razón que obligó a reescribir
+este documento, esas 55 ya no son las mismas.
