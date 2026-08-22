@@ -146,7 +146,16 @@ public static class RiskAnalyzer
             var noWhere = steps.Where(s =>
             {
                 var action = Str(s.Properties, "action");
-                return (action == "UPDATE" || action == "DELETE") && !OutOf(s.Id, "FILTERS_ON").Any();
+                if (action != "UPDATE" && action != "DELETE") return false;
+                // has_where sale de FlowLinkInfo.FilterText, que es el WHERE de verdad. La
+                // ausencia de FILTERS_ON no sirve: un WHERE contra #temp o @tabla no emite
+                // arista porque esas entidades no se modelan a proposito. Ver
+                // docs/auditoria-dnn.md 6.1 - medido, 2 falsos positivos de 4 en DNN.
+                if (s.Properties.ContainsKey("has_where"))
+                    return !Flag(s.Properties, "has_where");
+                // Store viejo, sin la propiedad: se cae al criterio anterior en vez de
+                // callar el hallazgo. Peor es perder un DELETE sin filtro que repetir un FP.
+                return !OutOf(s.Id, "FILTERS_ON").Any();
             }).ToList();
             if (noWhere.Count > 0)
                 Add("high", "Integridad", "UPDATE/DELETE sin WHERE", name,

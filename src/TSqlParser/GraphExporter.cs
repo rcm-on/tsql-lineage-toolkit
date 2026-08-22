@@ -352,6 +352,11 @@ public static class GraphExporter
                         ["dynamic_sql"] = SqlText.Truncate(fl.DynamicSqlText, 200),
                         ["is_dynamic_sql"] = fl.DynamicSqlVars.Count > 0,
                         ["select_star"] = fl.SelectStar,
+                        // "tiene WHERE", que NO es lo mismo que "tiene aristas FILTERS_ON":
+                        // un WHERE cuyo predicado solo toca #temp o @tabla no produce arista
+                        // porque esas entidades no se modelan. RiskAnalyzer usaba la ausencia
+                        // de arista como sustituto y marcaba DELETEs filtrados (docs/auditoria-dnn.md 6.1).
+                        ["has_where"] = !string.IsNullOrWhiteSpace(fl.FilterText),
                         ["condition_path"] = fl.ConditionPath,
                         ["condition_keys"] = fl.ConditionKeys,
                         ["label"] = $"{fl.ConsequenceType}{(fl.Detail.Length > 0 ? $" ({fl.Detail})" : "")} -> {fl.ConsequenceTarget}".TrimEnd(' ', '-', '>'),

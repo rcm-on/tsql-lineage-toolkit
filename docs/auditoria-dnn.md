@@ -271,7 +271,19 @@ Dos defectos del motor encontrados **por esta auditoría**, no por sus pruebas. 
 informe porque un informe que no declara los límites del instrumento con el que se hizo vale
 menos.
 
-### 6.1 Falso positivo: "UPDATE/DELETE sin WHERE" — 2 de 4
+### 6.1 Falso positivo: "UPDATE/DELETE sin WHERE" — 2 de 4 · **ARREGLADO 2026-08-22**
+
+> **Arreglado.** El paso lleva ahora una propiedad `has_where` propia, derivada de
+> `FlowLinkInfo.FilterText` — el WHERE de verdad — en vez de deducirse de las aristas.
+> Resultado sobre DNN: `BuildTabLevelAndPath` deja de aparecer, y **aparecen dos objetos que
+> el defecto ocultaba en la dirección contraria**: `dbo.DeleteOrphanedAspNetUsers` (línea 22,
+> `DELETE m FROM … INNER JOIN …`) y `dbo.CoreMessaging_GetNextMessagesForDigestDispatch`
+> (línea 8, el `WHERE` está dentro de la subconsulta). Los dos emitían `FILTERS_ON` desde un
+> `JOIN ... ON`, así que la regla vieja los daba por filtrados. El total `high` pasa de 11 a
+> **12**: −1 falso positivo, +2 verdaderos que no se veían. Gate: `HasWhereRuleTests`, 6
+> pruebas, 3 de ellas rojas con el criterio anterior.
+
+El diagnóstico original, que se mantiene por trazabilidad:
 
 **[motor + lectura]** — La regla marca un paso cuando **no tiene arista `FILTERS_ON`**, y usa
 eso como sustituto de "no tiene `WHERE`". No son lo mismo.
