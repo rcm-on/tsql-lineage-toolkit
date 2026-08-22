@@ -18,6 +18,54 @@ queda el árbol y cuál es el siguiente paso concreto.
 
 ---
 
+## 2026-08-22 (cierre) — A3, y el informe encuentra dos defectos del motor
+
+**Estado**: `main` limpio, **7 commits sin publicar** sobre `7d87df4`. Suites **374/374** y
+**43/43**. Ciegas: 22, sin mover.
+
+`cb674e2` informe de auditoría end-to-end sobre DNN (A3) · `16fe610` arreglo de §6.1.
+
+### Lo que hay que recordar de esta parte
+
+**El informe se auditó a sí mismo y encontró dos defectos que las pruebas no veían.** Ese es
+el resultado, más que el informe: pasar el producto por un corpus real destapa lo que un
+corpus de pruebas no, porque las pruebas comprueban lo que ya sabías.
+
+**§6.1 — arreglado.** La regla "UPDATE/DELETE sin WHERE" usaba "no hay arista `FILTERS_ON`"
+como sustituto de "no hay `WHERE`". Fallaba en **las dos direcciones**, y yo solo vi una al
+principio: el falso positivo (WHERE contra `#temp`/`@tabla`, que no emiten arista) y el falso
+negativo (un `JOIN ... ON` sí emite arista aunque no haya WHERE). Sobre DNN: `high` 11 → 12,
+−1 falso positivo y **+2 verdaderos que estaban ocultos**.
+
+Lección del arreglo: **la señal correcta ya existía**. `FlowLinkInfo.FilterText` documentaba
+en su propio comentario que su vaciedad, y no la de `FilterColumns`, es lo que distingue "no
+hay WHERE" — y `GraphExporter` ya lo usaba para decidir si crear un `:BusinessRule`. Solo
+faltaba exponerlo en el nodo `Step`. Antes de modelar algo nuevo, mirar si el dato ya está y
+lo que falla es quién lo consulta.
+
+**§6.2 — diagnosticado, NO arreglado.** `crit / Inyección SQL` da 0 sobre DNN. La ruta real
+es `ProfilePropertyDefinition.PropertyName → @PivotSql → @Sql → sp_executesql`, y la regla
+exige las dos condiciones en la **misma** variable. No puede cumplirlas: en las 34.278
+aristas del grafo **no hay ni una `Variable → Variable`**, y `USES_VARIABLE` de `step1`
+tampoco recoge `@PivotSql` pese a que la línea 66 lo concatena. Alcance medido: **1 objeto**.
+
+**Se paró a propósito.** A diferencia de §6.1, aquí hay que emitir una arista que hoy no
+existe — cirugía en `AstWalker` — y no cabía hacerlo con red. La alternativa barata (una regla
+por co-locación: "el objeto tiene alguna variable con taint y alguna que arma SQL") se
+descartó: acierta en DNN por casualidad y no es trazabilidad, es adivinar. La norma del repo
+pide medir falsos positivos antes de añadir reglas.
+
+### Siguiente paso concreto
+
+1. **§6.2**: hacer que `UsedVariables` recoja las variables referenciadas en la expresión que
+   asigna otra variable (`SELECT @Sql = '…' + @PivotSql + '…'`). Con eso la regla puede
+   seguir `paso → USES_VARIABLE → W` y cerrar la clausura transitiva. Verificable de
+   inmediato: `dbo.GetAvailableUsersForIndex` debe pasar de `high` a `crit`.
+2. **A2** (`remediation_plan`) es lo único que queda de la fase A.
+3. Publicar los 7 commits.
+
+---
+
 ## 2026-08-22 — Ola 1 del plan: A1 + B1 + C2
 
 **Estado al terminar**: `main`, árbol limpio, 4 commits nuevos sobre `7d87df4`, **sin
