@@ -4,7 +4,7 @@ description: Qué cambió en cada sesión, lo más reciente arriba.
 read_when: Para saber qué pasó en las últimas sesiones antes de continuar el trabajo.
 related: [docs/PROYECTO.md, docs/plan-arquitectura.md, docs/CONVENCIONES.md]
 stability: volatile
-updated: 2026-08-21
+updated: 2026-08-22
 ---
 
 # Bitácora
@@ -15,6 +15,75 @@ nada escrito es una sesión que hay que reconstruir leyendo commits.
 
 Formato de una entrada: qué se hizo, qué se aprendió que no estaba previsto, en qué estado
 queda el árbol y cuál es el siguiente paso concreto.
+
+---
+
+## 2026-08-22 — Ola 1 del plan: A1 + B1 + C2
+
+**Estado al terminar**: `main`, árbol limpio, 4 commits nuevos sobre `7d87df4`, **sin
+publicar**. Suites **368/368** (era 342 al empezar; +26 gates) y **43/43**. Ciegas: 22, sin
+mover — ninguna de las tres tareas toca el motor.
+
+### Qué se hizo
+
+| Commit | Tarea | Qué |
+|---|---|---|
+| `08ed01f` | B1 | Reclasificadas las 22 ciegas: 8 causas, 5 de ellas gateadas |
+| `64e2360` | A1 | `evidence`: los pasos y su `line_no` detrás de una arista |
+| `587426c` | C2 | `tools/list` medido (11.160 B) y con gate |
+
+**A1 — `evidence`.** Cierra el hueco entre lo que el grafo afirma y lo que el agente puede
+comprobar. No colapsa pasos (dos sentencias que leen la misma tabla salen como dos líneas),
+dice bajo qué `IF` cuelga cada paso, y **declara su límite en la propia respuesta**: línea y
+paso, no SQL literal. Ese campo `alcance` no es cortesía — sin él la respuesta aparentaría
+citar código que el store no guarda.
+
+**C2 — el catálogo cuesta 11.160 bytes** con diez herramientas, ~2.800 tokens **en cada
+turno**. El presupuesto queda gateado en 12 KB, con techo de 1.800 B por herramienta. Sitio
+para una más; la siguiente entra a costa de algo.
+
+### Lo que no estaba previsto
+
+- **`docs/CONTEXTO-SESION.md` ya no existe**, se troceó en `f478048`. Es el fichero que pide
+  el arranque de sesión por costumbre. El punto de entrada real es `AGENTS.md` →
+  `docs/INDICE-AGENTE.md`.
+- **La clasificación por lectura falla; la clasificación por sonda no.** Al reclasificar,
+  `registerassembly.major/minor/build` parecía ser la TVF del `CROSS APPLY` y resultó ser el
+  `ORDER BY`: una sonda demostró que las columnas de una TVF **sí** se resuelven en un
+  `WHERE`. La categoría «otras, sin causa aislada» de la clasificación anterior también se
+  cerró — era el `UNION`.
+- **Defecto general destapado**: con `UNION`, la lista `SELECT` no aporta **ninguna** arista
+  de columna, mientras `READS_FROM` y `FILTERS_ON` salen enteros. Solo produce 5 ciegas
+  porque la redundancia con `ON`/`WHERE` lo tapa, así que **el corpus subestima este
+  defecto**. Es el mejor candidato de la fase B, por encima de su recuento.
+- **El gate como instrumento de medida, no solo de defensa.** Para escribir el ground-truth
+  de `blind-patterns` se declaró todo «ciego» a propósito y se dejó que el gate dijera
+  cuáles no lo eran: 14 de 22 filas salieron cubiertas. Así apareció algo que la lectura del
+  SQL no vio — en un join entre paréntesis se pierde **también** la referencia del `ON`
+  exterior a una tabla de dentro. Barato, y más fiable que razonar sobre el código.
+- **Los controles negativos son la mitad del diagnóstico.** `dbo.UnionSinUnion` y
+  `dbo.TvfEnJoinLlano` son la misma consulta sin el patrón sospechoso. Sin ellos, «el
+  `UNION` rompe las columnas» sería una correlación.
+- **Dos causas se quedaron fuera del gate y se dice**: `SELECT *` en `MERGE ... USING` y
+  `INSERT INTO @tablavar SELECT *` necesitan `CREATE TABLE` real para que haya un `*` que
+  expandir, y el corpus de `blind-patterns` no lleva esquema.
+
+### Siguiente paso concreto
+
+**A3** (informe de auditoría end-to-end sobre DNN), que era lo que A1 bloqueaba: ahora cada
+hallazgo puede citar objeto + línea + paso en vez de afirmar. En paralelo cabe **B4** (Ola 2
+del plan: son disjuntas).
+
+De la fase B, el orden por valor real cambió: **la causa A (`UNION`) sube al primer puesto**
+aunque solo valga 5 ciegas en el corpus, porque es defecto de motor y no caso de borde. El
+`ORDER BY` (6 ciegas, las más) sigue el último: ya tumbó la precisión de la clase `direct`
+una vez, y no entra sin un gate de precisión por clase delante.
+
+### Pendiente sin tocar
+
+Los 4 commits están **en local, sin publicar**. Sigue pendiente de sesiones anteriores:
+Actions en GitHub tras el primer push con CI real; `test/pr-impact-demo`; blog con 35
+sustituciones aplicadas y sin commitear.
 
 ---
 

@@ -4,7 +4,7 @@ description: Plan de ejecución de la Fase 0/1/2 de la solución, con rutas, con
 read_when: Para saber qué queda por hacer y en qué orden, o antes de mover código entre proyectos.
 related: [docs/ARQUITECTURA.md, docs/PATRONES.md, docs/BITACORA.md]
 stability: volatile
-updated: 2026-08-21
+updated: 2026-08-22
 ---
 
 # Plan de diseño de la solución
@@ -285,6 +285,7 @@ cada turno del agente. No meter doce. Conjunto real de nueve:
 | Herramienta | Estado | Uso |
 |---|---|---|
 | `resolve_object` | hecha | nombre suelto → id canónico |
+| `evidence` | **hecha (A1)** | los pasos y su `line_no` detrás de una arista; declara que da posición, no SQL |
 | `impact` | hecha | qué se rompe / de qué depende |
 | `store_info` | nueva | fecha y tamaño del grafo; evita que un store viejo mienta |
 | `describe_object` | nueva | la ficha del objeto. **Peldaño que falta**: hoy el agente resuelve un id y no puede leer el objeto |
@@ -330,13 +331,12 @@ solo**. Un corte por cuota entre pasos deja el árbol sano; dentro de un paso, n
 
 | # | Tarea | Complejidad | Perfil |
 |---|---|---|---|
-| A1 | **`evidence(objeto, tabla\|columna)`** — objeto + `line_no` + etiqueta del paso | baja-media | medio |
+| ~~A1~~ | ~~**`evidence(objeto, tabla\|columna)`**~~ — **HECHA 2026-08-22** (`64e2360`) | baja-media | medio |
 | A2 | **`remediation_plan(id)`** — los dos órdenes topológicos, con conflictos y ciclos declarados | **alta** | diseño humano, implementación medio |
 | A3 | **Informe de auditoría end-to-end** sobre DNN, como demo real | media | medio |
 
-**A1 desbloquea el resto**: sin evidencia por hallazgo, el informe es una lista de
-afirmaciones que nadie puede comprobar. Los `Step` ya guardan `line_no`, `action`,
-`target_name` y `condition_path`, y **ninguna herramienta los expone**.
+**A1 está hecha y desbloquea el resto**: ya hay evidencia por hallazgo, así que A3 puede
+citar objeto + línea + paso en vez de afirmar. A2 sigue dependiendo de A1, no al revés.
 
 **A2 es lo que ningún competidor puede hacer** (ordenar por dependencia real y no por
 severidad) y también lo más difícil. Depende de A1. El diseño está en
@@ -346,7 +346,7 @@ severidad) y también lo más difícil. Depende de A1. El diseño está en
 
 | # | Tarea | Complejidad | Perfil |
 |---|---|---|---|
-| B1 | Reclasificar las 22 ciegas | baja | medio |
+| ~~B1~~ | ~~Reclasificar las 22 ciegas~~ — **HECHA 2026-08-22** (`08ed01f`), 8 causas, 5 gateadas | baja | medio |
 | B2 | **Mapa de cobertura de scopes**: qué tipos de nodo reciben resolución de columnas | media | medio |
 | B3 | `ORDER BY` con detección de alias de salida | media, **riesgo medio** | medio |
 | B4 | Planes de ejecución sobre el SQL dinámico | media-alta | medio |
@@ -366,7 +366,7 @@ evaluable por falta de evidencia.
 | # | Tarea | Complejidad | Perfil |
 |---|---|---|---|
 | C1 | **Barrido del descarte silencioso**: `new List<>()` vacíos, `return` tempranos, `continue` sin registrar | media | medio |
-| C2 | Medir cuántos bytes ocupa `tools/list` completo | baja | bajo |
+| ~~C2~~ | ~~Medir cuántos bytes ocupa `tools/list`~~ — **HECHA 2026-08-22** (`587426c`): **11.160 B / ~2.800 tokens por turno**, con gate a 12 KB | baja | bajo |
 | C3 | Registrar coste real por tarea delegada | baja | proceso |
 
 **C1 tiene la mejor relación esfuerzo/hallazgo de la lista.** Cinco casos aparecieron en una
@@ -375,7 +375,7 @@ vez de tropezarlo.
 
 ### Paralelización
 
-- **Ola 1**: A1 + B1 + C2 — rutas disjuntas, se lanzan juntas.
+- ~~**Ola 1**: A1 + B1 + C2~~ — **cerrada el 2026-08-22**, los tres commiteados por separado.
 - **Ola 2**: A3 + B4 — disjuntas entre sí.
 - **Solas**: A2 (exige diseño previo), B3 y C1 (las dos tocan `AstWalker`).
 - **Nunca juntas**: dos tareas sobre `AstWalker`. Aprendido a base de conflictos.
@@ -386,8 +386,10 @@ cifras. Eso cazó dos defectos que los agentes no podían ver.
 
 ### Fuera de alcance, y por qué
 
-- **Herramientas MCP nuevas**: nueve es el techo hasta que C2 diga lo que cuesta el catálogo
-  en cada turno del agente.
+- **Herramientas MCP nuevas**: C2 ya dijo lo que cuesta — 11.160 bytes con **diez**
+  herramientas, ~2.800 tokens en cada turno. El techo pasa a ser el presupuesto gateado de
+  12 KB (`McpTools.ToolsListBudgetBytes`), que deja sitio para **una más** sin recortar
+  descripciones. La siguiente que entre, entra a costa de algo.
 - **Reglas de riesgo nuevas**: las 22 existentes tienen **2 controles negativos**. Sin medir
   falsos positivos, añadir es empeorar.
 - **Capa de inferencia por LLM**: va después de B4, por el orden razonado en

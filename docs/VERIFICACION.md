@@ -4,7 +4,7 @@ description: Los cuatro comandos de 30 segundos para dar el visto bueno a un cam
 read_when: Antes de dar por bueno cualquier cambio en el motor, como primer paso.
 related: [docs/guia-de-verificacion.md, docs/ejecucion-canonica.md]
 stability: durable
-updated: 2026-08-21
+updated: 2026-08-22
 ---
 
 # Verificación
@@ -22,8 +22,8 @@ dotnet test tests/NetParser.Tests/NetParser.Tests.csproj -c Release
 dotnet src/TSqlParser/bin/Release/net10.0/TSqlParser.dll blind-refs dnn out.csv
 ```
 
-Cifras de referencia en el momento de escribir esto: **268 / 43 / 90 ciegas
-(98,7675 % de recall laxo)**. `Category!=LiveSql` excluye los tests que necesitan un SQL
+Cifras de referencia en el momento de escribir esto: **368 / 43 / 22 ciegas
+(99,6987 % de recall laxo)**. `Category!=LiveSql` excluye los tests que necesitan un SQL
 Server real.
 
 ## Trampas del entorno

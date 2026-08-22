@@ -29,7 +29,7 @@ dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "
 dotnet test tests/NetParser.Tests/NetParser.Tests.csproj -c Release
 ```
 
-Cifras de referencia: 268/268, 43/43, 90 referencias ciegas (98,7675 % de recall laxo en
+Cifras de referencia: 368/368, 43/43, 22 referencias ciegas (99,6987 % de recall laxo en
 el corpus DNN). Checklist completo en `docs/guia-de-verificacion.md`.
 
 ## Trampas del entorno
