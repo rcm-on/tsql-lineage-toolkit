@@ -17,5 +17,6 @@ public static class McpToolRegistry
         new RiskTool(),
         new StoreInfoTool(),
         new DescribeObjectTool(),
+        new EvidenceTool(),
     ];
 }
