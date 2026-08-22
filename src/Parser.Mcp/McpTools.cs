@@ -24,6 +24,11 @@ public static class McpTools
     /// BudgetGateTests) - this is a design gate, not a soft guideline.</summary>
     public const int ResponseBudgetBytes = 2048;
 
+    /// <summary>Techo de tools/list completo. A diferencia de una respuesta, este catálogo
+    /// viaja en CADA turno del agente, así que su coste es recurrente: medido en
+    /// McpRegistryGateTests. Un número, no un criterio; se baja cuando se pueda.</summary>
+    public const int ToolsListBudgetBytes = 12288;
+
     private static readonly IReadOnlyList<string> ImpactEdgeTypes = StoreSchema.ImpactEdgeTypes;
     private static readonly string ImpactEdgeTypesLabel = string.Join("/", ImpactEdgeTypes);
     private static readonly string AddressableLabelsCsv =

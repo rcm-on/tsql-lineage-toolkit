@@ -42,6 +42,48 @@ public class McpRegistryGateTests
         Assert.Contains("\"properties\"", schema);
     }
 
+    // ── coste de contexto del catálogo (C2) ─────────────────────────────────
+    //
+    // Una respuesta se paga una vez; tools/list se paga en cada turno del agente. Por eso
+    // tiene presupuesto propio y más alto, y por eso se mide en vez de estimarse: la
+    // decisión de "¿cabe una herramienta más?" necesita un número, no una intuición.
+
+    private static string ToolsListJson()
+    {
+        using var conn = new SqliteConnection("Data Source=:memory:");
+        conn.Open();
+        var respuesta = new McpServer().HandleLine(conn, "{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/list\"}");
+        Assert.NotNull(respuesta);
+        using var doc = JsonDocument.Parse(respuesta!);
+        return doc.RootElement.GetProperty("result").GetProperty("tools").ToString();
+    }
+
+    [Fact]
+    public void ToolsList_CabeEnElPresupuestoDeCatalogo()
+    {
+        var bytes = System.Text.Encoding.UTF8.GetByteCount(ToolsListJson());
+
+        Assert.True(bytes < McpTools.ToolsListBudgetBytes,
+            $"tools/list ocupa {bytes} bytes con {McpToolRegistry.Default.Count} herramientas, " +
+            $"sobre el presupuesto de {McpTools.ToolsListBudgetBytes}. Se paga en cada turno del agente: " +
+            "recorta descripciones o quita una herramienta antes de subir el techo.");
+    }
+
+    [Theory]
+    [MemberData(nameof(Herramientas))]
+    public void NingunaHerramienta_SeComeElCatalogoElla_Sola(string nombre)
+    {
+        var tool = McpToolRegistry.Default.Single(t => t.Name == nombre);
+        var bytes = System.Text.Encoding.UTF8.GetByteCount(JsonSerializer.Serialize(new
+        {
+            name = tool.Name,
+            description = tool.Description,
+            inputSchema = tool.InputSchema,
+        }));
+
+        Assert.True(bytes < 1800, $"'{nombre}' ocupa {bytes} bytes en tools/list; el techo por herramienta es 1800.");
+    }
+
     [Theory]
     [MemberData(nameof(Herramientas))]
     public void CadaHerramientaDelRegistro_EsAlcanzableDesdeToolsCall(string nombre)
