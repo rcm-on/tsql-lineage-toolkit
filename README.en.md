@@ -55,7 +55,7 @@ It's a **utility tool**, built by one person, not a data-governance product. It 
 **Where it doesn't add much, or there are simply better options:**
 
 - **It's single-dialect.** T-SQL only. If you need multiple engines, [SQLGlot](https://github.com/tobymao/sqlglot) is more complete and more mature — in fact we use it **as a reference** to validate our own column lineage (see [`eval/sqlglot-reference/`](eval/sqlglot-reference/)).
-- **Column lineage isn't complete.** 98.8 % recall on a large production corpus, and 90 references we don't see, classified by root cause in [`eval/column-recall/`](eval/column-recall/).
+- **Column lineage isn't complete.** 99.7 % recall on a large production corpus, and 22 references we don't see, classified by root cause — with **five of the eight causes gated in the suite** — in [`eval/column-recall/`](eval/column-recall/).
 - **It isn't data governance.** No catalog, glossary, permissions, or cross-system lineage.
 - **No support or warranties.** It's MIT, published as-is.
 
@@ -88,7 +88,7 @@ It's not just WideWorldImporters. It runs against **five corpora**, three of the
 > samples of one specific construct (view output columns). Measured
 > on a large corpus of production T-SQL —679 procedures from DNN
 > Platform, **7,786** column references according to `sys.dm_sql_referenced_entities`—
-> the real recall is **98.77 %**, with **90 references the engine doesn't
+> the real recall is **99.70 %**, with **22 references the engine doesn't
 > see**, classified one by one by root cause. The detail, the corpus, and the gate that measures it are at
 > [`eval/column-recall/`](eval/column-recall/).
 
@@ -112,7 +112,7 @@ And against corpora with their own oracle:
 - **Complex constructs (`eval/community-edge-cases/`):** `MERGE`, recursive CTEs, dynamic SQL, cursors.
 - **Column lineage (`eval/view-lineage/`):** checked against `sys.dm_sql_referenced_entities`.
 
-In addition, **239 tests (xUnit)** cover the parser and **all of them run as a gate in CI**. Three are in the `LiveSql` category and check against a live SQL Server: CI spins up a container with WideWorldImporters and AdventureWorks2019 restored ([`scripts/ci/restore-sample-databases.sh`](scripts/ci/restore-sample-databases.sh)).
+In addition, **374 tests (xUnit)** cover the parser and **all of them run as a gate in CI**. Three are in the `LiveSql` category and check against a live SQL Server: CI spins up a container with WideWorldImporters and AdventureWorks2019 restored ([`scripts/ci/restore-sample-databases.sh`](scripts/ci/restore-sample-databases.sh)).
 
 > **What that validation found.** Running the new corpora uncovered **twelve defects** in the engine itself, **all fixed** —among them one serious one: with a certain `UPDATE` pattern, a table's identity split into two nodes and *"who writes here?"* returned zero when there were three writers. The detail, with the reproduction of each one, is in [`docs/corpus-multibase.md`](docs/corpus-multibase.md). It's published because a bug found and documented says more about a tool's reliability than an all-green table.
 
@@ -261,7 +261,7 @@ claude mcp add tsql-lineage -- dotnet "<absolute-path>/src/TSqlParser/bin/Releas
 
 **Note:** `--columns` is **mandatory** if you want access to the column tools (`column_provenance`, `column_impact`).
 
-### The six MCP tools
+### The ten MCP tools
 
 | Tool | What it does |
 | --- | --- |
@@ -271,6 +271,10 @@ claude mcp add tsql-lineage -- dotnet "<absolute-path>/src/TSqlParser/bin/Releas
 | `column_provenance` | Given a column id, answers *"where does the value of this column come from?"*: traces DERIVES_FROM back to the base columns it's computed from. |
 | `describe_object` | An object's fact sheet: type, complexity, step count, whether it has error handling, cursors or transactions, which tables it reads and writes, and who it calls and who calls it. |
 | `column_impact` | Given a column id, answers *"what breaks if I change this column?"*: returns both the objects that reference it AND the columns whose value depends on it. |
+| `evidence` | **Why do you say this object touches that table?** Returns the concrete steps behind the edge: `line_no` in the source, the action (`SELECT`/`INSERT`/`EXEC`…), the relation, and **which `IF` the step hangs from**. It does not collapse: two statements reading the same table come back as two lines. States its own scope in the response — **line and step, not the literal SQL**. |
+| `blind_spots` | Where the engine does **not** see: objects whose dynamic SQL never resolved. Not an error list — the perimeter of what this extraction cannot assert. |
+| `risks` | Bad-practice findings from the same rule engine the dashboard runs, filterable by severity. Warns when the store was never enriched with execution plans: without execution data, an object that runs twice a year and a hot-path one get the same verdict. |
+| `diff_impact` | Over two `change_map`s: which impact is **new** relative to the base branch. This is the PR gate's tool. |
 
 ### Demo in 30 seconds
 
@@ -348,7 +352,7 @@ jobs:
 - **No confidence scoring yet**: a certain edge and an inferred one look the same. The groundwork is already measured —precision by evidence class, above— but it isn't exposed in the response yet.
 - **Parameterized dynamic SQL can be recovered, but it needs runtime.** Statically it's impossible: if the table name is built with `QUOTENAME(@TableName)`, there's no way to know without executing it. With `capture-plans` (an Extended Events session + `enrich-from-plans`) it can: on `Sequences.ReseedSequenceBeyondTableValues` from WideWorldImportersDW, the edge to `Dimension.City` is recovered, invisible to static analysis. **The cost is that you have to run the workload**, and coverage depends on which paths get executed — a plan is proof of presence, never of absence.
 - **Watch where you measure it.** On the First Responder Kit it discovers 906 edges and **none of them is a business table** (60 % temporary, 36 % internal SQL Server ones): FRK is DBA tooling and its dynamic SQL targets DMVs. Any "edges recovered" figure needs to be read broken down by target type.
-- **Column lineage is 98.8 %, not 100 %.** Measured on 7,302 deduplicated references from a production corpus (DNN Platform); 90 are not seen, classified by cause. A missing edge means "not detected", not "proven not to exist". See [`eval/column-recall/`](eval/column-recall/).
+- **Column lineage is 99.7 %, not 100 %.** Measured on 7,302 deduplicated references from a production corpus (DNN Platform); 22 are not seen, classified by cause, five of the eight causes gated. A missing edge means "not detected", not "proven not to exist". See [`eval/column-recall/`](eval/column-recall/).
 - **It gives you the dependency map, not the migration plan.** It answers what depends on what; semantics, data quality, and business rules are still your work.
 - **Tested at the scale of these five corpora** (the largest by object count: 739 modules from DNN Platform; the largest single-procedure size: `sp_Blitz`, 478 KB and 10,659 lines). There's no measurement yet on a database with thousands of procedures.
 

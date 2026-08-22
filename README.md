@@ -55,7 +55,7 @@ Es una **herramienta de utilidad**, hecha por una persona, no un producto de gob
 **Dónde no aporta, o directamente hay opciones mejores:**
 
 - **Es monodialecto.** Solo T-SQL. Si necesitas varios motores, [SQLGlot](https://github.com/tobymao/sqlglot) es más completo y más maduro — de hecho lo usamos **como referencia** para validar nuestro propio lineage de columna (ver [`eval/sqlglot-reference/`](eval/sqlglot-reference/)).
-- **El lineage de columna no es completo.** 98,8 % de cobertura sobre un corpus grande de producción, y 90 referencias que no vemos, clasificadas por causa raíz en [`eval/column-recall/`](eval/column-recall/).
+- **El lineage de columna no es completo.** 99,7 % de cobertura sobre un corpus grande de producción, y 22 referencias que no vemos, clasificadas por causa raíz —y **cinco de las ocho causas gateadas en la suite**— en [`eval/column-recall/`](eval/column-recall/).
 - **No es gobierno del dato.** Sin catálogo, glosario, permisos, ni linaje entre sistemas.
 - **No hay soporte ni garantías.** Es MIT, se publica tal cual.
 
@@ -88,7 +88,7 @@ No es solo WideWorldImporters. Se ejecuta contra **cinco corpus**, tres de ellos
 > pequeñas y de una construcción concreta (columnas de salida de vistas). Sobre un
 > corpus grande de producción —679 procedimientos de DNN Platform, 7.786 filas de
 > `sys.dm_sql_referenced_entities`, que deduplicadas por (módulo, columna) son **7.302**
-> referencias— la cobertura es del **98,77 %** y quedan **90 que el motor no ve**,
+> referencias— la cobertura es del **99,70 %** y quedan **22 que el motor no ve**,
 > clasificadas una a una por causa en [`eval/column-recall/`](eval/column-recall/).
 
 Sobre la precisión, medida por clase de evidencia en ese mismo corpus:
@@ -111,7 +111,7 @@ Y contra corpus con oráculo propio:
 - **Construcciones complejas (`eval/community-edge-cases/`):** `MERGE`, CTEs recursivas, SQL dinámico, cursores.
 - **Lineage de columna (`eval/view-lineage/`):** contrastado contra `sys.dm_sql_referenced_entities`.
 
-Además, **239 pruebas (xUnit)** cubren el parser y **todas corren como gate en CI**. Tres son de categoría `LiveSql` y se contrastan contra un SQL Server vivo: en CI se levanta un contenedor con WideWorldImporters y AdventureWorks2019 restauradas ([`scripts/ci/restore-sample-databases.sh`](scripts/ci/restore-sample-databases.sh)).
+Además, **374 pruebas (xUnit)** cubren el parser y **todas corren como gate en CI**. Tres son de categoría `LiveSql` y se contrastan contra un SQL Server vivo: en CI se levanta un contenedor con WideWorldImporters y AdventureWorks2019 restauradas ([`scripts/ci/restore-sample-databases.sh`](scripts/ci/restore-sample-databases.sh)).
 
 > **Qué encontró esa validación.** Correr los corpus nuevos destapó **doce defectos** en el propio motor, **todos corregidos** —entre ellos uno grave: con cierto patrón de `UPDATE` la identidad de una tabla se partía en dos nodos y *"¿quién escribe aquí?"* devolvía cero teniendo tres escritores. El detalle, con la reproducción de cada uno, está en [`docs/corpus-multibase.md`](docs/corpus-multibase.md). Se publica porque un fallo encontrado y documentado dice más de la fiabilidad de una herramienta que una tabla en verde.
 
@@ -260,7 +260,7 @@ claude mcp add tsql-lineage -- dotnet "<ruta-absoluta>/src/TSqlParser/bin/Releas
 
 **Nota:** `--columns` es **obligatorio** si quieres acceso a las herramientas de columna (`column_provenance`, `column_impact`).
 
-### Las seis herramientas MCP
+### Las diez herramientas MCP
 
 | Herramienta | Qué hace |
 | --- | --- |
@@ -270,6 +270,10 @@ claude mcp add tsql-lineage -- dotnet "<ruta-absoluta>/src/TSqlParser/bin/Releas
 | `column_provenance` | Dado un id de columna, responde *"¿de dónde sale el valor de esta columna?"*: remonta DERIVES_FROM hasta las columnas base de las que se computa. |
 | `describe_object` | La ficha de un objeto: tipo, complejidad, número de pasos, si tiene manejo de errores, cursores o transacciones, qué tablas lee y escribe, y a quién llama y quién le llama. |
 | `column_impact` | Dado un id de columna, responde *"¿qué se rompe si cambio esta columna?"*: devuelve los objetos que la referencian Y las columnas cuyo valor depende de ella. |
+| `evidence` | **¿Por qué dices que este objeto toca esa tabla?** Devuelve los pasos concretos detrás de la arista: `line_no` en el fuente, la acción (`SELECT`/`INSERT`/`EXEC`…), la relación y **bajo qué `IF` cuelga el paso**. No colapsa: dos sentencias que leen la misma tabla salen como dos líneas. Declara su alcance en la propia respuesta — **línea y paso, no el SQL literal**. |
+| `blind_spots` | Dónde el motor **no** ve: objetos con SQL dinámico que nunca resolvió. No es una lista de errores, es el perímetro de lo que esta extracción no puede afirmar. |
+| `risks` | Los hallazgos de malas prácticas del mismo motor de reglas que usa el dashboard, filtrables por severidad. Avisa si el store nunca se enriqueció con planes de ejecución: sin datos de ejecución, un objeto que corre dos veces al año y otro del camino caliente reciben el mismo veredicto. |
+| `diff_impact` | Sobre dos `change_map`: qué impacto es **nuevo** respecto a la rama base. Es la herramienta del gate de PR. |
 
 ### Demo en 30 segundos
 
@@ -282,13 +286,30 @@ Claude (con column_impact): Se afectan 5 procedimientos y 3 columnas derivadas.
 
 Usuario: ¿De dónde viene el valor de UnitPrice?
 Claude (con column_provenance): Es una columna base; nada la computa.
+
+Usuario: ¿Por qué dices que ese procedimiento la toca?
+Claude (con evidence): paso step2, línea 41, DELETE -> dbo.[ScheduleHistory],
+                       bajo la condición WHILE#37.
 ```
 
-### Dos avisos de honestidad
+### Tres avisos de honestidad
 
 1. **Un resultado vacío siempre lleva contexto.** Toda respuesta vacía (sin objetos afectados, sin fuentes) viene con un campo `reason` explicando por qué. Si la pregunta contraria sí tiene respuesta, viene un `hint` sugiriendo qué preguntar. **Nunca leas un vacío como "no hay impacto"** — es una herramienta rota si no dice por qué está vacía.
 
 2. **`column_impact` puede devolver `desconocido`.** Son objetos en la misma base cuyo SQL dinámico nunca se resolvió estáticamente, así que *podrían* tocar la columna sin que exista arista que lo pruebe o lo descarte. No es "no se encontró nada" — es un descargo permanente sobre lo que el análisis estático **no puede ver**.
+
+3. **El catálogo de herramientas cuesta contexto en cada turno.** `tools/list` ocupa **11.160 bytes (~2.800 tokens)** con las diez herramientas, y viaja en cada turno del agente, no una sola vez. Está medido y gateado a 12 KB (`McpTools.ToolsListBudgetBytes`): añadir una herramienta nueva obliga a recortar descripciones o a quitar otra. Por eso el catálogo es de diez y no de veinte.
+
+### Un informe de auditoría completo, hecho con estas herramientas
+
+[`docs/auditoria-dnn.md`](docs/auditoria-dnn.md) es una auditoría end-to-end del corpus DNN Platform (739 objetos) generada con el motor y el MCP. Cada afirmación lleva marcada su procedencia — **[motor]** si sale del grafo y es reproducible, **[lectura]** si la obtuvo una persona leyendo el T-SQL porque el motor no llega.
+
+Lo que enseña, y que ninguna captura de pantalla enseña igual de bien:
+
+- **Declara su perímetro de ignorancia antes que los hallazgos.** El caso que lo ilustra: `dbo.GetUsersBasicSearch` son ~100 líneas que el grafo reduce a **un paso, complejidad 1, cero aristas**. Por toda métrica de calidad es el objeto más simple del corpus, y es el que más superficie oculta.
+- **Encadena la consecuencia**: `dbo.vw_Profile` figura como "tabla huérfana" **solo porque sus únicos lectores son ciegos**. Quien use esa lista para decidir qué retirar borraría una vista en uso.
+- **Ordena el plan por dependencia, no por severidad** — y ese caso lo justifica: por severidad, "revisar tablas sin uso" (`low`) iría antes que "parametrizar el SQL dinámico" (`high`). En ese orden se borra la vista.
+- **Audita al auditor**: la propia auditoría encontró dos defectos del motor. Uno ya está arreglado y gateado; el otro queda diagnosticado con su causa raíz, sin arreglar y dicho como tal.
 
 ## Dashboard visual (offline, sin build)
 
@@ -347,7 +368,7 @@ El `change_map_diff.json` queda como artefacto: qué objetos cambiaron y a quié
 - **Sin scoring de confianza todavía**: una arista cierta y una inferida se ven igual. La base ya está medida —precisión por clase de evidencia, arriba— pero aún no se expone en la respuesta.
 - **El SQL dinámico parametrizado sí se puede recuperar, pero necesita runtime.** Estáticamente es imposible: si el nombre de la tabla se construye con `QUOTENAME(@TableName)`, no hay forma de saberlo sin ejecutar. Con `capture-plans` (sesión de Extended Events + `enrich-from-plans`) sí: sobre `Sequences.ReseedSequenceBeyondTableValues` de WideWorldImportersDW se recupera la arista a `Dimension.City`, invisible al análisis estático. **El coste es que hay que ejecutar la carga de trabajo**, y la cobertura depende de qué caminos se ejecuten — un plan es prueba de presencia, nunca de ausencia.
 - **Ojo al elegir dónde medirlo.** Sobre el First Responder Kit descubre 906 aristas y **ninguna es una tabla de negocio** (60 % temporales, 36 % internas de SQL Server): el FRK es tooling de DBA y su SQL dinámico ataca DMVs. Cualquier cifra de "aristas recuperadas" hay que leerla desglosada por tipo de destino.
-- **El lineage de columna es del 98,8 %, no del 100 %.** Medido sobre 7.302 referencias deduplicadas de un corpus de producción (DNN Platform); 90 no se ven, clasificadas por causa. La ausencia de una arista es "no detectada", no "probado que no existe". Ver [`eval/column-recall/`](eval/column-recall/).
+- **El lineage de columna es del 99,7 %, no del 100 %.** Medido sobre 7.302 referencias deduplicadas de un corpus de producción (DNN Platform); 22 no se ven, clasificadas por causa y con cinco de las ocho causas gateadas. La ausencia de una arista es "no detectada", no "probado que no existe". Ver [`eval/column-recall/`](eval/column-recall/).
 - **Te da el mapa de dependencias, no el plan de migración.** Responde qué depende de qué; la semántica, la calidad del dato y las reglas de negocio siguen siendo trabajo tuyo.
 - **Probado a la escala de estos cinco corpus** (el mayor por objetos: 739 módulos de DNN Platform; el mayor por tamaño de un solo procedimiento: `sp_Blitz`, 478 KB y 10.659 líneas). No hay todavía medición sobre una base de miles de procedimientos.
 
