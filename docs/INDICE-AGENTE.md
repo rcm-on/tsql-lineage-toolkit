@@ -4,7 +4,7 @@ description: Punto de entrada a la documentación — qué leer según lo que ne
 read_when: Siempre, como primer fichero de docs/ al empezar una sesión o tarea.
 related: [AGENTS.md]
 stability: durable
-updated: 2026-08-21
+updated: 2026-08-22
 ---
 
 # Índice de agente
@@ -27,6 +27,11 @@ si tu herramienta puede filtrar por ahí en vez de leer esta tabla a mano.
 | Qué queda por hacer, en qué orden, con ruta y gate por paso | `docs/plan-arquitectura.md` | ~365 | volatile |
 
 ## Fuera de este índice
+
+Entregable de ejemplo: **`docs/auditoria-dnn.md`** es un informe de auditoría completo sobre
+el corpus DNN, generado con el motor y el MCP. Léelo antes de escribir uno nuevo — muestra
+qué puede afirmar cada sección, cómo se marca la procedencia de cada dato y cómo se declara
+lo no evaluable.
 
 El resto de `docs/` son entregables y referencias puntuales, no arranque de sesión:
 comparativas de parsers, informes de auditoría, capturas del dashboard, guiones de
