@@ -316,47 +316,83 @@ compilador). Quedan:
 
 ---
 
-## 9. Orden de ejecución
+## 9. Cola de trabajo (actualizada 2026-08-21)
 
-Principio de troceado: **cada paso compila, pasa la suite y se commitea solo**. Nada de
-mover 5.000 líneas de una vez. Un corte por cuota entre pasos deja el árbol sano; un corte
-*dentro* de un paso, no. Por eso los pasos se dimensionan por grupo cohesionado, no por
-comodidad.
+**La fase 0 de arquitectura está HECHA y publicada.** `Parser.Graph` y `Parser.Mcp`
+existen, con la frontera impuesta por el compilador. El MCP tiene 9 herramientas. Las
+ciegas de columna del corpus DNN bajaron de 90 a 22 (recall 99,6987 %) sin tocar la
+precisión. Detalle en `docs/BITACORA.md`.
 
-**Fase 0 — la solución** (antes de T17). Ocho pasos, ninguno grande:
+Principio de troceado, que sigue vigente: **cada paso compila, pasa la suite y se commitea
+solo**. Un corte por cuota entre pasos deja el árbol sano; dentro de un paso, no.
 
-| # | Paso | Ficheros | Gate |
+### Fase A — cerrar el producto (lo que lo hace enseñable)
+
+| # | Tarea | Complejidad | Perfil |
 |---|---|---|---|
-| 0.1 | `Parser.Graph` vacío + `.csproj` + referencia desde `TSqlParser` + `global using Parser.Graph;` en `GlobalUsings.cs` | 0 movidos | compila, 256/256 |
-| 0.2 | Mover `Export/`: Sqlite, Graphify, GraphMl, Utf8Io | 4 | 256/256 sin tocar un test |
-| 0.3 | Mover `NodeStoreExporter` (1198 líneas, va solo) | 1 | 256/256 |
-| 0.4 | Mover `Analysis/`: Risk, Audit×2, BlindRefs, Report | 5 | 256/256 |
-| 0.5 | Mover `ChangeMap/` + `Bench/` + `Models`/`InputAnalyzer` | 5 | 256/256 |
-| 0.6 | `StoreSchema.cs` en Contracts + gate `ImpactEdgeTypes ⊆ Vocab.KnownEdgeTypes` | 1 nuevo | gate nuevo en verde |
-| 0.7 | `Parser.Mcp`: mover McpServer + McpTools | 2 | 256/256 |
-| 0.8 | `IMcpTool` + registro; `IGraphSink` | refactor | gate de 2 KB pasa a bucle sobre el registro |
+| A1 | **`evidence(objeto, tabla\|columna)`** — objeto + `line_no` + etiqueta del paso | baja-media | medio |
+| A2 | **`remediation_plan(id)`** — los dos órdenes topológicos, con conflictos y ciclos declarados | **alta** | diseño humano, implementación medio |
+| A3 | **Informe de auditoría end-to-end** sobre DNN, como demo real | media | medio |
 
-Y entonces, **la validación de que la arquitectura sirve para algo** (no un extra):
+**A1 desbloquea el resto**: sin evidencia por hallazgo, el informe es una lista de
+afirmaciones que nadie puede comprobar. Los `Step` ya guardan `line_no`, `action`,
+`target_name` y `condition_path`, y **ninguna herramienta los expone**.
 
-| # | Paso | Por qué |
-|---|---|---|
-| 0.9 | `ParserGeneral` escribe SQLite del grafo unificado | El MCP ve SQL + .NET con las herramientas que ya existen. Si esto no sale fácil, la arquitectura de §1 está mal y hay que revisarla antes de seguir. |
+**A2 es lo que ningún competidor puede hacer** (ordenar por dependencia real y no por
+severidad) y también lo más difícil. Depende de A1. El diseño está en
+`docs/auditoria-plantilla.md`, sección del plan de tareas.
 
-**Fase 1 — producto**:
-5. T17 `column_impact`/`column_provenance`; T18 `diff_impact`.
-6. `store_info` + `describe_object`.
-7. `quickstart` + error que enseña + prompts MCP + T19.
-8. `IRiskRule` + registro, con la herramienta `risks` y `blind_spots`.
-9. `ISubcommand` en `Cli/`.
+### Fase B — el foso
 
-**Fase 2 — con red, por tramos, prueba por mutación en cada uno**:
-10. `IGraphBuildStep`: partir `Build`.
-11. Visitors de ScriptDom: partir `AstWalker`.
-12. `ISqlCatalog` + `TSqlParser/Live/`.
+| # | Tarea | Complejidad | Perfil |
+|---|---|---|---|
+| B1 | Reclasificar las 22 ciegas | baja | medio |
+| B2 | **Mapa de cobertura de scopes**: qué tipos de nodo reciben resolución de columnas | media | medio |
+| B3 | `ORDER BY` con detección de alias de salida | media, **riesgo medio** | medio |
+| B4 | Planes de ejecución sobre el SQL dinámico | media-alta | medio |
 
----
+**B2 cambia el método.** Hoy descubrir un hueco exige leer `AstWalker` entero. Un test que
+enumere los tipos de nodo con scope propio y verifique cuáles están cubiertos convierte el
+diagnóstico en **leer una tabla**. Es la lección de la sesión hecha instrumento.
 
-## Nota
+**B3 ya falló una vez**: metía deducciones en la clase `direct` y tumbaba su precisión. El
+intento está en `stash@{0}` con el diagnóstico.
 
-`notes/` está ignorado por git. Si este plan debe sobrevivir fuera de esta máquina, su
-sitio es `docs/`. Misma decisión pendiente que la de `test/pr-impact-demo`.
+**B4 desbloquea además** la sección de rendimiento del informe, que hoy se declara no
+evaluable por falta de evidencia.
+
+### Fase C — higiene con retorno medible
+
+| # | Tarea | Complejidad | Perfil |
+|---|---|---|---|
+| C1 | **Barrido del descarte silencioso**: `new List<>()` vacíos, `return` tempranos, `continue` sin registrar | media | medio |
+| C2 | Medir cuántos bytes ocupa `tools/list` completo | baja | bajo |
+| C3 | Registrar coste real por tarea delegada | baja | proceso |
+
+**C1 tiene la mejor relación esfuerzo/hallazgo de la lista.** Cinco casos aparecieron en una
+sola sesión, todos del mismo patrón (ver `docs/BITACORA.md`). Buscarlo explícitamente en
+vez de tropezarlo.
+
+### Paralelización
+
+- **Ola 1**: A1 + B1 + C2 — rutas disjuntas, se lanzan juntas.
+- **Ola 2**: A3 + B4 — disjuntas entre sí.
+- **Solas**: A2 (exige diseño previo), B3 y C1 (las dos tocan `AstWalker`).
+- **Nunca juntas**: dos tareas sobre `AstWalker`. Aprendido a base de conflictos.
+
+Regla operativa del multiagente: **el coordinador cablea `McpToolRegistry` y los contadores
+congelados de `BlindRefsTests`**; a los agentes se les prohíbe tocarlos y devuelven las
+cifras. Eso cazó dos defectos que los agentes no podían ver.
+
+### Fuera de alcance, y por qué
+
+- **Herramientas MCP nuevas**: nueve es el techo hasta que C2 diga lo que cuesta el catálogo
+  en cada turno del agente.
+- **Reglas de riesgo nuevas**: las 22 existentes tienen **2 controles negativos**. Sin medir
+  falsos positivos, añadir es empeorar.
+- **Capa de inferencia por LLM**: va después de B4, por el orden razonado en
+  `docs/BITACORA.md`.
+- **Fase 2 del refactor** (`GraphExporter.Build`, visitors de `AstWalker`): sigue reservada
+  para hacerse con red y por tramos, y `AstWalker` ha subido de valor esta sesión, así que
+  su listón sube también.
+
