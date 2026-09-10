@@ -35,7 +35,17 @@ public static class CatalogRecall
         int ParseErrors,
         int ObjectsWithUnresolvedDynamicSql,
         IReadOnlyList<BlindRef> Phantom,
-        IReadOnlyList<BlindRef> PhantomFromDynamic);
+        IReadOnlyList<BlindRef> PhantomFromDynamic,
+        int ModulesInOracle,
+        IReadOnlyList<BlindRef> PhantomOutsideOracle)
+    {
+        /// <summary>
+        /// Fraccion de modulos sobre los que el oraculo dice ALGO. Es el dato que decide si el
+        /// recall significa algo: un 100 % de recall medido sobre un tercio de la base no es un
+        /// 100 %, es un tercio.
+        /// </summary>
+        public double OracleModuleCoverage => ModulesAnalyzed == 0 ? 0.0 : (double)ModulesInOracle / ModulesAnalyzed;
+    }
 
     public static LiveRecallResult Compute(string database, string server)
     {
@@ -80,10 +90,28 @@ public static class CatalogRecall
             // origen porque el catalogo NO ve el SQL dinamico resuelto y el motor SI: acusar de
             // fantasma a lo que sale de ahi seria acusar al motor de su mejor funcion.
             var origenDinamico = OrigenDinamicoPorRef(graph);
+
+            // Modulos sobre los que el oraculo dice ALGO. Un modulo con una sola referencia rota
+            // pierde TODAS sus filas (SQL Server no liga la sentencia y el filtro
+            // referenced_id IS NOT NULL se lleva por delante hasta la parte que si resolvia), asi
+            // que en una base con objetos borrados el oraculo se queda mudo sobre medio catalogo
+            // sin decirlo. Medido: 3 procedimientos, 2 con referencia rota -> recall 100 % sobre
+            // el unico que resolvia.
+            var modulosConOraculo = catalogoLaxo.Select(r => r.Module).ToHashSet(StringComparer.Ordinal);
+
             var fantasmas = new List<BlindRef>();
             var fantasmasDinamico = new List<BlindRef>();
+            var fantasmasFueraDelOraculo = new List<BlindRef>();
             foreach (var r in grafoLaxo.Where(r => !catalogoLaxo.Contains(r)).OrderBy(r => r.Module, StringComparer.Ordinal).ThenBy(r => r.Column, StringComparer.Ordinal))
-                (origenDinamico.Contains(r) ? fantasmasDinamico : fantasmas).Add(new BlindRef(r.Module, r.Column));
+            {
+                var destino =
+                    origenDinamico.Contains(r) ? fantasmasDinamico
+                    // Si el oraculo no declara NADA de ese modulo, no puede contradecir a nadie:
+                    // no es sospecha de interpretacion erronea, es su propia zona ciega.
+                    : !modulosConOraculo.Contains(r.Module) ? fantasmasFueraDelOraculo
+                    : fantasmas;
+                destino.Add(new BlindRef(r.Module, r.Column));
+            }
 
             return new LiveRecallResult(
                 Database: database,
@@ -92,7 +120,9 @@ public static class CatalogRecall
                 ParseErrors: results.Count(r => r.Error != null),
                 ObjectsWithUnresolvedDynamicSql: ContarObjetosConDinamicoSinResolver(graph),
                 Phantom: fantasmas,
-                PhantomFromDynamic: fantasmasDinamico);
+                PhantomFromDynamic: fantasmasDinamico,
+                ModulesInOracle: modulosConOraculo.Count,
+                PhantomOutsideOracle: fantasmasFueraDelOraculo);
         }
         finally
         {
@@ -201,10 +231,32 @@ public static class CatalogRecall
             (r.ParseErrors > 0 ? $", {r.ParseErrors} con error de parseo (no analizados)" : ""),
         };
 
+        // La cobertura del oraculo va ANTES que los fantasmas y en mayusculas cuando falla: un
+        // recall alto medido sobre una fraccion de la base es la cifra mas peligrosa que puede
+        // emitir esta herramienta, porque parece exactamente lo que uno quiere ver.
+        if (r.ModulesInOracle < r.ModulesAnalyzed)
+        {
+            lineas.Add(
+                $"  ATENCION: el oraculo solo declara algo de {r.ModulesInOracle} de los {r.ModulesAnalyzed} modulos " +
+                $"({r.OracleModuleCoverage:P2}). El recall de arriba esta medido SOLO sobre esos, no sobre la base.");
+            lineas.Add(
+                "  Causa habitual: un modulo con UNA referencia rota (objeto borrado, cross-database, servidor " +
+                "vinculado) pierde TODAS sus filas en dm_sql_referenced_entities, hasta las que si resolvian. " +
+                "Cuanto mas rota esta la base, mejor pinta este numero. No lo publiques sin esta linea al lado.");
+        }
+        else
+        {
+            lineas.Add($"  El oraculo declara algo de los {r.ModulesAnalyzed} modulos: el recall cubre toda la base.");
+        }
+
         lineas.Add(
-            $"  fantasmas: {r.Phantom.Count} referencia(s) que el grafo afirma y el catalogo no declara" +
+            $"  fantasmas: {r.Phantom.Count} referencia(s) que el grafo afirma y el catalogo contradice" +
             (r.PhantomFromDynamic.Count > 0
-                ? $" (+{r.PhantomFromDynamic.Count} desde dinamico resuelto, que el catalogo no puede ver: NO cuentan como error)"
+                ? $" (+{r.PhantomFromDynamic.Count} desde dinamico resuelto, que el catalogo no puede ver: NO cuentan)"
+                : "") +
+            (r.PhantomOutsideOracle.Count > 0
+                ? $" (+{r.PhantomOutsideOracle.Count} en modulos de los que el oraculo no declara nada: tampoco cuentan, " +
+                  "no puede contradecir lo que no ve)"
                 : "") +
             (r.Phantom.Count > 0 ? ". Sospechosas de interpretacion erronea: revisar." : "."));
 
@@ -213,7 +265,7 @@ public static class CatalogRecall
                 $"  AVISO: {r.ObjectsWithUnresolvedDynamicSql} objeto(s) con SQL dinamico sin resolver. " +
                 "El catalogo de SQL Server tampoco los ve, asi que lo que toquen NO cuenta en ese recall: " +
                 "es una zona ciega para las dos partes.");
-        else
+        else if (r.ModulesInOracle >= r.ModulesAnalyzed)
             lineas.Add("  Sin SQL dinamico sin resolver: el recall cubre todo lo que el catalogo declara.");
 
         return string.Join(Environment.NewLine, lineas);
