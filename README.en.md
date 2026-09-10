@@ -1,4 +1,4 @@
-﻿# T-SQL Lineage Toolkit
+# T-SQL Lineage Toolkit
 
 *Read this in [Spanish](README.md).*
 
@@ -112,7 +112,7 @@ And against corpora with their own oracle:
 - **Complex constructs (`eval/community-edge-cases/`):** `MERGE`, recursive CTEs, dynamic SQL, cursors.
 - **Column lineage (`eval/view-lineage/`):** checked against `sys.dm_sql_referenced_entities`.
 
-In addition, **374 tests (xUnit)** cover the parser and **all of them run as a gate in CI**. Three are in the `LiveSql` category and check against a live SQL Server: CI spins up a container with WideWorldImporters and AdventureWorks2019 restored ([`scripts/ci/restore-sample-databases.sh`](scripts/ci/restore-sample-databases.sh)).
+In addition, **374 tests (xUnit)** cover the parser and **all of them run as a gate in CI**. Three are in the `LiveSql` category and check against a live SQL Server: CI spins up a container with WideWorldImporters and AdventureWorks2019 restored ([`eng/restore-sample-databases.sh`](eng/restore-sample-databases.sh)).
 
 > **What that validation found.** Running the new corpora uncovered **twelve defects** in the engine itself, **all fixed** —among them one serious one: with a certain `UPDATE` pattern, a table's identity split into two nodes and *"who writes here?"* returned zero when there were three writers. The detail, with the reproduction of each one, is in [`docs/corpus-multibase.md`](docs/corpus-multibase.md). It's published because a bug found and documented says more about a tool's reliability than an all-green table.
 
@@ -180,7 +180,7 @@ The figures above are checked against a real SQL Server. Reproducing that takes 
 Docker:
 
 ```bash
-bash scripts/ci/restore-sample-databases.sh          # starts the container, restores WWI + AdventureWorks2019
+bash eng/restore-sample-databases.sh          # starts the container, restores WWI + AdventureWorks2019
 dotnet test tests/TSqlParser.Tests --filter "Category=LiveSql"
 ```
 

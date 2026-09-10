@@ -32,6 +32,6 @@ Server real.
   `0x800711C7`). No es un fallo del código. Invoca el DLL de **Release** directamente.
   Detección y reintentos: `docs/guia-de-verificacion.md` §2.
 - **No hay SQL Server local en esta máquina.** La vía viva es el contenedor
-  (`scripts/ci/restore-sample-databases.sh`, necesita Docker Desktop arrancado).
+  (`eng/restore-sample-databases.sh`, necesita Docker Desktop arrancado).
 - **`notes/` está ignorado por git.** Lo que deba sobrevivir a la máquina va en `docs/`.
 - **La rama por defecto es `main`**, no `master`.

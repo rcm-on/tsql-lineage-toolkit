@@ -1,0 +1,74 @@
+# Entorno de compilación y prueba reproducible.
+#
+# Vive en la raíz a propósito: `docker compose` lo descubre solo desde aquí, y es el punto
+# de entrada de desarrollo. Lo que crece —Dockerfiles, scripts de infraestructura— va en
+# `eng/`; los circuitos de CI/CD están en `.github/workflows/`, donde GitHub los exige.
+#
+# Existe por dos razones, y la segunda no es un apaño:
+#
+# 1. Smart App Control (Windows 11) bloquea el binario recién compilado con un
+#    FileLoadException 0x800711C7. Un DLL que acabas de compilar tiene un hash que nadie
+#    ha visto nunca, luego no tiene reputación, luego no carga — y no la va a ganar,
+#    porque cada compilación produce un hash distinto. Dentro del contenedor no interviene.
+# 2. El CI corre sobre Linux. Compilar y probar aquí es probar donde de verdad tiene que
+#    pasar la suite, no donde resulta cómodo.
+#
+# Uso:
+#   cp .env.example .env          # y edita la contraseña
+#   docker compose run --rm sdk dotnet build ParserGeneral.sln -c Release --artifacts-path /repo/.artifacts-linux
+#   docker compose run --rm sdk dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --artifacts-path /repo/.artifacts-linux --filter "Category!=LiveSql"
+#
+# Con base viva:
+#   docker compose up -d mssql
+#   MSSQL_SA_PASSWORD=... bash eng/restore-sample-databases.sh
+#   docker compose run --rm sdk dotnet run --project src/TSqlParser -c Release --artifacts-path /repo/.artifacts-linux -- recall WideWorldImporters --server mssql
+#
+# Al terminar: docker compose down   (con -v borra también los datos de SQL Server)
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: tsql-mssql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?define MSSQL_SA_PASSWORD en .env}
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    healthcheck:
+      # Sin esto, `docker compose run sdk` arranca antes de que SQL Server acepte
+      # conexiones, y el fallo aparece como un error de red sin relación con su causa.
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  sdk:
+    image: mcr.microsoft.com/dotnet/sdk:10.0
+    working_dir: /repo
+    depends_on:
+      mssql:
+        condition: service_healthy
+    environment:
+      # Los mismos nombres que lee SqlConnections.FromEnvironment(). Dentro de la red de
+      # compose el servidor se llama "mssql", no localhost.
+      TSQL_SQL_USER: sa
+      TSQL_SQL_PASSWORD: ${MSSQL_SA_PASSWORD}
+      TSQLPARSER_SQL_SERVER: mssql
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+      DOTNET_NOLOGO: "1"
+    volumes:
+      - ./:/repo
+      - nuget-cache:/root/.nuget/packages
+    # Los artefactos van a /repo/.artifacts-linux (--artifacts-path en cada comando):
+    # DENTRO del repo, porque varios tests localizan la raíz subiendo desde el ensamblado
+    # y desde un volumen externo nunca la encuentran; pero en su propia carpeta, porque el
+    # build de Linux y el de Windows no comparten rutas ni RIDs y mezclarlos rompe los dos.
+    command: ["dotnet", "--info"]
+
+volumes:
+  mssql-data:
+  nuget-cache:

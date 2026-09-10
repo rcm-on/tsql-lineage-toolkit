@@ -1,4 +1,4 @@
-﻿# T-SQL Lineage Toolkit
+# T-SQL Lineage Toolkit
 
 *Read this in [English](README.en.md).*
 
@@ -111,7 +111,7 @@ Y contra corpus con oráculo propio:
 - **Construcciones complejas (`eval/community-edge-cases/`):** `MERGE`, CTEs recursivas, SQL dinámico, cursores.
 - **Lineage de columna (`eval/view-lineage/`):** contrastado contra `sys.dm_sql_referenced_entities`.
 
-Además, **374 pruebas (xUnit)** cubren el parser y **todas corren como gate en CI**. Tres son de categoría `LiveSql` y se contrastan contra un SQL Server vivo: en CI se levanta un contenedor con WideWorldImporters y AdventureWorks2019 restauradas ([`scripts/ci/restore-sample-databases.sh`](scripts/ci/restore-sample-databases.sh)).
+Además, **374 pruebas (xUnit)** cubren el parser y **todas corren como gate en CI**. Tres son de categoría `LiveSql` y se contrastan contra un SQL Server vivo: en CI se levanta un contenedor con WideWorldImporters y AdventureWorks2019 restauradas ([`eng/restore-sample-databases.sh`](eng/restore-sample-databases.sh)).
 
 > **Qué encontró esa validación.** Correr los corpus nuevos destapó **doce defectos** en el propio motor, **todos corregidos** —entre ellos uno grave: con cierto patrón de `UPDATE` la identidad de una tabla se partía en dos nodos y *"¿quién escribe aquí?"* devolvía cero teniendo tres escritores. El detalle, con la reproducción de cada uno, está en [`docs/corpus-multibase.md`](docs/corpus-multibase.md). Se publica porque un fallo encontrado y documentado dice más de la fiabilidad de una herramienta que una tabla en verde.
 
@@ -179,7 +179,7 @@ Las cifras de arriba se contrastan contra un SQL Server real. Para repetirlo no 
 instalar nada más que Docker:
 
 ```bash
-bash scripts/ci/restore-sample-databases.sh          # levanta el contenedor y restaura WWI + AdventureWorks2019
+bash eng/restore-sample-databases.sh          # levanta el contenedor y restaura WWI + AdventureWorks2019
 dotnet test tests/TSqlParser.Tests --filter "Category=LiveSql"
 ```
 

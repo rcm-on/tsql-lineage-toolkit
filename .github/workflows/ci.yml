@@ -40,7 +40,7 @@ jobs:
   # TSQL_SQL_USER + TSQL_SQL_PASSWORD are both set, falling back to integrated security
   # otherwise (unchanged default). Verified locally 2026-08-16 against
   # mcr.microsoft.com/mssql/server:2022-latest with both databases restored from the
-  # public microsoft/sql-server-samples releases (scripts/ci/restore-sample-databases.sh)
+  # public microsoft/sql-server-samples releases (eng/restore-sample-databases.sh)
   # and a SA password containing ';' and '"' (exercises SqlConnections.Quote) — all 3
   # LiveSql tests passed.
   #
@@ -84,7 +84,7 @@ jobs:
           fi
 
       - name: Restore sample databases (WideWorldImporters + AdventureWorks2019)
-        run: bash scripts/ci/restore-sample-databases.sh
+        run: bash eng/restore-sample-databases.sh
         env:
           MSSQL_SA_PASSWORD: ${{ secrets.TSQL_SQL_SA_PASSWORD }}
 

@@ -21,7 +21,13 @@ namespace TSqlParser.Tests.ChatGpt
         [Fact]
         public void RunAllSpecs_ValidateExpectedDerivations()
         {
-            var baseDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "lineage_specs"));
+            // Se resuelve desde la raíz del repo, no contando carpetas hacia arriba desde el
+            // ensamblado: "tres niveles" solo vale con el bin/<cfg>/<tfm> clásico y se rompe con
+            // --artifacts-path, que es como se compila dentro del contenedor (ver compose.yaml).
+            var repoRoot = CorpusManifest.FindRepoRoot(AppContext.BaseDirectory);
+            var baseDir = repoRoot != null
+                ? Path.Combine(repoRoot, "tests", "TSqlParser.Tests", "lineage_specs")
+                : Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "lineage_specs"));
             if (!Directory.Exists(baseDir)) Assert.Fail($"Specs directory not found: {baseDir}");
 
             foreach (var f in Directory.EnumerateFiles(baseDir, "*.json").OrderBy(x => x))

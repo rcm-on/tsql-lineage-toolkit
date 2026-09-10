@@ -36,12 +36,26 @@ El recall no es la única medida: `coverage` reconcilia módulo a módulo y `syn
 declara los tipos de nodo sin caso en el recorrido. Ver `docs/prompt-validacion-externa.md`,
 Parte F — hay defectos reales que dejan el recall EXACTAMENTE igual.
 
+## Compilar y probar
+
+En Windows, **usa el contenedor**:
+
+```bash
+cp .env.example .env
+docker compose run --rm sdk dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --artifacts-path /repo/.artifacts-linux --filter "Category!=LiveSql"
+```
+
+Smart App Control bloquea cualquier binario recién compilado con `FileLoadException
+0x800711C7`: un DLL nuevo tiene un hash que nadie ha visto, luego no tiene reputación,
+luego no carga — y no la va a ganar, porque cada compilación produce un hash distinto. La
+nota que decía "invoca el DLL de Release" describía una casualidad, no una regla: el
+Release funcionaba solo mientras no se recompilara. Compilar dentro del contenedor lo
+esquiva y además prueba sobre Linux, que es donde corre el CI.
+
 ## Trampas del entorno
 
-- Smart App Control bloquea el DLL de Debug recién compilado (`FileLoadException
-  0x800711C7`). No es un fallo del código: invoca el DLL de Release.
-- No hay SQL Server local; la vía viva es el contenedor
-  (`scripts/ci/restore-sample-databases.sh`).
+- No hay SQL Server local; la vía viva es el contenedor (`docker compose up -d mssql` y
+  luego `eng/restore-sample-databases.sh`).
 - `notes/` está ignorado por git; lo que deba sobrevivir va en `docs/`.
 - La rama por defecto es `main`, no `master`.
 
