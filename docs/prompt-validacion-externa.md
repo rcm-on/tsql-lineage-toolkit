@@ -27,6 +27,30 @@ Tres invariantes que gobiernan todo lo demás:
 - **Un defecto por iteración.** El agente cierra el paquete, olvida y vuelve a empezar.
   Ese olvido es lo que mantiene el contexto pequeño.
 
+## Cómo leer este documento sin gastarte el presupuesto
+
+Son ~800 líneas: **no se lee entero**, y pedir "lee las Partes A, B, C" sin decir dónde
+empiezan obliga a abrirlo del todo — el ensayo del 2026-09-10 se comió el presupuesto de
+contexto exactamente así, antes de tocar una sola línea de código.
+
+| Parte | Qué es | Cuándo la necesitas |
+|---|---|---|
+| Puesta en marcha | Requisitos y arranque en otro equipo | Al empezar, una vez |
+| A | El prompt de caza de defectos | Cada iteración |
+| Reconciliación | Por qué `recall` no basta | Solo si dudas de la Fase 0 |
+| A-bis | Modo barrido proc a proc | Solo si haces barrido |
+| C-bis | Esqueleto de un procedimiento | Solo con paquetes del barrido |
+| B | Estructura del paquete y `ficha.md` | Al escribir un paquete |
+| C | Anonimización: gramática y barrido | Al escribir un paquete |
+| C-cuater | El circuito anónimo que no anonimiza | Antes de nada: es lo más barato |
+| C-ter | Qué debe sobrevivir a la anonimización | Al escribir un paquete |
+| F | Cuando el error no salta | Al dar un veredicto |
+| G | Ensayo en local | Solo para probar el protocolo |
+| E | Prompt de ingesta | Al otro lado, no aquí |
+
+Localiza cada una con `grep -n "^## " docs/prompt-validacion-externa.md` y lee **solo el
+rango** que te toque. Ese grep es gratis y es el primer comando que deberías ejecutar.
+
 ## Puesta en marcha en otro equipo
 
 Lo que hace falta en la máquina donde vive la base:
@@ -61,6 +85,17 @@ dotnet run --project src/TSqlParser -c Release -- syntax-coverage input.json --o
 Autenticación: por defecto se usa la de Windows. Para usuario y contraseña, las variables
 que lee `SqlConnections.FromEnvironment()` (ver `src/TSqlParser/SqlConnections.cs`) — nunca
 credenciales en la línea de comandos, que acaban en el historial del shell.
+
+**Trampa que costó un fallo entero en el ensayo:** si tu herramienta de shell abre un proceso
+nuevo por llamada —lo normal en un agente—, el `$env:` de una invocación **no lo hereda la
+siguiente**. Hay que ponerlo en la MISMA invocación que el comando:
+
+```powershell
+$env:TSQL_SQL_USER='sa'; $env:TSQL_SQL_PASSWORD='...'; dotnet run --project src/TSqlParser -c Release -- recall <BASE> --server "localhost,1433"
+```
+
+Si se separan, la conexión cae a la autenticación integrada y falla con un
+`Login failed for user '<host>\Guest'` que no se parece en nada a su causa.
 
 Dos trampas del entorno que cuestan una tarde si no se saben:
 
@@ -125,6 +160,13 @@ FASE 0 — Instrumento e inventario (solo si notes/validacion-externa/estado.md 
    mándala tal cual — para arreglar un tipo de nodo sin caso no hace falta ver tu código.
    Prioriza por número de módulos afectados, no por apariciones: 40 veces en un módulo es
    un procedimiento raro; 40 veces en 8 módulos es una familia entera de lineage perdido.
+   REGLA DE CORTE: copia en estado.md como mucho las 10 primeras filas no benignas por
+   modulos afectados, mas el recuento total. En una base pequena caben todas; en una de 700
+   procedimientos copiarlas enteras se comeria el presupuesto antes de la Fase 1. El fichero
+   completo se queda en disco y se manda tal cual, que para eso es anonimo.
+   Y antes de atribuir esas apariciones a un defecto concreto, COMPRUEBA que hablan del mismo
+   fenomeno: un mismo tipo de nodo puede contarse por causas distintas. Si no lo verificas,
+   la ficha lleva `frecuencia: sin_verificar`, no un numero que parece evidencia y no lo es.
 8. FANTASMAS: si `recall` escribió un fichero `-fantasmas.csv`, esas son referencias que el
    motor AFIRMA y el catálogo no declara — candidatas a interpretación errónea. Las que
    vienen de dinámico resuelto ya están descontadas por el propio subcomando.
@@ -401,6 +443,28 @@ toolkit_commit: e9c7e35
 Y debajo, cuatro apartados de tres líneas cada uno: **Síntoma**, **Esperado**,
 **Observado**, **Hipótesis**. Nada más. La ficha no es un informe: es lo justo para que
 alguien con el repo delante y sin la base pueda atacar el defecto.
+
+### Dos clases de paquete, y en qué se diferencian
+
+El documento asumía que todo paquete nace de reducir SQL real. No es así, y confundirlas hizo
+perder tiempo en el ensayo:
+
+| | **Paquete de reducción** | **Paquete de tipo de nodo** |
+|---|---|---|
+| Origen | Un módulo real que falla | Una fila de `syntax-coverage` |
+| Bisección (Fase 2, paso 1) | Obligatoria | **No aplica**: nace mínimo |
+| `repro.sql` | Reducido y anonimizado | Escrito desde cero |
+| Esperado en `delta.md` | `sys.dm_sql_referenced_entities` del módulo original | La semántica del repro, y se dice así |
+| Entorno en la ficha | Del módulo real | `no_aplica`, salvo que el defecto dependa de la versión |
+| Frecuencia | Nº de ciegas del cúmulo | **Solo si has verificado que esas apariciones son de ESTE defecto** |
+
+Esa última fila es la que más duele. Un tipo de nodo puede aparecer contado por razones
+distintas de tu repro: en el ensayo, las 21 apariciones de
+`SchemaObjectFunctionTableReference` en AdventureWorks eran `.nodes()` de XML —que el motor
+sí trata—, no el TVF del repro. La frecuencia se copió del instrumento sin comprobar que
+hablaban del mismo fenómeno. Si no lo has verificado, pon `frecuencia: sin_verificar`.
+
+`toolkit_commit` sale de `git rev-parse --short HEAD`. No lo produce ningún subcomando.
 
 ### Por qué el JSON no viaja
 

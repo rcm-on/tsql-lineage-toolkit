@@ -229,7 +229,8 @@ public static class SyntaxCoverage
         var lineas = new List<string>
         {
             $"syntax-coverage --anon: {r.ModulesTotal} modulo(s), {r.ModulesWithParseError} con error de parseo, " +
-            $"{noBenignas.Count} tipo(s) de nodo sin cubrir -> {outputPath}",
+            $"{noBenignas.Count} tipo(s) de nodo sin cubrir de {r.Uncovered.Count} listado(s) " +
+            $"({r.Uncovered.Count - noBenignas.Count} benigno(s) declarado(s)) -> {outputPath}",
             "  El fichero NO contiene nombres, ni SQL, ni estructura: solo tipos de nodo, numeros de error y recuentos.",
         };
         foreach (var u in noBenignas.Take(15))

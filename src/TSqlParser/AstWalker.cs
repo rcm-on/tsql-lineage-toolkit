@@ -2180,7 +2180,13 @@ public static class AstWalker
             //    mapping is possible, so columns qualified with their alias simply won't
             //    resolve below.
             default:
-                SyntaxCoverage.Record(SyntaxCoverage.FamiliaTabla, tref);
+                // Un caso con guarda `when` que no se cumple cae aquí aunque OTRO mecanismo lo
+                // resuelva a propósito. El "xmlCol.nodes(...)" es exactamente eso: tiene la
+                // forma de un TVF cualificado, la guarda lo excluye, y BuildXmlApplyMap ya lo
+                // resuelve a su columna base real. Contarlo como no cubierto era una mentira del
+                // instrumento, y mando a un agente a reducir un defecto que no existía.
+                if (tref is not SchemaObjectFunctionTableReference xmlFn || !IsXmlNodesMethodCall(xmlFn))
+                    SyntaxCoverage.Record(SyntaxCoverage.FamiliaTabla, tref);
                 break;
         }
     }

@@ -80,6 +80,28 @@ END");
     }
 
     [Fact]
+    public void XmlNodes_NoSeCuentaComoNoCubierto()
+    {
+        // Encontrado por el ensayo del protocolo (notes/ensayo, 2026-09-10): "xmlCol.nodes(...)"
+        // tiene la forma sintáctica de un TVF cualificado, la guarda del case lo excluye, y cae
+        // al default — pero BuildXmlApplyMap SÍ lo resuelve a su columna base. El instrumento lo
+        // declaraba "no cubierto" y mandó a un agente a reducir un defecto inexistente: las 21
+        // apariciones que atribuyó al fallo eran las vistas XML de AdventureWorks.
+        // Un instrumento que miente es peor que no tenerlo, porque se le hace caso.
+        using var scope = SyntaxCoverage.Collect();
+        SqlAnalyzer.AnalyzeObject("db::dbo.p1", @"
+CREATE PROCEDURE dbo.p1 AS
+BEGIN
+    SELECT x1.c1
+    FROM dbo.t1
+    CROSS APPLY t1.xmlcol.nodes('/a/b') AS x1(c1);
+END");
+
+        Assert.DoesNotContain(scope.Rows("dbo.p1"),
+            f => !f.Benign && f.NodeType == "SchemaObjectFunctionTableReference");
+    }
+
+    [Fact]
     public void Analyze_AtribuyeCadaNodoASuModulo()
     {
         var ruta = EscribirInput(
