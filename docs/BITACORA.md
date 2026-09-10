@@ -1,4 +1,4 @@
-﻿---
+---
 title: Bitácora
 description: Qué cambió en cada sesión, lo más reciente arriba.
 read_when: Para saber qué pasó en las últimas sesiones antes de continuar el trabajo.
@@ -15,6 +15,45 @@ nada escrito es una sesión que hay que reconstruir leyendo commits.
 
 Formato de una entrada: qué se hizo, qué se aprendió que no estaba previsto, en qué estado
 queda el árbol y cuál es el siguiente paso concreto.
+
+---
+
+## 2026-09-10 — Validación externa: instrumentos para lo que no da error
+
+Nace de una restricción real: la herramienta se ejecuta contra una base corporativa que no
+puede salir de su red, con un agente que no es Claude y con menos contexto del que consume
+este repo. De ahí `docs/prompt-validacion-externa.md` (protocolo iterativo, estructura de
+paquetes, anonimización como gramática cerrada, prompt de ingesta para diagnóstico y plan).
+
+Al escribirlo salió el hueco de verdad: `recall` mide **referencias de columna**, así que un
+módulo que no se extrae, que no parsea o que no aporta columnas no aparece en su medida ni
+para bien ni para mal. Tres instrumentos nuevos, todos con su prueba:
+
+- `coverage <base>`: reconciliación módulo a módulo (`sys.objects` contra `input.json` y
+  contra el grafo). Estados `NO_EXTRAIDO`, `ERROR_PARSEO`, `DEFECTO_SIN_ARISTAS`.
+- `syntax-coverage <input.json> [--anon]`: el `default` del recorrido ahora registra el tipo
+  de nodo que no supo tratar. Con `--anon`, informe anónimo **por construcción** — solo tipos
+  de ScriptDom, números de error y recuentos, verificado contra el ensamblado del parser.
+- Fantasmas en `recall`: la resta inversa (`grafo \ catálogo`), separando lo que viene de
+  dinámico resuelto, que el catálogo no puede ver y por tanto no es error.
+
+Lo que no estaba previsto, y es la lección de la sesión: `syntax-coverage` encontró a la
+primera `VariableTableReference` (40 apariciones en 8 módulos de DNN, 22 en 3 de WWI) y
+`JoinParenthesisTableReference`. Arreglados los dos en `CollectTableRefsInto`. Y entonces la
+medida: **las ciegas sobre DNN siguieron siendo 22, exactamente las mismas**. El catálogo de
+SQL Server no conoce las variables de tabla, así que esas referencias nunca pudieron salir en
+su lista. Un instrumento no encuentra lo que no puede ver, y apretar más el mismo instrumento
+no lo arregla — el `SELECT c1 FROM @tv v JOIN dbo.t2 x` afirmaba `dbo.t2.c1`, una columna que
+esa consulta no lee, y ningún gate del repo lo notaba.
+
+El gate de patrones ciegos sí hizo su trabajo: exigió actualizar `expected-columns.json`
+(`dbo.hijos.madreid`, de ciego a cubierto) en cuanto el arreglo lo cubrió.
+
+Estado: 395/395 en verde, sin commitear. Siguiente: `VariableMethodCallTableReference` (única
+fila no benigna que queda en DNN) y el puente de lectura de tablas transitorias — hoy
+`INSERT INTO @tv SELECT ... FROM t1` seguido de `SELECT v.c1 FROM @tv v` no devuelve la
+columna al origen real; queda dicho en `TableVariableLineageTests` en vez de aparentar verde.
+
 
 ---
 

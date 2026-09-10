@@ -323,7 +323,7 @@
     "Module": "dbo.joinentreparentesis",
     "Table": "dbo.hijos",
     "Column": "madreid",
-    "Status": "ciego",
+    "Status": "cubierto",
     "Pattern": "join-entre-parentesis",
     "Reason": "MAS AMPLIO DE LO SUPUESTO: h.MadreId esta en el ON EXTERIOR, y aun asi se pierde por apuntar a una tabla que vive dentro del parentesis. Descubierto por este gate el 2026-08-22, no por lectura del SQL."
   },

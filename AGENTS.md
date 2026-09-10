@@ -29,8 +29,12 @@ dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "
 dotnet test tests/NetParser.Tests/NetParser.Tests.csproj -c Release
 ```
 
-Cifras de referencia: 368/368, 43/43, 22 referencias ciegas (99,6987 % de recall laxo en
+Cifras de referencia: 395/395, 43/43, 22 referencias ciegas (99,6987 % de recall laxo en
 el corpus DNN). Checklist completo en `docs/guia-de-verificacion.md`.
+
+El recall no es la única medida: `coverage` reconcilia módulo a módulo y `syntax-coverage`
+declara los tipos de nodo sin caso en el recorrido. Ver `docs/prompt-validacion-externa.md`,
+Parte F — hay defectos reales que dejan el recall EXACTAMENTE igual.
 
 ## Trampas del entorno
 
