@@ -517,6 +517,31 @@ Comentarios: se borran todos, sin excepción — son el escondite habitual de no
 cliente, tickets y correos. Si un comentario era necesario para entender el defecto, eso
 va en la ficha, no en el `.sql`.
 
+### La excepción que sí existe: las cadenas del SQL dinámico
+
+En SQL dinámico la cadena **es el código**. Aplicar "cadena → `'a'`" ahí no anonimiza: borra
+el defecto, y manda un repro que no reproduce nada.
+
+Se anonimiza **por dentro**: los identificadores del SQL embebido pasan por la misma
+gramática de arriba, y las palabras clave de T-SQL se quedan como están.
+
+| | |
+|---|---|
+| Original | `SET @sql = 'SELECT Importe FROM dbo.Facturas'` |
+| Mal (regla general) | `SET @a1 = 'a'` — el motor deja de ver nada |
+| Bien | `SET @a1 = 'SELECT c1 FROM s1.t1'` — reproduce igual, y no dice nada de nadie |
+
+Medido el 2026-09-10: el original y la versión de la derecha dan las mismas 2 aristas; la
+del medio da 0.
+
+Lo mismo vale para cómo se **construye** la cadena: qué se concatena, en qué orden, qué
+viene de variable, si pasa por `sp_executesql` con parámetros o por `EXEC(@s)`. Eso es la
+forma del defecto y sobrevive entero, solo con los nombres cambiados.
+
+Consecuencia para el barrido de la Parte C: **hay que mirar dentro de las cadenas**. Un
+nombre real olvidado ahí no lo caza la gramática de identificadores, porque va dentro de un
+literal. Es el sitio más fácil por donde se cuela una fuga en un repro de dinámico.
+
 Barrido de comprobación, en PowerShell, sobre el paquete entero. Debe salir vacío:
 
 ```powershell
