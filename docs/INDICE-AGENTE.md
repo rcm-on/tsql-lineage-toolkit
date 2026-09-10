@@ -23,6 +23,7 @@ si tu herramienta puede filtrar por ahí en vez de leer esta tabla a mano.
 | Los 4 comandos de 30s para validar un cambio, y las trampas del entorno | `docs/VERIFICACION.md` | ~37 | durable |
 | Checklist completo de verificación (corpus, `validate`, capturas, higiene de git) | `docs/guia-de-verificacion.md` | ~370 | durable |
 | Reglas de proceso: gates, mutación, checkpoints, bitácora, autoría | `docs/CONVENCIONES.md` | ~30 | durable |
+| Validar contra una base corporativa que no sale de su red, con un agente que no es Claude | `docs/prompt-validacion-externa.md` | ~300 | durable |
 | Qué pasó en cada sesión, lo más reciente arriba | `docs/BITACORA.md` | ~80 | volatile |
 | Qué queda por hacer, en qué orden, con ruta y gate por paso | `docs/plan-arquitectura.md` | ~365 | volatile |
 
