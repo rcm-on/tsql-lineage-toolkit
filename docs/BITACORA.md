@@ -49,10 +49,73 @@ esa consulta no lee, y ningún gate del repo lo notaba.
 El gate de patrones ciegos sí hizo su trabajo: exigió actualizar `expected-columns.json`
 (`dbo.hijos.madreid`, de ciego a cubierto) en cuanto el arreglo lo cubrió.
 
-Estado: 395/395 en verde, sin commitear. Siguiente: `VariableMethodCallTableReference` (única
-fila no benigna que queda en DNN) y el puente de lectura de tablas transitorias — hoy
-`INSERT INTO @tv SELECT ... FROM t1` seguido de `SELECT v.c1 FROM @tv v` no devuelve la
-columna al origen real; queda dicho en `TableVariableLineageTests` en vez de aparentar verde.
+### El ensayo del protocolo, y lo que devolvió
+
+Se probó el protocolo en local con un agente menor (Sonnet) contra AdventureWorks2019, con
+el encargo de seguirlo al pie de la letra y devolver un informe de sus fallos. Devolvió
+cuatro problemas concretos del documento —el presupuesto de contexto se lo comía la propia
+lectura de estas 800 líneas, el `$env:` no sobrevive entre invocaciones de shell, la
+bisección no aplica a paquetes de tipo de nodo, `toolkit_commit` no lo produce ningún
+comando— y un paquete de defecto real.
+
+Pero lo que de verdad devolvió fue esto: **`syntax-coverage` mentía**. Un `case` con guarda
+`when` que no se cumple cae al `default` aunque otro mecanismo lo resuelva a propósito. El
+`xmlCol.nodes(...)` tiene forma de TVF cualificado, la guarda lo excluye, y BuildXmlApplyMap
+ya lo resolvía. El instrumento declaraba 21 apariciones no cubiertas en 6 módulos —las seis
+vistas XML clásicas de AdventureWorks— y el agente, que hizo lo correcto, se puso a reducir
+un defecto que no existía. Tras el arreglo: una sola fila no benigna, y esa sí es real.
+
+Un instrumento que miente es peor que no tenerlo, porque se le hace caso. Y ese fallo no
+sale leyendo el propio código: hace falta alguien que se fíe del instrumento sin sospechar.
+
+### El bloqueo de Smart App Control, y lo que destapó
+
+A media sesión SAC empezó a bloquear **cualquier** binario recién compilado, Release y test
+host incluidos. La nota de `AGENTS.md` ("invoca el DLL de Release") describía una
+casualidad: el Release funcionaba solo mientras no se recompilara. Un DLL nuevo tiene un
+hash que nadie ha visto, luego no tiene reputación, y no la va a ganar nunca.
+
+De ahí salió `compose.yaml` (SQL Server 2022 con healthcheck + SDK de .NET), el `Dockerfile`
+del CLI y la separación en `eng/`. Compilar en contenedor esquiva SAC y además prueba sobre
+Linux, que es donde corre el CI.
+
+Y al desbloquear, cayó el arreglo que estaba esperando. `BlockerLab`, 3 procedimientos, 2
+apuntando a tablas inexistentes: **`recall = 100,0000 %`**. La causa no era el `TRY/CATCH`
+del cursor —esa hipótesis salió falsa, `@failed = 0`— sino el filtro `referenced_id IS NOT
+NULL`, con un matiz que no estaba visto: un módulo con UNA referencia rota pierde TODAS sus
+filas en `dm_sql_referenced_entities`, hasta las que sí resolvían. Cuanto más rota está la
+base, mejor pinta el número. Medido sobre WideWorldImporters, una base de muestra limpia de
+Microsoft: el oráculo solo declara algo de 30 de 47 módulos (63,83 %). El 93,29 % que
+veníamos publicando estaba medido sobre dos tercios de la base, y 41 de los 95 fantasmas
+eran acusaciones falsas.
+
+Tres veces en una sesión el mismo patrón: **un instrumento que calla lo que no sabe**.
+
+### Limpieza y forma
+
+`ParserGeneral.sln` declaraba 7 proyectos y no incluía `NetParser.Tests`: el build de la
+solución nunca compilaba esas 43 pruebas, y por eso la verificación iba proyecto a proyecto.
+Se queda la `.slnx`, que declara los 8, y la verificación vuelve a ser un comando (441/441).
+Borradas cuatro utilidades JS/Python que el CLI ya hace mejor y `sql/adventureworks/` (102
+ficheros generados por ellas, sin una sola referencia).
+
+El informe `--anon` pasó a llevar dos mitades: la cola de fallos y la **forma** de la base
+(`statement`, `table_reference`, `query_expression`). Sin la segunda, un informe de tres
+filas describe una base de tres construcciones — inútil para generar nada. Probado a escala
+con DNN replicado ×5: 4335 módulos, 18,8 s, y el informe NO crece (41 tipos), lo que
+invalida la regla de corte que se había añadido al protocolo por precaución.
+
+Estado: 441/441, todo commiteado y publicado hasta `2fc5439`. Contenedor `tsql-mssql`
+levantado con WWI y AdventureWorks2019 (`docker compose down` para bajarlo).
+
+Siguiente, por orden: (1) el generador de base sintética a partir de un informe `--anon`
+REAL de la base del trabajo — construirlo antes es construir para una entrada imaginada, que
+es el error que cometió el paquete del ensayo; su gate es el bucle cerrado, generar desde R
+y exigir que `syntax-coverage` devuelva R. (2) Los 54 fantasmas que quedan en WWI, con
+hipótesis: nodos `:table:` sintéticos de TVF. (3) `FullTextTableReference`, hueco real y
+pequeño. (4) El puente de lectura de tablas transitorias — hoy `INSERT INTO @tv SELECT ...
+FROM t1` seguido de `SELECT v.c1 FROM @tv v` no devuelve la columna al origen real; queda
+dicho en `TableVariableLineageTests` en vez de aparentar verde.
 
 
 ---
