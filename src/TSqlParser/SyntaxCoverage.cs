@@ -18,6 +18,14 @@ public static class SyntaxCoverage
     public const string FamiliaSentencia = "statement";
     public const string FamiliaTabla = "table_reference";
 
+    /// <summary>
+    /// Solo aparece en el perfil, no en lo no cubierto: las expresiones de consulta no pasan por
+    /// ningún <c>switch</c> con <c>default</c> del recorrido. Van en el perfil porque un UNION o
+    /// una consulta entre paréntesis cambian la forma de una base, y sin ellas el perfil describe
+    /// una base de sentencias sueltas.
+    /// </summary>
+    public const string FamiliaConsulta = "query_expression";
+
     [ThreadStatic] private static Dictionary<string, int>? _sumidero;
 
     /// <summary>
@@ -95,6 +103,35 @@ public static class SyntaxCoverage
     /// <summary>Una fila del informe anónimo: el tipo, cuántas veces y en cuántos módulos. Sin nombres.</summary>
     public sealed record AnonNodeRow(string Family, string NodeType, int Occurrences, int Modules, bool Benign);
 
+    /// <summary>
+    /// Cuenta TODOS los nodos de sentencia y de referencia de tabla, los trate el motor o no.
+    ///
+    /// <see cref="SyntaxCoverage"/> solo ve lo que llega al <c>default</c> del recorrido, que es
+    /// la cola de fallos. Para saber qué FORMA tiene una base hace falta la distribución entera:
+    /// sin ella, un informe de tres filas describe una base de tres construcciones, que no se
+    /// parece a ninguna real. <c>Visit(TSqlFragment)</c> es la raíz de la cadena de despacho de
+    /// ScriptDom, así que pasa por él cada nodo del árbol.
+    /// </summary>
+    private sealed class PerfilVisitor : TSqlFragmentVisitor
+    {
+        public readonly Dictionary<string, int> Cuenta = new(StringComparer.Ordinal);
+
+        public override void Visit(TSqlFragment node)
+        {
+            var familia = node switch
+            {
+                TSqlStatement => FamiliaSentencia,
+                TableReference => FamiliaTabla,
+                QueryExpression => FamiliaConsulta,
+                _ => null,
+            };
+            if (familia is null) return;
+
+            var clave = familia + "|" + node.GetType().Name;
+            Cuenta[clave] = Cuenta.TryGetValue(clave, out var n) ? n + 1 : 1;
+        }
+    }
+
     /// <summary>Un error de parseo por su NÚMERO de ScriptDom. El mensaje lleva el identificador que rompió; el número no.</summary>
     public sealed record AnonParseError(int Number, int Modules);
 
@@ -109,7 +146,8 @@ public static class SyntaxCoverage
         int ModulesTotal,
         int ModulesWithParseError,
         IReadOnlyList<AnonNodeRow> Uncovered,
-        IReadOnlyList<AnonParseError> ParseErrors);
+        IReadOnlyList<AnonParseError> ParseErrors,
+        IReadOnlyList<AnonNodeRow> Shape);
 
     public static AnonReport AnalyzeAnonymous(string inputJsonPath)
     {
@@ -118,27 +156,50 @@ public static class SyntaxCoverage
             ?? throw new InvalidDataException("No se pudo leer el input JSON: " + inputJsonPath);
 
         var filas = new List<UncoveredNode>();
+        var perfil = new List<UncoveredNode>();
         var erroresPorNumero = new Dictionary<int, HashSet<string>>();
         var conError = 0;
 
         foreach (var src in sources)
         {
             var modulo = ModuloDe(src.Name);
-            using var scope = Collect();
-            var res = SqlAnalyzer.AnalyzeObject(src.Name, src.Sql);
-            filas.AddRange(scope.Rows(modulo));
-
-            if (res.Error == null) continue;
-            conError++;
-            foreach (var n in res.ParseErrorNumbers)
+            using (var scope = Collect())
             {
-                if (!erroresPorNumero.TryGetValue(n, out var mods))
-                    erroresPorNumero[n] = mods = new HashSet<string>(StringComparer.Ordinal);
-                mods.Add(modulo);
+                var res = SqlAnalyzer.AnalyzeObject(src.Name, src.Sql);
+                filas.AddRange(scope.Rows(modulo));
+
+                if (res.Error != null)
+                {
+                    conError++;
+                    foreach (var n in res.ParseErrorNumbers)
+                    {
+                        if (!erroresPorNumero.TryGetValue(n, out var mods))
+                            erroresPorNumero[n] = mods = new HashSet<string>(StringComparer.Ordinal);
+                        mods.Add(modulo);
+                    }
+                    // Un módulo que no parsea no aporta forma: contarlo sesgaría el perfil.
+                    continue;
+                }
             }
+
+            perfil.AddRange(PerfilDe(modulo, src.Sql));
         }
 
-        var agregadas = filas
+        return new AnonReport(
+            Schema: "tsql-diag/2",
+            Generated: DateTime.UtcNow.ToString("yyyy-MM-dd"),
+            ModulesTotal: sources.Count,
+            ModulesWithParseError: conError,
+            Uncovered: Agregar(filas),
+            ParseErrors: erroresPorNumero
+                .Select(kv => new AnonParseError(kv.Key, kv.Value.Count))
+                .OrderByDescending(e => e.Modules)
+                .ToList(),
+            Shape: Agregar(perfil));
+    }
+
+    private static List<AnonNodeRow> Agregar(IEnumerable<UncoveredNode> filas) =>
+        filas
             .GroupBy(f => (f.Family, f.NodeType, f.Benign))
             .Select(g => new AnonNodeRow(
                 g.Key.Family, g.Key.NodeType,
@@ -150,16 +211,24 @@ public static class SyntaxCoverage
             .ThenByDescending(r => r.Occurrences)
             .ToList();
 
-        return new AnonReport(
-            Schema: "tsql-diag/1",
-            Generated: DateTime.UtcNow.ToString("yyyy-MM-dd"),
-            ModulesTotal: sources.Count,
-            ModulesWithParseError: conError,
-            Uncovered: agregadas,
-            ParseErrors: erroresPorNumero
-                .Select(kv => new AnonParseError(kv.Key, kv.Value.Count))
-                .OrderByDescending(e => e.Modules)
-                .ToList());
+    /// <summary>La distribución de construcciones de un módulo, las trate el motor o no.</summary>
+    private static IEnumerable<UncoveredNode> PerfilDe(string modulo, string? sql)
+    {
+        if (string.IsNullOrWhiteSpace(sql)) yield break;
+
+        var parser = new TSql160Parser(initialQuotedIdentifiers: true);
+        using var reader = new StringReader(sql);
+        var fragment = parser.Parse(reader, out var errores);
+        if (errores.Count > 0) yield break;
+
+        var visitor = new PerfilVisitor();
+        fragment.Accept(visitor);
+
+        foreach (var kv in visitor.Cuenta)
+        {
+            var partes = kv.Key.Split('|', 2);
+            yield return new UncoveredNode(modulo, partes[0], partes[1], kv.Value, Benign: false);
+        }
     }
 
     public static void WriteAnonJson(AnonReport report, string outputPath)
@@ -180,12 +249,12 @@ public static class SyntaxCoverage
         var ensamblado = typeof(TSqlFragment).Assembly;
         var sospechosos = new List<string>();
 
-        if (r.Schema != "tsql-diag/1") sospechosos.Add(r.Schema);
+        if (r.Schema != "tsql-diag/2") sospechosos.Add(r.Schema);
         if (!DateTime.TryParse(r.Generated, out _)) sospechosos.Add(r.Generated);
 
-        foreach (var u in r.Uncovered)
+        foreach (var u in r.Uncovered.Concat(r.Shape))
         {
-            if (u.Family != FamiliaSentencia && u.Family != FamiliaTabla)
+            if (u.Family != FamiliaSentencia && u.Family != FamiliaTabla && u.Family != FamiliaConsulta)
                 sospechosos.Add(u.Family);
             if (ensamblado.GetType("Microsoft.SqlServer.TransactSql.ScriptDom." + u.NodeType) == null)
                 sospechosos.Add(u.NodeType);
@@ -212,6 +281,14 @@ public static class SyntaxCoverage
 
         if (r.Uncovered.Count == 0)
             lineas.Add("  (ninguno)");
+
+        lineas.Add("");
+        lineas.Add($"forma de la base: {r.Shape.Count} tipo(s) de construccion distintos");
+        lineas.Add("(familia / tipo / apariciones / modulos) - las 20 mas extendidas");
+        foreach (var s in r.Shape.Take(20))
+            lineas.Add($"  {s.Family,-16} {s.NodeType,-38} {s.Occurrences,7} {s.Modules,6}");
+        if (r.Shape.Count > 20)
+            lineas.Add($"  ... y {r.Shape.Count - 20} tipo(s) mas, todos en el fichero");
 
         lineas.Add("");
         lineas.Add("errores de parseo (numero de ScriptDom / modulos)");

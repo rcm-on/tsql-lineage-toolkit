@@ -140,11 +140,66 @@ END");
             foreach (var prohibido in new[]
                      {
                          "BaseDeFacturacion", "ventas", "CalculoComisionesAcme",
-                         "FacturasClienteAcme", "importe", "nifCliente", "12345678Z", "SELECT",
+                         "FacturasClienteAcme", "importe", "nifCliente", "12345678Z",
                      })
             {
                 Assert.DoesNotContain(prohibido, json, StringComparison.OrdinalIgnoreCase);
             }
+        }
+        finally
+        {
+            File.Delete(ruta);
+        }
+    }
+
+    [Fact]
+    public void InformeAnonimo_LlevaLaFormaEntera_NoSoloLaColaDeFallos()
+    {
+        // Sin esto, un informe de tres filas describe una base de tres construcciones — y
+        // cualquier cosa que se genere a partir de él es una caricatura: 100 % de casos límite
+        // y ni una construcción normal alrededor. La forma es la mitad del diagnóstico que
+        // faltaba: qué SÍ ve el motor, no solo qué se le escapa.
+        var ruta = EscribirInput(("db::dbo.p1", @"
+CREATE PROCEDURE dbo.p1 AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO dbo.t2 (c1) SELECT c1 FROM dbo.t1 WHERE c2 = 1;
+    UPDATE dbo.t3 SET c4 = 2;
+END"));
+        try
+        {
+            var informe = SyntaxCoverage.AnalyzeAnonymous(ruta);
+            var tipos = informe.Shape.Select(s => s.NodeType).ToList();
+
+            // Construcciones que el motor SÍ trata: nunca aparecerían en Uncovered.
+            Assert.Contains("InsertStatement", tipos);
+            Assert.Contains("UpdateStatement", tipos);
+            Assert.Contains("QuerySpecification", tipos);
+            Assert.Contains("NamedTableReference", tipos);
+
+            Assert.True(informe.Shape.Count > informe.Uncovered.Count,
+                "La forma tiene que ser más rica que la cola de fallos; si no, no sirve para " +
+                "generar nada. Forma: " + informe.Shape.Count + ", sin cubrir: " + informe.Uncovered.Count);
+        }
+        finally
+        {
+            File.Delete(ruta);
+        }
+    }
+
+    [Fact]
+    public void ElPerfil_TambienEsAnonimoPorConstruccion()
+    {
+        // La forma multiplica las filas del informe, así que multiplica la superficie por la
+        // que podría escaparse un nombre. La comprobación tiene que cubrirla igual.
+        var ruta = EscribirInput(("BaseFacturacion::ventas.ComisionesAcme",
+            "CREATE PROCEDURE ventas.ComisionesAcme AS BEGIN SELECT importe FROM ventas.FacturasAcme; END"));
+        try
+        {
+            var informe = SyntaxCoverage.AnalyzeAnonymous(ruta);
+            Assert.NotEmpty(informe.Shape);
+            Assert.Empty(SyntaxCoverage.VerifyAnonymous(informe));
+            Assert.DoesNotContain("Acme", JsonSerializer.Serialize(informe), StringComparison.OrdinalIgnoreCase);
         }
         finally
         {
@@ -158,9 +213,10 @@ END");
         // La comprobación tiene que fallar cuando debe, no solo pasar cuando todo va bien: un
         // gate que no puede ponerse rojo no protege de nada.
         var contaminado = new SyntaxCoverage.AnonReport(
-            "tsql-diag/1", "2026-09-10", 1, 0,
+            "tsql-diag/2", "2026-09-10", 1, 0,
             new[] { new SyntaxCoverage.AnonNodeRow("statement", "FacturasClienteAcme", 1, 1, false) },
-            Array.Empty<SyntaxCoverage.AnonParseError>());
+            Array.Empty<SyntaxCoverage.AnonParseError>(),
+            Array.Empty<SyntaxCoverage.AnonNodeRow>());
 
         Assert.Contains("FacturasClienteAcme", SyntaxCoverage.VerifyAnonymous(contaminado));
     }

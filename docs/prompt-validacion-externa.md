@@ -160,10 +160,9 @@ FASE 0 — Instrumento e inventario (solo si notes/validacion-externa/estado.md 
    mándala tal cual — para arreglar un tipo de nodo sin caso no hace falta ver tu código.
    Prioriza por número de módulos afectados, no por apariciones: 40 veces en un módulo es
    un procedimiento raro; 40 veces en 8 módulos es una familia entera de lineage perdido.
-   REGLA DE CORTE: copia en estado.md como mucho las 10 primeras filas no benignas por
-   modulos afectados, mas el recuento total. En una base pequena caben todas; en una de 700
-   procedimientos copiarlas enteras se comeria el presupuesto antes de la Fase 1. El fichero
-   completo se queda en disco y se manda tal cual, que para eso es anonimo.
+   El informe NO crece con el tamano de la base: su tamano lo marca el numero de tipos de
+   nodo distintos, no el de modulos. Medido sobre 4335 modulos: 3 filas sin cubrir y 41
+   tipos de forma, en 19 segundos. Copialo entero en estado.md sin miedo.
    Y antes de atribuir esas apariciones a un defecto concreto, COMPRUEBA que hablan del mismo
    fenomeno: un mismo tipo de nodo puede contarse por causas distintas. Si no lo verificas,
    la ficha lleva `frecuencia: sin_verificar`, no un numero que parece evidencia y no lo es.
@@ -551,8 +550,25 @@ dotnet run --project src/TSqlParser -c Release -- syntax-coverage <input.json> -
 
 El fichero lleva exactamente cuatro cosas: el identificador del esquema, la fecha, recuentos,
 y nombres de **tipos de nodo de ScriptDom** (`VariableTableReference`, `MergeStatement`...)
-más **números de error** del parser. Ni un nombre, ni una línea de SQL, ni la forma del
-modelo. No se anonimiza: es que no hay nada que anonimizar.
+más **números de error** del parser. Ni un nombre, ni una línea de SQL, ni el modelo de
+datos. No se anonimiza: es que no hay nada que anonimizar.
+
+Trae dos mitades, y las dos hacen falta:
+
+- **`Uncovered`** — la cola de fallos: qué construcciones no supo tratar el recorrido.
+- **`Shape`** — la distribución completa: qué construcciones tiene la base, las trate el
+  motor o no, por familia (`statement`, `table_reference`, `query_expression`), con
+  apariciones y en cuántos módulos.
+
+Sin la segunda, un informe de tres filas describe una base de tres construcciones. Sirve
+para diagnosticar un defecto concreto, pero no dice nada sobre **qué forma tiene** ese
+sistema — y cualquier cosa que se genere a partir de ella sería una caricatura hecha de
+puros casos límite.
+
+**No crece con la base.** Su tamaño lo marca el número de tipos de nodo distintos, que está
+acotado por el vocabulario de ScriptDom, no por cuántos procedimientos tengas. Medido sobre
+4335 módulos: 3 filas sin cubrir, 41 tipos de forma, 19 segundos. Cabe en pantalla igual que
+con 50.
 
 ### Cómo lo compruebas tú, sin fiarte del programa
 
