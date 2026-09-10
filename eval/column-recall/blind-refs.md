@@ -10,7 +10,7 @@ que queda**, que es justo el motivo de la regla de reclasificar antes de seguir 
 Ya no hace falta un programa de un solo uso: el listado sale del subcomando `blind-refs`.
 
 ```bash
-dotnet build ParserGeneral.sln -c Release
+dotnet build TSqlLineageToolkit.slnx -c Release
 dotnet src/TSqlParser/bin/Release/net10.0/TSqlParser.dll blind-refs dnn ciegas.csv
 ```
 

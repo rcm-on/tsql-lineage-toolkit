@@ -32,7 +32,7 @@ en cada invocación y a reescribir todas las rutas de volumen.
 
 ```bash
 cp .env.example .env    # y edita la contraseña
-docker compose run --rm sdk dotnet build ParserGeneral.sln -c Release --artifacts-path /repo/.artifacts-linux
+docker compose run --rm sdk dotnet build TSqlLineageToolkit.slnx -c Release --artifacts-path /repo/.artifacts-linux
 docker compose run --rm sdk dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --artifacts-path /repo/.artifacts-linux --filter "Category!=LiveSql"
 ```
 

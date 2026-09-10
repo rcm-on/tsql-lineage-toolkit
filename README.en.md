@@ -250,7 +250,7 @@ Natural-language questions
 
 ```bash
 # Build the project
-dotnet build ParserGeneral.sln -c Release
+dotnet build TSqlLineageToolkit.slnx -c Release
 
 # Generate the graph with columns and SQLite database (--columns is mandatory for column tools)
 dotnet src/TSqlParser/bin/Release/net10.0/TSqlParser.dll input.json out/graph_full.json --columns --sqlite

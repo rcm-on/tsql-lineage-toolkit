@@ -24,12 +24,11 @@ referenciar `TSqlParser`, el cambio está mal planteado.
 ## Verificación
 
 ```bash
-dotnet build ParserGeneral.sln -c Release
-dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category!=LiveSql"
-dotnet test tests/NetParser.Tests/NetParser.Tests.csproj -c Release
+dotnet build TSqlLineageToolkit.slnx -c Release
+dotnet test TSqlLineageToolkit.slnx -c Release --filter "Category!=LiveSql"
 ```
 
-Cifras de referencia: 395/395, 43/43, 22 referencias ciegas (99,6987 % de recall laxo en
+Cifras de referencia: 439/439 (396 + 43, un solo comando desde que la solucion es la .slnx), 22 referencias ciegas (99,6987 % de recall laxo en
 el corpus DNN). Checklist completo en `docs/guia-de-verificacion.md`.
 
 El recall no es la única medida: `coverage` reconcilia módulo a módulo y `syntax-coverage`

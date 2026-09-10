@@ -249,7 +249,7 @@ Preguntas en lenguaje natural
 
 ```bash
 # Construir el proyecto
-dotnet build ParserGeneral.sln -c Release
+dotnet build TSqlLineageToolkit.slnx -c Release
 
 # Generar el grafo con columnas y base SQLite (obligatorio --columns para herramientas de columna)
 dotnet src/TSqlParser/bin/Release/net10.0/TSqlParser.dll input.json out/graph_full.json --columns --sqlite

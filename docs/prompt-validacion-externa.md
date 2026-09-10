@@ -68,7 +68,7 @@ Lo que hace falta en la máquina donde vive la base:
 Arranque, en orden, desde la raíz del repo:
 
 ```bash
-dotnet build ParserGeneral.sln -c Release
+dotnet build TSqlLineageToolkit.slnx -c Release
 dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category!=LiveSql"
 
 # 1. Cuanto ve el motor, y que NO ve, sobre tu base
@@ -131,7 +131,7 @@ PRESUPUESTO DE CONTEXTO (obligatorio, es la parte más importante del encargo)
   encadenes un segundo defecto aunque te sobre contexto.
 
 FASE 0 — Instrumento e inventario (solo si notes/validacion-externa/estado.md no existe)
-1. dotnet build ParserGeneral.sln -c Release
+1. dotnet build TSqlLineageToolkit.slnx -c Release
 2. dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category!=LiveSql"
    Si no está verde, para y repórtalo: el instrumento está roto, no midas con él.
 3. Inventario real de la base, contra el catálogo, no contra el motor:

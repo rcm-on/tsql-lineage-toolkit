@@ -16,7 +16,7 @@ dashboard, higiene de git, trampas ambientales por síntoma — vive en
 ## Comandos
 
 ```bash
-dotnet build ParserGeneral.sln -c Release
+dotnet build TSqlLineageToolkit.slnx -c Release
 dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category!=LiveSql"
 dotnet test tests/NetParser.Tests/NetParser.Tests.csproj -c Release
 dotnet src/TSqlParser/bin/Release/net10.0/TSqlParser.dll blind-refs dnn out.csv

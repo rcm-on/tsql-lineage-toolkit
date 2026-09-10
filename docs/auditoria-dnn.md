@@ -391,7 +391,7 @@ determinista sobre un modelo redactando de cero no se puede comprobar.
 
 ```bash
 # 1. Grafo + store SQLite del corpus congelado (no necesita SQL Server)
-dotnet build ParserGeneral.sln -c Release
+dotnet build TSqlLineageToolkit.slnx -c Release
 dotnet src/TSqlParser/bin/Release/net10.0/TSqlParser.dll \
     eval/column-recall/dnn-corpus.json out/dnn.json --columns --sqlite
 
