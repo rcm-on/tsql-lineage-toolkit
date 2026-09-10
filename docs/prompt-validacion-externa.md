@@ -36,7 +36,8 @@ contexto exactamente así, antes de tocar una sola línea de código.
 | Parte | Qué es | Cuándo la necesitas |
 |---|---|---|
 | Puesta en marcha | Requisitos y arranque en otro equipo | Al empezar, una vez |
-| A | El prompt de caza de defectos | Cada iteración |
+| **H** | **Medir allí, plan formal para arreglar aquí** | **Empieza por aquí** |
+| A | El prompt de caza de defectos, con paquetes | Solo si H no vale |
 | Reconciliación | Por qué `recall` no basta | Solo si dudas de la Fase 0 |
 | A-bis | Modo barrido proc a proc | Solo si haces barrido |
 | C-bis | Esqueleto de un procedimiento | Solo con paquetes del barrido |
@@ -50,6 +51,21 @@ contexto exactamente así, antes de tocar una sola línea de código.
 
 Localiza cada una con `grep -n "^## " docs/prompt-validacion-externa.md` y lee **solo el
 rango** que te toque. Ese grep es gratis y es el primer comando que deberías ejecutar.
+
+## Antes de leer nada más: ¿puedes ejecutar el motor en esa máquina?
+
+Casi todo este documento existe para un solo problema: que el defecto tenga que **salir** de
+esa red para arreglarse. Si puedes editar el código y pasar las pruebas allí mismo, ese
+problema no existe y la mitad de estas páginas son burocracia.
+
+| Puedes ejecutar el motor allí | Solo puedes mirar |
+|---|---|
+| Lee la **Parte H** y para. Son 80 líneas | Lee A, B, C, C-ter, F. Son las 600 restantes |
+| Nada sale de la red salvo el `--anon`, y es opcional | Cada defecto viaja como paquete anonimizado |
+| El ciclo es medir → diagnosticar → plan → arreglar fuera | El ciclo es medir → reducir → anonimizar → empaquetar |
+
+La Parte A no es "la versión completa" de la Parte H: es la versión **cara**, para cuando no
+queda otra. Si tienes acceso de escritura al repo en esa máquina, empieza por H.
 
 ## Puesta en marcha en otro equipo
 
@@ -106,6 +122,111 @@ Dos trampas del entorno que cuestan una tarde si no se saben:
 
 De lo anterior, lo único que necesita conexión a la base es `recall` y `coverage`. El paso 3
 funciona con un `input.json` ya extraído, así que puede ejecutarse en cualquier máquina.
+
+## Parte H — Medir allí, arreglar aquí: el plan formal
+
+El camino corto, y el bueno siempre que se pueda ejecutar el motor en esa máquina — aunque
+no se pueda, o no se quiera, escribir código allí.
+
+La idea: el agente de la compañía **mide y diagnostica**, y entrega un plan de tareas. El
+arreglo se hace fuera. Lo que viaja es prosa sobre **nuestro motor** —qué tipo de nodo no
+tiene caso, qué fichero hay que tocar— más números. Nada de eso pertenece a tu empresa: un
+`FullTextTableReference` sin caso en `CollectTableRefsInto` es un defecto nuestro,
+descrito con vocabulario de ScriptDom, que es público.
+
+Sale más barato que empaquetar defectos (Parte A) y evita la pregunta espinosa de a quién
+pertenece el código escrito en un equipo corporativo.
+
+Se pega tal cual. Sustituye `<BASE>` y `<SERVIDOR>` la primera vez.
+
+```text
+Trabajas en el repositorio tsql-lineage-toolkit: motor determinista de lineage T-SQL en
+.NET. Tienes delante la base <BASE> en <SERVIDOR>. Vas a medir qué no ve el motor,
+arreglarlo aquí mismo, y volver a medir.
+
+ANTES DE MEDIR
+  dotnet build TSqlLineageToolkit.slnx -c Release
+  dotnet test  TSqlLineageToolkit.slnx -c Release --filter "Category!=LiveSql"
+Tiene que dar 441/441. Si no, para: el instrumento está roto y ninguna cifra posterior
+significa nada. Si sale FileLoadException 0x800711C7 es Smart App Control, no tu código:
+usa el contenedor (docker compose run --rm sdk ...), ver eng/README.md.
+
+EL CICLO — una iteración = un defecto. Repítelo.
+
+1. MIDE. Las tres, en este orden, cada una en UNA sola invocación de shell (si separas el
+   $env: del comando, la conexión cae a autenticación integrada y falla con un error que no
+   se parece a su causa):
+     recall <BASE> --server <SERVIDOR> --out ciegas.csv
+     coverage <BASE> --server <SERVIDOR> --out reconciliacion.csv
+     extract <BASE> input.json --server <SERVIDOR>  &&  syntax-coverage input.json --anon --out diag.json
+   Apunta las tres cifras. Son tu línea base y las vas a necesitar en el paso 5.
+
+2. ELIGE, por este orden de prioridad:
+     a. Estado NO_EXTRAIDO o ERROR_PARSEO en reconciliacion.csv - el motor no vio el módulo
+        entero. No produce síntoma: el grafo sale limpio y falto.
+     b. Fila no benigna de diag.json con más MÓDULOS afectados (no más apariciones).
+     c. DEFECTO_SIN_ARISTAS: módulo con DML en el cuerpo y cero aristas.
+     d. El cúmulo mayor de ciegas.csv.
+   Antes de atacar una fila de diag.json, COMPRUEBA que las apariciones que cuenta son de
+   la causa que crees. Un mismo tipo de nodo se cuenta por razones distintas, y ya nos pasó:
+   21 apariciones atribuidas a un defecto resultaron ser .nodes() de XML, que sí se tratan.
+
+3. LOCALIZA LA CAUSA EN EL MOTOR, no en la base. Abre solo lo que el síntoma señale:
+     tipo de nodo sin caso -> src/TSqlParser/AstWalker.cs (switch de Walk para sentencias,
+       CollectTableRefsInto para referencias de tabla)
+     módulo no extraído    -> src/TSqlParser/ObjectExtractor.cs (la consulta y sus filtros)
+     error de parseo       -> el número de ScriptDom dice la clase de problema
+   Cita fichero y rango de líneas. Si no lo encuentras, dilo: "causa desconocida" es una
+   respuesta legítima y útil; una inventada, no.
+
+4. PROPÓN EL CASO MÍNIMO, escrito por ti desde cero. Para un tipo de nodo, el tipo ES la
+   receta: VariableTableReference es "SELECT c1 FROM @tv v", FullTextTableReference es
+   CONTAINSTABLE. NO uses SQL de la base ni siquiera anonimizado - no hace falta, y en
+   cuanto lo tocas empieza a hacer falta revisarlo.
+
+5. ESCRIBE EL PLAN en plan-reparacion.md, con una tarea por causa raíz. Cada tarea:
+
+   ## T<n> — <titulo>
+   causa_raiz:      <tipo de nodo de ScriptDom, o estado de coverage>
+   evidencia:       <apariciones> en <n> modulos   (de que comando sale)
+   verificado:      si | no   <- ¿comprobaste que esas apariciones son de ESTA causa?
+   fichero:         src/TSqlParser/<fichero>:<lineas>   | desconocido
+   caso_minimo:     |
+     <T-SQL de 3-10 lineas, escrito desde cero, sin nada de esta base>
+   esperado:        <que aristas deberia dar ese caso, y por que>
+   observado:       <que da hoy>
+   gate:            <nombre de la prueba xUnit a escribir>
+   esfuerzo:        S | M | L
+   senal_de_exito:  <que metrica se mueve, o "ninguna" si el instrumento no puede verlo>
+
+   El último campo es el que más se olvida. Un arreglo real puede dejar el recall EXACTAMENTE
+   igual: nos pasó con las variables de tabla, dos defectos corregidos y las ciegas siguieron
+   siendo 22, porque el catálogo de SQL Server no las conoce y esas referencias nunca
+   pudieron salir en su lista. Si tu tarea no mueve ninguna métrica, dilo — no lo escondas.
+
+   Ordena por módulos afectados, no por apariciones.
+
+6. CIERRA con un resumen de una página: las tres cifras de la línea base, el reparto por
+   estado de coverage, y qué NO es evaluable (cifrados, CLR, servidores vinculados). Lo no
+   evaluable va en su propia sección, nunca mezclado con las tareas.
+
+REGLAS
+- Solo lectura sobre la base. No escribas código del motor: tu entregable es el plan.
+- Regla del cero culpable: una medida vacía o sospechosamente limpia es instrumento roto
+  hasta demostrar lo contrario. Diagnostica la ejecución antes de celebrar.
+- Un recall alto no significa nada por sí solo: mira la línea de cobertura del oráculo que
+  imprime `recall`. Si dice que mide sobre una fracción, esa es la cifra que cuenta.
+- VOCABULARIO CERRADO EN EL PLAN. Solo pueden aparecer: tipos de ScriptDom, rutas de este
+  repo, números, y T-SQL que hayas escrito tú con nombres neutros (s1, t1, c1, @a1). Ni un
+  nombre de objeto, esquema, base o columna de esta base. Repasa el plan entero antes de
+  darlo por cerrado: si reconoces una palabra de tu empresa, sobra.
+- No saques input.json, ciegas.csv ni reconciliacion.csv: llevan nombres. Sí salen
+  plan-reparacion.md y diag.json.
+```
+
+Viajan dos ficheros: `plan-reparacion.md` y `diag.json`. Con eso se ejecuta el arreglo fuera
+—prueba en rojo primero, luego el cambio, luego el gate— y lo que vuelve a esa máquina es un
+binario nuevo con el que re-medir. Ese segundo `recall` es el que dice si sirvió de algo.
 
 ## Parte A — El prompt
 
