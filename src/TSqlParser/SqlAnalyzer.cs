@@ -32,6 +32,7 @@ public static class SqlAnalyzer
         if (errors.Count > 0)
         {
             result.Error = string.Join("; ", errors.Select(e => $"L{e.Line}: {e.Message}"));
+            result.ParseErrorNumbers.AddRange(errors.Select(e => e.Number).Distinct());
             return result;
         }
 

@@ -665,7 +665,9 @@ public static class AstWalker
 
                 default:
                     // SET, PRINT, GOTO, etc.: not tracked as "consequences" (SET/DECLARE
-                    // surface instead as Variable nodes, not control-flow steps).
+                    // surface instead as Variable nodes, not control-flow steps). Recorded
+                    // so a statement type with no case here is countable instead of silent.
+                    SyntaxCoverage.Record(SyntaxCoverage.FamiliaSentencia, stmt);
                     break;
             }
 
@@ -2074,6 +2076,19 @@ public static class AstWalker
                 var alias = ntr.Alias?.Value ?? ntr.SchemaObject.BaseIdentifier?.Value ?? "";
                 result.Add((alias, table));
                 break;
+            case VariableTableReference vtr when !string.IsNullOrEmpty(vtr.Variable?.Name):
+                // "FROM @tv v": la variable de tabla ya se registra al declararla
+                // (DeclareTableVariableStatement -> RegisterTransientTable), pero su uso como
+                // origen de filas no lo hacía nadie, así que "v.c1" no tenía a qué resolverse
+                // y la lectura desaparecía entera. Se registra con la misma forma que una tabla
+                // temporal: alias -> @nombre.
+                result.Add((vtr.Alias?.Value ?? vtr.Variable!.Name, vtr.Variable!.Name));
+                break;
+            case JoinParenthesisTableReference jptr:
+                // "FROM (a JOIN b ON ...) ": el paréntesis envuelve el join. Sin descender se
+                // perdían LOS DOS lados, no uno.
+                CollectTableRefsInto(jptr.Join, cteNames, cteBaseTables, result);
+                break;
             case QualifiedJoin qj:
                 CollectTableRefsInto(qj.FirstTableReference, cteNames, cteBaseTables, result);
                 CollectTableRefsInto(qj.SecondTableReference, cteNames, cteBaseTables, result);
@@ -2164,6 +2179,9 @@ public static class AstWalker
             //  - Pivots/derived tables with a non-QuerySpecification body: no alias->table
             //    mapping is possible, so columns qualified with their alias simply won't
             //    resolve below.
+            default:
+                SyntaxCoverage.Record(SyntaxCoverage.FamiliaTabla, tref);
+                break;
         }
     }
 

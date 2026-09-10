@@ -137,6 +137,15 @@ public static class BlindRefs
             Blind: blind);
     }
 
+    /// <summary>Escribe una lista de referencias como CSV con cabecera "module,column".</summary>
+    public static void WriteCsv(IReadOnlyList<BlindRef> refs, string outputPath)
+    {
+        using var writer = new StreamWriter(outputPath, append: false, Utf8Io.NoBom);
+        writer.WriteLine("module,column");
+        foreach (var r in refs)
+            writer.WriteLine($"{CsvField(r.Module)},{CsvField(r.Column)}");
+    }
+
     /// <summary>Escribe <paramref name="result"/> como CSV con cabecera "module,column".</summary>
     public static void WriteCsv(BlindRefsResult result, string outputPath)
     {

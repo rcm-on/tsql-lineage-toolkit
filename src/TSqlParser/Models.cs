@@ -332,6 +332,10 @@ public class ObjectResult
     public int ComplexityScore { get; set; } = 1;
     public string? Error { get; set; }
 
+    /// <summary>Números de error de ScriptDom del parseo fallido. El mensaje lleva el identificador
+    /// que rompió; el número no lleva nada, y es lo único que puede salir de una red ajena.</summary>
+    public List<int> ParseErrorNumbers { get; } = new();
+
     /// <summary>Object kind detected from the SQL definition: PROCEDURE, SCALAR_FUNCTION, TABLE_VALUED_FUNCTION, TRIGGER, VIEW, SYNONYM, or SCRIPT (bare DML batch).</summary>
     public string ObjectType { get; set; } = "UNKNOWN";
 

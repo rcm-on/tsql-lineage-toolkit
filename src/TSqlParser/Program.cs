@@ -177,6 +177,16 @@ if (positional.Count >= 1 && positional[0] == "recall")
     {
         var recall = CatalogRecall.Compute(positional[1], srv);
         BlindRefs.WriteCsv(recall.Refs, salida);
+        if (recall.Phantom.Count > 0)
+        {
+            var fantasmasCsv = Path.Combine(
+                Path.GetDirectoryName(salida) is { Length: > 0 } d ? d : ".",
+                Path.GetFileNameWithoutExtension(salida) + "-fantasmas.csv");
+            BlindRefs.WriteCsv(recall.Phantom, fantasmasCsv);
+            Console.WriteLine(CatalogRecall.Summarize(recall, salida));
+            Console.WriteLine($"  fantasmas -> {fantasmasCsv}");
+            return 0;
+        }
         Console.WriteLine(CatalogRecall.Summarize(recall, salida));
         return 0;
     }
@@ -189,6 +199,92 @@ if (positional.Count >= 1 && positional[0] == "recall")
                                 "tenga VIEW DEFINITION sobre ella (lo exige dm_sql_referenced_entities).");
         return 1;
     }
+}
+
+// "coverage <database> [--server X] [--out reconciliacion.csv]": reconciliacion MODULO a modulo.
+// recall mide columnas; un modulo que no se extrae, no parsea o no aporta columnas no aparece en
+// esa medida ni para bien ni para mal. Esto cruza sys.objects contra lo que el motor trajo.
+if (positional.Count >= 1 && positional[0] == "coverage")
+{
+    if (positional.Count < 2)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser coverage <database> [--server <server>] [--out <reconciliacion.csv>]");
+        return 1;
+    }
+    var covSrvIdx = Array.IndexOf(args, "--server");
+    var covSrv = covSrvIdx >= 0 && covSrvIdx + 1 < args.Length ? args[covSrvIdx + 1] : @".\SQLEXPRESS";
+    var covOutIdx = Array.IndexOf(args, "--out");
+    var covSalida = covOutIdx >= 0 && covOutIdx + 1 < args.Length ? args[covOutIdx + 1] : $"coverage-{positional[1]}.csv";
+
+    try
+    {
+        var cobertura = ModuleCoverage.Compute(positional[1], covSrv);
+        ModuleCoverage.WriteCsv(cobertura, covSalida);
+        Console.WriteLine(ModuleCoverage.Summarize(cobertura, covSalida));
+        return 0;
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine($"coverage: {ex.Message}");
+        Console.Error.WriteLine("Comprueba el servidor, el nombre de la base y que el usuario tenga VIEW DEFINITION sobre ella.");
+        return 1;
+    }
+}
+
+// "syntax-coverage <input.json> [--out csv]": que construcciones llegan al default del recorrido.
+// Un tipo de nodo sin caso no da error ni ciega: da un grafo incompleto con aspecto de completo.
+if (positional.Count >= 1 && positional[0] == "syntax-coverage")
+{
+    if (positional.Count < 2)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser syntax-coverage <input.json> [--anon] [--out <salida>]");
+        return 1;
+    }
+    if (!File.Exists(positional[1]))
+    {
+        Console.Error.WriteLine($"No existe '{positional[1]}'.");
+        return 1;
+    }
+    var scAnon = args.Contains("--anon");
+    var scOutIdx = Array.IndexOf(args, "--out");
+    var scSalida = scOutIdx >= 0 && scOutIdx + 1 < args.Length
+        ? args[scOutIdx + 1]
+        : Path.GetFileNameWithoutExtension(positional[1]) + (scAnon ? "-diag.json" : "-syntax-coverage.csv");
+
+    if (scAnon)
+    {
+        var informe = SyntaxCoverage.AnalyzeAnonymous(positional[1]);
+        SyntaxCoverage.WriteAnonJson(informe, scSalida);
+
+        // El informe se imprime ENTERO, no resumido: es lo bastante pequeño para leerlo antes de
+        // sacarlo de una red ajena, y quien lo manda tiene que poder verlo con sus propios ojos.
+        Console.WriteLine(SyntaxCoverage.SummarizeAnon(informe, scSalida));
+        Console.WriteLine();
+        Console.WriteLine("--- contenido integro del fichero ---");
+        Console.WriteLine(SyntaxCoverage.RenderAnon(informe));
+        Console.WriteLine();
+
+        var sospechosos = SyntaxCoverage.VerifyAnonymous(informe);
+        if (sospechosos.Count == 0)
+        {
+            Console.WriteLine("COMPROBACION: todo texto del informe es vocabulario cerrado - el identificador de");
+            Console.WriteLine("esquema, la fecha, la familia, o un tipo que EXISTE en el ensamblado ScriptDom de");
+            Console.WriteLine("Microsoft. Un nombre de tu base no puede pasar esa condicion: no es un tipo del parser.");
+            Console.WriteLine("Puedes repetirla tu mismo: cada NodeType del fichero tiene que ser una clase de");
+            Console.WriteLine("Microsoft.SqlServer.TransactSql.ScriptDom. Si reconoces una palabra tuya, es un fallo.");
+            return 0;
+        }
+
+        Console.Error.WriteLine("COMPROBACION FALLIDA. Estos textos no son vocabulario cerrado y NO deben salir:");
+        foreach (var s in sospechosos)
+            Console.Error.WriteLine("  " + s);
+        return 1;
+    }
+
+    var nodos = SyntaxCoverage.Analyze(positional[1]);
+    SyntaxCoverage.WriteCsv(nodos, scSalida);
+    Console.WriteLine(SyntaxCoverage.Summarize(nodos, scSalida));
+    return 0;
 }
 
 if (positional.Count >= 1 && positional[0] == "blind-refs")
@@ -452,6 +548,8 @@ if (positional.Count < 2)
     Console.Error.WriteLine("       TSqlParser mcp --store <graph_full.db>");
 
     Console.Error.WriteLine("       TSqlParser recall <database> [--server <server>] [--out <ciegas.csv>]");
+    Console.Error.WriteLine("       TSqlParser coverage <database> [--server <server>] [--out <reconciliacion.csv>]");
+    Console.Error.WriteLine("       TSqlParser syntax-coverage <input.json> [--anon] [--out <salida>]");
     Console.Error.WriteLine("       TSqlParser corpus [list | refresh <id> [--server <server>] [--write]]");
     Console.Error.WriteLine("       TSqlParser capture-plans <database> <outputDir> [--server <server>] [--exec-file <path.sql>] [--wait-seconds N]");
     Console.Error.WriteLine("       TSqlParser enrich-from-plans <graph.json> <output_graph.json> <plan1.xml> [plan2.xml ...]");

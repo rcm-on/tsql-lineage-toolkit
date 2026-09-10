@@ -33,7 +33,9 @@ public static class CatalogRecall
         BlindRefsResult Refs,
         int ModulesAnalyzed,
         int ParseErrors,
-        int ObjectsWithUnresolvedDynamicSql);
+        int ObjectsWithUnresolvedDynamicSql,
+        IReadOnlyList<BlindRef> Phantom,
+        IReadOnlyList<BlindRef> PhantomFromDynamic);
 
     public static LiveRecallResult Compute(string database, string server)
     {
@@ -74,18 +76,72 @@ public static class CatalogRecall
                 LooseRecall: recall,
                 Blind: ciegas);
 
+            // La resta inversa: lo que el grafo afirma y el catalogo no declara. Separada por
+            // origen porque el catalogo NO ve el SQL dinamico resuelto y el motor SI: acusar de
+            // fantasma a lo que sale de ahi seria acusar al motor de su mejor funcion.
+            var origenDinamico = OrigenDinamicoPorRef(graph);
+            var fantasmas = new List<BlindRef>();
+            var fantasmasDinamico = new List<BlindRef>();
+            foreach (var r in grafoLaxo.Where(r => !catalogoLaxo.Contains(r)).OrderBy(r => r.Module, StringComparer.Ordinal).ThenBy(r => r.Column, StringComparer.Ordinal))
+                (origenDinamico.Contains(r) ? fantasmasDinamico : fantasmas).Add(new BlindRef(r.Module, r.Column));
+
             return new LiveRecallResult(
                 Database: database,
                 Refs: refs,
                 ModulesAnalyzed: results.Count,
                 ParseErrors: results.Count(r => r.Error != null),
-                ObjectsWithUnresolvedDynamicSql: ContarObjetosConDinamicoSinResolver(graph));
+                ObjectsWithUnresolvedDynamicSql: ContarObjetosConDinamicoSinResolver(graph),
+                Phantom: fantasmas,
+                PhantomFromDynamic: fantasmasDinamico);
         }
         finally
         {
             if (File.Exists(inputPath))
                 File.Delete(inputPath);
         }
+    }
+
+    /// <summary>
+    /// Referencias (modulo, columna) del grafo que provienen de un Step marcado como SQL dinamico.
+    /// Misma resolucion de propietario que <see cref="BlindRefs.BuildGraphRefs"/>; lo unico que
+    /// cambia es que aqui interesa la procedencia del Step, no la tripleta completa.
+    /// </summary>
+    private static HashSet<(string Module, string Column)> OrigenDinamicoPorRef(Parser.Contracts.GraphPayload graph)
+    {
+        var owner = graph.Relationships
+            .Where(r => r.Type == "HAS_STEP")
+            .GroupBy(r => r.EndNodeId)
+            .ToDictionary(g => g.Key, g => g.First().StartNodeId, StringComparer.Ordinal);
+
+        var pasosDinamicos = graph.Nodes
+            .Where(n => n.Labels.Contains("Step")
+                     && n.Properties.TryGetValue("is_dynamic_sql", out var d) && d is true)
+            .Select(n => n.Id)
+            .ToHashSet(StringComparer.Ordinal);
+
+        static string Prop(Dictionary<string, object> p, string key) =>
+            p.TryGetValue(key, out var v) && v is not null ? v.ToString() ?? "" : "";
+
+        var columnas = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var n in graph.Nodes)
+        {
+            if (!n.Labels.Contains("Column")) continue;
+            var col = BlindRefs.Plain(Prop(n.Properties, "name"));
+            if (col.Length > 0)
+                columnas[n.Id] = col;
+        }
+
+        var salida = new HashSet<(string, string)>();
+        foreach (var r in graph.Relationships)
+        {
+            if (!BlindRefs.ColumnRefEdges.Contains(r.Type)) continue;
+            if (!pasosDinamicos.Contains(r.StartNodeId)) continue;
+            if (!columnas.TryGetValue(r.EndNodeId, out var col)) continue;
+            var objId = owner.TryGetValue(r.StartNodeId, out var o) ? o : r.StartNodeId.Split("#step")[0];
+            var idx = objId.IndexOf("::", StringComparison.Ordinal);
+            salida.Add((BlindRefs.Plain(idx >= 0 ? objId[(idx + 2)..] : objId), col));
+        }
+        return salida;
     }
 
     /// <summary>Objetos con al menos un paso de SQL dinamico que nunca resolvio a literal:
@@ -144,6 +200,13 @@ public static class CatalogRecall
             $"  modulos analizados: {r.ModulesAnalyzed}" +
             (r.ParseErrors > 0 ? $", {r.ParseErrors} con error de parseo (no analizados)" : ""),
         };
+
+        lineas.Add(
+            $"  fantasmas: {r.Phantom.Count} referencia(s) que el grafo afirma y el catalogo no declara" +
+            (r.PhantomFromDynamic.Count > 0
+                ? $" (+{r.PhantomFromDynamic.Count} desde dinamico resuelto, que el catalogo no puede ver: NO cuentan como error)"
+                : "") +
+            (r.Phantom.Count > 0 ? ". Sospechosas de interpretacion erronea: revisar." : "."));
 
         if (r.ObjectsWithUnresolvedDynamicSql > 0)
             lineas.Add(
