@@ -7,6 +7,7 @@
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
+ARG VERSION=0.0.0-dev
 
 COPY src/ ./src/
 # TSqlParser.csproj embebe eval/column-recall/extract-catalog.sql como recurso: el tool
@@ -16,6 +17,7 @@ RUN dotnet restore src/TSqlParser/TSqlParser.csproj
 
 RUN dotnet publish src/TSqlParser/TSqlParser.csproj \
     -c Release \
+    -p:Version=$VERSION \
     -o /app \
     --no-self-contained
 
