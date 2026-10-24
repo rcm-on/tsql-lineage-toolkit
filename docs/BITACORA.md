@@ -48,13 +48,26 @@ Control bloqueando `SQLitePCLRaw.batteries_v2.dll` (0x800711C7): ambiental. **Si
 inexistente dice cómo generarlo; prompts MCP `onboard_database` y `assess_change`, con gate de
 que toda herramienta citada existe (visto fallar por mutación). Suite 414/415 + 43/43.
 
-**Sin verificar contra base viva**: en esta máquina no hay SQL Server instalado y Docker no
-estaba levantado; además Smart App Control bloquea `SQLitePCLRaw` en local. Repetir quickstart
-es seguro por lectura de código (`input.json` se reescribe, el `.db` se borra antes), salvo con
-un `mcp` abierto sobre ese `.db`. **Pendiente**: ejecutar quickstart contra WWI en el
-contenedor `tsql-mssql`.
+**Verificado contra base viva** (contenedor `tsql-mssql`, SDK en contenedor por Smart App
+Control): WWI → 47 objetos + 48 tablas, 1636 nodos / 4880 aristas, configuración MCP con ruta
+absoluta. Segunda ejecución: `input.json` sigue en 95 entradas, sin duplicar. El `mcp` real
+sobre ese `.db` responde `initialize` (con `prompts`), `prompts/list`, `store_info` y
+`resolve_object`. Límite: borrar el `.db` falla en Windows si hay un `mcp` abierto sobre él.
 
-Siguiente: publicación (`release.yml`, en worktree `C:\temp\release-wt`).
+### Publicación (delegado a Sonnet en worktree, revisado aquí)
+
+`release.yml` por tag `v*` (+ `workflow_dispatch` con `dry_run`): valida semver, tests,
+nupkg a NuGet, binarios autocontenidos win/linux/osx + `SHA256SUMS`, GitHub Release, imagen
+GHCR. **Destapado**: el `Dockerfile` copiaba `ParserGeneral.sln`, borrado en `ba4b40b` — la
+imagen no se construía desde entonces. Verificado aquí: `docker build` OK y la imagen arranca;
+el binario linux-x64 single-file (92 MB) genera el `.db` con SQLite nativo y responde por MCP
+en `runtime-deps`, sin .NET. Sin probar: osx-arm64 y el workflow en GitHub.
+
+**Pendiente de Ramón**: secret `NUGET_API_KEY`, un `dry_run` desde Actions, push y primer
+tag; hacer público el paquete GHCR; pegar el texto de instalación (en `docs/EMPAQUETADO.md`)
+en los README. Menor: los zips llevarán `.pdb` (`-p:DebugType=none` si molesta).
+
+Siguiente: benchmark agente con MCP vs sin MCP (P2), luego A2 `remediation_plan`.
 
 ---
 
