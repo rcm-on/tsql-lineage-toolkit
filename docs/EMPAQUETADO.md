@@ -4,7 +4,7 @@ description: Procedimiento end-to-end para empaquetar, instalar y verificar Tsql
 read_when: Después de cualquier cambio en TSqlParser.csproj o en las referencias de Parser.Graph/Parser.Mcp, antes de publicar un lanzamiento.
 related: [docs/VERIFICACION.md, docs/guia-de-verificacion.md]
 stability: durable
-updated: 2026-08-21
+updated: 2026-10-24
 ---
 
 # Empaquetado como herramienta global
@@ -21,6 +21,95 @@ El 2026-08-21, se verificó end-to-end que TsqlLineageToolkit.Cli.0.1.0 (empaque
 | Subcomando `recall` | ✓ OK | `tsql-lineage recall` sin argumentos | Imprime uso (`Usage: TSqlParser recall <database>...`); **prueba que el recurso embebido `extract-catalog.sql` viaja** |
 | Subcomando `mcp` | ✓ OK | `tsql-lineage mcp --store /tmp/nonexistent.db` | Error controlado: `No existe la base SQLite 'C:\...\nonexistent.db'`; **prueba que Parser.Mcp.dll viaja y carga sin excepciones** |
 | JSON-RPC tools/list | ✓ OK | `echo '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' \| tsql-lineage mcp --store <db>` | Lista **9 herramientas**: resolve_object, impact, column_provenance, column_impact, blind_spots, diff_impact, risks, store_info, describe_object |
+
+## Publicar una versión
+
+El workflow `.github/workflows/release.yml` construye y publica todo a partir de un tag.
+
+### Una sola vez: el secret
+
+En GitHub, Settings > Secrets and variables > Actions, crear `NUGET_API_KEY` con una API key de
+nuget.org (scope "Push", glob `TsqlLineageToolkit.Cli`). Sin él, un tag real falla en el paso
+de push con un error explícito; no se salta en silencio. GHCR y la Release usan `GITHUB_TOKEN`.
+
+### Ensayo (dry run)
+
+Actions > Release > Run workflow, con `dry_run` marcado (es el valor por defecto). Corre los
+tests, empaqueta el `.nupkg`, compila los tres binarios, construye la imagen y sube todo como
+artefactos del run (`nupkg`, `binary-<rid>`, `release-assets` con `SHA256SUMS`). No publica
+nada. La versión es `0.0.0-dryrun.<run_number>`.
+
+### Publicar
+
+```bash
+git switch main && git pull
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+El tag `vX.Y.Z` (o `vX.Y.Z-rc.1`) fija la versión; el workflow falla si no parece semver. Hace:
+
+| Job | Qué hace |
+|-----|----------|
+| `test` | build + tests no-LiveSql (los mismos pasos que `ci.yml`) |
+| `pack` | `dotnet pack` con `-p:Version`, push a nuget.org con `--skip-duplicate` |
+| `binaries` | `win-x64` (zip), `linux-x64` y `osx-arm64` (tar.gz), single-file self-contained |
+| `checksums` | `SHA256SUMS` de nupkg + binarios |
+| `release` | `gh release create` con notas generadas, adjunta todo (prerelease si hay sufijo) |
+| `docker` | imagen en `ghcr.io/<owner>/tsql-lineage-toolkit` con tags `<versión>` y `latest` |
+
+`Version` del `.csproj` (0.1.0) solo vale para builds locales; la del release sale siempre
+del tag.
+
+### Verificar después de publicar
+
+```bash
+dotnet tool install -g TsqlLineageToolkit.Cli --version 0.2.0   # nuget.org tarda unos minutos en indexar
+tsql-lineage recall                                              # imprime uso: el recurso embebido viaja
+sha256sum -c SHA256SUMS --ignore-missing                         # tras descargar un binario de la Release
+docker run --rm ghcr.io/rcm-on/tsql-lineage-toolkit:0.2.0 --help
+```
+
+El paquete de GHCR nace privado: hay que hacerlo público en la página del paquete (Package
+settings > Change visibility) tras la primera subida.
+
+### Notas de diseño
+
+- El single-file va con `-p:PackAsTool=false`. Verificado el 2026-10-24 que `PackAsTool=true`
+  no impide el publish por RID, pero un binario suelto no es un tool.
+- Los binarios pesan ~90 MB (runtime incluido, sin trimming: ScriptDom usa reflexión y recortar no es seguro).
+- `osx-arm64` no está firmado ni notarizado: Gatekeeper lo pondrá en cuarentena al descargarlo
+  con navegador (`xattr -d com.apple.quarantine tsql-lineage`).
+- La imagen Docker es framework-dependent sobre `dotnet/runtime`; no usa los binarios single-file.
+
+## Texto para el README (pendiente de primera publicación)
+
+No se ha pegado en `README.md` ni `README.en.md` porque aún no existe ninguna versión
+publicada. Propuesta para la sección "Instalación":
+
+```markdown
+## Instalación
+
+Sin clonar ni compilar, tres vías:
+
+**Herramienta de .NET** (requiere el SDK 10):
+
+    dotnet tool install -g TsqlLineageToolkit.Cli
+
+**Binario autónomo** (sin .NET): descarga `tsql-lineage-<versión>-<rid>` desde
+[Releases](https://github.com/rcm-on/tsql-lineage-toolkit/releases) (`win-x64`, `linux-x64`,
+`osx-arm64`) y verifica el hash con `SHA256SUMS`.
+
+**Docker**:
+
+    docker run --rm -v "$PWD:/work" ghcr.io/rcm-on/tsql-lineage-toolkit --help
+
+Después, para empezar con tu base:
+
+    tsql-lineage quickstart <base>
+```
+
+`quickstart` lo implementa otro agente en paralelo; el texto lo nombra tal cual.
 
 ## Procedimiento paso a paso
 
