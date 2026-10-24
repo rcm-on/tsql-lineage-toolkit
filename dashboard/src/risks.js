@@ -35,9 +35,22 @@
 
     for (const o of DATA.objects) {
       // ── Seguridad ────────────────────────────────────────────
-      const tainted = o.vars.filter(v => v.buildsSql > 0 && v.assignedFrom.length > 0);
+      // Contaminación transitiva: columna -> variable -> variable (mismo punto fijo que RiskAnalyzer.cs)
+      const origin = new Map(o.vars.filter(v => v.assignedFrom.length > 0).map(v => [v.id, v.assignedFrom.join(', ')]));
+      const nameById = new Map(o.vars.map(v => [v.id, v.name]));
+      for (let changed = true; changed;) {
+        changed = false;
+        for (const v of o.vars) {
+          if (origin.has(v.id)) continue;
+          const via = (v.fromVars || []).find(x => origin.has(x));
+          if (!via) continue;
+          origin.set(v.id, `${nameById.get(via)} ← ${origin.get(via)}`);
+          changed = true;
+        }
+      }
+      const tainted = o.vars.filter(v => v.buildsSql > 0 && origin.has(v.id));
       if (tainted.length)
-        add('crit', 'Seguridad', 'Inyección SQL', o.name, `SQL dinámico construido desde datos de tabla: ${tainted.map(v => `${v.name} ← ${v.assignedFrom.join(', ')}`).join('; ')}`);
+        add('crit', 'Seguridad', 'Inyección SQL', o.name, `SQL dinámico construido desde datos de tabla: ${tainted.map(v => `${v.name} ← ${origin.get(v.id)}`).join('; ')}`);
       else if (o.dyn > 0) {
         const dynVars = o.vars.filter(v => v.buildsSql > 0).map(v => v.name);
         add('high', 'Seguridad', 'SQL dinámico', o.name, `Ejecuta ${o.dyn} sentencia(s) de SQL dinámico${dynVars.length ? ` (desde ${dynVars.join(', ')})` : ''}: revisar parametrización/permisos.`);

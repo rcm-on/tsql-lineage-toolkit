@@ -106,6 +106,8 @@ public static class SqlAnalyzer
             result.VariableConstructions[kv.Key] = kv.Value;
         foreach (var kv in ctx.VariableOpKinds)
             result.VariableOpKinds[kv.Key] = kv.Value.ToList();
+        foreach (var kv in ctx.VariableSources)
+            result.VariableSources[kv.Key] = kv.Value.ToList();
 
         var funcCollector = new AstWalker.FunctionCallCollector();
         if (statementList != null)

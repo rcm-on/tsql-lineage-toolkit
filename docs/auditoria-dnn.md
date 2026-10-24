@@ -222,7 +222,7 @@ no como hallazgo.
 
 | Severidad | Nº |
 |---|---:|
-| `crit` | **0** (falso negativo, §6.2) |
+| `crit` | **0** (falso negativo, §6.2; 1 tras el arreglo de 2026-10-24) |
 | `high` | 11 |
 | `med` | 467 |
 | `low` | 303 |
@@ -309,7 +309,17 @@ escrito** — `DELETE` de 1.000 filas dentro de un `WHILE`, con transacción por
 herramienta `evidence` lo enseña sin abrir el fichero: el paso cuelga de `WHILE#37`. Es lo
 contrario de lo que decía el hallazgo.
 
-### 6.2 Falso negativo: `crit / Inyección SQL` — el taint no se propaga entre variables
+### 6.2 Falso negativo: `crit / Inyección SQL` — la contaminación no se propaga entre variables · **ARREGLADO 2026-10-24**
+
+> **Arreglado.** Nueva arista `(:Variable)-[:ASSIGNED_FROM_VAR]->(:Variable|:Parameter)` por
+> cada variable leída en el lado derecho de una asignación (`SET`, `SELECT @v =` y el
+> inicializador de `DECLARE`), y la regla `crit` pasa a la clausura transitiva. Sobre DNN
+> (237 aristas nuevas): `crit` 0 → **1**, `dbo.GetAvailableUsersForIndex` con detalle
+> `@Sql ← @PivotSql ← dbo.profilepropertydefinition(PropertyName)`, y `high` 12 → 11 por el
+> mismo objeto. **Ningún otro cambio** en DNN, WideWorldImporters ni WideWorldImporters-DW.
+> Gate: `InyeccionContaminacionTests`, verificado por mutación. Límite conocido: una variable contaminada
+> pasada como **parámetro tipado** a `sp_executesql` también cuenta como `BUILDS_SQL_FROM`
+> (comportamiento previo, no introducido aquí).
 
 **[motor]** — En `dbo.GetAvailableUsersForIndex` la ruta real es:
 
@@ -340,7 +350,7 @@ Ninguna cumple ambas → `crit = 0`.
 
 **Por qué no puede cumplirlas hoy**: en las 34.278 aristas del grafo **no hay ni una sola
 arista `Variable → Variable`**. `ASSIGNED_FROM` apunta siempre a `Column` (128 aristas, todas).
-El flujo de datos entre variables no está modelado, así que el taint no puede propagarse por
+El flujo de datos entre variables no está modelado, así que la contaminación no puede propagarse por
 construcción, no por un descuido de la regla.
 
 **Alcance medido**: exactamente **1 objeto** del corpus tiene el patrón partido en dos
@@ -379,7 +389,7 @@ dentro de un objeto, no dependencias entre objetos distintos.
 | Tarea | Origen |
 |---|---|
 | Distinguir "sin `WHERE`" de "sin arista de filtro": marcar el paso con un `has_where` propio | §6.1 |
-| Arista `Variable → Variable` para propagar taint, y ampliar la regla `crit` a la clausura transitiva | §6.2 |
+| ~~Arista `Variable → Variable` para propagar la contaminación, y ampliar la regla `crit` a la clausura transitiva~~ — hecho 2026-10-24 | §6.2 |
 | Añadir estos dos casos como controles negativos de `eval/bad-practices` antes de tocar ninguna regla | ambas |
 
 ---

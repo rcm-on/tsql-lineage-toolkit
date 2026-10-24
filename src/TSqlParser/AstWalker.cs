@@ -69,7 +69,10 @@ public static class AstWalker
                             el.Value != null ? SqlText.Truncate(SqlText.Generate(el.Value), 120) : ""
                         ));
                         if (el.Value != null)
+                        {
                             TrackResolvedValue(ctx, el.VariableName.Value, el.Value);
+                            RecordVariableSources(ctx, el.VariableName.Value, el.Value);
+                        }
                     }
                     break;
 
@@ -2953,12 +2956,26 @@ public static class AstWalker
                 opSet.Add(op);
         }
 
+        RecordVariableSources(ctx, varName, expr);
+
         var text = SqlText.Truncate(SqlText.Generate(expr), 300);
         if (text.Length == 0)
             return;
         if (!ctx.VariableConstructions.TryGetValue(varName, out var list))
             ctx.VariableConstructions[varName] = list = new List<string>();
         list.Add(text);
+    }
+
+    private static void RecordVariableSources(WalkContext ctx, string varName, ScalarExpression expr)
+    {
+        foreach (var src in CollectVariableNames(expr))
+        {
+            if (string.Equals(src, varName, StringComparison.OrdinalIgnoreCase))
+                continue;
+            if (!ctx.VariableSources.TryGetValue(varName, out var srcSet))
+                ctx.VariableSources[varName] = srcSet = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
+            srcSet.Add(src);
+        }
     }
 
     /// <summary>

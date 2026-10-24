@@ -286,6 +286,31 @@ public static class GraphExporter
                 });
             }
 
+            // ── ASSIGNED_FROM_VAR: (:Variable)-[:ASSIGNED_FROM_VAR]->(:Variable|:Parameter)
+            // for "SET @Sql = '...' + @PivotSql" - variable-to-variable flow, without it
+            // taint stops at the first intermediate variable.
+            foreach (var v in r.Variables)
+            {
+                if (!r.VariableSources.TryGetValue(v.Name, out var sources))
+                    continue;
+                foreach (var srcName in sources)
+                {
+                    string? srcId = null;
+                    if (r.Variables.Any(x => string.Equals(x.Name, srcName, StringComparison.OrdinalIgnoreCase)))
+                        srcId = $"{r.ObjectName}#var:{srcName}";
+                    else if (r.Parameters.Any(p => string.Equals(p.Name, srcName, StringComparison.OrdinalIgnoreCase)))
+                        srcId = $"{r.ObjectName}#param:{srcName}";
+                    if (srcId == null)
+                        continue;
+                    graph.Relationships.Add(new GraphRel
+                    {
+                        Type = "ASSIGNED_FROM_VAR",
+                        StartNodeId = $"{r.ObjectName}#var:{v.Name}",
+                        EndNodeId = srcId,
+                    });
+                }
+            }
+
             // ── ASSIGNED_FROM: (:Variable)-[:ASSIGNED_FROM]->(:Column) for
             // "SET @var = (SELECT Col FROM S ...)" / "SELECT @var = Col FROM S ...",
             // i.e. column-to-variable lineage - column-level, so only when --columns.

@@ -88,7 +88,9 @@ public static class RiskAnalyzer
             }
 
             var vars = OutOf(n.Id, "DECLARES").Select(r => byId[r.EndNodeId]).Select(v => (
+                Id: v.Id,
                 Name: Str(v.Properties, "name"),
+                FromVars: OutOf(v.Id, "ASSIGNED_FROM_VAR").Select(r2 => r2.EndNodeId).ToList(),
                 UsedBy: IncOf(v.Id, "USES_VARIABLE").Count(r2 => stepIds.Contains(r2.StartNodeId)),
                 BuildsSql: IncOf(v.Id, "BUILDS_SQL_FROM").Count(),
                 AssignedFrom: OutOf(v.Id, "ASSIGNED_FROM").Select(r2 =>
@@ -101,10 +103,27 @@ public static class RiskAnalyzer
             var callsIn = IncOf(n.Id, "CALLS").Select(r => NameOf(r.StartNodeId)).Distinct().ToList();
 
             // ── Seguridad ────────────────────────────────────────────
-            var tainted = vars.Where(v => v.BuildsSql > 0 && v.AssignedFrom.Count > 0).ToList();
+            // Taint: a variable carries table data if assigned from a column, or from
+            // another variable that does (fixpoint over ASSIGNED_FROM_VAR).
+            var taintOrigin = vars.Where(v => v.AssignedFrom.Count > 0)
+                .ToDictionary(v => v.Id, v => string.Join(", ", v.AssignedFrom));
+            var varNameById = vars.ToDictionary(v => v.Id, v => v.Name);
+            for (var changed = true; changed;)
+            {
+                changed = false;
+                foreach (var v in vars)
+                {
+                    if (taintOrigin.ContainsKey(v.Id)) continue;
+                    var via = v.FromVars.FirstOrDefault(taintOrigin.ContainsKey);
+                    if (via == null) continue;
+                    taintOrigin[v.Id] = $"{varNameById[via]} ← {taintOrigin[via]}";
+                    changed = true;
+                }
+            }
+            var tainted = vars.Where(v => v.BuildsSql > 0 && taintOrigin.ContainsKey(v.Id)).ToList();
             if (tainted.Count > 0)
                 Add("crit", "Seguridad", "Inyección SQL", name,
-                    $"SQL dinámico construido desde datos de tabla: {string.Join("; ", tainted.Select(v => $"{v.Name} ← {string.Join(", ", v.AssignedFrom)}"))}");
+                    $"SQL dinámico construido desde datos de tabla: {string.Join("; ", tainted.Select(v => $"{v.Name} ← {taintOrigin[v.Id]}"))}");
             else if (dyn > 0)
             {
                 var dynVars = vars.Where(v => v.BuildsSql > 0).Select(v => v.Name).ToList();

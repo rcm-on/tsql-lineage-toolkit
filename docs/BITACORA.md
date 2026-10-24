@@ -18,6 +18,33 @@ queda el árbol y cuál es el siguiente paso concreto.
 
 ---
 
+## 2026-10-24 — §6.2: la contaminación cruza variables
+
+Se priorizó lo pendiente (plan en `~/.claude/plans/tareas-que-faltan-que-vectorized-flask.md`):
+§6.2 primero por ser corto y cerrar un cero sospechoso; después onboarding (`quickstart` +
+prompts MCP), luego A2 `remediation_plan`.
+
+**Hecho**: arista `ASSIGNED_FROM_VAR` (`Variable → Variable|Parameter`) desde `SET`,
+`SELECT @v =` y el inicializador de `DECLARE`, sin autobucle (`COALESCE(@v + ',', '')`).
+La regla `crit / Inyección SQL` hace punto fijo sobre ella, en `RiskAnalyzer.cs` y en
+`dashboard/src/risks.js` a la vez. Medido: DNN `crit` 0 → 1 (`GetAvailableUsersForIndex`,
+`high` 12 → 11 por el mismo objeto); WWI y WWI-DW sin un solo cambio. 4 pruebas en
+`InyeccionContaminacionTests`, la principal vista fallar por mutación.
+
+**No previsto**: el inicializador de `DECLARE @x = expr` no pasaba por `RecordConstruction`,
+así que tampoco deja `construction` ni `op_kinds`. Solo se le añaden las fuentes de variable;
+lo demás queda igual a propósito, para no mover artefactos en el mismo cambio.
+
+**Límite que sigue**: una variable contaminada pasada como parámetro tipado a `sp_executesql`
+cuenta como `BUILDS_SQL_FROM`. Es anterior a este cambio; medir antes de tocarlo.
+
+Estado: 401/402 + 43/43. La que cae es `McpTests.EndToEnd_StdioProcess…`, por Smart App
+Control bloqueando `SQLitePCLRaw.batteries_v2.dll` (0x800711C7): ambiental. **Sin commitear.**
+
+Siguiente: onboarding (`quickstart`, error de `--store` que enseña, `prompts/list`).
+
+---
+
 ## 2026-09-10 — Validación externa: instrumentos para lo que no da error
 
 Nace de una restricción real: la herramienta se ejecuta contra una base corporativa que no
@@ -153,7 +180,7 @@ tampoco recoge `@PivotSql` pese a que la línea 66 lo concatena. Alcance medido:
 
 **Se paró a propósito.** A diferencia de §6.1, aquí hay que emitir una arista que hoy no
 existe — cirugía en `AstWalker` — y no cabía hacerlo con red. La alternativa barata (una regla
-por co-locación: "el objeto tiene alguna variable con taint y alguna que arma SQL") se
+por co-locación: "el objeto tiene alguna variable contaminada y alguna que arma SQL") se
 descartó: acierta en DNN por casualidad y no es trazabilidad, es adivinar. La norma del repo
 pide medir falsos positivos antes de añadir reglas.
 

@@ -43,7 +43,7 @@ public class GraphRehydratorTests : IDisposable
     private static SqliteConnection AbrirSoloLectura(string ruta) =>
         new(new SqliteConnectionStringBuilder { DataSource = ruta, Mode = SqliteOpenMode.ReadOnly }.ToString());
 
-    // Corpus con: procedimiento normal (SqlObject+Process), inyección SQL (tainted var),
+    // Corpus con: procedimiento normal (SqlObject+Process), inyección SQL (variable contaminada),
     // cursor+tx sin catch, UPDATE sin WHERE, tabla sin PK - cubre varias reglas de
     // RiskAnalyzer en varias categorías, para que el gate compare algo con sustancia.
     private static readonly (string Name, string Sql)[] CorpusConRiesgos =

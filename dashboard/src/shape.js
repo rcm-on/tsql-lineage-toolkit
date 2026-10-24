@@ -85,7 +85,8 @@
       const writesByTable = Object.entries(writeTally).map(([table, count]) => ({ table, count }));
 
       const vars = outOf(id, 'DECLARES').map(r => byId[r.EndNodeId]).map(v => ({
-        name: v.Properties.name, type: v.Properties.data_type,
+        id: v.Id, name: v.Properties.name, type: v.Properties.data_type,
+        fromVars: outOf(v.Id, 'ASSIGNED_FROM_VAR').map(r => r.EndNodeId),   // SET @a = ... + @b
         usedBy: incOf(v.Id, 'USES_VARIABLE').filter(r => stepIds.has(r.StartNodeId)).length,
         buildsSql: incOf(v.Id, 'BUILDS_SQL_FROM').length,
         assignedFrom: outOf(v.Id, 'ASSIGNED_FROM').map(r => { const c = byId[r.EndNodeId]; return `${c.Properties.table}(${c.Properties.name})`; }),

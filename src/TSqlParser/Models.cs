@@ -184,6 +184,13 @@ public class WalkContext
     public Dictionary<string, SortedSet<string>> VariableOpKinds { get; } = new();
 
     /// <summary>
+    /// Per-variable set of the other @variables read on the right-hand side of its
+    /// assignments ("SET @Sql = '...' + @PivotSql" -> @Sql: {@PivotSql}). Surfaced as
+    /// ASSIGNED_FROM_VAR, so taint can be followed across variables.
+    /// </summary>
+    public Dictionary<string, SortedSet<string>> VariableSources { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
     /// Per-variable current value, but only while it remains a pure string literal
     /// (concatenation of literals, possibly through other literal variables). Updated on
     /// each assignment in source order; an assignment whose RHS isn't fully literal
@@ -319,6 +326,8 @@ public class ObjectResult
     public Dictionary<string, List<string>> VariableConstructions { get; } = new();
     /// <summary>Per-variable operator tokens (see <see cref="OperatorClassifier"/>), unioned across all its assignments. Surfaced on the Variable node as op_kinds.</summary>
     public Dictionary<string, List<string>> VariableOpKinds { get; } = new();
+    /// <summary>Per-variable @variables read on the RHS of its assignments. Surfaced as ASSIGNED_FROM_VAR.</summary>
+    public Dictionary<string, List<string>> VariableSources { get; } = new(StringComparer.OrdinalIgnoreCase);
     /// <summary>For a VIEW: each output column paired with the base table column(s) its value comes from (see <see cref="OperatorClassifier"/> for ops). Empty for non-views. Surfaced as DERIVES_FROM off the view's own :Column nodes.</summary>
     public List<ColumnDerivation> ViewColumnLineage { get; } = new();
     /// <summary>For a TABLE_VALUED_FUNCTION/INLINE_TABLE_FUNCTION: its output column names (from RETURNS TABLE's SELECT list, or the declared RETURNS @t TABLE(...) columns). Empty otherwise. Lets InputAnalyzer register the function in the table-columns catalog so callers can expand "SELECT * FROM func()".</summary>

@@ -40,7 +40,7 @@ public static class Vocab
     public static readonly IReadOnlyList<string> KnownEdgeTypes = new[]
     {
         // SQL side (GraphExporter)
-        "HAS_PARAMETER", "DECLARES", "ASSIGNED_FROM", "HAS_STEP", "ACTION", "BUILDS_SQL_FROM",
+        "HAS_PARAMETER", "DECLARES", "ASSIGNED_FROM", "ASSIGNED_FROM_VAR", "HAS_STEP", "ACTION", "BUILDS_SQL_FROM",
         "USES_VARIABLE", "TARGETS", "WRITES_TO", "READS_FROM", "READS_COLUMN", "WRITES_COLUMN",
         "FILTERS_ON", "DERIVES_FROM", "CONDITIONED_BY", "NESTED_IN", "GOVERNS", "CALLS", "AFFECTS", "HAS_COLUMN", "FK_TO", "REFERENCES",
         "BELONGS_TO", "WORKFLOW_WRITES_TO", "CONTAINS", "HAS_RULE", "CONSTRAINS",
