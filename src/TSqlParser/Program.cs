@@ -137,6 +137,23 @@ if (positional.Count >= 1 && positional[0] == "corpus")
     return 1;
 }
 
+// "quickstart <database> [--server X] [--out dir]": extrae la base, construye graph_full.db
+// (columnas incluidas) e imprime la configuracion MCP lista para pegar. Autenticacion:
+// integrada por defecto; TSQL_SQL_USER / TSQL_SQL_PASSWORD para SQL auth.
+if (positional.Count >= 1 && positional[0] == "quickstart")
+{
+    if (positional.Count < 2)
+    {
+        Console.Error.WriteLine("Usage: TSqlParser quickstart <database> [--server <server>] [--out <dir>]");
+        return 1;
+    }
+    var qsSrvIdx = Array.IndexOf(args, "--server");
+    var qsSrv = qsSrvIdx >= 0 && qsSrvIdx + 1 < args.Length ? args[qsSrvIdx + 1] : @".\SQLEXPRESS";
+    var qsOutIdx = Array.IndexOf(args, "--out");
+    var qsOut = qsOutIdx >= 0 && qsOutIdx + 1 < args.Length ? args[qsOutIdx + 1] : "./" + positional[1];
+    return QuickStart.Run(positional[1], qsSrv, qsOut);
+}
+
 // "mcp --store <graph_full.db>": speaks MCP (JSON-RPC 2.0 over stdio) so an agent can
 // query the graph live - resolve_object (name -> canonical id) and impact (transitive
 // blast radius) - instead of scanning graph_full.json. Read-only. See McpServer.
@@ -145,7 +162,7 @@ if (positional.Count >= 1 && positional[0] == "mcp")
     var mcpStoreIdx = Array.IndexOf(args, "--store");
     if (mcpStoreIdx < 0 || mcpStoreIdx + 1 >= args.Length)
     {
-        Console.Error.WriteLine("Usage: TSqlParser mcp --store <graph_full.db>");
+        Console.Error.WriteLine("Usage: TSqlParser mcp --store <graph_full.db>   (genera la base con: TSqlParser quickstart <base>)");
         return 1;
     }
     return new McpServer().Run(args[mcpStoreIdx + 1]);
@@ -536,6 +553,7 @@ if (positional.Count >= 1 && positional[0] is "bench-make" or "bench-grade")
 if (positional.Count < 2)
 {
     Console.Error.WriteLine("Usage: TSqlParser <input.json> <output_graph.json> [output_workflows.json] [--columns] [--graphify] [--graphml] [--nodestore] [--sqlite]");
+    Console.Error.WriteLine("       TSqlParser quickstart <database> [--server <server>] [--out <dir>]");
     Console.Error.WriteLine("       TSqlParser report <input.json> [nombre-objeto]");
     Console.Error.WriteLine("       TSqlParser from-sql <database> <input.json> <file1.sql> [file2.sql ...|dir|glob]");
     Console.Error.WriteLine("       TSqlParser extract <database> <input.json> [--server <server>] [--tables] [--object schema.name]... [--like pattern]");

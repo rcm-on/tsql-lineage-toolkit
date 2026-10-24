@@ -41,7 +41,20 @@ cuenta como `BUILDS_SQL_FROM`. Es anterior a este cambio; medir antes de tocarlo
 Estado: 401/402 + 43/43. La que cae es `McpTests.EndToEnd_StdioProcess…`, por Smart App
 Control bloqueando `SQLitePCLRaw.batteries_v2.dll` (0x800711C7): ambiental. **Sin commitear.**
 
-Siguiente: onboarding (`quickstart`, error de `--store` que enseña, `prompts/list`).
+### Onboarding (delegado a Sonnet, revisado aquí)
+
+`quickstart <base> [--server] [--out]` (extrae + tablas + grafo con columnas + `.db` e imprime
+`claude mcp add …` y el JSON para Cursor/Desktop con ruta absoluta); el error de `--store`
+inexistente dice cómo generarlo; prompts MCP `onboard_database` y `assess_change`, con gate de
+que toda herramienta citada existe (visto fallar por mutación). Suite 414/415 + 43/43.
+
+**Sin verificar contra base viva**: en esta máquina no hay SQL Server instalado y Docker no
+estaba levantado; además Smart App Control bloquea `SQLitePCLRaw` en local. Repetir quickstart
+es seguro por lectura de código (`input.json` se reescribe, el `.db` se borra antes), salvo con
+un `mcp` abierto sobre ese `.db`. **Pendiente**: ejecutar quickstart contra WWI en el
+contenedor `tsql-mssql`.
+
+Siguiente: publicación (`release.yml`, en worktree `C:\temp\release-wt`).
 
 ---
 

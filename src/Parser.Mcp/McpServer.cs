@@ -6,7 +6,7 @@ namespace Parser.Mcp;
 
 /// <summary>
 /// Transporte MCP a mano: JSON-RPC 2.0 delimitado por saltos de línea sobre stdin/stdout.
-/// Métodos: initialize, tools/list, tools/call. Las herramientas vienen del registro
+/// Métodos: initialize, tools/list, tools/call, prompts/list, prompts/get. Las herramientas vienen del registro
 /// inyectado, así que el transporte no sabe cuáles hay. Sin SDK oficial; el porqué está en
 /// notes/checkpoints/T16.md.
 /// </summary>
@@ -26,6 +26,8 @@ public sealed class McpServer
         if (!File.Exists(storePath))
         {
             Console.Error.WriteLine($"No existe la base SQLite '{storePath}'.");
+            Console.Error.WriteLine("Genérala con:  TSqlParser quickstart <base> [--server <servidor>]");
+            Console.Error.WriteLine("o, desde un input.json ya extraído:  TSqlParser <input.json> graph_full.json --columns --sqlite");
             return 1;
         }
 
@@ -78,6 +80,8 @@ public sealed class McpServer
                 "initialize" => Initialize(),
                 "tools/list" => ToolsList(),
                 "tools/call" => ToolsCall(conn, @params),
+                "prompts/list" => PromptsList(),
+                "prompts/get" => PromptsGet(@params),
                 _ => throw new McpMethodNotFoundException(method ?? "(null)"),
             };
             return isNotification ? null : Envelope(idNode, result: result);
@@ -99,7 +103,11 @@ public sealed class McpServer
     private static Dictionary<string, object?> Initialize() => new()
     {
         ["protocolVersion"] = ProtocolVersion,
-        ["capabilities"] = new Dictionary<string, object?> { ["tools"] = new Dictionary<string, object?>() },
+        ["capabilities"] = new Dictionary<string, object?>
+        {
+            ["tools"] = new Dictionary<string, object?>(),
+            ["prompts"] = new Dictionary<string, object?>(),
+        },
         ["serverInfo"] = new Dictionary<string, object?> { ["name"] = "tsql-lineage-mcp", ["version"] = "0.1.0" },
     };
 
@@ -112,6 +120,58 @@ public sealed class McpServer
             ["inputSchema"] = t.InputSchema,
         }).ToList(),
     };
+
+    private static Dictionary<string, object?> PromptsList() => new()
+    {
+        ["prompts"] = McpPrompts.Default.Select(p => new Dictionary<string, object?>
+        {
+            ["name"] = p.Name,
+            ["description"] = p.Description,
+            ["arguments"] = p.Arguments.Select(a => new Dictionary<string, object?>
+            {
+                ["name"] = a.Name,
+                ["description"] = a.Description,
+                ["required"] = a.Required,
+            }).ToList(),
+        }).ToList(),
+    };
+
+    private static Dictionary<string, object?> PromptsGet(JsonObject? @params)
+    {
+        var name = @params?["name"]?.GetValue<string>();
+        if (string.IsNullOrEmpty(name))
+            throw new McpInvalidParamsException("prompts/get requiere 'name'.");
+
+        var prompt = McpPrompts.Default.FirstOrDefault(p => p.Name == name)
+                     ?? throw new McpInvalidParamsException($"Prompt desconocido: '{name}'.");
+
+        var given = @params?["arguments"] as JsonObject;
+        var values = new Dictionary<string, string>();
+        foreach (var arg in prompt.Arguments)
+        {
+            var v = given is null ? null : McpArgs.String(given, arg.Name);
+            if (string.IsNullOrWhiteSpace(v))
+            {
+                if (arg.Required)
+                    throw new McpInvalidParamsException($"El prompt '{name}' requiere el argumento '{arg.Name}'.");
+                continue;
+            }
+            values[arg.Name] = v;
+        }
+
+        return new()
+        {
+            ["description"] = prompt.Description,
+            ["messages"] = new object[]
+            {
+                new Dictionary<string, object?>
+                {
+                    ["role"] = "user",
+                    ["content"] = new Dictionary<string, object?> { ["type"] = "text", ["text"] = prompt.Render(values) },
+                },
+            },
+        };
+    }
 
     private Dictionary<string, object?> ToolsCall(SqliteConnection conn, JsonObject? @params)
     {
