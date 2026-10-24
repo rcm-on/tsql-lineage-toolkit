@@ -1,0 +1,245 @@
+name: Release
+
+# Tag v* = publicar. workflow_dispatch con dry_run (por defecto) construye todo y sube los
+# artefactos al run, sin publicar nada. Procedimiento en docs/EMPAQUETADO.md.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Construir y subir artefactos al run, sin publicar"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  version:
+    name: Resolve version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      publish: ${{ steps.v.outputs.publish }}
+    steps:
+      - id: v
+        env:
+          EVENT: ${{ github.event_name }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          if [ "$EVENT" = "workflow_dispatch" ] && [ "$DRY_RUN" = "true" ]; then
+            version="0.0.0-dryrun.$RUN_NUMBER"
+            publish=false
+          else
+            if [ "$REF_TYPE" != "tag" ]; then
+              echo "::error::Publicar exige un tag v*; esto se ejecuta sobre '$REF_NAME'. Usa dry_run o lanza el workflow sobre un tag."
+              exit 1
+            fi
+            version="${REF_NAME#v}"
+            publish=true
+          fi
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::'$version' no parece semver (X.Y.Z o X.Y.Z-prerelease)."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "publish=$publish" >> "$GITHUB_OUTPUT"
+          echo "Version $version, publish=$publish"
+
+  # Mismos pasos que el job test de ci.yml.
+  test:
+    name: Build & test (non-LiveSql)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Build
+        run: dotnet build src/TSqlParser/TSqlParser.csproj -c Release
+
+      - name: Test (Category!=LiveSql)
+        run: dotnet test tests/TSqlParser.Tests/TSqlParser.Tests.csproj -c Release --filter "Category!=LiveSql"
+
+      - name: Test NetParser (Category!=LiveSql)
+        run: dotnet test tests/NetParser.Tests/NetParser.Tests.csproj -c Release --filter "Category!=LiveSql"
+
+  pack:
+    name: Pack & push NuGet
+    needs: [version, test]
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Pack
+        run: dotnet pack src/TSqlParser/TSqlParser.csproj -c Release -o nupkg -p:Version="$VERSION"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: nupkg/*.nupkg
+          if-no-files-found: error
+
+      - name: Push to nuget.org
+        if: needs.version.outputs.publish == 'true'
+        env:
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: |
+          if [ -z "$NUGET_API_KEY" ]; then
+            echo "::error::Falta el secret NUGET_API_KEY (Settings > Secrets and variables > Actions); no se publica en silencio."
+            exit 1
+          fi
+          dotnet nuget push "nupkg/*.nupkg" --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  binaries:
+    name: Binary ${{ matrix.rid }}
+    needs: [version, test]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { rid: win-x64, os: windows-latest }
+          - { rid: linux-x64, os: ubuntu-latest }
+          - { rid: osx-arm64, os: macos-latest }
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      RID: ${{ matrix.rid }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      # PackAsTool no choca con single-file (verificado), pero un binario suelto no es un tool.
+      - name: Publish single-file
+        shell: bash
+        run: |
+          dotnet publish src/TSqlParser/TSqlParser.csproj -c Release -r "$RID" --self-contained true \
+            -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true \
+            -p:PackAsTool=false -p:Version="$VERSION" -o publish
+
+      - name: Archive
+        shell: bash
+        run: |
+          name="tsql-lineage-$VERSION-$RID"
+          mkdir -p "stage/$name" dist
+          if [ "$RID" = "win-x64" ]; then
+            cp publish/TSqlParser.exe "stage/$name/tsql-lineage.exe"
+          else
+            cp publish/TSqlParser "stage/$name/tsql-lineage"
+            chmod +x "stage/$name/tsql-lineage"
+          fi
+          cp LICENSE "stage/$name/"
+          if [ "$RID" = "win-x64" ]; then
+            (cd stage && 7z a -tzip "../dist/$name.zip" "$name")
+          else
+            tar -czf "dist/$name.tar.gz" -C stage "$name"
+          fi
+          ls -l dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.rid }}
+          path: dist/*
+          if-no-files-found: error
+
+  checksums:
+    name: SHA256SUMS
+    needs: [pack, binaries]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: assets
+          merge-multiple: true
+
+      - name: Compute
+        working-directory: assets
+        run: |
+          sha256sum * | tee SHA256SUMS.tmp
+          mv SHA256SUMS.tmp SHA256SUMS
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-assets
+          path: assets/*
+          if-no-files-found: error
+
+  release:
+    name: GitHub Release
+    needs: [version, checksums]
+    if: needs.version.outputs.publish == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-assets
+          path: assets
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ github.ref_name }}
+          VERSION: ${{ needs.version.outputs.version }}
+        run: |
+          flags=""
+          case "$VERSION" in *-*) flags="--prerelease" ;; esac
+          gh release create "$TAG" assets/* --title "$TAG" --generate-notes --verify-tag $flags
+
+  docker:
+    name: Docker image
+    needs: [version, test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      PUBLISH: ${{ needs.version.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Image tags
+        id: meta
+        run: |
+          image="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/tsql-lineage-toolkit"
+          tags="$image:$VERSION"
+          if [ "$PUBLISH" = "true" ]; then tags="$tags,$image:latest"; fi
+          echo "tags=$tags" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        if: env.PUBLISH == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ env.PUBLISH == 'true' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          build-args: VERSION=${{ env.VERSION }}
